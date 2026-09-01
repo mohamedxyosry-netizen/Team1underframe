@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>طلبات الحذف</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        /* =========================================
+           صفحة طلبات الحذف
+        ========================================= */
+
+        .delete-page {
+            padding: 30px;
+        }
+
+
+        .delete-header {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+
+        .delete-header h1 {
+            margin: 0 0 10px;
+        }
+
+
+        .delete-header p {
+            margin: 0;
+            color: #666;
+        }
+
+
+        .request-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-right: 5px solid #d92d20;
+        }
+
+
+        .request-card.pending {
+            border-right-color: #f79009;
+        }
+
+
+        .request-card.approved {
+            border-right-color: #198754;
+        }
+
+
+        .request-card.rejected {
+            border-right-color: #d92d20;
+        }
+
+
+        .request-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+
+        .request-title h2 {
+            margin: 0;
+        }
+
+
+        .status {
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+
+        .status.pending {
+            background: #fff4e5;
+            color: #b54708;
+        }
+
+
+        .status.approved {
+            background: #e8f7ee;
+            color: #198754;
+        }
+
+
+        .status.rejected {
+            background: #fff0f0;
+            color: #d92d20;
+        }
+
+
+        .request-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+
+        .reason-box {
+            margin-top: 15px;
+            background: #fff8e8;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+
+        .approve-btn,
+        .reject-btn {
+            flex: 1;
+            min-width: 180px;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        .approve-btn {
+            background: #198754;
+        }
+
+
+        .approve-btn:hover {
+            background: #157347;
+        }
+
+
+        .reject-btn {
+            background: #d92d20;
+        }
+
+
+        .reject-btn:hover {
+            background: #b42318;
+        }
+
+
+        .review-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+
+        .review-result.approved {
+            background: #e8f7ee;
+            color: #198754;
+        }
+
+
+        .review-result.rejected {
+            background: #fff0f0;
+            color: #d92d20;
+        }
+
+
+        .empty-box {
+            background: white;
+            border-radius: 15px;
+            padding: 50px 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+
+        .empty-box .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+
+        @media (max-width: 600px) {
+
+            .delete-page {
+                padding: 15px;
+            }
+
+            .request-card {
+                padding: 18px;
+            }
+
+            .request-info {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =========================================
+         الشريط الجانبي
+    ========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo-area">
+
+            <div class="logo-icon">
+                🚆
+            </div>
+
+            <h2>
+                نظام إدارة بيانات العمل
+            </h2>
+
+            <p>
+                WORK DATA MANAGEMENT SYSTEM
+            </p>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+
+            <button
+                class="menu-item"
+                onclick="goHome()">
+
+                <span>🏠</span>
+
+                <strong>
+                    الرئيسية
+                </strong>
+
+            </button>
+
+
+            <button
+                class="menu-item"
+                onclick="openSection('search')">
+
+                <span>📋</span>
+
+                <strong>
+                    سجل البيانات
+                </strong>
+
+            </button>
+
+
+            <button
+                class="menu-item active">
+
+                <span>🗑️</span>
+
+                <strong>
+                    طلبات الحذف
+                </strong>
+
+                <span
+                    id="deleteRequestsCount"
+                    style="
+                        background:#d92d20;
+                        color:white;
+                        border-radius:20px;
+                        padding:3px 9px;
+                        font-size:12px;
+                        font-weight:bold;
+                        margin-right:auto;
+                    ">
+                    0
+                </span>
+
+            </button>
+
+
+            <button
+                class="menu-item logout-menu"
+                onclick="logout()">
+
+                <span>🚪</span>
+
+                <strong>
+                    تسجيل الخروج
+                </strong>
+
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            جميع الحقوق محفوظة © 2026
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =========================================
+         المحتوى الرئيسي
+    ========================================== -->
+
+    <div class="main-content">
+
+
+        <!-- الهيدر -->
+
+        <header class="top-header">
+
+            <div>
+
+                <h1>
+                    طلبات الحذف
+                </h1>
+
+                <p>
+                    الرئيسية / طلبات الحذف
+                </p>
+
+            </div>
+
+
+            <div class="user-info">
+
+                <div class="user-icon">
+                    👤
+                </div>
+
+                <div>
+
+                    <strong id="currentUserName">
+                        المدير
+                    </strong>
+
+                    <small id="currentUserRole">
+                        Admin
+                    </small>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =========================================
+             صفحة الطلبات
+        ========================================== -->
+
+        <main class="delete-page">
+
+
+            <button
+                class="back-btn"
+                onclick="goHome()">
+
+                ← العودة للرئيسية
+
+            </button>
+
+
+            <div class="delete-header">
+
+                <h1>
+                    🗑️ إدارة طلبات الحذف
+                </h1>
+
+                <p>
+                    من هنا يستطيع المدير مراجعة طلبات حذف البيانات والموافقة عليها أو رفضها.
+                </p>
+
+            </div>
+
+
+            <!-- =====================================
+                 هنا سيتم عرض الطلبات
+            ====================================== -->
+
+            <div id="deleteRequests">
+
+                <div class="empty-box">
+
+                    <div class="icon">
+                        ⏳
+                    </div>
+
+                    <h2>
+                        جاري تحميل الطلبات...
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+        </main>
+
+
+
+        <!-- الفوتر -->
+
+        <footer class="main-footer">
+
+            <span>
+                نسخة 1.0.0
+            </span>
+
+            <span id="currentDate">
+                2026
+            </span>
+
+            <span id="currentTime">
+                --
+            </span>
+
+        </footer>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================
+     JavaScript الرئيسي
+========================================= -->
+
+<script src="script.js"></script>
+
+
+
+<script>
+
+    // =========================================
+    // التأكد من أن المستخدم مدير
+    // =========================================
+
+    function checkDeleteRequestsAdmin() {
+
+        const user =
+            getCurrentUser();
+
+
+        if (
+            !user ||
+            user.role !== "admin"
+        ) {
+
+            document.body.innerHTML = `
+
+                <div style="
+                    min-height:100vh;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    text-align:center;
+                    font-family:Arial;
+                    background:#f5f5f5;
+                    padding:20px;
+                ">
+
+                    <div style="
+                        background:white;
+                        padding:40px;
+                        border-radius:15px;
+                        box-shadow:0 5px 20px rgba(0,0,0,0.1);
+                    ">
+
+                        <div style="
+                            font-size:50px;
+                            margin-bottom:15px;
+                        ">
+                            🔒
+                        </div>
+
+                        <h2>
+                            غير مسموح
+                        </h2>
+
+                        <p>
+                            صفحة طلبات الحذف متاحة للمدير فقط.
+                        </p>
+
+                        <button
+                            onclick="goHome()"
+                            style="
+                                border:none;
+                                padding:12px 25px;
+                                border-radius:8px;
+                                background:#333;
+                                color:white;
+                                cursor:pointer;
+                            "
+                        >
+                            العودة للرئيسية
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
+
+
+    // =========================================
+    // تشغيل الصفحة
+    // =========================================
+
+    if (
+        checkDeleteRequestsAdmin()
+    ) {
+
+        const user =
+            getCurrentUser();
+
+
+        const nameElement =
+            document.getElementById(
+                "currentUserName"
+            );
+
+
+        const roleElement =
+            document.getElementById(
+                "currentUserRole"
+            );
+
+
+        if (nameElement && user) {
+
+            nameElement.innerText =
+                user.name;
+
+        }
+
+
+        if (roleElement) {
+
+            roleElement.innerText =
+                "Admin";
+
+        }
+
+
+        displayDeleteRequests();
+
+    }
+
+
+
+    // =========================================
+    // التاريخ والوقت
+    // =========================================
+
+    function updateDeletePageDateTime() {
+
+        const now =
+            new Date();
+
+
+        const dateElement =
+            document.getElementById(
+                "currentDate"
+            );
+
+
+        const timeElement =
+            document.getElementById(
+                "currentTime"
+            );
+
+
+        if (dateElement) {
+
+            dateElement.innerText =
+                now.toLocaleDateString(
+                    "ar-EG"
+                );
+
+        }
+
+
+        if (timeElement) {
+
+            timeElement.innerText =
+                now.toLocaleTimeString(
+                    "ar-EG",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                );
+
+        }
+
+    }
+
+
+    updateDeletePageDateTime();
+
+
+    setInterval(
+        updateDeletePageDateTime,
+        1000
+    );
+
+
+</script>
+
+
+</body>
+
+</html>

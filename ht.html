@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>قسم HT</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        /* =========================================
+           صفحة HT
+        ========================================= */
+
+        .ht-page {
+
+            padding: 25px;
+
+        }
+
+
+        /* =========================================
+           رأس الصفحة
+        ========================================= */
+
+        .ht-header {
+
+            background: linear-gradient(
+                135deg,
+                #266db4,
+                #2a69a8
+            );
+
+            color: white;
+
+            border-radius: 18px;
+
+            padding: 22px 25px;
+
+            margin-bottom: 25px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            box-shadow:
+                0 5px 20px rgba(129, 28, 172, 0.15);
+
+        }
+
+
+        .ht-header h1 {
+
+            margin: 0;
+
+            font-size: 28px;
+
+        }
+
+
+        .ht-header p {
+
+            margin: 7px 0 0;
+
+            opacity: 0.85;
+
+            font-size: 14px;
+
+        }
+
+
+        .ht-home-btn {
+
+            border: none;
+
+            background: white;
+
+            color: #343a40;
+
+            padding: 11px 20px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+
+        }
+
+
+        .ht-home-btn:hover {
+
+            transform: translateY(-2px);
+
+        }
+
+
+        /* =========================================
+           محتوى الصفحة
+        ========================================= */
+
+        .ht-content {
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(300px, 0.8fr)
+                minmax(350px, 1.2fr);
+
+            gap: 22px;
+
+            align-items: start;
+
+        }
+
+
+        /* =========================================
+           كارت تسجيل البيانات
+        ========================================= */
+
+        .ht-form-card {
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.08);
+
+            border-top: 5px solid #343a40;
+
+        }
+
+
+        .ht-form-title {
+
+            margin: 0 0 22px;
+
+            font-size: 21px;
+
+            color: #343a40;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+        }
+
+
+        /* =========================================
+           مجموعات الإدخال
+        ========================================= */
+
+        .ht-input-group {
+
+            margin-bottom: 17px;
+
+        }
+
+
+        .ht-input-group label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+
+            color: #444;
+
+            font-size: 14px;
+
+        }
+
+
+        .ht-input-group input,
+        .ht-input-group select,
+        .ht-input-group textarea {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 12px 14px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 10px;
+
+            background: #fafafa;
+
+            outline: none;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+
+        }
+
+
+        .ht-input-group input:focus,
+        .ht-input-group select:focus,
+        .ht-input-group textarea:focus {
+
+            border-color: #343a40;
+
+            background: white;
+
+            box-shadow:
+                0 0 0 3px rgba(52,58,64,0.08);
+
+        }
+
+
+        .ht-input-group textarea {
+
+            min-height: 100px;
+
+            resize: vertical;
+
+        }
+
+
+        /* =========================================
+           زر الحفظ
+        ========================================= */
+
+        .ht-save-btn {
+
+            width: 100%;
+
+            border: none;
+
+            background: linear-gradient(
+                135deg,
+                #6628e2,
+                #245e98
+            );
+
+            color: white;
+
+            padding: 13px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            margin-top: 5px;
+
+            transition: 0.2s;
+
+        }
+
+
+        .ht-save-btn:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 5px 15px rgba(89, 41, 165, 0.15);
+
+        }
+
+
+        #htMessage {
+
+            text-align: center;
+
+            margin: 12px 0 0;
+
+            font-weight: bold;
+
+        }
+
+
+        /* =========================================
+           كارت البيانات المسجلة
+        ========================================= */
+
+        .ht-records-card {
+
+            background: rgb(245, 235, 235);
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 20px rgba(82, 52, 173, 0.08);
+
+            border-top: 5px solid #653bcf;
+
+            min-height: 200px;
+
+        }
+
+
+        .ht-records-title {
+
+            margin: 0 0 20px;
+
+            font-size: 21px;
+
+            color: #4b5967;
+
+        }
+
+
+        /* =========================================
+           الموبايل
+        ========================================= */
+
+        @media (max-width: 800px) {
+
+            .ht-page {
+
+                padding: 12px;
+
+            }
+
+
+            .ht-header {
+
+                padding: 18px;
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 15px;
+
+                text-align: center;
+
+            }
+
+
+            .ht-header h1 {
+
+                font-size: 24px;
+
+            }
+
+
+            .ht-home-btn {
+
+                width: 100%;
+
+            }
+
+
+            .ht-content {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .ht-form-card,
+            .ht-records-card {
+
+                padding: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="dashboard">
+
+        <div class="ht-page">
+
+
+            <!-- =========================================
+                 رأس الصفحة
+            ========================================= -->
+
+            <header class="ht-header">
+
+                <div>
+
+                    <h1>
+                        ⚡ قسم HT
+                    </h1>
+
+                    <p>
+                        تسجيل ومتابعة أعمال الـ HT
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="ht-home-btn"
+                    onclick="goHome()">
+
+                    🏠 الأقسام الرئيسية
+
+                </button>
+
+            </header>
+
+
+            <!-- =========================================
+                 محتوى الصفحة
+            ========================================= -->
+
+            <main class="ht-content">
+
+
+                <!-- =====================================
+                     تسجيل بيانات جديدة
+                ====================================== -->
+
+                <div class="ht-form-card">
+
+                    <h2 class="ht-form-title">
+
+                        📝 تسجيل بيانات جديدة
+
+                    </h2>
+
+
+                    <!-- اسم العربية -->
+
+                    <div class="ht-input-group">
+
+                        <label>
+                            🚆 اسم العربية
+                        </label>
+
+                        <input
+                            type="text"
+                            id="htCarName"
+                            placeholder="اكتب اسم العربية">
+
+                    </div>
+
+
+                    <!-- رقم العربية -->
+
+                    <div class="ht-input-group">
+
+                        <label>
+                            🔢 رقم العربية
+                        </label>
+
+                        <input
+                            type="text"
+                            id="htCarNumber"
+                            placeholder="اكتب رقم العربية">
+
+                    </div>
+
+
+                    <!-- حالة الانتهاء -->
+
+                    <div class="ht-input-group">
+
+                        <label>
+                            ✅ حالة الانتهاء
+                        </label>
+
+                        <select id="htDone">
+
+                            <option value="">
+                                اختار الحالة
+                            </option>
+
+                            <option value="نعم">
+                                نعم - تم الانتهاء
+                            </option>
+
+                            <option value="لا">
+                                لا - لم يتم الانتهاء
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- الملاحظات -->
+
+                    <div class="ht-input-group">
+
+                        <label>
+                            📝 ملاحظات
+                        </label>
+
+                        <textarea
+                            id="htNotes"
+                            placeholder="اكتب الملاحظات"></textarea>
+
+                    </div>
+
+
+                    <!-- زر الحفظ -->
+
+                    <button
+                        class="ht-save-btn"
+                        onclick="saveHT()">
+
+                        💾 حفظ البيانات
+
+                    </button>
+
+
+                    <p id="htMessage"></p>
+
+                </div>
+
+
+                <!-- =====================================
+                     البيانات المسجلة
+                ====================================== -->
+
+                <div class="ht-records-card">
+
+                    <h2 class="ht-records-title">
+
+                        📋 البيانات المسجلة
+
+                    </h2>
+
+
+                    <div id="htRecords">
+
+                    </div>
+
+                </div>
+
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <!-- ملف JavaScript الأساسي -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

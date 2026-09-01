@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>البحث عن سيارة</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <header class="header">
+
+            <div>
+                <h1>البحث عن سيارة</h1>
+                <p>عرض أعمال جميع الأقسام للسيارة</p>
+            </div>
+
+            <button class="logout-btn" onclick="goHome()">
+                الأقسام الرئيسية
+            </button>
+
+        </header>
+
+
+        <main class="search-page">
+
+            <!-- البحث -->
+
+            <div class="form-card">
+
+                <h2>البحث عن سيارة</h2>
+
+                <div class="input-group">
+
+                    <label>رقم العربية</label>
+
+                    <input
+                        type="text"
+                        id="searchCarNumber"
+                        placeholder="اكتب رقم العربية">
+
+                </div>
+
+                <button
+                    class="save-btn"
+                    onclick="searchCar()">
+
+                    🔍 بحث
+
+                </button>
+
+            </div>
+
+
+            <!-- نتائج الأقسام -->
+
+            <div id="searchResult"></div>
+
+        </main>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+    <script>
+
+        // لو جايين من الصفحة الرئيسية برقم عربية
+        const savedNumber =
+            localStorage.getItem("searchNumber");
+
+        if (savedNumber) {
+
+            const input =
+                document.getElementById("searchCarNumber");
+
+            if (input) {
+                input.value = savedNumber;
+            }
+
+            localStorage.removeItem("searchNumber");
+
+            searchCar();
+        }
+
+    </script>
+
+</body>
+
+</html>

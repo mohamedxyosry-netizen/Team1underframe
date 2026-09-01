@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>نظام إدارة بيانات العمل</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- ==============================
+             الشريط الجانبي
+        =============================== -->
+
+        <aside class="sidebar">
+
+            <div class="logo-area">
+
+                <div class="logo-icon">
+                    🚆
+                </div>
+
+                <h2>
+                    نظام إدارة بيانات العمل
+                </h2>
+
+                <p>
+                    WORK DATA MANAGEMENT SYSTEM
+                </p>
+
+            </div>
+
+
+            <nav class="sidebar-menu">
+
+                <!-- إدخال البيانات -->
+
+                <button
+                    class="menu-item active"
+                    onclick="openSection('wiring')">
+
+                    <span>📝</span>
+
+                    <strong>
+                        إدخال البيانات
+                    </strong>
+
+                </button>
+
+
+                <!-- سجل البيانات -->
+
+                <button
+                    class="menu-item"
+                    onclick="openSection('search')">
+
+                    <span>📋</span>
+
+                    <strong>
+                        سجل البيانات
+                    </strong>
+
+                </button>
+
+
+                <!-- ==============================
+                     الدردشة
+                =============================== -->
+
+                <button
+                    id="chatMenu"
+                    class="menu-item"
+                    onclick="openChat()">
+
+                    <span>💬</span>
+
+                    <strong>
+                        الدردشة
+                    </strong>
+
+                </button>
+
+
+                <!-- ==============================
+                     طلبات الحذف
+                =============================== -->
+
+                <button
+                    id="deleteRequestsMenu"
+                    class="menu-item"
+                    onclick="openSection('deleteRequests')">
+
+                    <span>🗑️</span>
+
+                    <strong>
+                        طلبات الحذف
+                    </strong>
+
+                    <span
+                        id="deleteRequestsCount"
+                        style="
+                            background:#d92d20;
+                            color:white;
+                            border-radius:20px;
+                            padding:3px 9px;
+                            font-size:12px;
+                            font-weight:bold;
+                            margin-right:auto;
+                        ">
+                        0
+                    </span>
+
+                </button>
+
+
+                <!-- التقارير -->
+
+                <button
+                    class="menu-item">
+
+                    <span>📊</span>
+
+                    <strong>
+                        التقارير
+                    </strong>
+
+                </button>
+
+
+                <!-- الإعدادات -->
+
+                <button
+                    class="menu-item">
+
+                    <span>⚙️</span>
+
+                    <strong>
+                        الإعدادات
+                    </strong>
+
+                </button>
+
+
+                <!-- تسجيل الخروج -->
+
+                <button
+                    class="menu-item logout-menu"
+                    onclick="logout()">
+
+                    <span>🚪</span>
+
+                    <strong>
+                        تسجيل الخروج
+                    </strong>
+
+                </button>
+
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                جميع الحقوق محفوظة © 2026
+
+            </div>
+
+        </aside>
+
+
+        <!-- ==============================
+             المحتوى الرئيسي
+        =============================== -->
+
+        <div class="main-content">
+
+
+            <!-- ==============================
+                 الهيدر
+            =============================== -->
+
+            <header class="top-header">
+
+                <div>
+
+                    <h1>
+                        لوحة التحكم
+                    </h1>
+
+                    <p>
+                        الرئيسية / لوحة التحكم
+                    </p>
+
+                </div>
+
+
+                <div class="user-info">
+
+                    <div class="user-icon">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <strong id="currentUserName">
+                            المستخدم
+                        </strong>
+
+                        <small id="currentUserRole">
+                            Worker
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- ==============================
+                 الإحصائيات
+            =============================== -->
+
+            <section class="stats">
+
+
+                <!-- إجمالي الإدخالات -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+                        📁
+                    </div>
+
+                    <div>
+
+                        <span>
+                            إجمالي الإدخالات
+                        </span>
+
+                        <strong id="totalRecords">
+                            0
+                        </strong>
+
+                        <small>
+                            كل الأقسام
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- مكتملة -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <span>
+                            مكتملة
+                        </span>
+
+                        <strong id="completedRecords">
+                            0
+                        </strong>
+
+                        <small>
+                            إدخال
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- قيد التنفيذ -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+                        ⏳
+                    </div>
+
+                    <div>
+
+                        <span>
+                            قيد التنفيذ
+                        </span>
+
+                        <strong id="pendingRecords">
+                            0
+                        </strong>
+
+                        <small>
+                            إدخال
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- متأخرة -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon red">
+                        ✕
+                    </div>
+
+                    <div>
+
+                        <span>
+                            متأخرة
+                        </span>
+
+                        <strong id="delayedRecords">
+                            0
+                        </strong>
+
+                        <small>
+                            إدخال
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- اليوم -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon purple">
+                        📅
+                    </div>
+
+                    <div>
+
+                        <span>
+                            اليوم
+                        </span>
+
+                        <strong id="todayRecords">
+                            0
+                        </strong>
+
+                        <small>
+                            إدخال جديد
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==============================
+                 الأقسام
+            =============================== -->
+
+            <section class="section-area">
+
+                <div class="section-title">
+
+                    <span></span>
+
+                    <h2>
+                        إدخال بيانات العمل
+                    </h2>
+
+                </div>
+
+
+                <div class="sections">
+
+
+                    <!-- Wiring -->
+
+                    <button
+                        id="section-wiring"
+                        class="section-card"
+                        onclick="openSection('wiring')">
+
+                        <div class="department-icon wiring-icon">
+                            🔌
+                        </div>
+
+                        <strong>
+                            قسم Wiring
+                        </strong>
+
+                        <small>
+                            تسجيل أعمال Wiring
+                        </small>
+
+                        <span class="enter-btn">
+                            دخول
+                        </span>
+
+                    </button>
+
+
+                    <!-- LT -->
+
+                    <button
+                        id="section-lt"
+                        class="section-card"
+                        onclick="openSection('lt')">
+
+                        <div class="department-icon lt-icon">
+                            ⚡
+                        </div>
+
+                        <strong>
+                            قسم LT
+                        </strong>
+
+                        <small>
+                            تسجيل أعمال LT
+                        </small>
+
+                        <span class="enter-btn">
+                            دخول
+                        </span>
+
+                    </button>
+
+
+                    <!-- HT -->
+
+                    <button
+                        id="section-ht"
+                        class="section-card"
+                        onclick="openSection('ht')">
+
+                        <div class="department-icon ht-icon">
+                            ⚡
+                        </div>
+
+                        <strong>
+                            قسم HT
+                        </strong>
+
+                        <small>
+                            تسجيل أعمال HT
+                        </small>
+
+                        <span class="enter-btn">
+                            دخول
+                        </span>
+
+                    </button>
+
+
+                    <!-- التركيبات -->
+
+                    <button
+                        id="section-installation"
+                        class="section-card"
+                        onclick="openSection('installation')">
+
+                        <div class="department-icon installation-icon">
+                            🔧
+                        </div>
+
+                        <strong>
+                            قسم التركيبات
+                        </strong>
+
+                        <small>
+                            تسجيل أعمال التركيبات
+                        </small>
+
+                        <span class="enter-btn">
+                            دخول
+                        </span>
+
+                    </button>
+
+
+                    <!-- الفنش النهائي -->
+
+                    <button
+                        id="section-final"
+                        class="section-card"
+                        onclick="openSection('final')">
+
+                        <div class="department-icon final-icon">
+                            ✓
+                        </div>
+
+                        <strong>
+                            قسم الفنش النهائي
+                        </strong>
+
+                        <small>
+                            تسجيل الفنش النهائي
+                        </small>
+
+                        <span class="enter-btn">
+                            دخول
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==============================
+                 البحث السريع
+            =============================== -->
+
+            <section class="quick-search">
+
+                <div class="search-content">
+
+                    <div class="search-icon">
+                        🔎
+                    </div>
+
+                    <div class="search-text">
+
+                        <h2>
+                            البحث السريع
+                        </h2>
+
+                        <p>
+                            ابحث عن أي سيارة باستخدام رقم العربية
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="search-box">
+
+                    <input
+                        type="text"
+                        id="homeSearchNumber"
+                        placeholder="اكتب رقم العربية هنا...">
+
+                    <button
+                        onclick="homeSearch()">
+
+                        🔍 بحث
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==============================
+                 الفوتر
+            =============================== -->
+
+            <footer class="main-footer">
+
+                <span>
+                    نسخة 1.0.0
+                </span>
+
+                <span id="currentDate">
+                    2026
+                </span>
+
+                <span id="currentTime">
+                    --
+                </span>
+
+            </footer>
+
+        </div>
+
+    </div>
+
+
+    <!-- JavaScript الرئيسي -->
+
+    <script src="script.js"></script>
+
+
+    <script>
+
+        // ==================================
+        // فتح صفحة الدردشة
+        // ==================================
+
+        function openChat() {
+
+            const user =
+                getCurrentUser();
+
+
+            if (!user) {
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            window.location.href =
+                "chat.html";
+
+        }
+
+
+        // ==================================
+        // إحصائيات الصفحة الرئيسية
+        // ==================================
+
+        function updateDashboardStats() {
+
+            const storages = [
+
+                "wiringRecords",
+                "ltRecords",
+                "htRecords",
+                "installationRecords",
+                "finalRecords"
+
+            ];
+
+
+            let records = [];
+
+
+            storages.forEach(
+                function(storageName) {
+
+                    try {
+
+                        const data =
+                            JSON.parse(
+                                localStorage.getItem(
+                                    storageName
+                                ) || "[]"
+                            );
+
+
+                        if (Array.isArray(data)) {
+
+                            records =
+                                records.concat(data);
+
+                        }
+
+                    } catch (error) {}
+
+                }
+            );
+
+
+            const total =
+                records.length;
+
+
+            const completed =
+                records.filter(
+                    function(record) {
+
+                        return record.done === "نعم";
+
+                    }
+                ).length;
+
+
+            const pending =
+                records.filter(
+                    function(record) {
+
+                        return record.done === "لا";
+
+                    }
+                ).length;
+
+
+            const today =
+                new Date()
+                    .toLocaleDateString(
+                        "ar-EG"
+                    );
+
+
+            const todayRecords =
+                records.filter(
+                    function(record) {
+
+                        if (!record.date) {
+
+                            return false;
+
+                        }
+
+
+                        return record.date.includes(
+                            today
+                        );
+
+                    }
+                ).length;
+
+
+            const totalElement =
+                document.getElementById(
+                    "totalRecords"
+                );
+
+
+            if (totalElement) {
+
+                totalElement.innerText =
+                    total;
+
+            }
+
+
+            const completedElement =
+                document.getElementById(
+                    "completedRecords"
+                );
+
+
+            if (completedElement) {
+
+                completedElement.innerText =
+                    completed;
+
+            }
+
+
+            const pendingElement =
+                document.getElementById(
+                    "pendingRecords"
+                );
+
+
+            if (pendingElement) {
+
+                pendingElement.innerText =
+                    pending;
+
+            }
+
+
+            const todayElement =
+                document.getElementById(
+                    "todayRecords"
+                );
+
+
+            if (todayElement) {
+
+                todayElement.innerText =
+                    todayRecords;
+
+            }
+
+        }
+
+
+        // ==================================
+        // البحث من الصفحة الرئيسية
+        // ==================================
+
+        function homeSearch() {
+
+            const input =
+                document.getElementById(
+                    "homeSearchNumber"
+                );
+
+
+            if (!input) {
+
+                return;
+
+            }
+
+
+            const number =
+                input.value.trim();
+
+
+            if (!number) {
+
+                alert(
+                    "من فضلك اكتب رقم العربية"
+                );
+
+                return;
+
+            }
+
+
+            localStorage.setItem(
+                "searchNumber",
+                number
+            );
+
+
+            window.location.href =
+                "search.html";
+
+        }
+
+
+        // ==================================
+        // التاريخ والوقت
+        // ==================================
+
+        function updateDateTime() {
+
+            const now =
+                new Date();
+
+
+            const dateElement =
+                document.getElementById(
+                    "currentDate"
+                );
+
+
+            const timeElement =
+                document.getElementById(
+                    "currentTime"
+                );
+
+
+            if (dateElement) {
+
+                dateElement.innerText =
+                    now.toLocaleDateString(
+                        "ar-EG"
+                    );
+
+            }
+
+
+            if (timeElement) {
+
+                timeElement.innerText =
+                    now.toLocaleTimeString(
+                        "ar-EG",
+                        {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }
+                    );
+
+            }
+
+        }
+
+
+        // ==================================
+        // تشغيل
+        // ==================================
+
+        updateDashboardStats();
+
+        updateDateTime();
+
+
+        setInterval(
+            updateDateTime,
+            1000
+        );
+
+
+        setInterval(
+            updateDashboardStats,
+            3000
+        );
+
+    </script>
+
+
+    <img
+        src="train.-bg.jpeg"
+        alt="yoo">
+
+</body>
+
+</html>

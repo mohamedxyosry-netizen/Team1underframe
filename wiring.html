@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Wiring</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f1f5f9;
+            color: #1f2937;
+        }
+
+        .dashboard {
+            min-height: 100vh;
+        }
+
+        /* =========================
+           Header
+        ========================= */
+
+        .header {
+            background: rgb(52, 67, 84);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 3px 15px rgba(185, 168, 168, 0.08);
+            border-bottom: 3px solid #5928e0;
+        }
+
+        .header h1 {
+            margin: 0 0 7px;
+            font-size: 28px;
+            color: #2623f8;
+        }
+
+        .header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            border: none;
+            background: #198754;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* =========================
+           Main
+        ========================= */
+
+        .form-page {
+            width: min(1100px, 94%);
+            margin: 30px auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        /* =========================
+           Cards
+        ========================= */
+
+        .form-card,
+        .records-card {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-card {
+            border-top: 5px solid #198754;
+        }
+
+        .records-card {
+            border-top: 5px solid #0d6efd;
+        }
+
+        .form-card h2,
+        .records-card h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 21px;
+        }
+
+        .form-card h2 {
+            color: #198754;
+        }
+
+        .records-card h2 {
+            color: #0d6efd;
+        }
+
+        /* =========================
+           Inputs
+        ========================= */
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 15px;
+            background: #f9fafb;
+            outline: none;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            border-color: #198754;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(25,135,84,0.12);
+        }
+
+        .input-group textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        /* =========================
+           Save Button
+        ========================= */
+
+        .save-btn {
+            width: 100%;
+            border: none;
+            background: #198754;
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .save-btn:hover {
+            background: #157347;
+        }
+
+        #wiringMessage {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        /* =========================
+           Records
+        ========================= */
+
+        #wiringRecords {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .record {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-right: 5px solid #0d6efd;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .record h3 {
+            margin-top: 0;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .record p {
+            margin: 9px 0;
+            line-height: 1.7;
+        }
+
+        .record strong {
+            color: #374151;
+        }
+
+        /* =========================
+           Mobile
+        ========================= */
+
+        @media (max-width: 750px) {
+
+            .header {
+                padding: 18px;
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+            }
+
+            .form-page {
+                grid-template-columns: 1fr;
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .form-card,
+            .records-card {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="dashboard">
+
+
+        <!-- =========================
+             Header
+        ========================= -->
+
+        <header class="header">
+
+            <div>
+
+                <h1>
+                    🔌 قسم Wiring
+                </h1>
+
+                <p>
+                    تسجيل ومتابعة أعمال الـ Wiring
+                </p>
+
+            </div>
+
+
+            <button
+                class="logout-btn"
+                onclick="goHome()">
+
+                🏠 الأقسام الرئيسية
+
+            </button>
+
+        </header>
+
+
+        <!-- =========================
+             Main
+        ========================= -->
+
+        <main class="form-page">
+
+
+            <!-- =========================
+                 Form Card
+            ========================= -->
+
+            <div class="form-card">
+
+                <h2>
+                    📝 تسجيل بيانات جديدة
+                </h2>
+
+
+                <div class="input-group">
+
+                    <label>
+                        🚆 اسم العربية
+                    </label>
+
+                    <input
+                        type="text"
+                        id="wiringCarName"
+                        placeholder="اكتب اسم العربية">
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        🔢 رقم العربية
+                    </label>
+
+                    <input
+                        type="text"
+                        id="wiringCarNumber"
+                        placeholder="اكتب رقم العربية">
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        ✅ تم الانتهاء
+                    </label>
+
+                    <select id="wiringDone">
+
+                        <option value="">
+                            اختار الحالة
+                        </option>
+
+                        <option value="نعم">
+                            نعم - تم الانتهاء
+                        </option>
+
+                        <option value="لا">
+                            لا - لم يتم الانتهاء
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        📝 ملاحظات
+                    </label>
+
+                    <textarea
+                        id="wiringNotes"
+                        placeholder="اكتب الملاحظات">
+                    </textarea>
+
+                </div>
+
+
+                <button
+                    class="save-btn"
+                    onclick="saveWiring()">
+
+                    💾 حفظ البيانات
+
+                </button>
+
+
+                <p id="wiringMessage"></p>
+
+            </div>
+
+
+            <!-- =========================
+                 Records Card
+            ========================= -->
+
+            <div class="records-card">
+
+                <h2>
+                    📋 البيانات المسجلة
+                </h2>
+
+
+                <div id="wiringRecords">
+
+                </div>
+
+            </div>
+
+
+        </main>
+
+    </div>
+
+
+    <!-- مهم جدًا: ملف الوظائف الأصلي -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>

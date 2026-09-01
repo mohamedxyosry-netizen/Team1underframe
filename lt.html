@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>LT</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f1f5f9;
+            color: #1f2937;
+        }
+
+        .dashboard {
+            min-height: 100vh;
+        }
+
+        /* =========================
+           رأس الصفحة
+        ========================= */
+
+        .header {
+            background: rgb(136, 52, 254);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 3px 15px rgba(244, 9, 9, 0.08);
+            border-bottom: 3px solid #d8e6df;
+        }
+
+        .header h1 {
+            margin: 0 0 7px;
+            font-size: 28px;
+            color: #fcfefd;
+        }
+
+        .header p {
+            margin: 0;
+            color: #010918;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            border: none;
+            background: #198754;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* =========================
+           المحتوى
+        ========================= */
+
+        .form-page {
+            width: min(1100px, 94%);
+            margin: 30px auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        /* =========================
+           الكروت
+        ========================= */
+
+        .form-card,
+        .records-card {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-card {
+            border-top: 5px solid #198754;
+        }
+
+        .records-card {
+            border-top: 5px solid #0d6efd;
+        }
+
+        .form-card h2,
+        .records-card h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 21px;
+        }
+
+        .form-card h2 {
+            color: #198754;
+        }
+
+        .records-card h2 {
+            color: #0d6efd;
+        }
+
+        /* =========================
+           الحقول
+        ========================= */
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 15px;
+            background: #f9fafb;
+            outline: none;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            border-color: #198754;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(25,135,84,0.12);
+        }
+
+        .input-group textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        /* =========================
+           زر الحفظ
+        ========================= */
+
+        .save-btn {
+            width: 100%;
+            border: none;
+            background: #198754;
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .save-btn:hover {
+            background: #157347;
+        }
+
+        #ltMessage {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        /* =========================
+           البيانات المسجلة
+        ========================= */
+
+        #ltRecords {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* =========================
+           الموبايل
+        ========================= */
+
+        @media (max-width: 750px) {
+
+            .header {
+                padding: 18px;
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+            }
+
+            .form-page {
+                grid-template-columns: 1fr;
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .form-card,
+            .records-card {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="dashboard">
+
+
+        <!-- =========================
+             رأس الصفحة
+        ========================= -->
+
+        <header class="header">
+
+            <div>
+
+                <h1>
+                    🔧 قسم LT
+                </h1>
+
+                <p>
+                    تسجيل ومتابعة أعمال الـ LT
+                </p>
+
+            </div>
+
+
+            <button
+                class="logout-btn"
+                onclick="goHome()">
+
+                🏠 الأقسام الرئيسية
+
+            </button>
+
+        </header>
+
+
+        <!-- =========================
+             المحتوى
+        ========================= -->
+
+        <main class="form-page">
+
+
+            <!-- =========================
+                 نموذج تسجيل البيانات
+            ========================= -->
+
+            <div class="form-card">
+
+                <h2>
+                    📝 تسجيل بيانات جديدة
+                </h2>
+
+
+                <!-- اسم العربية -->
+
+                <div class="input-group">
+
+                    <label>
+                        🚆 اسم العربية
+                    </label>
+
+                    <input
+                        type="text"
+                        id="ltCarName"
+                        placeholder="اكتب اسم العربية">
+
+                </div>
+
+
+                <!-- رقم العربية -->
+
+                <div class="input-group">
+
+                    <label>
+                        🔢 رقم العربية
+                    </label>
+
+                    <input
+                        type="text"
+                        id="ltCarNumber"
+                        placeholder="اكتب رقم العربية">
+
+                </div>
+
+
+                <!-- اسم الجهاز -->
+
+                <div class="input-group">
+
+                    <label>
+                        ⚙️ اسم الجهاز
+                    </label>
+
+                    <input
+                        type="text"
+                        id="ltDevice"
+                        placeholder="اكتب اسم الجهاز">
+
+                </div>
+
+
+                <!-- اسم السوكيت -->
+
+                <div class="input-group">
+
+                    <label>
+                        🔌 اسم السوكيت
+                    </label>
+
+                    <input
+                        type="text"
+                        id="ltSocket"
+                        placeholder="اكتب اسم السوكيت">
+
+                </div>
+
+
+                <!-- الملاحظات -->
+
+                <div class="input-group">
+
+                    <label>
+                        📝 ملاحظات
+                    </label>
+
+                    <textarea
+                        id="ltNotes"
+                        placeholder="اكتب الملاحظات"></textarea>
+
+                </div>
+
+
+                <!-- اسم الشخص -->
+
+                <div class="input-group">
+
+                    <label>
+                        👤 اسم الشخص
+                    </label>
+
+                    <input
+                        type="text"
+                        id="ltPerson"
+                        placeholder="اكتب اسم الشخص">
+
+                </div>
+
+
+                <!-- زر الحفظ -->
+
+                <button
+                    class="save-btn"
+                    onclick="saveLT()">
+
+                    💾 حفظ البيانات
+
+                </button>
+
+
+                <p id="ltMessage"></p>
+
+            </div>
+
+
+            <!-- =========================
+                 البيانات المسجلة
+            ========================= -->
+
+            <div class="records-card">
+
+                <h2>
+                    📋 البيانات المسجلة
+                </h2>
+
+
+                <div id="ltRecords">
+
+                </div>
+
+            </div>
+
+
+        </main>
+
+    </div>
+
+
+    <!-- ملف JavaScript الأصلي -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>

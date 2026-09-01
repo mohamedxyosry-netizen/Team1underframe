@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>الفنش النهائي</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        /* =========================================
+           صفحة الفنش النهائي
+        ========================================= */
+
+        .final-page {
+
+            padding: 25px;
+
+        }
+
+
+        /* =========================================
+           رأس الصفحة
+        ========================================= */
+
+        .final-header {
+
+            background: linear-gradient(
+                135deg,
+                #343a40,
+                #495057
+            );
+
+            color: white;
+
+            border-radius: 18px;
+
+            padding: 22px 25px;
+
+            margin-bottom: 25px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.15);
+
+        }
+
+
+        .final-header h1 {
+
+            margin: 0;
+
+            font-size: 28px;
+
+        }
+
+
+        .final-header p {
+
+            margin: 7px 0 0;
+
+            opacity: 0.85;
+
+            font-size: 14px;
+
+        }
+
+
+        .final-home-btn {
+
+            border: none;
+
+            background: white;
+
+            color: #343a40;
+
+            padding: 11px 20px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+
+        }
+
+
+        .final-home-btn:hover {
+
+            transform: translateY(-2px);
+
+        }
+
+
+        /* =========================================
+           محتوى الصفحة
+        ========================================= */
+
+        .final-content {
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(300px, 0.8fr)
+                minmax(350px, 1.2fr);
+
+            gap: 22px;
+
+            align-items: start;
+
+        }
+
+
+        /* =========================================
+           كارت تسجيل البيانات
+        ========================================= */
+
+        .final-form-card {
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.08);
+
+            border-top: 5px solid #343a40;
+
+        }
+
+
+        .final-form-title {
+
+            margin: 0 0 22px;
+
+            font-size: 21px;
+
+            color: #343a40;
+
+        }
+
+
+        /* =========================================
+           مجموعات الإدخال
+        ========================================= */
+
+        .final-input-group {
+
+            margin-bottom: 17px;
+
+        }
+
+
+        .final-input-group label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+
+            color: #444;
+
+            font-size: 14px;
+
+        }
+
+
+        .final-input-group input,
+        .final-input-group select,
+        .final-input-group textarea {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 12px 14px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 10px;
+
+            background: #fafafa;
+
+            outline: none;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+
+        }
+
+
+        .final-input-group input:focus,
+        .final-input-group select:focus,
+        .final-input-group textarea:focus {
+
+            border-color: #343a40;
+
+            background: white;
+
+            box-shadow:
+                0 0 0 3px rgba(52,58,64,0.08);
+
+        }
+
+
+        .final-input-group textarea {
+
+            min-height: 100px;
+
+            resize: vertical;
+
+        }
+
+
+        /* =========================================
+           زر الحفظ
+        ========================================= */
+
+        .final-save-btn {
+
+            width: 100%;
+
+            border: none;
+
+            background: linear-gradient(
+                135deg,
+                #343a40,
+                #495057
+            );
+
+            color: white;
+
+            padding: 13px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            margin-top: 5px;
+
+            transition: 0.2s;
+
+        }
+
+
+        .final-save-btn:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 5px 15px rgba(0,0,0,0.15);
+
+        }
+
+
+        #finalMessage {
+
+            text-align: center;
+
+            margin: 12px 0 0;
+
+            font-weight: bold;
+
+        }
+
+
+        /* =========================================
+           كارت البيانات المسجلة
+        ========================================= */
+
+        .final-records-card {
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.08);
+
+            border-top: 5px solid #198754;
+
+            min-height: 200px;
+
+        }
+
+
+        .final-records-title {
+
+            margin: 0 0 20px;
+
+            font-size: 21px;
+
+            color: #343a40;
+
+        }
+
+
+        /* =========================================
+           الموبايل
+        ========================================= */
+
+        @media (max-width: 800px) {
+
+            .final-page {
+
+                padding: 12px;
+
+            }
+
+
+            .final-header {
+
+                padding: 18px;
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 15px;
+
+                text-align: center;
+
+            }
+
+
+            .final-header h1 {
+
+                font-size: 24px;
+
+            }
+
+
+            .final-home-btn {
+
+                width: 100%;
+
+            }
+
+
+            .final-content {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .final-form-card,
+            .final-records-card {
+
+                padding: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="dashboard">
+
+        <div class="final-page">
+
+
+            <!-- =========================================
+                 رأس الصفحة
+            ========================================= -->
+
+            <header class="final-header">
+
+                <div>
+
+                    <h1>
+                        🏁 الفنش النهائي
+                    </h1>
+
+                    <p>
+                        تسجيل ومتابعة الفنش النهائي
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="final-home-btn"
+                    onclick="goHome()">
+
+                    🏠 الأقسام الرئيسية
+
+                </button>
+
+            </header>
+
+
+            <!-- =========================================
+                 محتوى الصفحة
+            ========================================= -->
+
+            <main class="final-content">
+
+
+                <!-- =====================================
+                     تسجيل بيانات جديدة
+                ====================================== -->
+
+                <div class="final-form-card">
+
+                    <h2 class="final-form-title">
+
+                        📝 تسجيل بيانات جديدة
+
+                    </h2>
+
+
+                    <!-- اسم العربية -->
+
+                    <div class="final-input-group">
+
+                        <label>
+                            🚆 اسم العربية
+                        </label>
+
+                        <input
+                            type="text"
+                            id="finalCarName"
+                            placeholder="اكتب اسم العربية">
+
+                    </div>
+
+
+                    <!-- رقم العربية -->
+
+                    <div class="final-input-group">
+
+                        <label>
+                            🔢 رقم العربية
+                        </label>
+
+                        <input
+                            type="text"
+                            id="finalCarNumber"
+                            placeholder="اكتب رقم العربية">
+
+                    </div>
+
+
+                    <!-- حالة الانتهاء -->
+
+                    <div class="final-input-group">
+
+                        <label>
+                            ✅ حالة الانتهاء
+                        </label>
+
+                        <select id="finalDone">
+
+                            <option value="">
+                                اختار الحالة
+                            </option>
+
+                            <option value="نعم">
+                                نعم - تم الانتهاء
+                            </option>
+
+                            <option value="لا">
+                                لا - لم يتم الانتهاء
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- الملاحظات -->
+
+                    <div class="final-input-group">
+
+                        <label>
+                            📝 ملاحظات
+                        </label>
+
+                        <textarea
+                            id="finalNotes"
+                            placeholder="اكتب الملاحظات"></textarea>
+
+                    </div>
+
+
+                    <!-- زر الحفظ -->
+
+                    <button
+                        class="final-save-btn"
+                        onclick="saveFinal()">
+
+                        💾 حفظ البيانات
+
+                    </button>
+
+
+                    <p id="finalMessage"></p>
+
+                </div>
+
+
+                <!-- =====================================
+                     البيانات المسجلة
+                ====================================== -->
+
+                <div class="final-records-card">
+
+                    <h2 class="final-records-title">
+
+                        📋 البيانات المسجلة
+
+                    </h2>
+
+
+                    <div id="finalRecords">
+
+                    </div>
+
+                </div>
+
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

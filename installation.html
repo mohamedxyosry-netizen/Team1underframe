@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>قسم التركيبات</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        /* =========================================
+           صفحة التركيبات
+        ========================================= */
+
+        .installation-page {
+
+            padding: 25px;
+
+        }
+
+
+        /* =========================================
+           رأس الصفحة
+        ========================================= */
+
+        .installation-header {
+
+            background: linear-gradient(
+                135deg,
+                #343a40,
+                #495057
+            );
+
+            color: white;
+
+            border-radius: 18px;
+
+            padding: 22px 25px;
+
+            margin-bottom: 25px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.15);
+
+        }
+
+
+        .installation-header h1 {
+
+            margin: 0;
+
+            font-size: 28px;
+
+        }
+
+
+        .installation-header p {
+
+            margin: 7px 0 0;
+
+            opacity: 0.85;
+
+            font-size: 14px;
+
+        }
+
+
+        .installation-home-btn {
+
+            border: none;
+
+            background: white;
+
+            color: #343a40;
+
+            padding: 11px 20px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+
+        }
+
+
+        .installation-home-btn:hover {
+
+            transform: translateY(-2px);
+
+        }
+
+
+        /* =========================================
+           محتوى الصفحة
+        ========================================= */
+
+        .installation-content {
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(300px, 0.8fr)
+                minmax(350px, 1.2fr);
+
+            gap: 22px;
+
+            align-items: start;
+
+        }
+
+
+        /* =========================================
+           كارت تسجيل البيانات
+        ========================================= */
+
+        .installation-form-card {
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.08);
+
+            border-top: 5px solid #343a40;
+
+        }
+
+
+        .installation-form-title {
+
+            margin: 0 0 22px;
+
+            font-size: 21px;
+
+            color: #343a40;
+
+        }
+
+
+        /* =========================================
+           مجموعات الإدخال
+        ========================================= */
+
+        .installation-input-group {
+
+            margin-bottom: 17px;
+
+        }
+
+
+        .installation-input-group label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+
+            color: #444;
+
+            font-size: 14px;
+
+        }
+
+
+        .installation-input-group input,
+        .installation-input-group select,
+        .installation-input-group textarea {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 12px 14px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 10px;
+
+            background: #fafafa;
+
+            outline: none;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+
+        }
+
+
+        .installation-input-group input:focus,
+        .installation-input-group select:focus,
+        .installation-input-group textarea:focus {
+
+            border-color: #343a40;
+
+            background: white;
+
+            box-shadow:
+                0 0 0 3px rgba(52,58,64,0.08);
+
+        }
+
+
+        .installation-input-group textarea {
+
+            min-height: 100px;
+
+            resize: vertical;
+
+        }
+
+
+        /* =========================================
+           زر الحفظ
+        ========================================= */
+
+        .installation-save-btn {
+
+            width: 100%;
+
+            border: none;
+
+            background: linear-gradient(
+                135deg,
+                #343a40,
+                #495057
+            );
+
+            color: white;
+
+            padding: 13px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            margin-top: 5px;
+
+            transition: 0.2s;
+
+        }
+
+
+        .installation-save-btn:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 5px 15px rgba(0,0,0,0.15);
+
+        }
+
+
+        #installationMessage {
+
+            text-align: center;
+
+            margin: 12px 0 0;
+
+            font-weight: bold;
+
+        }
+
+
+        /* =========================================
+           كارت البيانات المسجلة
+        ========================================= */
+
+        .installation-records-card {
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.08);
+
+            border-top: 5px solid #198754;
+
+            min-height: 200px;
+
+        }
+
+
+        .installation-records-title {
+
+            margin: 0 0 20px;
+
+            font-size: 21px;
+
+            color: #343a40;
+
+        }
+
+
+        /* =========================================
+           الموبايل
+        ========================================= */
+
+        @media (max-width: 800px) {
+
+            .installation-page {
+
+                padding: 12px;
+
+            }
+
+
+            .installation-header {
+
+                padding: 18px;
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 15px;
+
+                text-align: center;
+
+            }
+
+
+            .installation-header h1 {
+
+                font-size: 24px;
+
+            }
+
+
+            .installation-home-btn {
+
+                width: 100%;
+
+            }
+
+
+            .installation-content {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .installation-form-card,
+            .installation-records-card {
+
+                padding: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="dashboard">
+
+        <div class="installation-page">
+
+
+            <!-- =========================================
+                 رأس الصفحة
+            ========================================= -->
+
+            <header class="installation-header">
+
+                <div>
+
+                    <h1>
+                        🔧 قسم التركيبات
+                    </h1>
+
+                    <p>
+                        تسجيل ومتابعة أعمال التركيبات
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="installation-home-btn"
+                    onclick="goHome()">
+
+                    🏠 الأقسام الرئيسية
+
+                </button>
+
+            </header>
+
+
+            <!-- =========================================
+                 محتوى الصفحة
+            ========================================= -->
+
+            <main class="installation-content">
+
+
+                <!-- =====================================
+                     تسجيل بيانات جديدة
+                ====================================== -->
+
+                <div class="installation-form-card">
+
+                    <h2 class="installation-form-title">
+
+                        📝 تسجيل بيانات جديدة
+
+                    </h2>
+
+
+                    <!-- اسم العربية -->
+
+                    <div class="installation-input-group">
+
+                        <label>
+                            🚆 اسم العربية
+                        </label>
+
+                        <input
+                            type="text"
+                            id="installationCarName"
+                            placeholder="اكتب اسم العربية">
+
+                    </div>
+
+
+                    <!-- رقم العربية -->
+
+                    <div class="installation-input-group">
+
+                        <label>
+                            🔢 رقم العربية
+                        </label>
+
+                        <input
+                            type="text"
+                            id="installationCarNumber"
+                            placeholder="اكتب رقم العربية">
+
+                    </div>
+
+
+                    <!-- حالة الانتهاء -->
+
+                    <div class="installation-input-group">
+
+                        <label>
+                            ✅ حالة الانتهاء
+                        </label>
+
+                        <select id="installationDone">
+
+                            <option value="">
+                                اختار الحالة
+                            </option>
+
+                            <option value="نعم">
+                                نعم - تم الانتهاء
+                            </option>
+
+                            <option value="لا">
+                                لا - لم يتم الانتهاء
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- الملاحظات -->
+
+                    <div class="installation-input-group">
+
+                        <label>
+                            📝 ملاحظات
+                        </label>
+
+                        <textarea
+                            id="installationNotes"
+                            placeholder="اكتب الملاحظات"></textarea>
+
+                    </div>
+
+
+                    <!-- زر الحفظ -->
+
+                    <button
+                        class="installation-save-btn"
+                        onclick="saveInstallation()">
+
+                        💾 حفظ البيانات
+
+                    </button>
+
+
+                    <p id="installationMessage"></p>
+
+                </div>
+
+
+                <!-- =====================================
+                     البيانات المسجلة
+                ====================================== -->
+
+                <div class="installation-records-card">
+
+                    <h2 class="installation-records-title">
+
+                        📋 البيانات المسجلة
+
+                    </h2>
+
+
+                    <div id="installationRecords">
+
+                    </div>
+
+                </div>
+
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
