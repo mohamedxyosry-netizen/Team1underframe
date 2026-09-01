@@ -412,9 +412,148 @@
     </div>
 
 
-    <!-- مهم جدًا: ملف الوظائف الأصلي -->
+    <!-- =====================================================
+         Supabase
+         مهم: لازم يتم تحميل المكتبة قبل script.js
+    ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <script>
+
+        // =====================================================
+        // إعداد Supabase
+        // =====================================================
+
+        const SUPABASE_URL =
+            "https://gzyybadyaunizdlvmcle.supabase.co";
+
+
+        const SUPABASE_KEY =
+            "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+
+
+        // التأكد من تحميل مكتبة Supabase
+
+        if (
+            window.supabase &&
+            typeof window.supabase.createClient === "function"
+        ) {
+
+            window.supabaseClient =
+                window.supabase.createClient(
+                    SUPABASE_URL,
+                    SUPABASE_KEY
+                );
+
+        }
+
+    </script>
+
+
+    <!-- =====================================================
+         ملف النظام الرئيسي
+    ====================================================== -->
 
     <script src="script.js"></script>
+
+
+    <!-- =====================================================
+         فحص اتصال Supabase
+    ====================================================== -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            async function() {
+
+                const message =
+                    document.getElementById(
+                        "wiringMessage"
+                    );
+
+
+                if (
+                    !window.supabaseClient
+                ) {
+
+                    if (message) {
+
+                        message.innerText =
+                            "❌ تعذر تحميل Supabase";
+
+                        message.style.color =
+                            "#d92d20";
+
+                    }
+
+                    return;
+
+                }
+
+
+                try {
+
+                    const result =
+                        await window.supabaseClient
+                            .from("records")
+                            .select("id")
+                            .limit(1);
+
+
+                    if (result.error) {
+
+                        console.error(
+                            "Supabase Error:",
+                            result.error
+                        );
+
+                        if (message) {
+
+                            message.innerText =
+                                "❌ يوجد خطأ في اتصال Supabase أو صلاحيات جدول records";
+
+                            message.style.color =
+                                "#d92d20";
+
+                        }
+
+                        return;
+
+                    }
+
+
+                    console.log(
+                        "Supabase Connected Successfully"
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Supabase Connection Error:",
+                        error
+                    );
+
+                    if (message) {
+
+                        message.innerText =
+                            "❌ غير متصل بـ Supabase";
+
+                        message.style.color =
+                            "#d92d20";
+
+                    }
+
+                }
+
+            }
+        );
+
+    </script>
 
 
 </body>
