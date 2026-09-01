@@ -17,42 +17,27 @@
 <body class="login-page">
 
 
-    <!-- =================================
-         NERIC
-    ================================== -->
+    <div class="site-header">
 
-<div class="site-header">
+        <div class="neric">
+            NERIC
+        </div>
 
-    <div class="neric">
-        NERIC
     </div>
 
 
-</div>
-
-
-
-    <!-- =================================
-         Login Box
-    ================================== -->
-
     <div class="login-container">
-
 
         <h1>
             Login to Access Sections
         </h1>
 
-
         <div class="login-line"></div>
-
 
         <p class="login-subtitle">
             Railway Work Management System
         </p>
 
-
-        <!-- Username -->
 
         <div class="input-group">
 
@@ -66,9 +51,6 @@
         </div>
 
 
-
-        <!-- Password -->
-
         <div class="input-group">
 
             <input
@@ -80,9 +62,6 @@
 
         </div>
 
-
-
-        <!-- Remember Me -->
 
         <label class="remember">
 
@@ -98,29 +77,244 @@
         </label>
 
 
-
-        <!-- Login Button -->
-
         <button
             type="button"
-            onclick="login()">
+            id="loginButton">
 
-            LOGIN
+            🔐 LOGIN
 
         </button>
 
 
-
-        <!-- Message -->
-
         <div id="message"></div>
-
 
     </div>
 
 
+<script>
 
-    <script src="script.js"></script>
+const USERS = {
+
+    "Yosry": {
+        password: "0111252",
+        role: "admin",
+        name: "Yosry"
+    },
+
+    "Zezo": {
+        password: "58321476",
+        role: "wiring",
+        name: "Zezo"
+    },
+
+    "Abdo": {
+        password: "74185296",
+        role: "wiring",
+        name: "Abdo"
+    },
+
+    "Osama": {
+        password: "29481736",
+        role: "lt",
+        name: "Osama"
+    },
+
+    "Yaser": {
+        password: "63825194",
+        role: "lt",
+        name: "Yaser"
+    },
+
+    "Seif": {
+        password: "81573924",
+        role: "lt",
+        name: "Seif"
+    },
+
+    "Ahmed Ayman": {
+        password: "47291638",
+        role: "lt",
+        name: "Ahmed Ayman"
+    },
+
+    "Mamdouh": {
+        password: "92638471",
+        role: "ht",
+        name: "Mamdouh"
+    },
+
+    "Ali": {
+        password: "35182749",
+        role: "ht",
+        name: "Ali"
+    },
+
+    "Eid": {
+        password: "68421937",
+        role: "installation",
+        name: "Eid"
+    },
+
+    "Mosad": {
+        password: "51963827",
+        role: "installation",
+        name: "Mosad"
+    },
+
+    "Mohamed Haitham": {
+        password: "83746192",
+        role: "installation",
+        name: "Mohamed Haitham"
+    }
+
+};
+
+
+function loginUser() {
+
+    const username =
+        document.getElementById("username").value.trim();
+
+    const password =
+        document.getElementById("password").value.trim();
+
+    const message =
+        document.getElementById("message");
+
+    const button =
+        document.getElementById("loginButton");
+
+
+    if (!username || !password) {
+
+        message.innerText =
+            "❌ من فضلك اكتب اسم المستخدم وكلمة المرور";
+
+        message.style.color = "#dc3545";
+
+        return;
+    }
+
+
+    const user =
+        USERS[username];
+
+
+    if (!user || user.password !== password) {
+
+        message.innerText =
+            "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+
+        message.style.color = "#dc3545";
+
+        return;
+    }
+
+
+    const currentUser = {
+
+        username: username,
+
+        name: user.name,
+
+        role: user.role
+
+    };
+
+
+    sessionStorage.setItem(
+        "currentUser",
+        JSON.stringify(currentUser)
+    );
+
+
+    const remember =
+        document.getElementById("rememberMe").checked;
+
+
+    if (remember) {
+
+        localStorage.setItem(
+            "rememberedUsername",
+            username
+        );
+
+    } else {
+
+        localStorage.removeItem(
+            "rememberedUsername"
+        );
+
+    }
+
+
+    message.innerText =
+        "✅ تم تسجيل الدخول بنجاح";
+
+    message.style.color = "#198754";
+
+
+    button.disabled = true;
+
+    button.innerText =
+        "⏳ جاري الدخول...";
+
+
+    window.location.href = "index.html";
+
+}
+
+
+document
+    .getElementById("loginButton")
+    .addEventListener(
+        "click",
+        loginUser
+    );
+
+
+document
+    .getElementById("password")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                loginUser();
+
+            }
+
+        }
+    );
+
+
+window.addEventListener(
+    "load",
+    function() {
+
+        const remembered =
+            localStorage.getItem(
+                "rememberedUsername"
+            );
+
+
+        if (remembered) {
+
+            document.getElementById(
+                "username"
+            ).value = remembered;
+
+            document.getElementById(
+                "rememberMe"
+            ).checked = true;
+
+        }
+
+    }
+);
+
+</script>
 
 </body>
 
