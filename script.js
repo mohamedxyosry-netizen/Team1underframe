@@ -2,6 +2,7 @@
 // نظام إدارة بيانات العمل
 // الحسابات + الصلاحيات + الأقسام + السجلات
 // + البحث + طلبات حذف بموافقة المدير
+// + Supabase
 // ============================================================
 
 
@@ -21,7 +22,6 @@ const users = {
         name: "Yosry"
     },
 
-
     // =========================
     // Wiring
     // =========================
@@ -37,7 +37,6 @@ const users = {
         role: "wiring",
         name: "Abdo"
     },
-
 
     // =========================
     // LT
@@ -67,7 +66,6 @@ const users = {
         name: "Ahmed Ayman"
     },
 
-
     // =========================
     // HT
     // =========================
@@ -83,7 +81,6 @@ const users = {
         role: "ht",
         name: "Ali"
     },
-
 
     // =========================
     // التركيبات
@@ -116,10 +113,6 @@ const users = {
 
 const permissions = {
 
-    // =========================
-    // المدير
-    // =========================
-
     admin: [
         "index.html",
         "wiring.html",
@@ -132,21 +125,11 @@ const permissions = {
         "chat.html"
     ],
 
-
-    // =========================
-    // Wiring
-    // =========================
-
     wiring: [
         "index.html",
         "wiring.html",
         "chat.html"
     ],
-
-
-    // =========================
-    // LT
-    // =========================
 
     lt: [
         "index.html",
@@ -154,32 +137,17 @@ const permissions = {
         "chat.html"
     ],
 
-
-    // =========================
-    // HT
-    // =========================
-
     ht: [
         "index.html",
         "ht.html",
         "chat.html"
     ],
 
-
-    // =========================
-    // التركيبات
-    // =========================
-
     installation: [
         "index.html",
         "installation.html",
         "chat.html"
     ],
-
-
-    // =========================
-    // Final
-    // =========================
 
     final: [
         "index.html",
@@ -189,12 +157,65 @@ const permissions = {
 
 };
 
+
+// ============================================================
+// أسماء الأقسام في Supabase
+// ============================================================
+
+const DEPARTMENT_NAMES = {
+
+    wiring:
+        "Wiring",
+
+    lt:
+        "LT",
+
+    ht:
+        "HT",
+
+    installation:
+        "Installation",
+
+    final:
+        "Final"
+
+};
+
+
 // ============================================================
 // اسم تخزين طلبات الحذف
+// ============================================================
+//
+// طلبات الحذف تظل في localStorage مؤقتًا.
+// السجلات نفسها أصبحت في Supabase.
 // ============================================================
 
 const DELETE_REQUESTS_STORAGE =
     "deleteRequests";
+
+
+// ============================================================
+// التأكد من وجود Supabase
+// ============================================================
+
+function checkSupabase() {
+
+    if (
+        typeof supabaseClient === "undefined" ||
+        !supabaseClient
+    ) {
+
+        console.error(
+            "Supabase client غير موجود."
+        );
+
+        return false;
+
+    }
+
+    return true;
+
+}
 
 
 // ============================================================
@@ -237,14 +258,12 @@ function getCurrentPage() {
             .pop()
             .toLowerCase();
 
-
     if (!page) {
 
         page =
             "index.html";
 
     }
-
 
     return page;
 
@@ -261,21 +280,17 @@ function canOpenFinal(user) {
         return false;
     }
 
-
     if (user.role === "admin") {
         return true;
     }
-
 
     if (user.username === "Osama") {
         return true;
     }
 
-
     if (user.username === "Mamdouh") {
         return true;
     }
-
 
     return false;
 
@@ -314,7 +329,6 @@ function login() {
             "message"
         );
 
-
     if (
         !usernameInput ||
         !passwordInput
@@ -324,13 +338,11 @@ function login() {
 
     }
 
-
     const username =
         usernameInput.value.trim();
 
     const password =
         passwordInput.value.trim();
-
 
     if (
         !username ||
@@ -348,10 +360,8 @@ function login() {
 
     }
 
-
     const userData =
         users[username];
-
 
     if (
         !userData ||
@@ -369,23 +379,23 @@ function login() {
 
     }
 
-
     const currentUser = {
 
-        username: username,
+        username:
+            username,
 
-        role: userData.role,
+        role:
+            userData.role,
 
-        name: userData.name
+        name:
+            userData.name
 
     };
-
 
     sessionStorage.setItem(
         "currentUser",
         JSON.stringify(currentUser)
     );
-
 
     window.location.href =
         "index.html";
@@ -418,7 +428,6 @@ function goHome() {
     const user =
         getCurrentUser();
 
-
     if (!user) {
 
         window.location.href =
@@ -427,7 +436,6 @@ function goHome() {
         return;
 
     }
-
 
     window.location.href =
         "index.html";
@@ -444,7 +452,6 @@ function protectPage() {
     const currentPage =
         getCurrentPage();
 
-
     if (
         currentPage === "login.html"
     ) {
@@ -453,10 +460,8 @@ function protectPage() {
 
     }
 
-
     const user =
         getCurrentUser();
-
 
     if (!user) {
 
@@ -467,7 +472,6 @@ function protectPage() {
 
     }
 
-
     if (
         user.role === "admin"
     ) {
@@ -476,7 +480,6 @@ function protectPage() {
 
     }
 
-
     if (
         currentPage === "index.html"
     ) {
@@ -484,7 +487,6 @@ function protectPage() {
         return;
 
     }
-
 
     if (
         currentPage === "final.html"
@@ -496,11 +498,9 @@ function protectPage() {
 
         }
 
-
         alert(
             "ليس لديك صلاحية للدخول إلى الفنش النهائي ❌"
         );
-
 
         window.location.href =
             "index.html";
@@ -509,10 +509,8 @@ function protectPage() {
 
     }
 
-
     const allowedPages =
         permissions[user.role] || [];
-
 
     if (
         !allowedPages.includes(
@@ -523,7 +521,6 @@ function protectPage() {
         alert(
             "ليس لديك صلاحية للدخول إلى هذه الصفحة ❌"
         );
-
 
         window.location.href =
             "index.html";
@@ -544,7 +541,6 @@ function openSection(section) {
     const user =
         getCurrentUser();
 
-
     if (!user) {
 
         window.location.href =
@@ -553,11 +549,6 @@ function openSection(section) {
         return;
 
     }
-
-
-    // ========================================================
-    // المدير
-    // ========================================================
 
     if (
         user.role === "admin"
@@ -624,11 +615,6 @@ function openSection(section) {
 
     }
 
-
-    // ========================================================
-    // طلبات الحذف - المدير فقط
-    // ========================================================
-
     if (
         section === "deleteRequests"
     ) {
@@ -641,11 +627,6 @@ function openSection(section) {
 
     }
 
-
-    // ========================================================
-    // البحث - المدير فقط
-    // ========================================================
-
     if (
         section === "search"
     ) {
@@ -657,11 +638,6 @@ function openSection(section) {
         return;
 
     }
-
-
-    // ========================================================
-    // Final
-    // ========================================================
 
     if (
         section === "final"
@@ -676,7 +652,6 @@ function openSection(section) {
 
         }
 
-
         alert(
             "ليس لديك صلاحية للدخول إلى الفنش النهائي ❌"
         );
@@ -684,11 +659,6 @@ function openSection(section) {
         return;
 
     }
-
-
-    // ========================================================
-    // القسم الخاص بالمستخدم
-    // ========================================================
 
     if (
         user.role !== section
@@ -701,7 +671,6 @@ function openSection(section) {
         return;
 
     }
-
 
     if (
         section === "wiring"
@@ -751,21 +720,14 @@ function setupDashboard() {
     const user =
         getCurrentUser();
 
-
     if (!user) {
         return;
     }
-
-
-    // ========================================================
-    // اسم المستخدم
-    // ========================================================
 
     const nameElement =
         document.getElementById(
             "currentUserName"
         );
-
 
     if (nameElement) {
 
@@ -774,16 +736,10 @@ function setupDashboard() {
 
     }
 
-
-    // ========================================================
-    // نوع الحساب
-    // ========================================================
-
     const roleElement =
         document.getElementById(
             "currentUserRole"
         );
-
 
     if (roleElement) {
 
@@ -841,18 +797,10 @@ function setupDashboard() {
 
     }
 
-
-    // ========================================================
-    // مهم جدًا:
-    // كل الأقسام تظل ظاهرة لكل المستخدمين
-    // لكن openSection() هو المسؤول عن منع الدخول
-    // ========================================================
-
     const sectionCards =
         document.querySelectorAll(
             ".section-card"
         );
-
 
     sectionCards.forEach(
         function(card) {
@@ -863,17 +811,10 @@ function setupDashboard() {
         }
     );
 
-
-    // ========================================================
-    // سجل البيانات
-    // المدير فقط
-    // ========================================================
-
     const searchButton =
         document.querySelector(
             'button[onclick="openSection(\'search\')"]'
         );
-
 
     if (searchButton) {
 
@@ -884,17 +825,10 @@ function setupDashboard() {
 
     }
 
-
-    // ========================================================
-    // طلبات الحذف
-    // المدير فقط
-    // ========================================================
-
     const deleteRequestsMenu =
         document.getElementById(
             "deleteRequestsMenu"
         );
-
 
     if (deleteRequestsMenu) {
 
@@ -905,24 +839,16 @@ function setupDashboard() {
 
     }
 
-
-    // ========================================================
-    // التقارير والإعدادات
-    // المدير فقط
-    // ========================================================
-
     const menuItems =
         document.querySelectorAll(
             ".sidebar-menu .menu-item"
         );
-
 
     menuItems.forEach(
         function(item) {
 
             const text =
                 item.innerText.trim();
-
 
             if (
                 user.role !== "admin" &&
@@ -940,7 +866,6 @@ function setupDashboard() {
         }
     );
 
-
     updateDeleteRequestsCount();
 
 }
@@ -954,7 +879,6 @@ function getCurrentDateTime() {
 
     const now =
         new Date();
-
 
     return now.toLocaleString(
         "ar-EG",
@@ -973,516 +897,6 @@ function getCurrentDateTime() {
             hour12: true
 
         }
-    );
-
-}
-
-
-// ============================================================
-// قراءة طلبات الحذف
-// ============================================================
-
-function getDeleteRequests() {
-
-    try {
-
-        const requests =
-            JSON.parse(
-                localStorage.getItem(
-                    DELETE_REQUESTS_STORAGE
-                ) || "[]"
-            );
-
-
-        if (
-            Array.isArray(requests)
-        ) {
-
-            return requests;
-
-        }
-
-    } catch (error) {}
-
-    return [];
-
-}
-
-
-// ============================================================
-// حفظ طلبات الحذف
-// ============================================================
-
-function saveDeleteRequests(requests) {
-
-    localStorage.setItem(
-        DELETE_REQUESTS_STORAGE,
-        JSON.stringify(requests)
-    );
-
-}
-
-
-// ============================================================
-// عدد طلبات الحذف المعلقة
-// ============================================================
-
-function getPendingDeleteRequestsCount() {
-
-    const requests =
-        getDeleteRequests();
-
-
-    return requests.filter(
-        function(request) {
-
-            return request.status === "pending";
-
-        }
-    ).length;
-
-}
-
-
-// ============================================================
-// تحديث رقم طلبات الحذف
-// ============================================================
-
-function updateDeleteRequestsCount() {
-
-    const counter =
-        document.getElementById(
-            "deleteRequestsCount"
-        );
-
-
-    if (!counter) {
-        return;
-    }
-
-
-    const user =
-        getCurrentUser();
-
-
-    if (
-        !user ||
-        user.role !== "admin"
-    ) {
-
-        counter.style.display =
-            "none";
-
-        return;
-
-    }
-
-
-    const count =
-        getPendingDeleteRequestsCount();
-
-
-    counter.innerText =
-        count;
-
-
-    counter.style.display =
-        count > 0
-            ? "inline-block"
-            : "none";
-
-}
-
-
-// ============================================================
-// طلب حذف بيان
-// ============================================================
-
-function requestDeleteRecord(
-    storageName,
-    index
-) {
-
-    const user =
-        getCurrentUser();
-
-
-    if (!user) {
-
-        window.location.href =
-            "login.html";
-
-        return;
-
-    }
-
-
-    // المدير يستطيع الحذف مباشرة
-    if (
-        user.role === "admin"
-    ) {
-
-        deleteRecordDirectly(
-            storageName,
-            index
-        );
-
-        return;
-
-    }
-
-
-    // التأكد أن القسم يخص المستخدم
-    const ownStorage = {
-
-        wiring:
-            "wiringRecords",
-
-        lt:
-            "ltRecords",
-
-        ht:
-            "htRecords",
-
-        installation:
-            "installationRecords"
-
-    };
-
-
-    let allowed =
-        ownStorage[user.role] ===
-        storageName;
-
-
-    // Final
-    if (
-        storageName === "finalRecords" &&
-        canOpenFinal(user)
-    ) {
-
-        allowed = true;
-
-    }
-
-
-    if (!allowed) {
-
-        alert(
-            "ليس لديك صلاحية طلب حذف هذا البيان ❌"
-        );
-
-        return;
-
-    }
-
-
-    const records =
-        getRecordsFromStorage(
-            storageName
-        );
-
-
-    if (
-        index < 0 ||
-        index >= records.length
-    ) {
-
-        alert(
-            "البيان غير موجود ❌"
-        );
-
-        return;
-
-    }
-
-
-    const record =
-        records[index];
-
-
-    const requests =
-        getDeleteRequests();
-
-
-    const alreadyPending =
-        requests.some(
-            function(request) {
-
-                return (
-                    request.status === "pending" &&
-                    request.storageName === storageName &&
-                    request.recordId === record.recordId
-                );
-
-            }
-        );
-
-
-    if (alreadyPending) {
-
-        alert(
-            "تم إرسال طلب حذف هذا البيان بالفعل، وهو في انتظار موافقة المدير ⏳"
-        );
-
-        return;
-
-    }
-
-
-    const reason =
-        prompt(
-            "اكتب سبب طلب حذف هذا البيان:"
-        );
-
-
-    if (
-        reason === null
-    ) {
-
-        return;
-
-    }
-
-
-    const cleanReason =
-        reason.trim();
-
-
-    if (!cleanReason) {
-
-        alert(
-            "يجب كتابة سبب طلب الحذف ❌"
-        );
-
-        return;
-
-    }
-
-
-    if (!record.recordId) {
-
-        record.recordId =
-            generateRecordId();
-
-        records[index] =
-            record;
-
-        saveRecordsToStorage(
-            storageName,
-            records
-        );
-
-    }
-
-
-    const deleteRequest = {
-
-        id:
-            generateRequestId(),
-
-        storageName:
-            storageName,
-
-        recordId:
-            record.recordId,
-
-        recordIndex:
-            index,
-
-        carName:
-            record.carName || "",
-
-        carNumber:
-            record.carNumber || "",
-
-        section:
-            getSectionName(
-                storageName
-            ),
-
-        requestedBy:
-            user.name,
-
-        requestedByUsername:
-            user.username,
-
-        reason:
-            cleanReason,
-
-        requestDate:
-            getCurrentDateTime(),
-
-        status:
-            "pending"
-
-    };
-
-
-    requests.push(
-        deleteRequest
-    );
-
-
-    saveDeleteRequests(
-        requests
-    );
-
-
-    alert(
-        "تم إرسال طلب الحذف إلى المدير ✅\n\nلن يتم حذف البيان إلا بعد موافقة المدير."
-    );
-
-
-    updateDeleteRequestsCount();
-
-    displayAllRecords();
-
-}
-
-
-// ============================================================
-// حذف مباشر للمدير
-// ============================================================
-
-function deleteRecordDirectly(
-    storageName,
-    index
-) {
-
-    const user =
-        getCurrentUser();
-
-
-    if (
-        !user ||
-        user.role !== "admin"
-    ) {
-
-        alert(
-            "الحذف المباشر متاح للمدير فقط ❌"
-        );
-
-        return;
-
-    }
-
-
-    const confirmed =
-        confirm(
-            "⚠️ هل أنت متأكد أنك تريد حذف هذا البيان؟\n\nسيتم حذفه مباشرة."
-        );
-
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    const records =
-        getRecordsFromStorage(
-            storageName
-        );
-
-
-    if (
-        index < 0 ||
-        index >= records.length
-    ) {
-
-        alert(
-            "البيان غير موجود ❌"
-        );
-
-        return;
-
-    }
-
-
-    records.splice(
-        index,
-        1
-    );
-
-
-    saveRecordsToStorage(
-        storageName,
-        records
-    );
-
-
-    alert(
-        "تم حذف البيان بنجاح ✅"
-    );
-
-
-    displayAllRecords();
-
-}
-
-
-// ============================================================
-// الدالة القديمة deleteRecord
-// ============================================================
-
-function deleteRecord(
-    storageName,
-    index
-) {
-
-    requestDeleteRecord(
-        storageName,
-        index
-    );
-
-}
-
-
-// ============================================================
-// الحصول على السجلات
-// ============================================================
-
-function getRecordsFromStorage(
-    storageName
-) {
-
-    try {
-
-        const records =
-            JSON.parse(
-                localStorage.getItem(
-                    storageName
-                ) || "[]"
-            );
-
-
-        if (
-            Array.isArray(records)
-        ) {
-
-            return records;
-
-        }
-
-    } catch (error) {}
-
-    return [];
-
-}
-
-
-// ============================================================
-// حفظ السجلات
-// ============================================================
-
-function saveRecordsToStorage(
-    storageName,
-    records
-) {
-
-    localStorage.setItem(
-        storageName,
-        JSON.stringify(records)
     );
 
 }
@@ -1521,6 +935,312 @@ function generateRequestId() {
 
 
 // ============================================================
+// تحويل Supabase record إلى الشكل القديم
+// ============================================================
+
+function convertSupabaseRecord(record) {
+
+    if (!record) {
+        return null;
+    }
+
+    return {
+
+        id:
+            record.id,
+
+        recordId:
+            record.id
+                ? String(record.id)
+                : generateRecordId(),
+
+        carName:
+            record.car_name || "",
+
+        carNumber:
+            record.car_number || "",
+
+        device:
+            record.device || "",
+
+        socket:
+            record.socket || "",
+
+        done:
+            record.done || "",
+
+        notes:
+            record.notes || "",
+
+        person:
+            record.person || "",
+
+        date:
+            record.created_at
+                ? new Date(
+                    record.created_at
+                ).toLocaleString(
+                    "ar-EG"
+                )
+                : "",
+
+        addedBy:
+            record.created_by || "",
+
+        department:
+            record.department || ""
+
+    };
+
+}
+
+
+// ============================================================
+// جلب سجلات قسم من Supabase
+// ============================================================
+
+async function getRecordsFromSupabase(
+    department
+) {
+
+    if (!checkSupabase()) {
+
+        return [];
+
+    }
+
+    const { data, error } =
+        await supabaseClient
+            .from("records")
+            .select("*")
+            .eq(
+                "department",
+                department
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+    if (error) {
+
+        console.error(
+            "Supabase SELECT Error:",
+            error
+        );
+
+        return [];
+
+    }
+
+    return (
+        data || []
+    ).map(
+        convertSupabaseRecord
+    );
+
+}
+
+
+// ============================================================
+// جلب كل السجلات
+// ============================================================
+
+async function getAllRecordsFromSupabase() {
+
+    if (!checkSupabase()) {
+
+        return [];
+
+    }
+
+    const { data, error } =
+        await supabaseClient
+            .from("records")
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+    if (error) {
+
+        console.error(
+            "Supabase SELECT Error:",
+            error
+        );
+
+        return [];
+
+    }
+
+    return (
+        data || []
+    ).map(
+        convertSupabaseRecord
+    );
+
+}
+
+
+// ============================================================
+// حفظ سجل في Supabase
+// ============================================================
+
+async function saveRecordToSupabase(record) {
+
+    if (!checkSupabase()) {
+
+        throw new Error(
+            "Supabase غير متصل"
+        );
+
+    }
+
+    const { data, error } =
+        await supabaseClient
+            .from("records")
+            .insert([record])
+            .select();
+
+    if (error) {
+
+        console.error(
+            "Supabase INSERT Error:",
+            error
+        );
+
+        throw error;
+
+    }
+
+    return data;
+
+}
+
+
+// ============================================================
+// حذف سجل من Supabase
+// ============================================================
+
+async function deleteRecordFromSupabase(
+    id
+) {
+
+    if (!checkSupabase()) {
+
+        throw new Error(
+            "Supabase غير متصل"
+        );
+
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("records")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+    if (error) {
+
+        console.error(
+            "Supabase DELETE Error:",
+            error
+        );
+
+        throw error;
+
+    }
+
+}
+
+
+// ============================================================
+// الحصول على السجلات - للتوافق مع الكود القديم
+// ============================================================
+//
+// هذه الدالة أصبحت Async.
+// أي كود جديد يجب أن يستخدم getRecordsFromSupabase.
+// ============================================================
+
+async function getRecordsFromStorage(
+    storageName
+) {
+
+    const department =
+        storageToDepartment(
+            storageName
+        );
+
+    if (!department) {
+
+        return [];
+
+    }
+
+    return await getRecordsFromSupabase(
+        department
+    );
+
+}
+
+
+// ============================================================
+// تحويل اسم التخزين إلى القسم
+// ============================================================
+
+function storageToDepartment(
+    storageName
+) {
+
+    const map = {
+
+        wiringRecords:
+            "Wiring",
+
+        ltRecords:
+            "LT",
+
+        htRecords:
+            "HT",
+
+        installationRecords:
+            "Installation",
+
+        finalRecords:
+            "Final"
+
+    };
+
+    return map[storageName] || null;
+
+}
+
+
+// ============================================================
+// حفظ قديم - لم يعد مستخدمًا
+// ============================================================
+
+function saveRecordsToStorage(
+    storageName,
+    records
+) {
+
+    console.warn(
+        "saveRecordsToStorage لم تعد مستخدمة. البيانات تحفظ في Supabase."
+    );
+
+}
+
+
+// ============================================================
 // اسم القسم
 // ============================================================
 
@@ -1547,7 +1267,6 @@ function getSectionName(
 
     };
 
-
     return (
         names[storageName] ||
         storageName
@@ -1557,568 +1276,241 @@ function getSectionName(
 
 
 // ============================================================
-// صفحة طلبات الحذف
+// قراءة طلبات الحذف
 // ============================================================
 
-function displayDeleteRequests() {
+function getDeleteRequests() {
 
-    const container =
-        document.getElementById(
-            "deleteRequests"
-        );
+    try {
 
+        const requests =
+            JSON.parse(
+                localStorage.getItem(
+                    DELETE_REQUESTS_STORAGE
+                ) || "[]"
+            );
 
-    if (!container) {
-        return;
-    }
+        if (
+            Array.isArray(requests)
+        ) {
 
-
-    const user =
-        getCurrentUser();
-
-
-    if (
-        !user ||
-        user.role !== "admin"
-    ) {
-
-        container.innerHTML = `
-
-            <div class="error">
-
-                ❌ هذه الصفحة متاحة للمدير فقط
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    const requests =
-        getDeleteRequests();
-
-
-    container.innerHTML = "";
-
-
-    if (
-        requests.length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <div class="department-result no-data">
-
-                <h2>
-                    🗑️ طلبات الحذف
-                </h2>
-
-                <div class="no-car">
-
-                    لا توجد طلبات حذف حاليًا
-
-                </div>
-
-            </div>
-
-        `;
-
-        updateDeleteRequestsCount();
-
-        return;
-
-    }
-
-
-    const sortedRequests =
-        [...requests].reverse();
-
-
-    sortedRequests.forEach(
-        function(request) {
-
-            const realIndex =
-                requests.findIndex(
-                    function(item) {
-
-                        return item.id === request.id;
-
-                    }
-                );
-
-
-            let buttons = "";
-
-
-            if (
-                request.status === "pending"
-            ) {
-
-                buttons = `
-
-                    <div style="
-                        display:flex;
-                        gap:10px;
-                        margin-top:20px;
-                        flex-wrap:wrap;
-                    ">
-
-                        <button
-                            type="button"
-                            onclick="approveDeleteRequest(${realIndex})"
-                            style="
-                                flex:1;
-                                min-width:140px;
-                                padding:12px;
-                                border:none;
-                                border-radius:8px;
-                                background:#198754;
-                                color:white;
-                                font-size:15px;
-                                font-weight:bold;
-                                cursor:pointer;
-                            "
-                        >
-                            ✅ موافقة على الحذف
-                        </button>
-
-
-                        <button
-                            type="button"
-                            onclick="rejectDeleteRequest(${realIndex})"
-                            style="
-                                flex:1;
-                                min-width:140px;
-                                padding:12px;
-                                border:none;
-                                border-radius:8px;
-                                background:#d92d20;
-                                color:white;
-                                font-size:15px;
-                                font-weight:bold;
-                                cursor:pointer;
-                            "
-                        >
-                            ❌ رفض الطلب
-                        </button>
-
-                    </div>
-
-                `;
-
-            }
-
-            else if (
-                request.status === "approved"
-            ) {
-
-                buttons = `
-
-                    <div style="
-                        margin-top:15px;
-                        padding:12px;
-                        background:#e8f7ee;
-                        border-radius:8px;
-                        color:#198754;
-                        font-weight:bold;
-                    ">
-
-                        ✅ تمت الموافقة على الحذف
-
-                        <br>
-
-                        <small>
-                            بواسطة: ${request.reviewedBy || "المدير"}
-                            <br>
-                            ${request.reviewDate || ""}
-                        </small>
-
-                    </div>
-
-                `;
-
-            }
-
-            else if (
-                request.status === "rejected"
-            ) {
-
-                buttons = `
-
-                    <div style="
-                        margin-top:15px;
-                        padding:12px;
-                        background:#fff0f0;
-                        border-radius:8px;
-                        color:#d92d20;
-                        font-weight:bold;
-                    ">
-
-                        ❌ تم رفض طلب الحذف
-
-                        <br>
-
-                        <small>
-                            بواسطة: ${request.reviewedBy || "المدير"}
-                            <br>
-                            ${request.reviewDate || ""}
-                        </small>
-
-                    </div>
-
-                `;
-
-            }
-
-
-            container.innerHTML += `
-
-                <div class="department-result"
-                     style="
-                        margin-bottom:20px;
-                     ">
-
-                    <h2>
-                        🗑️ طلب حذف
-                        ${request.section || ""}
-                    </h2>
-
-
-                    <p>
-                        <strong>
-                            اسم العربية:
-                        </strong>
-
-                        ${request.carName || "غير موجود"}
-                    </p>
-
-
-                    <p>
-                        <strong>
-                            رقم العربية:
-                        </strong>
-
-                        ${request.carNumber || "غير موجود"}
-                    </p>
-
-
-                    <p>
-                        <strong>
-                            طلب الحذف بواسطة:
-                        </strong>
-
-                        ${request.requestedBy || "غير معروف"}
-                    </p>
-
-
-                    <p>
-                        <strong>
-                            حساب المستخدم:
-                        </strong>
-
-                        ${request.requestedByUsername || "غير معروف"}
-                    </p>
-
-
-                    <p>
-                        <strong>
-                            سبب الحذف:
-                        </strong>
-
-                        ${request.reason || "لا يوجد"}
-                    </p>
-
-
-                    <p>
-                        <strong>
-                            تاريخ الطلب:
-                        </strong>
-
-                        ${request.requestDate || "غير موجود"}
-                    </p>
-
-
-                    <p>
-                        <strong>
-                            حالة الطلب:
-                        </strong>
-
-                        ${
-                            request.status === "pending"
-                                ? "⏳ في انتظار الموافقة"
-                                : request.status === "approved"
-                                    ? "✅ تمت الموافقة"
-                                    : "❌ مرفوض"
-                        }
-                    </p>
-
-
-                    ${buttons}
-
-                </div>
-
-            `;
+            return requests;
 
         }
-    );
 
+    } catch (error) {}
 
-    updateDeleteRequestsCount();
+    return [];
 
 }
 
 
 // ============================================================
-// موافقة المدير على طلب الحذف
+// حفظ طلبات الحذف
 // ============================================================
 
-function approveDeleteRequest(
-    requestIndex
+function saveDeleteRequests(
+    requests
 ) {
+
+    localStorage.setItem(
+        DELETE_REQUESTS_STORAGE,
+        JSON.stringify(requests)
+    );
+
+}
+
+
+// ============================================================
+// عدد طلبات الحذف المعلقة
+// ============================================================
+
+function getPendingDeleteRequestsCount() {
+
+    const requests =
+        getDeleteRequests();
+
+    return requests.filter(
+        function(request) {
+
+            return request.status === "pending";
+
+        }
+    ).length;
+
+}
+
+
+// ============================================================
+// تحديث رقم طلبات الحذف
+// ============================================================
+
+function updateDeleteRequestsCount() {
+
+    const counter =
+        document.getElementById(
+            "deleteRequestsCount"
+        );
+
+    if (!counter) {
+        return;
+    }
 
     const user =
         getCurrentUser();
-
 
     if (
         !user ||
         user.role !== "admin"
     ) {
 
-        alert(
-            "هذه العملية متاحة للمدير فقط ❌"
+        counter.style.display =
+            "none";
+
+        return;
+
+    }
+
+    const count =
+        getPendingDeleteRequestsCount();
+
+    counter.innerText =
+        count;
+
+    counter.style.display =
+        count > 0
+            ? "inline-block"
+            : "none";
+
+}
+
+
+// ============================================================
+// طلب حذف بيان
+// ============================================================
+
+async function requestDeleteRecord(
+    storageName,
+    index
+) {
+
+    const user =
+        getCurrentUser();
+
+    if (!user) {
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+    // المدير يحذف مباشرة
+    if (
+        user.role === "admin"
+    ) {
+
+        await deleteRecordDirectly(
+            storageName,
+            index
         );
 
         return;
 
     }
 
+    const ownStorage = {
+
+        wiring:
+            "wiringRecords",
+
+        lt:
+            "ltRecords",
+
+        ht:
+            "htRecords",
+
+        installation:
+            "installationRecords"
+
+    };
+
+    let allowed =
+        ownStorage[user.role] ===
+        storageName;
+
+    if (
+        storageName === "finalRecords" &&
+        canOpenFinal(user)
+    ) {
+
+        allowed = true;
+
+    }
+
+    if (!allowed) {
+
+        alert(
+            "ليس لديك صلاحية طلب حذف هذا البيان ❌"
+        );
+
+        return;
+
+    }
+
+    const records =
+        await getRecordsFromStorage(
+            storageName
+        );
+
+    if (
+        index < 0 ||
+        index >= records.length
+    ) {
+
+        alert(
+            "البيان غير موجود ❌"
+        );
+
+        return;
+
+    }
+
+    const record =
+        records[index];
 
     const requests =
         getDeleteRequests();
 
-
-    const request =
-        requests[requestIndex];
-
-
-    if (!request) {
-
-        alert(
-            "طلب الحذف غير موجود ❌"
-        );
-
-        return;
-
-    }
-
-
-    if (
-        request.status !== "pending"
-    ) {
-
-        alert(
-            "تم التعامل مع هذا الطلب من قبل."
-        );
-
-        return;
-
-    }
-
-
-    const confirmed =
-        confirm(
-            "⚠️ هل تريد الموافقة على حذف هذا البيان؟"
-        );
-
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    let records =
-        getRecordsFromStorage(
-            request.storageName
-        );
-
-
-    let recordIndex =
-        records.findIndex(
-            function(record) {
+    const alreadyPending =
+        requests.some(
+            function(request) {
 
                 return (
-                    record &&
-                    record.recordId ===
-                    request.recordId
+                    request.status === "pending" &&
+                    request.storageName === storageName &&
+                    String(request.recordId) ===
+                    String(record.recordId)
                 );
 
             }
         );
 
-
-    if (
-        recordIndex === -1 &&
-        request.recordIndex >= 0 &&
-        request.recordIndex < records.length
-    ) {
-
-        recordIndex =
-            request.recordIndex;
-
-    }
-
-
-    if (
-        recordIndex === -1
-    ) {
-
-        request.status =
-            "approved";
-
-        request.reviewedBy =
-            user.name;
-
-        request.reviewDate =
-            getCurrentDateTime();
-
-        request.result =
-            "البيان كان محذوفًا بالفعل";
-
-
-        requests[requestIndex] =
-            request;
-
-
-        saveDeleteRequests(
-            requests
-        );
-
+    if (alreadyPending) {
 
         alert(
-            "تم اعتماد الطلب، ولكن البيان غير موجود لأنه تم حذفه بالفعل."
-        );
-
-
-        displayDeleteRequests();
-
-        return;
-
-    }
-
-
-    records.splice(
-        recordIndex,
-        1
-    );
-
-
-    saveRecordsToStorage(
-        request.storageName,
-        records
-    );
-
-
-    request.status =
-        "approved";
-
-    request.reviewedBy =
-        user.name;
-
-    request.reviewDate =
-        getCurrentDateTime();
-
-    request.result =
-        "تم حذف البيان";
-
-
-    requests[requestIndex] =
-        request;
-
-
-    saveDeleteRequests(
-        requests
-    );
-
-
-    alert(
-        "تمت الموافقة على الطلب وحذف البيان بنجاح ✅"
-    );
-
-
-    displayDeleteRequests();
-
-    displayAllRecords();
-
-}
-
-
-// ============================================================
-// رفض طلب الحذف
-// ============================================================
-
-function rejectDeleteRequest(
-    requestIndex
-) {
-
-    const user =
-        getCurrentUser();
-
-
-    if (
-        !user ||
-        user.role !== "admin"
-    ) {
-
-        alert(
-            "هذه العملية متاحة للمدير فقط ❌"
+            "تم إرسال طلب حذف هذا البيان بالفعل، وهو في انتظار موافقة المدير ⏳"
         );
 
         return;
 
     }
-
-
-    const requests =
-        getDeleteRequests();
-
-
-    const request =
-        requests[requestIndex];
-
-
-    if (!request) {
-
-        alert(
-            "طلب الحذف غير موجود ❌"
-        );
-
-        return;
-
-    }
-
-
-    if (
-        request.status !== "pending"
-    ) {
-
-        alert(
-            "تم التعامل مع هذا الطلب من قبل."
-        );
-
-        return;
-
-    }
-
 
     const reason =
         prompt(
-            "اكتب سبب رفض طلب الحذف (اختياري):"
+            "اكتب سبب طلب حذف هذا البيان:"
         );
-
 
     if (
         reason === null
@@ -2128,101 +1520,185 @@ function rejectDeleteRequest(
 
     }
 
-
-    request.status =
-        "rejected";
-
-    request.reviewedBy =
-        user.name;
-
-    request.reviewDate =
-        getCurrentDateTime();
-
-    request.rejectionReason =
+    const cleanReason =
         reason.trim();
 
+    if (!cleanReason) {
 
-    requests[requestIndex] =
-        request;
+        alert(
+            "يجب كتابة سبب طلب الحذف ❌"
+        );
 
+        return;
+
+    }
+
+    const deleteRequest = {
+
+        id:
+            generateRequestId(),
+
+        storageName:
+            storageName,
+
+        recordId:
+            record.recordId,
+
+        recordIndex:
+            index,
+
+        supabaseId:
+            record.id,
+
+        carName:
+            record.carName || "",
+
+        carNumber:
+            record.carNumber || "",
+
+        section:
+            getSectionName(
+                storageName
+            ),
+
+        requestedBy:
+            user.name,
+
+        requestedByUsername:
+            user.username,
+
+        reason:
+            cleanReason,
+
+        requestDate:
+            getCurrentDateTime(),
+
+        status:
+            "pending"
+
+    };
+
+    requests.push(
+        deleteRequest
+    );
 
     saveDeleteRequests(
         requests
     );
 
-
     alert(
-        "تم رفض طلب الحذف ❌"
+        "تم إرسال طلب الحذف إلى المدير ✅\n\nلن يتم حذف البيان إلا بعد موافقة المدير."
     );
 
+    updateDeleteRequestsCount();
 
-    displayDeleteRequests();
+    await displayAllRecords();
 
 }
 
 
 // ============================================================
-// إضافة recordId للسجلات القديمة
+// حذف مباشر للمدير
 // ============================================================
 
-function ensureRecordIds() {
+async function deleteRecordDirectly(
+    storageName,
+    index
+) {
 
-    const storages = [
+    const user =
+        getCurrentUser();
 
-        "wiringRecords",
+    if (
+        !user ||
+        user.role !== "admin"
+    ) {
 
-        "ltRecords",
+        alert(
+            "الحذف المباشر متاح للمدير فقط ❌"
+        );
 
-        "htRecords",
+        return;
 
-        "installationRecords",
+    }
 
-        "finalRecords"
+    const confirmed =
+        confirm(
+            "⚠️ هل أنت متأكد أنك تريد حذف هذا البيان؟\n\nسيتم حذفه مباشرة."
+        );
 
-    ];
+    if (!confirmed) {
+        return;
+    }
+
+    const records =
+        await getRecordsFromStorage(
+            storageName
+        );
+
+    if (
+        index < 0 ||
+        index >= records.length
+    ) {
+
+        alert(
+            "البيان غير موجود ❌"
+        );
+
+        return;
+
+    }
+
+    const record =
+        records[index];
+
+    if (!record.id) {
+
+        alert(
+            "تعذر معرفة رقم البيان في Supabase ❌"
+        );
+
+        return;
+
+    }
+
+    try {
+
+        await deleteRecordFromSupabase(
+            record.id
+        );
+
+        alert(
+            "تم حذف البيان بنجاح ✅"
+        );
+
+        await displayAllRecords();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "حدث خطأ أثناء حذف البيان ❌"
+        );
+
+    }
+
+}
 
 
-    storages.forEach(
-        function(storageName) {
+// ============================================================
+// الدالة القديمة deleteRecord
+// ============================================================
 
-            const records =
-                getRecordsFromStorage(
-                    storageName
-                );
+async function deleteRecord(
+    storageName,
+    index
+) {
 
-
-            let changed = false;
-
-
-            records.forEach(
-                function(record) {
-
-                    if (
-                        record &&
-                        !record.recordId
-                    ) {
-
-                        record.recordId =
-                            generateRecordId();
-
-                        changed = true;
-
-                    }
-
-                }
-            );
-
-
-            if (changed) {
-
-                saveRecordsToStorage(
-                    storageName,
-                    records
-                );
-
-            }
-
-        }
+    await requestDeleteRecord(
+        storageName,
+        index
     );
 
 }
@@ -2232,37 +1708,56 @@ function ensureRecordIds() {
 // حفظ Wiring
 // ============================================================
 
-function saveWiring() {
+async function saveWiring() {
 
-    const carName =
+    const carNameElement =
         document.getElementById(
             "wiringCarName"
-        ).value.trim();
+        );
 
-
-    const carNumber =
+    const carNumberElement =
         document.getElementById(
             "wiringCarNumber"
-        ).value.trim();
+        );
 
-
-    const done =
+    const doneElement =
         document.getElementById(
             "wiringDone"
-        ).value;
+        );
 
-
-    const notes =
+    const notesElement =
         document.getElementById(
             "wiringNotes"
-        ).value.trim();
-
+        );
 
     const message =
         document.getElementById(
             "wiringMessage"
         );
 
+    if (
+        !carNameElement ||
+        !carNumberElement ||
+        !doneElement
+    ) {
+
+        return;
+
+    }
+
+    const carName =
+        carNameElement.value.trim();
+
+    const carNumber =
+        carNumberElement.value.trim();
+
+    const done =
+        doneElement.value;
+
+    const notes =
+        notesElement
+            ? notesElement.value.trim()
+            : "";
 
     if (
         !carName ||
@@ -2281,71 +1776,75 @@ function saveWiring() {
 
     }
 
-
-    let records =
-        getRecordsFromStorage(
-            "wiringRecords"
-        );
-
-
     const user =
         getCurrentUser();
 
+    try {
 
-    const record = {
+        await saveRecordToSupabase({
 
-        recordId:
-            generateRecordId(),
+            department:
+                "Wiring",
 
-        carName:
-            carName,
+            car_name:
+                carName,
 
-        carNumber:
-            carNumber,
+            car_number:
+                carNumber,
 
-        done:
-            done,
+            done:
+                done,
 
-        notes:
-            notes,
+            notes:
+                notes,
 
-        date:
-            getCurrentDateTime(),
+            created_by:
+                user
+                    ? user.name
+                    : "Unknown"
 
-        addedBy:
-            user
-                ? user.name
-                : "Unknown"
+        });
 
-    };
+        if (message) {
 
+            message.innerText =
+                "تم حفظ البيانات في قاعدة البيانات بنجاح ✅";
 
-    records.push(
-        record
-    );
+        }
 
+        clearInput(
+            "wiringCarName"
+        );
 
-    saveRecordsToStorage(
-        "wiringRecords",
-        records
-    );
+        clearInput(
+            "wiringCarNumber"
+        );
 
+        clearInput(
+            "wiringDone"
+        );
 
-    if (message) {
+        clearInput(
+            "wiringNotes"
+        );
 
-        message.innerText =
-            "تم حفظ البيانات بنجاح ✅";
+        await displayWiringRecords();
+
+    } catch (error) {
+
+        if (message) {
+
+            message.innerText =
+                "حدث خطأ أثناء حفظ البيانات ❌";
+
+        }
+
+        alert(
+            "تعذر حفظ البيانات في Supabase ❌\n\n" +
+            (error.message || "")
+        );
 
     }
-
-
-    clearInput("wiringCarName");
-    clearInput("wiringCarNumber");
-    clearInput("wiringDone");
-    clearInput("wiringNotes");
-
-
-    displayWiringRecords();
 
 }
 
@@ -2354,9 +1853,9 @@ function saveWiring() {
 // عرض Wiring
 // ============================================================
 
-function displayWiringRecords() {
+async function displayWiringRecords() {
 
-    displayDepartmentRecords(
+    await displayDepartmentRecords(
         "wiringRecords",
         "wiringRecords"
     );
@@ -2368,49 +1867,74 @@ function displayWiringRecords() {
 // حفظ LT
 // ============================================================
 
-function saveLT() {
+async function saveLT() {
 
-    const carName =
+    const carNameElement =
         document.getElementById(
             "ltCarName"
-        ).value.trim();
+        );
 
-
-    const carNumber =
+    const carNumberElement =
         document.getElementById(
             "ltCarNumber"
-        ).value.trim();
+        );
 
-
-    const device =
+    const deviceElement =
         document.getElementById(
             "ltDevice"
-        ).value.trim();
+        );
 
-
-    const socket =
+    const socketElement =
         document.getElementById(
             "ltSocket"
-        ).value.trim();
+        );
 
-
-    const notes =
+    const notesElement =
         document.getElementById(
             "ltNotes"
-        ).value.trim();
+        );
 
-
-    const person =
+    const personElement =
         document.getElementById(
             "ltPerson"
-        ).value.trim();
-
+        );
 
     const message =
         document.getElementById(
             "ltMessage"
         );
 
+    if (
+        !carNameElement ||
+        !carNumberElement ||
+        !deviceElement ||
+        !socketElement ||
+        !personElement
+    ) {
+
+        return;
+
+    }
+
+    const carName =
+        carNameElement.value.trim();
+
+    const carNumber =
+        carNumberElement.value.trim();
+
+    const device =
+        deviceElement.value.trim();
+
+    const socket =
+        socketElement.value.trim();
+
+    const notes =
+        notesElement
+            ? notesElement.value.trim()
+            : "";
+
+    const person =
+        personElement.value.trim();
 
     if (
         !carName ||
@@ -2431,79 +1955,72 @@ function saveLT() {
 
     }
 
-
-    let records =
-        getRecordsFromStorage(
-            "ltRecords"
-        );
-
-
     const user =
         getCurrentUser();
 
+    try {
 
-    const record = {
+        await saveRecordToSupabase({
 
-        recordId:
-            generateRecordId(),
+            department:
+                "LT",
 
-        carName:
-            carName,
+            car_name:
+                carName,
 
-        carNumber:
-            carNumber,
+            car_number:
+                carNumber,
 
-        device:
-            device,
+            device:
+                device,
 
-        socket:
-            socket,
+            socket:
+                socket,
 
-        notes:
-            notes,
+            notes:
+                notes,
 
-        person:
-            person,
+            person:
+                person,
 
-        date:
-            getCurrentDateTime(),
+            created_by:
+                user
+                    ? user.name
+                    : "Unknown"
 
-        addedBy:
-            user
-                ? user.name
-                : "Unknown"
+        });
 
-    };
+        if (message) {
 
+            message.innerText =
+                "تم حفظ البيانات في قاعدة البيانات بنجاح ✅";
 
-    records.push(
-        record
-    );
+        }
 
+        clearInput("ltCarName");
+        clearInput("ltCarNumber");
+        clearInput("ltDevice");
+        clearInput("ltSocket");
+        clearInput("ltNotes");
+        clearInput("ltPerson");
 
-    saveRecordsToStorage(
-        "ltRecords",
-        records
-    );
+        await displayLTRecords();
 
+    } catch (error) {
 
-    if (message) {
+        if (message) {
 
-        message.innerText =
-            "تم حفظ البيانات بنجاح ✅";
+            message.innerText =
+                "حدث خطأ أثناء حفظ البيانات ❌";
+
+        }
+
+        alert(
+            "تعذر حفظ البيانات في Supabase ❌\n\n" +
+            (error.message || "")
+        );
 
     }
-
-
-    clearInput("ltCarName");
-    clearInput("ltCarNumber");
-    clearInput("ltDevice");
-    clearInput("ltSocket");
-    clearInput("ltNotes");
-    clearInput("ltPerson");
-
-
-    displayLTRecords();
 
 }
 
@@ -2512,9 +2029,9 @@ function saveLT() {
 // عرض LT
 // ============================================================
 
-function displayLTRecords() {
+async function displayLTRecords() {
 
-    displayDepartmentRecords(
+    await displayDepartmentRecords(
         "ltRecords",
         "ltRecords"
     );
@@ -2526,37 +2043,56 @@ function displayLTRecords() {
 // حفظ HT
 // ============================================================
 
-function saveHT() {
+async function saveHT() {
 
-    const carName =
+    const carNameElement =
         document.getElementById(
             "htCarName"
-        ).value.trim();
+        );
 
-
-    const carNumber =
+    const carNumberElement =
         document.getElementById(
             "htCarNumber"
-        ).value.trim();
+        );
 
-
-    const done =
+    const doneElement =
         document.getElementById(
             "htDone"
-        ).value;
+        );
 
-
-    const notes =
+    const notesElement =
         document.getElementById(
             "htNotes"
-        ).value.trim();
-
+        );
 
     const message =
         document.getElementById(
             "htMessage"
         );
 
+    if (
+        !carNameElement ||
+        !carNumberElement ||
+        !doneElement
+    ) {
+
+        return;
+
+    }
+
+    const carName =
+        carNameElement.value.trim();
+
+    const carNumber =
+        carNumberElement.value.trim();
+
+    const done =
+        doneElement.value;
+
+    const notes =
+        notesElement
+            ? notesElement.value.trim()
+            : "";
 
     if (
         !carName ||
@@ -2575,71 +2111,64 @@ function saveHT() {
 
     }
 
-
-    let records =
-        getRecordsFromStorage(
-            "htRecords"
-        );
-
-
     const user =
         getCurrentUser();
 
+    try {
 
-    const record = {
+        await saveRecordToSupabase({
 
-        recordId:
-            generateRecordId(),
+            department:
+                "HT",
 
-        carName:
-            carName,
+            car_name:
+                carName,
 
-        carNumber:
-            carNumber,
+            car_number:
+                carNumber,
 
-        done:
-            done,
+            done:
+                done,
 
-        notes:
-            notes,
+            notes:
+                notes,
 
-        date:
-            getCurrentDateTime(),
+            created_by:
+                user
+                    ? user.name
+                    : "Unknown"
 
-        addedBy:
-            user
-                ? user.name
-                : "Unknown"
+        });
 
-    };
+        if (message) {
 
+            message.innerText =
+                "تم حفظ البيانات في قاعدة البيانات بنجاح ✅";
 
-    records.push(
-        record
-    );
+        }
 
+        clearInput("htCarName");
+        clearInput("htCarNumber");
+        clearInput("htDone");
+        clearInput("htNotes");
 
-    saveRecordsToStorage(
-        "htRecords",
-        records
-    );
+        await displayHTRecords();
 
+    } catch (error) {
 
-    if (message) {
+        if (message) {
 
-        message.innerText =
-            "تم حفظ البيانات بنجاح ✅";
+            message.innerText =
+                "حدث خطأ أثناء حفظ البيانات ❌";
+
+        }
+
+        alert(
+            "تعذر حفظ البيانات في Supabase ❌\n\n" +
+            (error.message || "")
+        );
 
     }
-
-
-    clearInput("htCarName");
-    clearInput("htCarNumber");
-    clearInput("htDone");
-    clearInput("htNotes");
-
-
-    displayHTRecords();
 
 }
 
@@ -2648,9 +2177,9 @@ function saveHT() {
 // عرض HT
 // ============================================================
 
-function displayHTRecords() {
+async function displayHTRecords() {
 
-    displayDepartmentRecords(
+    await displayDepartmentRecords(
         "htRecords",
         "htRecords"
     );
@@ -2662,37 +2191,56 @@ function displayHTRecords() {
 // حفظ التركيبات
 // ============================================================
 
-function saveInstallation() {
+async function saveInstallation() {
 
-    const carName =
+    const carNameElement =
         document.getElementById(
             "installationCarName"
-        ).value.trim();
+        );
 
-
-    const carNumber =
+    const carNumberElement =
         document.getElementById(
             "installationCarNumber"
-        ).value.trim();
+        );
 
-
-    const done =
+    const doneElement =
         document.getElementById(
             "installationDone"
-        ).value;
+        );
 
-
-    const notes =
+    const notesElement =
         document.getElementById(
             "installationNotes"
-        ).value.trim();
-
+        );
 
     const message =
         document.getElementById(
             "installationMessage"
         );
 
+    if (
+        !carNameElement ||
+        !carNumberElement ||
+        !doneElement
+    ) {
+
+        return;
+
+    }
+
+    const carName =
+        carNameElement.value.trim();
+
+    const carNumber =
+        carNumberElement.value.trim();
+
+    const done =
+        doneElement.value;
+
+    const notes =
+        notesElement
+            ? notesElement.value.trim()
+            : "";
 
     if (
         !carName ||
@@ -2711,71 +2259,75 @@ function saveInstallation() {
 
     }
 
-
-    let records =
-        getRecordsFromStorage(
-            "installationRecords"
-        );
-
-
     const user =
         getCurrentUser();
 
+    try {
 
-    const record = {
+        await saveRecordToSupabase({
 
-        recordId:
-            generateRecordId(),
+            department:
+                "Installation",
 
-        carName:
-            carName,
+            car_name:
+                carName,
 
-        carNumber:
-            carNumber,
+            car_number:
+                carNumber,
 
-        done:
-            done,
+            done:
+                done,
 
-        notes:
-            notes,
+            notes:
+                notes,
 
-        date:
-            getCurrentDateTime(),
+            created_by:
+                user
+                    ? user.name
+                    : "Unknown"
 
-        addedBy:
-            user
-                ? user.name
-                : "Unknown"
+        });
 
-    };
+        if (message) {
 
+            message.innerText =
+                "تم حفظ البيانات في قاعدة البيانات بنجاح ✅";
 
-    records.push(
-        record
-    );
+        }
 
+        clearInput(
+            "installationCarName"
+        );
 
-    saveRecordsToStorage(
-        "installationRecords",
-        records
-    );
+        clearInput(
+            "installationCarNumber"
+        );
 
+        clearInput(
+            "installationDone"
+        );
 
-    if (message) {
+        clearInput(
+            "installationNotes"
+        );
 
-        message.innerText =
-            "تم حفظ البيانات بنجاح ✅";
+        await displayInstallationRecords();
+
+    } catch (error) {
+
+        if (message) {
+
+            message.innerText =
+                "حدث خطأ أثناء حفظ البيانات ❌";
+
+        }
+
+        alert(
+            "تعذر حفظ البيانات في Supabase ❌\n\n" +
+            (error.message || "")
+        );
 
     }
-
-
-    clearInput("installationCarName");
-    clearInput("installationCarNumber");
-    clearInput("installationDone");
-    clearInput("installationNotes");
-
-
-    displayInstallationRecords();
 
 }
 
@@ -2784,9 +2336,9 @@ function saveInstallation() {
 // عرض التركيبات
 // ============================================================
 
-function displayInstallationRecords() {
+async function displayInstallationRecords() {
 
-    displayDepartmentRecords(
+    await displayDepartmentRecords(
         "installationRecords",
         "installationRecords"
     );
@@ -2798,11 +2350,10 @@ function displayInstallationRecords() {
 // حفظ Final
 // ============================================================
 
-function saveFinal() {
+async function saveFinal() {
 
     const user =
         getCurrentUser();
-
 
     if (
         !user ||
@@ -2813,7 +2364,6 @@ function saveFinal() {
             "ليس لديك صلاحية للدخول إلى الفنش النهائي ❌"
         );
 
-
         window.location.href =
             "index.html";
 
@@ -2821,36 +2371,54 @@ function saveFinal() {
 
     }
 
-
-    const carName =
+    const carNameElement =
         document.getElementById(
             "finalCarName"
-        ).value.trim();
+        );
 
-
-    const carNumber =
+    const carNumberElement =
         document.getElementById(
             "finalCarNumber"
-        ).value.trim();
+        );
 
-
-    const done =
+    const doneElement =
         document.getElementById(
             "finalDone"
-        ).value;
+        );
 
-
-    const notes =
+    const notesElement =
         document.getElementById(
             "finalNotes"
-        ).value.trim();
-
+        );
 
     const message =
         document.getElementById(
             "finalMessage"
         );
 
+    if (
+        !carNameElement ||
+        !carNumberElement ||
+        !doneElement
+    ) {
+
+        return;
+
+    }
+
+    const carName =
+        carNameElement.value.trim();
+
+    const carNumber =
+        carNumberElement.value.trim();
+
+    const done =
+        doneElement.value;
+
+    const notes =
+        notesElement
+            ? notesElement.value.trim()
+            : "";
 
     if (
         !carName ||
@@ -2869,65 +2437,70 @@ function saveFinal() {
 
     }
 
+    try {
 
-    let records =
-        getRecordsFromStorage(
-            "finalRecords"
+        await saveRecordToSupabase({
+
+            department:
+                "Final",
+
+            car_name:
+                carName,
+
+            car_number:
+                carNumber,
+
+            done:
+                done,
+
+            notes:
+                notes,
+
+            created_by:
+                user.name
+
+        });
+
+        if (message) {
+
+            message.innerText =
+                "تم حفظ البيانات في قاعدة البيانات بنجاح ✅";
+
+        }
+
+        clearInput(
+            "finalCarName"
         );
 
+        clearInput(
+            "finalCarNumber"
+        );
 
-    const record = {
+        clearInput(
+            "finalDone"
+        );
 
-        recordId:
-            generateRecordId(),
+        clearInput(
+            "finalNotes"
+        );
 
-        carName:
-            carName,
+        await displayFinalRecords();
 
-        carNumber:
-            carNumber,
+    } catch (error) {
 
-        done:
-            done,
+        if (message) {
 
-        notes:
-            notes,
+            message.innerText =
+                "حدث خطأ أثناء حفظ البيانات ❌";
 
-        date:
-            getCurrentDateTime(),
+        }
 
-        addedBy:
-            user.name
-
-    };
-
-
-    records.push(
-        record
-    );
-
-
-    saveRecordsToStorage(
-        "finalRecords",
-        records
-    );
-
-
-    if (message) {
-
-        message.innerText =
-            "تم حفظ البيانات بنجاح ✅";
+        alert(
+            "تعذر حفظ البيانات في Supabase ❌\n\n" +
+            (error.message || "")
+        );
 
     }
-
-
-    clearInput("finalCarName");
-    clearInput("finalCarNumber");
-    clearInput("finalDone");
-    clearInput("finalNotes");
-
-
-    displayFinalRecords();
 
 }
 
@@ -2936,9 +2509,9 @@ function saveFinal() {
 // عرض Final
 // ============================================================
 
-function displayFinalRecords() {
+async function displayFinalRecords() {
 
-    displayDepartmentRecords(
+    await displayDepartmentRecords(
         "finalRecords",
         "finalRecords"
     );
@@ -2950,7 +2523,7 @@ function displayFinalRecords() {
 // عرض سجلات أي قسم
 // ============================================================
 
-function displayDepartmentRecords(
+async function displayDepartmentRecords(
     storageName,
     containerId
 ) {
@@ -2960,44 +2533,59 @@ function displayDepartmentRecords(
             containerId
         );
 
-
     if (!container) {
         return;
     }
 
-
     const records =
-        getRecordsFromStorage(
+        await getRecordsFromStorage(
             storageName
         );
 
-
     container.innerHTML = "";
-
 
     const user =
         getCurrentUser();
 
+    const deleteRequests =
+        getDeleteRequests();
+
+    if (
+        records.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <div class="no-data">
+
+                لا توجد بيانات مسجلة حاليًا
+
+            </div>
+
+        `;
+
+        return;
+
+    }
 
     records.forEach(
         function(record, index) {
 
             const hasPendingRequest =
-                getDeleteRequests().some(
+                deleteRequests.some(
                     function(request) {
 
                         return (
                             request.status === "pending" &&
                             request.storageName === storageName &&
-                            request.recordId === record.recordId
+                            String(request.recordId) ===
+                            String(record.recordId)
                         );
 
                     }
                 );
 
-
             let deleteButton = "";
-
 
             if (user) {
 
@@ -3087,9 +2675,7 @@ function displayDepartmentRecords(
 
             }
 
-
             let extraFields = "";
-
 
             if (record.device) {
 
@@ -3109,7 +2695,6 @@ function displayDepartmentRecords(
 
             }
 
-
             if (record.socket) {
 
                 extraFields += `
@@ -3127,7 +2712,6 @@ function displayDepartmentRecords(
                 `;
 
             }
-
 
             if (record.person) {
 
@@ -3147,7 +2731,6 @@ function displayDepartmentRecords(
 
             }
 
-
             container.innerHTML += `
 
                 <div class="record">
@@ -3160,7 +2743,6 @@ function displayDepartmentRecords(
 
                     </h3>
 
-
                     <p>
 
                         <strong>
@@ -3170,7 +2752,6 @@ function displayDepartmentRecords(
                         ${record.carName || "غير موجود"}
 
                     </p>
-
 
                     <p>
 
@@ -3182,9 +2763,7 @@ function displayDepartmentRecords(
 
                     </p>
 
-
                     ${extraFields}
-
 
                     <p>
 
@@ -3196,7 +2775,6 @@ function displayDepartmentRecords(
 
                     </p>
 
-
                     <p>
 
                         <strong>
@@ -3206,7 +2784,6 @@ function displayDepartmentRecords(
                         ${record.notes || "لا يوجد"}
 
                     </p>
-
 
                     ${
                         record.addedBy
@@ -3226,7 +2803,6 @@ function displayDepartmentRecords(
                         : ""
                     }
 
-
                     ${deleteButton}
 
                 </div>
@@ -3243,19 +2819,17 @@ function displayDepartmentRecords(
 // البحث عن سيارة
 // ============================================================
 
-function searchCar() {
+async function searchCar() {
 
     const input =
         document.getElementById(
             "searchCarNumber"
         );
 
-
     const result =
         document.getElementById(
             "searchResult"
         );
-
 
     if (
         !input ||
@@ -3266,10 +2840,8 @@ function searchCar() {
 
     }
 
-
     const number =
         input.value.trim();
-
 
     if (!number) {
 
@@ -3287,59 +2859,13 @@ function searchCar() {
 
     }
 
-
-    const sections = [
-
-        {
-            name:
-                "🔌 قسم Wiring",
-
-            storage:
-                "wiringRecords"
-        },
-
-        {
-            name:
-                "⚡ قسم LT",
-
-            storage:
-                "ltRecords"
-        },
-
-        {
-            name:
-                "⚡ قسم HT",
-
-            storage:
-                "htRecords"
-        },
-
-        {
-            name:
-                "🔧 قسم التركيبات",
-
-            storage:
-                "installationRecords"
-        },
-
-        {
-            name:
-                "✅ قسم الفنش النهائي",
-
-            storage:
-                "finalRecords"
-        }
-
-    ];
-
-
     result.innerHTML = `
 
         <div class="search-title">
 
             <h2>
 
-                بيانات العربية رقم:
+                جاري البحث عن العربية رقم:
 
                 ${number}
 
@@ -3349,212 +2875,386 @@ function searchCar() {
 
     `;
 
-
-    sections.forEach(
-        function(section) {
-
-            const records =
-                getRecordsFromStorage(
-                    section.storage
-                );
-
-
-            const carRecords =
-                records.filter(
-                    function(record) {
-
-                        if (!record) {
-                            return false;
-                        }
-
-
-                        const carNumber =
-                            String(
-                                record.carNumber || ""
-                            )
-                            .trim()
-                            .toLowerCase();
-
-
-                        return (
-                            carNumber ===
-                            number.toLowerCase()
-                        );
-
-                    }
-                );
-
-
-            if (
-                carRecords.length > 0
-            ) {
-
-                carRecords.forEach(
-                    function(record) {
-
-                        let extraFields = "";
-
-
-                        if (record.device) {
-
-                            extraFields += `
-
-                                <p>
-
-                                    <strong>
-                                        اسم الجهاز:
-                                    </strong>
-
-                                    ${record.device}
-
-                                </p>
-
-                            `;
-
-                        }
-
-
-                        if (record.socket) {
-
-                            extraFields += `
-
-                                <p>
-
-                                    <strong>
-                                        اسم السوكيت:
-                                    </strong>
-
-                                    ${record.socket}
-
-                                </p>
-
-                            `;
-
-                        }
-
-
-                        if (record.person) {
-
-                            extraFields += `
-
-                                <p>
-
-                                    <strong>
-                                        اسم الشخص:
-                                    </strong>
-
-                                    ${record.person}
-
-                                </p>
-
-                            `;
-
-                        }
-
-
-                        result.innerHTML += `
-
-                            <div class="department-result">
-
-                                <h2>
-                                    ${section.name}
-                                </h2>
-
-
-                                <p>
-                                    <strong>
-                                        اسم العربية:
-                                    </strong>
-
-                                    ${record.carName || "غير موجود"}
-                                </p>
-
-
-                                <p>
-                                    <strong>
-                                        رقم العربية:
-                                    </strong>
-
-                                    ${record.carNumber || "غير موجود"}
-                                </p>
-
-
-                                ${extraFields}
-
-
-                                <p>
-                                    <strong>
-                                        الحالة:
-                                    </strong>
-
-                                    ${record.done || "غير محددة"}
-                                </p>
-
-
-                                <p>
-                                    <strong>
-                                        الملاحظات:
-                                    </strong>
-
-                                    ${record.notes || "لا يوجد"}
-                                </p>
-
-
-                                <p>
-                                    <strong>
-                                        تاريخ التسجيل:
-                                    </strong>
-
-                                    ${record.date || "غير موجود"}
-                                </p>
-
-
-                                ${
-                                    record.addedBy
-                                    ? `
-
-                                        <p>
-
-                                            <strong>
-                                                تم التسجيل بواسطة:
-                                            </strong>
-
-                                            ${record.addedBy}
-
-                                        </p>
-
-                                    `
-                                    : ""
-                                }
-
-                            </div>
-
-                        `;
-
-                    }
+    const allRecords =
+        await getAllRecordsFromSupabase();
+
+    const carRecords =
+        allRecords.filter(
+            function(record) {
+
+                if (!record) {
+                    return false;
+                }
+
+                const carNumber =
+                    String(
+                        record.carNumber || ""
+                    )
+                    .trim()
+                    .toLowerCase();
+
+                return (
+                    carNumber ===
+                    number.toLowerCase()
                 );
 
             }
+        );
 
-            else {
+    if (
+        carRecords.length === 0
+    ) {
 
-                result.innerHTML += `
+        result.innerHTML += `
 
-                    <div class="department-result no-data">
+            <div class="department-result no-data">
 
-                        <h2>
+                <div class="no-car">
 
-                            ${section.name}
+                    ❌ لا يوجد بيانات لهذه العربية
 
-                        </h2>
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    carRecords.forEach(
+        function(record) {
+
+            let sectionName =
+                "القسم";
+
+            if (
+                record.department === "Wiring"
+            ) {
+
+                sectionName =
+                    "🔌 قسم Wiring";
+
+            }
+
+            else if (
+                record.department === "LT"
+            ) {
+
+                sectionName =
+                    "⚡ قسم LT";
+
+            }
+
+            else if (
+                record.department === "HT"
+            ) {
+
+                sectionName =
+                    "⚡ قسم HT";
+
+            }
+
+            else if (
+                record.department === "Installation"
+            ) {
+
+                sectionName =
+                    "🔧 قسم التركيبات";
+
+            }
+
+            else if (
+                record.department === "Final"
+            ) {
+
+                sectionName =
+                    "✅ قسم الفنش النهائي";
+
+            }
+
+            let extraFields = "";
+
+            if (record.device) {
+
+                extraFields += `
+
+                    <p>
+
+                        <strong>
+                            اسم الجهاز:
+                        </strong>
+
+                        ${record.device}
+
+                    </p>
+
+                `;
+
+            }
+
+            if (record.socket) {
+
+                extraFields += `
+
+                    <p>
+
+                        <strong>
+                            اسم السوكيت:
+                        </strong>
+
+                        ${record.socket}
+
+                    </p>
+
+                `;
+
+            }
+
+            if (record.person) {
+
+                extraFields += `
+
+                    <p>
+
+                        <strong>
+                            اسم الشخص:
+                        </strong>
+
+                        ${record.person}
+
+                    </p>
+
+                `;
+
+            }
+
+            result.innerHTML += `
+
+                <div class="department-result">
+
+                    <h2>
+                        ${sectionName}
+                    </h2>
+
+                    <p>
+
+                        <strong>
+                            اسم العربية:
+                        </strong>
+
+                        ${record.carName || "غير موجود"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            رقم العربية:
+                        </strong>
+
+                        ${record.carNumber || "غير موجود"}
+
+                    </p>
+
+                    ${extraFields}
+
+                    <p>
+
+                        <strong>
+                            الحالة:
+                        </strong>
+
+                        ${record.done || "غير محددة"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            الملاحظات:
+                        </strong>
+
+                        ${record.notes || "لا يوجد"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            تاريخ التسجيل:
+                        </strong>
+
+                        ${record.date || "غير موجود"}
+
+                    </p>
+
+                    ${
+                        record.addedBy
+                        ? `
+
+                            <p>
+
+                                <strong>
+                                    تم التسجيل بواسطة:
+                                </strong>
+
+                                ${record.addedBy}
+
+                            </p>
+
+                        `
+                        : ""
+                    }
+
+                </div>
+
+            `;
+
+        }
+    );
+
+}
 
 
-                        <div class="no-car">
+// ============================================================
+// صفحة طلبات الحذف
+// ============================================================
 
-                            ❌ لا يوجد بيانات لهذه العربية
-                            في هذا القسم
+function displayDeleteRequests() {
 
-                        </div>
+    const container =
+        document.getElementById(
+            "deleteRequests"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    const user =
+        getCurrentUser();
+
+    if (
+        !user ||
+        user.role !== "admin"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="error">
+
+                ❌ هذه الصفحة متاحة للمدير فقط
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    const requests =
+        getDeleteRequests();
+
+    container.innerHTML = "";
+
+    if (
+        requests.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <div class="department-result no-data">
+
+                <h2>
+                    🗑️ طلبات الحذف
+                </h2>
+
+                <div class="no-car">
+
+                    لا توجد طلبات حذف حاليًا
+
+                </div>
+
+            </div>
+
+        `;
+
+        updateDeleteRequestsCount();
+
+        return;
+
+    }
+
+    const sortedRequests =
+        [...requests].reverse();
+
+    sortedRequests.forEach(
+        function(request) {
+
+            const realIndex =
+                requests.findIndex(
+                    function(item) {
+
+                        return item.id === request.id;
+
+                    }
+                );
+
+            let buttons = "";
+
+            if (
+                request.status === "pending"
+            ) {
+
+                buttons = `
+
+                    <div style="
+                        display:flex;
+                        gap:10px;
+                        margin-top:20px;
+                        flex-wrap:wrap;
+                    ">
+
+                        <button
+                            type="button"
+                            onclick="approveDeleteRequest(${realIndex})"
+                            style="
+                                flex:1;
+                                min-width:140px;
+                                padding:12px;
+                                border:none;
+                                border-radius:8px;
+                                background:#198754;
+                                color:white;
+                                font-size:15px;
+                                font-weight:bold;
+                                cursor:pointer;
+                            "
+                        >
+                            ✅ موافقة على الحذف
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="rejectDeleteRequest(${realIndex})"
+                            style="
+                                flex:1;
+                                min-width:140px;
+                                padding:12px;
+                                border:none;
+                                border-radius:8px;
+                                background:#d92d20;
+                                color:white;
+                                font-size:15px;
+                                font-weight:bold;
+                                cursor:pointer;
+                            "
+                        >
+                            ❌ رفض الطلب
+                        </button>
 
                     </div>
 
@@ -3562,8 +3262,442 @@ function searchCar() {
 
             }
 
+            else if (
+                request.status === "approved"
+            ) {
+
+                buttons = `
+
+                    <div style="
+                        margin-top:15px;
+                        padding:12px;
+                        background:#e8f7ee;
+                        border-radius:8px;
+                        color:#198754;
+                        font-weight:bold;
+                    ">
+
+                        ✅ تمت الموافقة على الحذف
+
+                        <br>
+
+                        <small>
+
+                            بواسطة:
+                            ${request.reviewedBy || "المدير"}
+
+                            <br>
+
+                            ${request.reviewDate || ""}
+
+                        </small>
+
+                    </div>
+
+                `;
+
+            }
+
+            else if (
+                request.status === "rejected"
+            ) {
+
+                buttons = `
+
+                    <div style="
+                        margin-top:15px;
+                        padding:12px;
+                        background:#fff0f0;
+                        border-radius:8px;
+                        color:#d92d20;
+                        font-weight:bold;
+                    ">
+
+                        ❌ تم رفض طلب الحذف
+
+                        <br>
+
+                        <small>
+
+                            بواسطة:
+                            ${request.reviewedBy || "المدير"}
+
+                            <br>
+
+                            ${request.reviewDate || ""}
+
+                            ${
+                                request.rejectionReason
+                                ? `
+                                    <br>
+                                    السبب:
+                                    ${request.rejectionReason}
+                                `
+                                : ""
+                            }
+
+                        </small>
+
+                    </div>
+
+                `;
+
+            }
+
+            container.innerHTML += `
+
+                <div class="department-result"
+                     style="
+                        margin-bottom:20px;
+                     ">
+
+                    <h2>
+
+                        🗑️ طلب حذف
+
+                        ${request.section || ""}
+
+                    </h2>
+
+                    <p>
+
+                        <strong>
+                            اسم العربية:
+                        </strong>
+
+                        ${request.carName || "غير موجود"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            رقم العربية:
+                        </strong>
+
+                        ${request.carNumber || "غير موجود"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            طلب الحذف بواسطة:
+                        </strong>
+
+                        ${request.requestedBy || "غير معروف"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            حساب المستخدم:
+                        </strong>
+
+                        ${request.requestedByUsername || "غير معروف"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            سبب الحذف:
+                        </strong>
+
+                        ${request.reason || "لا يوجد"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            تاريخ الطلب:
+                        </strong>
+
+                        ${request.requestDate || "غير موجود"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            حالة الطلب:
+                        </strong>
+
+                        ${
+                            request.status === "pending"
+                                ? "⏳ في انتظار الموافقة"
+                                : request.status === "approved"
+                                    ? "✅ تمت الموافقة"
+                                    : "❌ مرفوض"
+                        }
+
+                    </p>
+
+                    ${buttons}
+
+                </div>
+
+            `;
+
         }
     );
+
+    updateDeleteRequestsCount();
+
+}
+
+
+// ============================================================
+// موافقة المدير على طلب الحذف
+// ============================================================
+
+async function approveDeleteRequest(
+    requestIndex
+) {
+
+    const user =
+        getCurrentUser();
+
+    if (
+        !user ||
+        user.role !== "admin"
+    ) {
+
+        alert(
+            "هذه العملية متاحة للمدير فقط ❌"
+        );
+
+        return;
+
+    }
+
+    const requests =
+        getDeleteRequests();
+
+    const request =
+        requests[requestIndex];
+
+    if (!request) {
+
+        alert(
+            "طلب الحذف غير موجود ❌"
+        );
+
+        return;
+
+    }
+
+    if (
+        request.status !== "pending"
+    ) {
+
+        alert(
+            "تم التعامل مع هذا الطلب من قبل."
+        );
+
+        return;
+
+    }
+
+    const confirmed =
+        confirm(
+            "⚠️ هل تريد الموافقة على حذف هذا البيان؟"
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        if (
+            request.supabaseId
+        ) {
+
+            await deleteRecordFromSupabase(
+                request.supabaseId
+            );
+
+        }
+
+        else {
+
+            const records =
+                await getRecordsFromStorage(
+                    request.storageName
+                );
+
+            const record =
+                records.find(
+                    function(item) {
+
+                        return (
+                            String(item.recordId) ===
+                            String(request.recordId)
+                        );
+
+                    }
+                );
+
+            if (
+                record &&
+                record.id
+            ) {
+
+                await deleteRecordFromSupabase(
+                    record.id
+                );
+
+            }
+
+        }
+
+        request.status =
+            "approved";
+
+        request.reviewedBy =
+            user.name;
+
+        request.reviewDate =
+            getCurrentDateTime();
+
+        request.result =
+            "تم حذف البيان";
+
+        requests[requestIndex] =
+            request;
+
+        saveDeleteRequests(
+            requests
+        );
+
+        alert(
+            "تمت الموافقة على الطلب وحذف البيان بنجاح ✅"
+        );
+
+        displayDeleteRequests();
+
+        await displayAllRecords();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "حدث خطأ أثناء حذف البيان من Supabase ❌\n\n" +
+            (error.message || "")
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// رفض طلب الحذف
+// ============================================================
+
+function rejectDeleteRequest(
+    requestIndex
+) {
+
+    const user =
+        getCurrentUser();
+
+    if (
+        !user ||
+        user.role !== "admin"
+    ) {
+
+        alert(
+            "هذه العملية متاحة للمدير فقط ❌"
+        );
+
+        return;
+
+    }
+
+    const requests =
+        getDeleteRequests();
+
+    const request =
+        requests[requestIndex];
+
+    if (!request) {
+
+        alert(
+            "طلب الحذف غير موجود ❌"
+        );
+
+        return;
+
+    }
+
+    if (
+        request.status !== "pending"
+    ) {
+
+        alert(
+            "تم التعامل مع هذا الطلب من قبل."
+        );
+
+        return;
+
+    }
+
+    const reason =
+        prompt(
+            "اكتب سبب رفض طلب الحذف (اختياري):"
+        );
+
+    if (
+        reason === null
+    ) {
+
+        return;
+
+    }
+
+    request.status =
+        "rejected";
+
+    request.reviewedBy =
+        user.name;
+
+    request.reviewDate =
+        getCurrentDateTime();
+
+    request.rejectionReason =
+        reason.trim();
+
+    requests[requestIndex] =
+        request;
+
+    saveDeleteRequests(
+        requests
+    );
+
+    alert(
+        "تم رفض طلب الحذف ❌"
+    );
+
+    displayDeleteRequests();
+
+}
+
+
+// ============================================================
+// إضافة IDs للسجلات القديمة
+// ============================================================
+//
+// لم نعد نحتاج إليها لأن Supabase يعطي كل record رقم id.
+// ============================================================
+
+function ensureRecordIds() {
+
+    return;
 
 }
 
@@ -3579,7 +3713,6 @@ function clearInput(id) {
             id
         );
 
-
     if (element) {
 
         element.value = "";
@@ -3593,17 +3726,17 @@ function clearInput(id) {
 // عرض كل السجلات
 // ============================================================
 
-function displayAllRecords() {
+async function displayAllRecords() {
 
-    displayWiringRecords();
+    await displayWiringRecords();
 
-    displayLTRecords();
+    await displayLTRecords();
 
-    displayHTRecords();
+    await displayHTRecords();
 
-    displayInstallationRecords();
+    await displayInstallationRecords();
 
-    displayFinalRecords();
+    await displayFinalRecords();
 
 }
 
@@ -3612,15 +3745,41 @@ function displayAllRecords() {
 // تشغيل النظام
 // ============================================================
 
-ensureRecordIds();
+async function initializeSystem() {
 
-protectPage();
+    ensureRecordIds();
 
-setupDashboard();
+    protectPage();
 
-displayAllRecords();
+    setupDashboard();
 
-displayDeleteRequests();
+    await displayAllRecords();
+
+    displayDeleteRequests();
+
+}
+
+
+// ============================================================
+// بدء النظام بعد تحميل الصفحة
+// ============================================================
+
+if (
+    document.readyState === "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        initializeSystem
+    );
+
+}
+
+else {
+
+    initializeSystem();
+
+}
 
 
 // ============================================================
