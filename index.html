@@ -630,6 +630,253 @@
 
 
         // ==================================
+        // فتح الأقسام
+        // نسخة مضمونة للحسابات
+        // ==================================
+
+        function openSection(section) {
+
+            const userData =
+                sessionStorage.getItem(
+                    "currentUser"
+                );
+
+
+            // لو مفيش مستخدم مسجل
+
+            if (!userData) {
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            let user;
+
+            try {
+
+                user =
+                    JSON.parse(
+                        userData
+                    );
+
+            } catch (error) {
+
+                sessionStorage.removeItem(
+                    "currentUser"
+                );
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            // ==================================
+            // Wiring
+            // ==================================
+
+            if (section === "wiring") {
+
+                if (
+                    user.role === "wiring" ||
+                    user.role === "admin"
+                ) {
+
+                    window.location.href =
+                        "wiring.html";
+
+                    return;
+
+                }
+
+
+                alert(
+                    "ليس لديك صلاحية للدخول إلى هذا القسم ❌"
+                );
+
+                return;
+
+            }
+
+
+            // ==================================
+            // LT
+            // ==================================
+
+            if (section === "lt") {
+
+                if (
+                    user.role === "lt" ||
+                    user.role === "admin"
+                ) {
+
+                    window.location.href =
+                        "lt.html";
+
+                    return;
+
+                }
+
+
+                alert(
+                    "ليس لديك صلاحية للدخول إلى هذا القسم ❌"
+                );
+
+                return;
+
+            }
+
+
+            // ==================================
+            // HT
+            // ==================================
+
+            if (section === "ht") {
+
+                if (
+                    user.role === "ht" ||
+                    user.role === "admin"
+                ) {
+
+                    window.location.href =
+                        "ht.html";
+
+                    return;
+
+                }
+
+
+                alert(
+                    "ليس لديك صلاحية للدخول إلى هذا القسم ❌"
+                );
+
+                return;
+
+            }
+
+
+            // ==================================
+            // التركيبات
+            // ==================================
+
+            if (section === "installation") {
+
+                if (
+                    user.role === "installation" ||
+                    user.role === "admin"
+                ) {
+
+                    window.location.href =
+                        "installation.html";
+
+                    return;
+
+                }
+
+
+                alert(
+                    "ليس لديك صلاحية للدخول إلى هذا القسم ❌"
+                );
+
+                return;
+
+            }
+
+
+            // ==================================
+            // الفنش النهائي
+            // ==================================
+
+            if (section === "final") {
+
+                if (
+                    user.role === "admin" ||
+                    user.username === "Osama" ||
+                    user.username === "Mamdouh"
+                ) {
+
+                    window.location.href =
+                        "final.html";
+
+                    return;
+
+                }
+
+
+                alert(
+                    "ليس لديك صلاحية للدخول إلى الفنش النهائي ❌"
+                );
+
+                return;
+
+            }
+
+
+            // ==================================
+            // سجل البيانات
+            // ==================================
+
+            if (section === "search") {
+
+                if (
+                    user.role === "admin"
+                ) {
+
+                    window.location.href =
+                        "search.html";
+
+                    return;
+
+                }
+
+
+                alert(
+                    "ليس لديك صلاحية للدخول إلى سجل البيانات ❌"
+                );
+
+                return;
+
+            }
+
+
+            // ==================================
+            // طلبات الحذف
+            // ==================================
+
+            if (
+                section === "deleteRequests"
+            ) {
+
+                if (
+                    user.role === "admin"
+                ) {
+
+                    window.location.href =
+                        "deleteRequests.html";
+
+                    return;
+
+                }
+
+
+                alert(
+                    "طلبات الحذف متاحة للمدير فقط ❌"
+                );
+
+                return;
+
+            }
+
+        }
+
+
+        // ==================================
         // إحصائيات الصفحة الرئيسية
         // ==================================
 
@@ -662,10 +909,14 @@
                             );
 
 
-                        if (Array.isArray(data)) {
+                        if (
+                            Array.isArray(data)
+                        ) {
 
                             records =
-                                records.concat(data);
+                                records.concat(
+                                    data
+                                );
 
                         }
 
@@ -683,7 +934,10 @@
                 records.filter(
                     function(record) {
 
-                        return record.done === "نعم";
+                        return (
+                            record.done ===
+                            "نعم"
+                        );
 
                     }
                 ).length;
@@ -693,7 +947,10 @@
                 records.filter(
                     function(record) {
 
-                        return record.done === "لا";
+                        return (
+                            record.done ===
+                            "لا"
+                        );
 
                     }
                 ).length;
