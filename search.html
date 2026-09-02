@@ -8,6 +8,9 @@
     <title>البحث عن سيارة</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -40,15 +43,20 @@
 
                     <label>رقم العربية</label>
 
-                    <input
-                        type="text"
-                        id="searchCarNumber"
-                        placeholder="اكتب رقم العربية">
+                    <select
+                        id="searchCarNumber">
+
+                        <option value="">
+                            ⬇️ اختر رقم العربية
+                        </option>
+
+                    </select>
 
                 </div>
 
                 <button
                     class="save-btn"
+                    id="searchButton"
                     onclick="searchCar()">
 
                     🔍 بحث
@@ -67,30 +75,952 @@
     </div>
 
 
-    <script src="script.js"></script>
+<script>
 
-    <script>
+/* =========================================================
+   SUPABASE
+========================================================= */
 
-        // لو جايين من الصفحة الرئيسية برقم عربية
-        const savedNumber =
-            localStorage.getItem("searchNumber");
+const SUPABASE_URL =
+    "https://gzyybadyaunizdlvmcle.supabase.co";
 
-        if (savedNumber) {
+const SUPABASE_KEY =
+    "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
 
-            const input =
-                document.getElementById("searchCarNumber");
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
-            if (input) {
-                input.value = savedNumber;
-            }
 
-            localStorage.removeItem("searchNumber");
+/* =========================================================
+   الهروب من HTML
+========================================================= */
 
-            searchCar();
+function escapeHTML(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   تحويل التاريخ للعربي
+========================================================= */
+
+function formatArabicDate(value) {
+
+    if (!value) {
+        return "غير موجود";
+    }
+
+    const date = new Date(value);
+
+    if (isNaN(date.getTime())) {
+        return escapeHTML(value);
+    }
+
+    return new Intl.DateTimeFormat(
+        "ar-EG",
+        {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true
+        }
+    ).format(date);
+}
+
+
+/* =========================================================
+   الرجوع للرئيسية
+========================================================= */
+
+function goHome() {
+
+    window.location.href = "index.html";
+
+}
+
+
+/* =========================================================
+   تحميل أرقام العربيات
+========================================================= */
+
+async function loadCarNumbers() {
+
+    const select =
+        document.getElementById(
+            "searchCarNumber"
+        );
+
+    if (!select) {
+        return;
+    }
+
+
+    /* رسالة تحميل */
+
+    select.innerHTML = `
+        <option value="">
+            ⏳ جاري تحميل أرقام العربيات...
+        </option>
+    `;
+
+
+    try {
+
+        console.log(
+            "🚗 جاري تحميل أرقام العربيات..."
+        );
+
+
+        /* =================================================
+           جلب أرقام العربيات من Supabase
+        ================================================= */
+
+        const response =
+            await supabaseClient
+                .from("records")
+                .select("car_number")
+                .not("car_number", "is", null)
+                .order("car_number", {
+                    ascending: true
+                });
+
+
+        console.log(
+            "📥 أرقام العربيات:",
+            response
+        );
+
+
+        if (response.error) {
+
+            console.error(
+                "❌ خطأ تحميل أرقام العربيات:",
+                response.error
+            );
+
+            select.innerHTML = `
+                <option value="">
+                    ❌ تعذر تحميل أرقام العربيات
+                </option>
+            `;
+
+            return;
         }
 
-    </script>
+
+        const rows =
+            response.data || [];
+
+
+        /* =================================================
+           إزالة التكرار
+        ================================================= */
+
+        const numbers = [
+            ...new Set(
+                rows
+                    .map(function(row) {
+                        return String(
+                            row.car_number || ""
+                        ).trim();
+                    })
+                    .filter(function(number) {
+                        return number !== "";
+                    })
+            )
+        ];
+
+
+        /* =================================================
+           ترتيب الأرقام
+        ================================================= */
+
+        numbers.sort(function(a, b) {
+
+            /*
+               نحاول ترتيب رقم العربية حسب
+               الرقم الموجود في البداية
+
+               مثال:
+               65-DTC-17
+               66-MC1-17
+               67-MC2-17
+            */
+
+            const numberA =
+                parseInt(
+                    a.split("-")[0]
+                ) || 999999;
+
+            const numberB =
+                parseInt(
+                    b.split("-")[0]
+                ) || 999999;
+
+
+            if (numberA !== numberB) {
+                return numberA - numberB;
+            }
+
+
+            return a.localeCompare(
+                b,
+                "ar"
+            );
+
+        });
+
+
+        /* =================================================
+           لا توجد أرقام
+        ================================================= */
+
+        if (numbers.length === 0) {
+
+            select.innerHTML = `
+                <option value="">
+                    ❌ لا توجد عربيات مسجلة
+                </option>
+            `;
+
+            return;
+        }
+
+
+        /* =================================================
+           بناء القائمة
+        ================================================= */
+
+        select.innerHTML = `
+            <option value="">
+                ⬇️ اختر رقم العربية
+            </option>
+        `;
+
+
+        numbers.forEach(
+            function(number) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    number;
+
+                option.textContent =
+                    number.replace(
+                        /-/g,
+                        "  "
+                    );
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        console.log(
+            "✅ تم تحميل",
+            numbers.length,
+            "رقم عربية"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ LOAD CAR NUMBERS ERROR:",
+            error
+        );
+
+
+        select.innerHTML = `
+            <option value="">
+                ❌ حصل خطأ أثناء تحميل العربيات
+            </option>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   عند اختيار العربية
+========================================================= */
+
+document
+    .getElementById("searchCarNumber")
+    .addEventListener(
+        "change",
+        function() {
+
+            const number =
+                this.value.trim();
+
+
+            if (!number) {
+                return;
+            }
+
+
+            /*
+               البحث مباشرة بعد الاختيار
+            */
+
+            searchCar();
+
+        }
+    );
+
+
+/* =========================================================
+   عند الضغط Enter
+========================================================= */
+
+document
+    .getElementById("searchCarNumber")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                searchCar();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   البحث عن السيارة
+========================================================= */
+
+async function searchCar() {
+
+    const input =
+        document.getElementById(
+            "searchCarNumber"
+        );
+
+    const result =
+        document.getElementById(
+            "searchResult"
+        );
+
+    const button =
+        document.getElementById(
+            "searchButton"
+        );
+
+
+    if (!input || !result) {
+        return;
+    }
+
+
+    const number =
+        input.value.trim();
+
+
+    /* -------------------------
+       التحقق من الرقم
+    ------------------------- */
+
+    if (!number) {
+
+        result.innerHTML = `
+            <div class="error">
+
+                من فضلك اختر رقم العربية
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    /* -------------------------
+       تعطيل الزر أثناء البحث
+    ------------------------- */
+
+    if (button) {
+
+        button.disabled = true;
+
+        button.innerHTML =
+            "⏳ جاري البحث...";
+
+    }
+
+
+    result.innerHTML = `
+        <div class="search-title">
+
+            <h2>
+                ⏳ جاري البحث عن العربية رقم:
+                ${escapeHTML(number)}
+            </h2>
+
+        </div>
+    `;
+
+
+    try {
+
+        console.log(
+            "🔎 البحث عن العربية:",
+            number
+        );
+
+
+        /* =================================================
+           جلب البيانات من Supabase
+        ================================================= */
+
+        const response =
+            await supabaseClient
+                .from("records")
+                .select("*")
+                .eq("car_number", number)
+                .order("id", {
+                    ascending: false
+                });
+
+
+        console.log(
+            "📥 نتيجة البحث:",
+            response
+        );
+
+
+        /* =================================================
+           خطأ Supabase
+        ================================================= */
+
+        if (response.error) {
+
+            console.error(
+                "❌ Supabase Search Error:",
+                response.error
+            );
+
+            result.innerHTML = `
+                <div class="error">
+
+                    ❌ تعذر البحث في قاعدة البيانات
+
+                    <br><br>
+
+                    ${escapeHTML(
+                        response.error.message
+                    )}
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        const records =
+            response.data || [];
+
+
+        /* =================================================
+           لا توجد بيانات
+        ================================================= */
+
+        if (records.length === 0) {
+
+            result.innerHTML = `
+                <div class="search-title">
+
+                    <h2>
+                        نتائج البحث
+                    </h2>
+
+                </div>
+
+                <div class="department-result no-data">
+
+                    <h2>
+                        ❌ لا توجد بيانات
+                    </h2>
+
+                    <div class="no-car">
+
+                        لا يوجد أي تسجيل للعربية رقم:
+
+                        <strong>
+                            ${escapeHTML(number)}
+                        </strong>
+
+                    </div>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        /* =================================================
+           أسماء الأقسام
+        ================================================= */
+
+        const departments = {
+
+            wiring:
+                "🔌 قسم Wiring",
+
+            lt:
+                "⚡ قسم LT",
+
+            ht:
+                "⚡ قسم HT",
+
+            installation:
+                "🔧 قسم التركيبات",
+
+            final:
+                "✅ قسم الفنش النهائي"
+
+        };
+
+
+        /* =================================================
+           بداية النتائج
+        ================================================= */
+
+        result.innerHTML = `
+
+            <div class="search-title">
+
+                <h2>
+
+                    بيانات العربية رقم:
+
+                    ${escapeHTML(number)}
+
+                </h2>
+
+                <p>
+
+                    تم العثور على
+                    <strong>${records.length}</strong>
+                    تسجيل
+
+                </p>
+
+            </div>
+
+        `;
+
+
+        /* =================================================
+           عرض كل الأقسام
+        ================================================= */
+
+        Object.keys(departments).forEach(
+            function(department) {
+
+
+                const departmentRecords =
+                    records.filter(
+                        function(record) {
+
+                            return String(
+                                record.department || ""
+                            ).toLowerCase() ===
+                            department;
+
+                        }
+                    );
+
+
+                /* -----------------------------------------
+                   القسم بدون بيانات
+                ----------------------------------------- */
+
+                if (
+                    departmentRecords.length === 0
+                ) {
+
+                    result.innerHTML += `
+
+                        <div class="department-result no-data">
+
+                            <h2>
+                                ${departments[department]}
+                            </h2>
+
+                            <div class="no-car">
+
+                                ❌ لا يوجد بيانات لهذه العربية
+                                في هذا القسم
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                    return;
+                }
+
+
+                /* -----------------------------------------
+                   عرض سجلات القسم
+                ----------------------------------------- */
+
+                departmentRecords.forEach(
+                    function(record) {
+
+
+                        let extraFields = "";
+
+
+                        /* الجهاز */
+
+                        if (record.device) {
+
+                            extraFields += `
+
+                                <p>
+
+                                    <strong>
+                                        اسم الجهاز:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        record.device
+                                    )}
+
+                                </p>
+
+                            `;
+
+                        }
+
+
+                        /* السوكيت */
+
+                        if (record.socket) {
+
+                            extraFields += `
+
+                                <p>
+
+                                    <strong>
+                                        اسم السوكيت:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        record.socket
+                                    )}
+
+                                </p>
+
+                            `;
+
+                        }
+
+
+                        /* اسم الشخص */
+
+                        if (record.person) {
+
+                            extraFields += `
+
+                                <p>
+
+                                    <strong>
+                                        اسم الشخص:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        record.person
+                                    )}
+
+                                </p>
+
+                            `;
+
+                        }
+
+
+                        /* الحالة */
+
+                        let doneText =
+                            record.done ||
+                            "";
+
+
+                        /* ---------------------------------
+                           الكارت
+                        --------------------------------- */
+
+                        result.innerHTML += `
+
+                            <div class="department-result">
+
+                                <h2>
+
+                                    ${departments[department]}
+
+                                </h2>
+
+
+                                <p>
+
+                                    <strong>
+                                        اسم العربية:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        record.car_name ||
+                                        "غير موجود"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        رقم العربية:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        record.car_number ||
+                                        "غير موجود"
+                                    )}
+
+                                </p>
+
+
+                                ${extraFields}
+
+
+                                ${
+                                    doneText
+                                    ? `
+
+                                        <p>
+
+                                            <strong>
+                                                الحالة:
+                                            </strong>
+
+                                            ${escapeHTML(
+                                                doneText
+                                            )}
+
+                                        </p>
+
+                                    `
+                                    : ""
+                                }
+
+
+                                <p>
+
+                                    <strong>
+                                        الملاحظات:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        record.notes ||
+                                        "لا يوجد"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        تم التسجيل بواسطة:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        record.created_by ||
+                                        "غير معروف"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        تاريخ التسجيل:
+                                    </strong>
+
+                                    ${formatArabicDate(
+                                        record.created_at
+                                    )}
+
+                                </p>
+
+                            </div>
+
+                        `;
+
+                    }
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ SEARCH ERROR:",
+            error
+        );
+
+
+        result.innerHTML = `
+
+            <div class="error">
+
+                ❌ حصل خطأ أثناء البحث
+
+                <br><br>
+
+                ${escapeHTML(
+                    error.message ||
+                    error
+                )}
+
+            </div>
+
+        `;
+
+    } finally {
+
+        /* إعادة الزر */
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.innerHTML =
+                "🔍 بحث";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   تشغيل تحميل أرقام العربيات عند فتح الصفحة
+========================================================= */
+
+loadCarNumbers();
+
+
+/* =========================================================
+   رقم البحث القادم من الصفحة الرئيسية
+========================================================= */
+
+try {
+
+    const savedNumber =
+        localStorage.getItem(
+            "searchNumber"
+        );
+
+
+    if (savedNumber) {
+
+        const select =
+            document.getElementById(
+                "searchCarNumber"
+            );
+
+
+        if (select) {
+
+            /*
+               ننتظر تحميل القائمة
+               ثم نختار الرقم المحفوظ
+            */
+
+            setTimeout(
+                function() {
+
+                    const option =
+                        Array.from(
+                            select.options
+                        ).find(
+                            function(option) {
+                                return option.value ===
+                                    savedNumber;
+                            }
+                        );
+
+
+                    if (option) {
+
+                        select.value =
+                            savedNumber;
+
+                        searchCar();
+
+                    }
+
+                },
+                500
+            );
+
+        }
+
+
+        localStorage.removeItem(
+            "searchNumber"
+        );
+
+    }
+
+} catch (error) {
+
+    console.log(
+        "لا يوجد رقم بحث محفوظ"
+    );
+
+}
+
+</script>
 
 </body>
-
 </html>

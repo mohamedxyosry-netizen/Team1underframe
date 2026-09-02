@@ -17,6 +17,10 @@
 <body class="login-page">
 
 
+    <!-- ================================
+         HEADER
+    ================================= -->
+
     <div class="site-header">
 
         <div class="neric">
@@ -25,6 +29,10 @@
 
     </div>
 
+
+    <!-- ================================
+         LOGIN
+    ================================= -->
 
     <div class="login-container">
 
@@ -39,6 +47,8 @@
         </p>
 
 
+        <!-- Username -->
+
         <div class="input-group">
 
             <input
@@ -51,6 +61,8 @@
         </div>
 
 
+        <!-- Password -->
+
         <div class="input-group">
 
             <input
@@ -62,6 +74,8 @@
 
         </div>
 
+
+        <!-- Remember Me -->
 
         <label class="remember">
 
@@ -77,6 +91,8 @@
         </label>
 
 
+        <!-- Login Button -->
+
         <button
             type="button"
             id="loginButton">
@@ -86,235 +102,318 @@
         </button>
 
 
+        <!-- Message -->
+
         <div id="message"></div>
 
     </div>
 
 
-<script>
+    <!-- ================================
+         LOGIN SCRIPT
+    ================================= -->
 
-const USERS = {
+    <script>
 
-    "Yosry": {
-        password: "0111252",
-        role: "admin",
-        name: "Yosry"
-    },
+        const USERS = {
 
-    "Zezo": {
-        password: "58321476",
-        role: "wiring",
-        name: "Zezo"
-    },
+            "Yosry": {
+                password: "0111252",
+                role: "admin",
+                name: "Yosry"
+            },
 
-    "Abdo": {
-        password: "74185296",
-        role: "wiring",
-        name: "Abdo"
-    },
+            "Zezo": {
+                password: "58321476",
+                role: "wiring",
+                name: "Zezo"
+            },
 
-    "Osama": {
-        password: "29481736",
-        role: "lt",
-        name: "Osama"
-    },
+            "Abdo": {
+                password: "74185296",
+                role: "wiring",
+                name: "Abdo"
+            },
 
-    "Yaser": {
-        password: "63825194",
-        role: "lt",
-        name: "Yaser"
-    },
+            "Osama": {
+                password: "29481736",
+                role: "lt",
+                name: "Osama"
+            },
 
-    "Seif": {
-        password: "81573924",
-        role: "lt",
-        name: "Seif"
-    },
+            "Yaser": {
+                password: "63825194",
+                role: "lt",
+                name: "Yaser"
+            },
 
-    "Ahmed Ayman": {
-        password: "47291638",
-        role: "lt",
-        name: "Ahmed Ayman"
-    },
+            "Seif": {
+                password: "81573924",
+                role: "lt",
+                name: "Seif"
+            },
 
-    "Mamdouh": {
-        password: "92638471",
-        role: "ht",
-        name: "Mamdouh"
-    },
+            "Ahmed Ayman": {
+                password: "47291638",
+                role: "lt",
+                name: "Ahmed Ayman"
+            },
 
-    "Ali": {
-        password: "35182749",
-        role: "ht",
-        name: "Ali"
-    },
+            "Mamdouh": {
+                password: "92638471",
+                role: "ht",
+                name: "Mamdouh"
+            },
 
-    "Eid": {
-        password: "68421937",
-        role: "installation",
-        name: "Eid"
-    },
+            "Ali": {
+                password: "35182749",
+                role: "ht",
+                name: "Ali"
+            },
 
-    "Mosad": {
-        password: "51963827",
-        role: "installation",
-        name: "Mosad"
-    },
+            "Eid": {
+                password: "68421937",
+                role: "installation",
+                name: "Eid"
+            },
 
-    "Mohamed Haitham": {
-        password: "83746192",
-        role: "installation",
-        name: "Mohamed Haitham"
-    }
+            "Mosad": {
+                password: "51963827",
+                role: "installation",
+                name: "Mosad"
+            },
 
-};
+            "Mohamed Haitham": {
+                password: "83746192",
+                role: "installation",
+                name: "Mohamed Haitham"
+            }
 
-
-function loginUser() {
-
-    const username =
-        document.getElementById("username").value.trim();
-
-    const password =
-        document.getElementById("password").value.trim();
-
-    const message =
-        document.getElementById("message");
-
-    const button =
-        document.getElementById("loginButton");
+        };
 
 
-    if (!username || !password) {
+        function loginUser() {
 
-        message.innerText =
-            "❌ من فضلك اكتب اسم المستخدم وكلمة المرور";
+            const usernameInput =
+                document.getElementById("username");
 
-        message.style.color = "#dc3545";
+            const passwordInput =
+                document.getElementById("password");
 
-        return;
-    }
+            const message =
+                document.getElementById("message");
 
-
-    const user =
-        USERS[username];
-
-
-    if (!user || user.password !== password) {
-
-        message.innerText =
-            "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-
-        message.style.color = "#dc3545";
-
-        return;
-    }
+            const button =
+                document.getElementById("loginButton");
 
 
-    const currentUser = {
+            const username =
+                usernameInput.value.trim();
 
-        username: username,
-
-        name: user.name,
-
-        role: user.role
-
-    };
+            const password =
+                passwordInput.value.trim();
 
 
-    sessionStorage.setItem(
-        "currentUser",
-        JSON.stringify(currentUser)
-    );
+            /* =========================
+               التحقق من البيانات
+            ========================= */
 
+            if (!username || !password) {
 
-    const remember =
-        document.getElementById("rememberMe").checked;
+                message.innerText =
+                    "❌ من فضلك اكتب اسم المستخدم وكلمة المرور";
 
+                message.style.color =
+                    "#dc3545";
 
-    if (remember) {
-
-        localStorage.setItem(
-            "rememberedUsername",
-            username
-        );
-
-    } else {
-
-        localStorage.removeItem(
-            "rememberedUsername"
-        );
-
-    }
-
-
-    message.innerText =
-        "✅ تم تسجيل الدخول بنجاح";
-
-    message.style.color = "#198754";
-
-
-    button.disabled = true;
-
-    button.innerText =
-        "⏳ جاري الدخول...";
-
-
-    window.location.href = "index.html";
-
-}
-
-
-document
-    .getElementById("loginButton")
-    .addEventListener(
-        "click",
-        loginUser
-    );
-
-
-document
-    .getElementById("password")
-    .addEventListener(
-        "keydown",
-        function(event) {
-
-            if (event.key === "Enter") {
-
-                loginUser();
+                return;
 
             }
 
-        }
-    );
+
+            /* =========================
+               البحث عن المستخدم
+            ========================= */
+
+            const user =
+                USERS[username];
 
 
-window.addEventListener(
-    "load",
-    function() {
+            if (
+                !user ||
+                user.password !== password
+            ) {
 
-        const remembered =
-            localStorage.getItem(
-                "rememberedUsername"
+                message.innerText =
+                    "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+
+                message.style.color =
+                    "#dc3545";
+
+                return;
+
+            }
+
+
+            /* =========================
+               إنشاء الجلسة
+            ========================= */
+
+            const currentUser = {
+
+                username:
+                    username,
+
+                name:
+                    user.name,
+
+                role:
+                    user.role
+
+            };
+
+
+            sessionStorage.setItem(
+                "currentUser",
+                JSON.stringify(currentUser)
             );
 
 
-        if (remembered) {
+            /* =========================
+               Remember Me
+            ========================= */
 
-            document.getElementById(
-                "username"
-            ).value = remembered;
+            const remember =
+                document.getElementById(
+                    "rememberMe"
+                ).checked;
 
-            document.getElementById(
-                "rememberMe"
-            ).checked = true;
+
+            if (remember) {
+
+                localStorage.setItem(
+                    "rememberedUsername",
+                    username
+                );
+
+            } else {
+
+                localStorage.removeItem(
+                    "rememberedUsername"
+                );
+
+            }
+
+
+            /* =========================
+               نجاح
+            ========================= */
+
+            message.innerText =
+                "✅ تم تسجيل الدخول بنجاح";
+
+            message.style.color =
+                "#198754";
+
+
+            button.disabled =
+                true;
+
+            button.innerText =
+                "⏳ جاري الدخول...";
+
+
+            /* =========================
+               الانتقال للرئيسية
+            ========================= */
+
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        "index.html";
+
+                },
+                300
+            );
 
         }
 
-    }
-);
 
-</script>
+        /* ================================
+           زر الدخول
+        ================================= */
+
+        document
+            .getElementById("loginButton")
+            .addEventListener(
+                "click",
+                loginUser
+            );
+
+
+        /* ================================
+           Enter
+        ================================= */
+
+        document
+            .getElementById("password")
+            .addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        loginUser();
+
+                    }
+
+                }
+            );
+
+
+        /* ================================
+           Remember Me
+        ================================= */
+
+        window.addEventListener(
+            "load",
+            function() {
+
+                const remembered =
+                    localStorage.getItem(
+                        "rememberedUsername"
+                    );
+
+
+                if (remembered) {
+
+                    const usernameInput =
+                        document.getElementById(
+                            "username"
+                        );
+
+                    const rememberMe =
+                        document.getElementById(
+                            "rememberMe"
+                        );
+
+
+                    usernameInput.value =
+                        remembered;
+
+                    rememberMe.checked =
+                        true;
+
+                }
+
+            }
+        );
+
+    </script>
+
 
 </body>
 

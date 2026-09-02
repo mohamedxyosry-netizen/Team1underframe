@@ -8,374 +8,238 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>قسم التركيبات</title>
-
-    <link rel="stylesheet" href="style.css">
+    <title>NERIC - Installation</title>
 
     <style>
 
-        /* =========================================
-           صفحة التركيبات
-        ========================================= */
-
-        .installation-page {
-
-            padding: 25px;
-
-        }
-
-
-        /* =========================================
-           رأس الصفحة
-        ========================================= */
-
-        .installation-header {
-
-            background: linear-gradient(
-                135deg,
-                #343a40,
-                #495057
-            );
-
-            color: white;
-
-            border-radius: 18px;
-
-            padding: 22px 25px;
-
-            margin-bottom: 25px;
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            box-shadow:
-                0 5px 20px rgba(0,0,0,0.15);
-
-        }
-
-
-        .installation-header h1 {
-
-            margin: 0;
-
-            font-size: 28px;
-
-        }
-
-
-        .installation-header p {
-
-            margin: 7px 0 0;
-
-            opacity: 0.85;
-
-            font-size: 14px;
-
-        }
-
-
-        .installation-home-btn {
-
-            border: none;
-
-            background: white;
-
-            color: #343a40;
-
-            padding: 11px 20px;
-
-            border-radius: 10px;
-
-            cursor: pointer;
-
-            font-size: 14px;
-
-            font-weight: bold;
-
-            transition: 0.2s;
-
-        }
-
-
-        .installation-home-btn:hover {
-
-            transform: translateY(-2px);
-
-        }
-
-
-        /* =========================================
-           محتوى الصفحة
-        ========================================= */
-
-        .installation-content {
-
-            display: grid;
-
-            grid-template-columns:
-                minmax(300px, 0.8fr)
-                minmax(350px, 1.2fr);
-
-            gap: 22px;
-
-            align-items: start;
-
-        }
-
-
-        /* =========================================
-           كارت تسجيل البيانات
-        ========================================= */
-
-        .installation-form-card {
-
-            background: white;
-
-            border-radius: 18px;
-
-            padding: 25px;
-
-            box-shadow:
-                0 5px 20px rgba(0,0,0,0.08);
-
-            border-top: 5px solid #343a40;
-
-        }
-
-
-        .installation-form-title {
-
-            margin: 0 0 22px;
-
-            font-size: 21px;
-
-            color: #343a40;
-
-        }
-
-
-        /* =========================================
-           مجموعات الإدخال
-        ========================================= */
-
-        .installation-input-group {
-
-            margin-bottom: 17px;
-
-        }
-
-
-        .installation-input-group label {
-
-            display: block;
-
-            margin-bottom: 7px;
-
-            font-weight: bold;
-
-            color: #444;
-
-            font-size: 14px;
-
-        }
-
-
-        .installation-input-group input,
-        .installation-input-group select,
-        .installation-input-group textarea {
-
-            width: 100%;
-
+        * {
             box-sizing: border-box;
+        }
 
-            padding: 12px 14px;
+        body {
+            margin: 0;
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f1f5f9;
+            color: #1f2937;
+        }
 
-            border: 1px solid #ddd;
+        .dashboard {
+            min-height: 100vh;
+        }
 
-            border-radius: 10px;
+        .header {
+            background: rgb(52, 67, 84);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            border-bottom: 3px solid #5928e0;
+        }
 
-            background: #fafafa;
+        .header h1 {
+            margin: 0 0 7px;
+            font-size: 28px;
+            color: #ffffff;
+        }
 
-            outline: none;
-
-            font-family: inherit;
-
+        .header p {
+            margin: 0;
+            color: #d1d5db;
             font-size: 14px;
-
-            transition: 0.2s;
-
         }
 
-
-        .installation-input-group input:focus,
-        .installation-input-group select:focus,
-        .installation-input-group textarea:focus {
-
-            border-color: #343a40;
-
-            background: white;
-
-            box-shadow:
-                0 0 0 3px rgba(52,58,64,0.08);
-
-        }
-
-
-        .installation-input-group textarea {
-
-            min-height: 100px;
-
-            resize: vertical;
-
-        }
-
-
-        /* =========================================
-           زر الحفظ
-        ========================================= */
-
-        .installation-save-btn {
-
-            width: 100%;
-
+        .logout-btn {
             border: none;
-
-            background: linear-gradient(
-                135deg,
-                #343a40,
-                #495057
-            );
-
+            background: #198754;
             color: white;
-
-            padding: 13px;
-
+            padding: 12px 20px;
             border-radius: 10px;
-
             cursor: pointer;
-
             font-size: 15px;
-
             font-weight: bold;
+        }
 
-            margin-top: 5px;
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
 
+        .form-page {
+            width: min(1100px, 94%);
+            margin: 30px auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .form-card,
+        .records-card {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-card {
+            border-top: 5px solid #198754;
+        }
+
+        .records-card {
+            border-top: 5px solid #0d6efd;
+        }
+
+        .form-card h2,
+        .records-card h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 21px;
+        }
+
+        .form-card h2 {
+            color: #198754;
+        }
+
+        .records-card h2 {
+            color: #0d6efd;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 15px;
+            background: #f9fafb;
+            outline: none;
             transition: 0.2s;
-
+            font-family: inherit;
         }
 
-
-        .installation-save-btn:hover {
-
-            transform: translateY(-2px);
-
-            box-shadow:
-                0 5px 15px rgba(0,0,0,0.15);
-
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            border-color: #198754;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(25,135,84,0.12);
         }
 
+        .input-group textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .save-btn {
+            width: 100%;
+            border: none;
+            background: #198754;
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .save-btn:hover {
+            background: #157347;
+        }
+
+        .save-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
 
         #installationMessage {
-
             text-align: center;
-
-            margin: 12px 0 0;
-
             font-weight: bold;
-
+            margin-top: 18px;
+            line-height: 1.7;
         }
 
-
-        /* =========================================
-           كارت البيانات المسجلة
-        ========================================= */
-
-        .installation-records-card {
-
-            background: white;
-
-            border-radius: 18px;
-
-            padding: 25px;
-
-            box-shadow:
-                0 5px 20px rgba(0,0,0,0.08);
-
-            border-top: 5px solid #198754;
-
-            min-height: 200px;
-
+        #installationRecords {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
-
-        .installation-records-title {
-
-            margin: 0 0 20px;
-
-            font-size: 21px;
-
-            color: #343a40;
-
+        .record {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-right: 5px solid #0d6efd;
+            border-radius: 12px;
+            padding: 18px;
         }
 
+        .record h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #0d6efd;
+        }
 
-        /* =========================================
-           الموبايل
-        ========================================= */
+        .record p {
+            margin: 9px 0;
+            line-height: 1.7;
+        }
 
-        @media (max-width: 800px) {
+        .record strong {
+            color: #374151;
+        }
 
-            .installation-page {
+        .empty {
+            text-align: center;
+            color: #64748b;
+            padding: 20px;
+        }
 
-                padding: 12px;
+        .error-box {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            color: #b42318;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            line-height: 1.7;
+        }
 
-            }
+        @media (max-width: 750px) {
 
-
-            .installation-header {
-
+            .header {
                 padding: 18px;
-
                 flex-direction: column;
-
                 align-items: stretch;
-
-                gap: 15px;
-
                 text-align: center;
-
             }
 
-
-            .installation-header h1 {
-
-                font-size: 24px;
-
-            }
-
-
-            .installation-home-btn {
-
+            .logout-btn {
                 width: 100%;
-
             }
 
-
-            .installation-content {
-
+            .form-page {
                 grid-template-columns: 1fr;
-
+                width: 94%;
+                margin: 20px auto;
             }
 
-
-            .installation-form-card,
-            .installation-records-card {
-
+            .form-card,
+            .records-card {
                 padding: 20px;
-
             }
 
         }
@@ -387,179 +251,916 @@
 
 <body>
 
-    <div class="dashboard">
+<div class="dashboard">
 
-        <div class="installation-page">
 
+    <header class="header">
 
-            <!-- =========================================
-                 رأس الصفحة
-            ========================================= -->
+        <div>
 
-            <header class="installation-header">
+            <h1>
+                🔧 قسم التركيبات
+            </h1>
 
-                <div>
-
-                    <h1>
-                        🔧 قسم التركيبات
-                    </h1>
-
-                    <p>
-                        تسجيل ومتابعة أعمال التركيبات
-                    </p>
-
-                </div>
-
-
-                <button
-                    class="installation-home-btn"
-                    onclick="goHome()">
-
-                    🏠 الأقسام الرئيسية
-
-                </button>
-
-            </header>
-
-
-            <!-- =========================================
-                 محتوى الصفحة
-            ========================================= -->
-
-            <main class="installation-content">
-
-
-                <!-- =====================================
-                     تسجيل بيانات جديدة
-                ====================================== -->
-
-                <div class="installation-form-card">
-
-                    <h2 class="installation-form-title">
-
-                        📝 تسجيل بيانات جديدة
-
-                    </h2>
-
-
-                    <!-- اسم العربية -->
-
-                    <div class="installation-input-group">
-
-                        <label>
-                            🚆 اسم العربية
-                        </label>
-
-                        <input
-                            type="text"
-                            id="installationCarName"
-                            placeholder="اكتب اسم العربية">
-
-                    </div>
-
-
-                    <!-- رقم العربية -->
-
-                    <div class="installation-input-group">
-
-                        <label>
-                            🔢 رقم العربية
-                        </label>
-
-                        <input
-                            type="text"
-                            id="installationCarNumber"
-                            placeholder="اكتب رقم العربية">
-
-                    </div>
-
-
-                    <!-- حالة الانتهاء -->
-
-                    <div class="installation-input-group">
-
-                        <label>
-                            ✅ حالة الانتهاء
-                        </label>
-
-                        <select id="installationDone">
-
-                            <option value="">
-                                اختار الحالة
-                            </option>
-
-                            <option value="نعم">
-                                نعم - تم الانتهاء
-                            </option>
-
-                            <option value="لا">
-                                لا - لم يتم الانتهاء
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- الملاحظات -->
-
-                    <div class="installation-input-group">
-
-                        <label>
-                            📝 ملاحظات
-                        </label>
-
-                        <textarea
-                            id="installationNotes"
-                            placeholder="اكتب الملاحظات"></textarea>
-
-                    </div>
-
-
-                    <!-- زر الحفظ -->
-
-                    <button
-                        class="installation-save-btn"
-                        onclick="saveInstallation()">
-
-                        💾 حفظ البيانات
-
-                    </button>
-
-
-                    <p id="installationMessage"></p>
-
-                </div>
-
-
-                <!-- =====================================
-                     البيانات المسجلة
-                ====================================== -->
-
-                <div class="installation-records-card">
-
-                    <h2 class="installation-records-title">
-
-                        📋 البيانات المسجلة
-
-                    </h2>
-
-
-                    <div id="installationRecords">
-
-                    </div>
-
-                </div>
-
-
-            </main>
+            <p>
+                تسجيل ومتابعة أعمال التركيبات
+            </p>
 
         </div>
 
-    </div>
+
+        <button
+            class="logout-btn"
+            type="button"
+            onclick="goHome()">
+
+            🏠 الأقسام الرئيسية
+
+        </button>
+
+    </header>
 
 
-    <script src="script.js"></script>
+
+    <main class="form-page">
+
+
+        <div class="form-card">
+
+            <h2>
+                📝 تسجيل بيانات جديدة
+            </h2>
+
+
+            <!-- اسم العربية -->
+
+            <div class="input-group">
+
+                <label>
+                    🚆 اسم العربية
+                </label>
+
+                <select
+                    id="installationCarName"
+                    onchange="updateInstallationCarNumber()">
+
+                    <option value="">
+                        اختر اسم العربية
+                    </option>
+
+                    <option value="DTC">
+                        DTC
+                    </option>
+
+                    <option value="MC1">
+                        MC1
+                    </option>
+
+                    <option value="MC2">
+                        MC2
+                    </option>
+
+                    <option value="MCI">
+                        MCI
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- رقم الوحدة -->
+
+            <div class="input-group">
+
+                <label>
+                    🔢 رقم الوحدة
+                </label>
+
+                <input
+                    type="number"
+                    id="installationUnitNumber"
+                    placeholder="مثال: 17"
+                    min="17"
+                    oninput="updateInstallationCarNumber()">
+
+            </div>
+
+
+            <!-- رقم العربية -->
+
+            <div class="input-group">
+
+                <label>
+                    🚆 رقم العربية
+                </label>
+
+                <input
+                    type="text"
+                    id="installationCarNumber"
+                    placeholder="سيظهر تلقائياً"
+                    readonly>
+
+            </div>
+
+
+            <!-- الحالة -->
+
+            <div class="input-group">
+
+                <label>
+                    ✅ حالة الانتهاء
+                </label>
+
+                <select id="installationDone">
+
+                    <option value="">
+                        اختار الحالة
+                    </option>
+
+                    <option value="نعم">
+                        نعم - تم الانتهاء
+                    </option>
+
+                    <option value="لا">
+                        لا - لم يتم الانتهاء
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- الملاحظات -->
+
+            <div class="input-group">
+
+                <label>
+                    📝 ملاحظات
+                </label>
+
+                <textarea
+                    id="installationNotes"
+                    placeholder="اكتب الملاحظات"></textarea>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="save-btn"
+                id="saveInstallationButton"
+                onclick="saveInstallation()">
+
+                💾 حفظ البيانات
+
+            </button>
+
+
+            <p id="installationMessage"></p>
+
+        </div>
+
+
+
+        <div class="records-card">
+
+            <h2>
+                📋 البيانات المسجلة
+            </h2>
+
+
+            <div id="installationRecords">
+
+                <div class="empty">
+                    ⏳ جاري تحميل البيانات...
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://gzyybadyaunizdlvmcle.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+
+
+let supabaseClient = null;
+
+
+try {
+
+    if (
+        window.supabase &&
+        typeof window.supabase.createClient === "function"
+    ) {
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+    }
+
+} catch (error) {
+
+    console.error(
+        "SUPABASE CLIENT ERROR:",
+        error
+    );
+
+}
+
+
+
+function getCurrentUsername() {
+
+    try {
+
+        const currentUser =
+            JSON.parse(
+                sessionStorage.getItem(
+                    "currentUser"
+                )
+            );
+
+        if (
+            currentUser &&
+            currentUser.name
+        ) {
+
+            return currentUser.name;
+
+        }
+
+        if (
+            currentUser &&
+            currentUser.username
+        ) {
+
+            return currentUser.username;
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Could not read current user"
+        );
+
+    }
+
+    return "Unknown";
+
+}
+
+
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+
+function formatArabicDate(value) {
+
+    if (!value) {
+        return "غير محدد";
+    }
+
+    const date =
+        new Date(value);
+
+    if (isNaN(date.getTime())) {
+        return value;
+    }
+
+    return new Intl.DateTimeFormat(
+        "ar-EG",
+        {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true
+        }
+    ).format(date);
+
+}
+
+
+
+/* =========================================
+   توليد رقم العربية
+   ========================================= */
+
+function updateInstallationCarNumber() {
+
+    const carName =
+        document.getElementById(
+            "installationCarName"
+        ).value;
+
+
+    const unitNumber =
+        document.getElementById(
+            "installationUnitNumber"
+        ).value.trim();
+
+
+    const carNumberInput =
+        document.getElementById(
+            "installationCarNumber"
+        );
+
+
+    if (
+        !carName ||
+        !unitNumber ||
+        Number(unitNumber) < 17
+    ) {
+
+        carNumberInput.value = "";
+
+        return;
+
+    }
+
+
+    const carPositions = {
+
+        DTC: 0,
+
+        MC1: 1,
+
+        MC2: 2,
+
+        MCI: 3
+
+    };
+
+
+    const position =
+        carPositions[carName];
+
+
+    const baseNumber =
+        65 +
+        (
+            (Number(unitNumber) - 17)
+            * 4
+        );
+
+
+    const finalNumber =
+        baseNumber +
+        position;
+
+
+    carNumberInput.value =
+        finalNumber +
+        "-" +
+        carName +
+        "-" +
+        unitNumber;
+
+}
+
+
+
+/* =========================================
+   حفظ بيانات Installation
+   ========================================= */
+
+async function saveInstallation() {
+
+    const carNameElement =
+        document.getElementById(
+            "installationCarName"
+        );
+
+
+    const unitNumberElement =
+        document.getElementById(
+            "installationUnitNumber"
+        );
+
+
+    const carNumberElement =
+        document.getElementById(
+            "installationCarNumber"
+        );
+
+
+    const doneElement =
+        document.getElementById(
+            "installationDone"
+        );
+
+
+    const notesElement =
+        document.getElementById(
+            "installationNotes"
+        );
+
+
+    const message =
+        document.getElementById(
+            "installationMessage"
+        );
+
+
+    const button =
+        document.getElementById(
+            "saveInstallationButton"
+        );
+
+
+    const carName =
+        carNameElement.value.trim();
+
+
+    const unitNumber =
+        unitNumberElement.value.trim();
+
+
+    const carNumber =
+        carNumberElement.value.trim();
+
+
+    const done =
+        doneElement.value;
+
+
+    const notes =
+        notesElement.value.trim();
+
+
+
+    if (
+        !carName ||
+        !unitNumber ||
+        !carNumber ||
+        !done
+    ) {
+
+        message.innerText =
+            "❌ من فضلك اختر اسم العربية ورقم الوحدة واختر الحالة";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+
+    if (
+        Number(unitNumber) < 17
+    ) {
+
+        message.innerText =
+            "❌ رقم الوحدة يجب أن يكون 17 أو أكبر";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+
+    if (!supabaseClient) {
+
+        message.innerText =
+            "❌ Supabase غير متصل";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+
+    button.disabled = true;
+
+    button.innerText =
+        "⏳ جاري الحفظ...";
+
+
+    message.innerText =
+        "⏳ جاري حفظ البيانات...";
+
+    message.style.color =
+        "#0d6efd";
+
+
+
+    const payload = {
+
+        department:
+            "installation",
+
+        car_name:
+            carName,
+
+        car_number:
+            carNumber,
+
+        done:
+            done,
+
+        notes:
+            notes,
+
+        created_by:
+            getCurrentUsername()
+
+    };
+
+
+
+    console.log(
+        "📤 INSTALLATION DATA:",
+        payload
+    );
+
+
+
+    try {
+
+        const result =
+            await supabaseClient
+                .from("records")
+                .insert(payload)
+                .select()
+                .single();
+
+
+
+        if (result.error) {
+
+            console.error(
+                "❌ INSTALLATION INSERT ERROR:",
+                result.error
+            );
+
+
+            message.innerText =
+                "❌ فشل الحفظ:\n" +
+                result.error.message;
+
+
+            message.style.color =
+                "#dc3545";
+
+
+            button.disabled = false;
+
+            button.innerText =
+                "💾 حفظ البيانات";
+
+            return;
+
+        }
+
+
+
+        console.log(
+            "✅ INSTALLATION SAVED:",
+            result.data
+        );
+
+
+        message.innerText =
+            "✅ تم حفظ البيانات بنجاح في Supabase";
+
+
+        message.style.color =
+            "#198754";
+
+
+
+        carNameElement.value = "";
+
+        unitNumberElement.value = "";
+
+        carNumberElement.value = "";
+
+        doneElement.value = "";
+
+        notesElement.value = "";
+
+
+
+        button.disabled = false;
+
+        button.innerText =
+            "💾 حفظ البيانات";
+
+
+
+        await loadInstallationRecords();
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ INSTALLATION SAVE ERROR:",
+            error
+        );
+
+
+        message.innerText =
+            "❌ حصل خطأ أثناء الحفظ:\n" +
+            error.message;
+
+
+        message.style.color =
+            "#dc3545";
+
+
+        button.disabled = false;
+
+        button.innerText =
+            "💾 حفظ البيانات";
+
+    }
+
+}
+
+
+
+/* =========================================
+   تحميل سجلات Installation
+   ========================================= */
+
+async function loadInstallationRecords() {
+
+    const container =
+        document.getElementById(
+            "installationRecords"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+
+    if (!supabaseClient) {
+
+        container.innerHTML =
+            '<div class="error-box">❌ Supabase غير متصل</div>';
+
+        return;
+
+    }
+
+
+
+    try {
+
+        const result =
+            await supabaseClient
+                .from("records")
+                .select("*")
+                .eq(
+                    "department",
+                    "installation"
+                );
+
+
+
+        if (result.error) {
+
+            console.error(
+                "❌ INSTALLATION LOAD ERROR:",
+                result.error
+            );
+
+
+            container.innerHTML =
+                '<div class="error-box">❌ ' +
+                escapeHTML(
+                    result.error.message
+                ) +
+                '</div>';
+
+            return;
+
+        }
+
+
+
+        const records =
+            result.data || [];
+
+
+
+        if (!records.length) {
+
+            container.innerHTML =
+                '<div class="empty">' +
+                'لا توجد بيانات مسجلة حتى الآن' +
+                '</div>';
+
+            return;
+
+        }
+
+
+
+        records.sort(
+            function(a, b) {
+
+                return new Date(
+                    b.created_at || 0
+                ) -
+                new Date(
+                    a.created_at || 0
+                );
+
+            }
+        );
+
+
+
+        container.innerHTML = "";
+
+
+
+        records.forEach(
+            function(record) {
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "record";
+
+
+                /* مهم جدًا لنظام الحذف */
+
+                div.dataset.recordId =
+                    record.id;
+
+
+                div.innerHTML = `
+
+                    <h3>
+                        🚆
+                        ${escapeHTML(
+                            record.car_name
+                        )}
+                    </h3>
+
+
+                    <p>
+                        <strong>
+                            🔢 رقم العربية:
+                        </strong>
+                        ${escapeHTML(
+                            record.car_number
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            ✅ الحالة:
+                        </strong>
+                        ${escapeHTML(
+                            record.done
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            📝 الملاحظات:
+                        </strong>
+                        ${escapeHTML(
+                            record.notes || ""
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            👤 المستخدم:
+                        </strong>
+                        ${escapeHTML(
+                            record.created_by || ""
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            🕐 وقت التسجيل:
+                        </strong>
+                        ${formatArabicDate(
+                            record.created_at
+                        )}
+                    </p>
+
+                `;
+
+
+                container.appendChild(
+                    div
+                );
+
+            }
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ INSTALLATION LOAD ERROR:",
+            error
+        );
+
+
+        container.innerHTML =
+            '<div class="error-box">' +
+            '❌ حصل خطأ أثناء تحميل البيانات' +
+            '</div>';
+
+    }
+
+}
+
+
+
+/* =========================================
+   العودة للرئيسية
+   ========================================= */
+
+function goHome() {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+
+/* =========================================
+   تشغيل الصفحة
+   ========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadInstallationRecords();
+
+    }
+);
+
+</script>
+
+
+<script src="delete-system.js?v=2"></script>
+
 
 </body>
 

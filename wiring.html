@@ -144,6 +144,98 @@
             resize: vertical;
         }
 
+
+        /* =====================================================
+           شكل رقم العربية
+        ===================================================== */
+
+        .car-number-preview {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr
+                1fr
+                1fr;
+
+            gap: 10px;
+
+            margin-top: 10px;
+
+            direction: ltr;
+
+        }
+
+
+        .number-part {
+
+            background: #f8fafc;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 12px;
+
+            padding: 12px 8px;
+
+            text-align: center;
+
+            min-height: 78px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+        }
+
+
+        .number-part span {
+
+            display: block;
+
+            font-size: 13px;
+
+            color: #64748b;
+
+            margin-bottom: 7px;
+
+            direction: rtl;
+
+        }
+
+
+        .number-part strong {
+
+            display: block;
+
+            font-size: 21px;
+
+            color: #344354;
+
+            direction: ltr;
+
+        }
+
+
+        .car-name-part {
+
+            border-color: #198754;
+
+            background: #f0fdf4;
+
+        }
+
+
+        .car-name-part strong {
+
+            color: #198754;
+
+            font-size: 22px;
+
+        }
+
+
         .save-btn {
             width: 100%;
             border: none;
@@ -218,6 +310,7 @@
             line-height: 1.7;
         }
 
+
         @media (max-width: 750px) {
 
             .header {
@@ -240,6 +333,27 @@
             .form-card,
             .records-card {
                 padding: 20px;
+            }
+
+
+            .car-number-preview {
+                gap: 6px;
+            }
+
+            .number-part {
+                padding: 10px 5px;
+            }
+
+            .number-part span {
+                font-size: 11px;
+            }
+
+            .number-part strong {
+                font-size: 18px;
+            }
+
+            .car-name-part strong {
+                font-size: 19px;
             }
 
         }
@@ -292,33 +406,140 @@
             </h2>
 
 
+            <!-- =================================================
+                 اسم العربية
+            ================================================== -->
+
             <div class="input-group">
 
                 <label>
-                    🚆 اسم العربية
+                    اسم العربية 🚂
                 </label>
 
-                <input
-                    type="text"
+                <select
                     id="wiringCarName"
-                    placeholder="اكتب اسم العربية">
+                    onchange="updateWiringCarNumber()">
+
+                    <option value="">
+                        اختر اسم العربية
+                    </option>
+
+                    <option value="DTC">
+                        DTC
+                    </option>
+
+                    <option value="MC1">
+                        MC1
+                    </option>
+
+                    <option value="MC2">
+                        MC2
+                    </option>
+
+                    <option value="MCI">
+                        MCI
+                    </option>
+
+                </select>
 
             </div>
 
+
+            <!-- =================================================
+                 رقم الوحدة
+            ================================================== -->
 
             <div class="input-group">
 
                 <label>
-                    🔢 رقم العربية
+                    رقم الوحدة 🔢
                 </label>
 
                 <input
-                    type="text"
-                    id="wiringCarNumber"
-                    placeholder="اكتب رقم العربية">
+                    type="number"
+                    id="wiringUnitNumber"
+                    placeholder="مثال: 17"
+                    min="17"
+                    oninput="updateWiringCarNumber()">
 
             </div>
 
+
+            <!-- =================================================
+                 عرض رقم العربية بالشكل الجديد
+            ================================================== -->
+
+            <div class="input-group">
+
+                <label>
+                    رقم العربية 🚆
+                </label>
+
+
+                <div class="car-number-preview">
+
+
+                    <!-- الشمال -->
+
+                    <div class="number-part">
+
+                        <span>
+                            رقم العربية
+                        </span>
+
+                        <strong id="wiringCarDisplay">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <!-- المنتصف -->
+
+                    <div class="number-part car-name-part">
+
+                        <span>
+                            اسم العربية
+                        </span>
+
+                        <strong id="wiringNameDisplay">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <!-- اليمين -->
+
+                    <div class="number-part">
+
+                        <span>
+                            رقم الوحدة
+                        </span>
+
+                        <strong id="wiringUnitDisplay">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- الرقم الكامل الذي سيتم حفظه -->
+
+                <input
+                    type="hidden"
+                    id="wiringCarNumber">
+
+            </div>
+
+
+
+            <!-- =================================================
+                 الحالة
+            ================================================== -->
 
             <div class="input-group">
 
@@ -345,6 +566,11 @@
             </div>
 
 
+
+            <!-- =================================================
+                 الملاحظات
+            ================================================== -->
+
             <div class="input-group">
 
                 <label>
@@ -357,6 +583,11 @@
 
             </div>
 
+
+
+            <!-- =================================================
+                 حفظ
+            ================================================== -->
 
             <button
                 type="button"
@@ -374,6 +605,10 @@
         </div>
 
 
+
+        <!-- =====================================================
+             RECORDS
+        ====================================================== -->
 
         <div class="records-card">
 
@@ -423,33 +658,17 @@
     // CREATE SUPABASE CLIENT
     // =====================================================
 
-    let supabaseClient = null;
-
-    try {
-
-        if (
-            window.supabase &&
-            typeof window.supabase.createClient === "function"
-        ) {
-
-            supabaseClient =
-                window.supabase.createClient(
-                    SUPABASE_URL,
-                    SUPABASE_KEY
-                );
-
-        }
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "SUPABASE CLIENT ERROR:",
-            error
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
         );
 
-    }
+
+    // مهم جدًا لـ delete-system.js
+
+    window.supabaseClient =
+        supabaseClient;
 
 
 
@@ -468,6 +687,7 @@
                     )
                 );
 
+
             if (
                 currentUser &&
                 currentUser.name
@@ -476,6 +696,7 @@
                 return currentUser.name;
 
             }
+
 
             if (
                 currentUser &&
@@ -520,6 +741,148 @@
 
 
     // =====================================================
+    // GENERATE CAR NUMBER
+    // =====================================================
+
+    function updateWiringCarNumber() {
+
+        const carName =
+            document.getElementById(
+                "wiringCarName"
+            ).value;
+
+
+        const unitNumber =
+            document.getElementById(
+                "wiringUnitNumber"
+            ).value.trim();
+
+
+        const carNumberInput =
+            document.getElementById(
+                "wiringCarNumber"
+            );
+
+
+        const carDisplay =
+            document.getElementById(
+                "wiringCarDisplay"
+            );
+
+
+        const nameDisplay =
+            document.getElementById(
+                "wiringNameDisplay"
+            );
+
+
+        const unitDisplay =
+            document.getElementById(
+                "wiringUnitDisplay"
+            );
+
+
+        // =================================================
+        // UPDATE DISPLAY
+        // =================================================
+
+        nameDisplay.textContent =
+            carName || "--";
+
+
+        unitDisplay.textContent =
+            unitNumber || "--";
+
+
+        // =================================================
+        // NO COMPLETE DATA
+        // =================================================
+
+        if (
+            !carName ||
+            !unitNumber
+        ) {
+
+            carDisplay.textContent =
+                "--";
+
+            carNumberInput.value =
+                "";
+
+            return;
+
+        }
+
+
+        // =================================================
+        // CAR ORDER
+        // =================================================
+
+        const carPositions = {
+
+            DTC: 0,
+
+            MC1: 1,
+
+            MC2: 2,
+
+            MCI: 3
+
+        };
+
+
+        const position =
+            carPositions[carName];
+
+
+        // =================================================
+        // UNIT 17 STARTS AT 65
+        // UNIT 18 STARTS AT 69
+        // UNIT 19 STARTS AT 73
+        // =================================================
+
+        const baseNumber =
+            65 +
+            (
+                (Number(unitNumber) - 17)
+                * 4
+            );
+
+
+        const finalNumber =
+            baseNumber + position;
+
+
+        // =================================================
+        // DISPLAY ONLY THE CAR NUMBER
+        // =================================================
+
+        carDisplay.textContent =
+            finalNumber;
+
+
+        // =================================================
+        // FULL VALUE SAVED TO SUPABASE
+        // =================================================
+
+        carNumberInput.value =
+            finalNumber +
+            "-" +
+            carName +
+            "-" +
+            unitNumber;
+
+
+        console.log(
+            "🚆 Generated car number:",
+            carNumberInput.value
+        );
+
+    }
+
+
+
+    // =====================================================
     // SAVE WIRING
     // =====================================================
 
@@ -530,25 +893,30 @@
                 "wiringCarName"
             );
 
+
         const carNumberElement =
             document.getElementById(
                 "wiringCarNumber"
             );
+
 
         const doneElement =
             document.getElementById(
                 "wiringDone"
             );
 
+
         const notesElement =
             document.getElementById(
                 "wiringNotes"
             );
 
+
         const message =
             document.getElementById(
                 "wiringMessage"
             );
+
 
         const button =
             document.getElementById(
@@ -561,15 +929,18 @@
                 ? carNameElement.value.trim()
                 : "";
 
+
         const carNumber =
             carNumberElement
                 ? carNumberElement.value.trim()
                 : "";
 
+
         const done =
             doneElement
                 ? doneElement.value
                 : "";
+
 
         const notes =
             notesElement
@@ -588,7 +959,7 @@
         ) {
 
             message.innerText =
-                "❌ من فضلك اكتب اسم العربية ورقم العربية واختر الحالة";
+                "❌ من فضلك اختر اسم العربية ورقم الوحدة واختر الحالة";
 
             message.style.color =
                 "#dc3545";
@@ -596,6 +967,7 @@
             return;
 
         }
+
 
 
         // =================================================
@@ -610,13 +982,10 @@
             message.style.color =
                 "#dc3545";
 
-            console.error(
-                "Supabase client is not available"
-            );
-
             return;
 
         }
+
 
 
         // =================================================
@@ -627,11 +996,13 @@
             getCurrentUsername();
 
 
+
         // =================================================
         // LOADING
         // =================================================
 
-        button.disabled = true;
+        button.disabled =
+            true;
 
         button.innerText =
             "⏳ جاري الحفظ...";
@@ -643,39 +1014,28 @@
             "#0d6efd";
 
 
+
         try {
 
             // =================================================
             // PAYLOAD
             // =================================================
 
-            const payload = {
-
-                department:
-                    "wiring",
-
-                car_name:
-                    carName,
-
-                car_number:
-                    carNumber,
-
-                done:
-                    done,
-
-                notes:
-                    notes,
-
-                created_by:
-                    username
-
-            };
-
+const payload = {
+    department: "wiring",
+    car_name: carName,
+    car_number: carNumber,
+    done: done,
+    notes: notes,
+    created_by: username,
+    created_at: new Date().toISOString()
+};
 
             console.log(
                 "📤 DATA SENT TO SUPABASE:",
                 payload
             );
+
 
 
             // =================================================
@@ -690,8 +1050,9 @@
                     .single();
 
 
+
             // =================================================
-            // SUPABASE ERROR
+            // ERROR
             // =================================================
 
             if (result.error) {
@@ -701,21 +1062,28 @@
                     result.error
                 );
 
+
                 message.innerText =
                     "❌ فشل الحفظ:\n" +
                     result.error.message;
 
+
                 message.style.color =
                     "#dc3545";
 
-                button.disabled = false;
+
+                button.disabled =
+                    false;
+
 
                 button.innerText =
                     "💾 حفظ البيانات";
 
+
                 return;
 
             }
+
 
 
             // =================================================
@@ -731,31 +1099,60 @@
             message.innerText =
                 "✅ تم حفظ البيانات بنجاح في Supabase";
 
+
             message.style.color =
                 "#198754";
+
 
 
             // =================================================
             // CLEAR INPUTS
             // =================================================
 
-            carNameElement.value = "";
+            carNameElement.value =
+                "";
 
-            carNumberElement.value = "";
+            document.getElementById(
+                "wiringUnitNumber"
+            ).value =
+                "";
 
-            doneElement.value = "";
+            carNumberElement.value =
+                "";
 
-            notesElement.value = "";
+            document.getElementById(
+                "wiringCarDisplay"
+            ).textContent =
+                "--";
+
+            document.getElementById(
+                "wiringNameDisplay"
+            ).textContent =
+                "--";
+
+            document.getElementById(
+                "wiringUnitDisplay"
+            ).textContent =
+                "--";
+
+            doneElement.value =
+                "";
+
+            notesElement.value =
+                "";
+
 
 
             // =================================================
             // BUTTON
             // =================================================
 
-            button.disabled = false;
+            button.disabled =
+                false;
 
             button.innerText =
                 "💾 حفظ البيانات";
+
 
 
             // =================================================
@@ -765,6 +1162,7 @@
             await loadWiringRecords();
 
         }
+
 
         catch (error) {
 
@@ -778,11 +1176,14 @@
                 "❌ حصل خطأ أثناء الاتصال بـ Supabase:\n" +
                 error.message;
 
+
             message.style.color =
                 "#dc3545";
 
 
-            button.disabled = false;
+            button.disabled =
+                false;
+
 
             button.innerText =
                 "💾 حفظ البيانات";
@@ -880,7 +1281,8 @@
             }
 
 
-            container.innerHTML = "";
+            container.innerHTML =
+                "";
 
 
             records.forEach(
@@ -896,14 +1298,30 @@
                         "record";
 
 
+                    /*
+                       مهم جدًا لـ delete-system.js
+                       نحفظ ID الحقيقي للسجل
+                    */
+
+                    if (record.id !== undefined) {
+
+                        div.dataset.recordId =
+                            record.id;
+
+                    }
+
+
                     div.innerHTML = `
 
                         <h3>
+
                             🚆
                             ${escapeHTML(
                                 record.car_name
                             )}
+
                         </h3>
+
 
                         <p>
 
@@ -917,6 +1335,7 @@
 
                         </p>
 
+
                         <p>
 
                             <strong>
@@ -928,6 +1347,7 @@
                             )}
 
                         </p>
+
 
                         <p>
 
@@ -941,6 +1361,7 @@
 
                         </p>
 
+
                         <p>
 
                             <strong>
@@ -952,6 +1373,24 @@
                             )}
 
                         </p>
+                        <p>
+
+    <strong>
+        🕘 وقت التسجيل:
+    </strong>
+
+    ${record.created_at
+        ? new Date(record.created_at).toLocaleString("ar-EG", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        })
+        : "غير متوفر"
+    }
+
+</p>
 
                     `;
 
@@ -964,6 +1403,7 @@
             );
 
         }
+
 
         catch (error) {
 
@@ -1011,6 +1451,14 @@
     );
 
 </script>
+
+
+
+<!-- =====================================================
+     DELETE SYSTEM
+====================================================== -->
+
+<script src="delete-system.js?v=3"></script>
 
 
 </body>

@@ -8,7 +8,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>LT</title>
+    <title>NERIC - LT</title>
 
     <style>
 
@@ -27,30 +27,26 @@
             min-height: 100vh;
         }
 
-        /* =========================
-           رأس الصفحة
-        ========================= */
-
         .header {
-            background: rgb(136, 52, 254);
+            background: rgb(52, 67, 84);
             padding: 20px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 20px;
-            box-shadow: 0 3px 15px rgba(244, 9, 9, 0.08);
-            border-bottom: 3px solid #d8e6df;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            border-bottom: 3px solid #5928e0;
         }
 
         .header h1 {
             margin: 0 0 7px;
             font-size: 28px;
-            color: #fcfefd;
+            color: #ffffff;
         }
 
         .header p {
             margin: 0;
-            color: #010918;
+            color: #d1d5db;
             font-size: 14px;
         }
 
@@ -69,10 +65,6 @@
             opacity: 0.9;
         }
 
-        /* =========================
-           المحتوى
-        ========================= */
-
         .form-page {
             width: min(1100px, 94%);
             margin: 30px auto;
@@ -81,10 +73,6 @@
             gap: 25px;
             align-items: start;
         }
-
-        /* =========================
-           الكروت
-        ========================= */
 
         .form-card,
         .records-card {
@@ -118,10 +106,6 @@
             color: #0d6efd;
         }
 
-        /* =========================
-           الحقول
-        ========================= */
-
         .input-group {
             margin-bottom: 18px;
         }
@@ -134,6 +118,7 @@
         }
 
         .input-group input,
+        .input-group select,
         .input-group textarea {
             width: 100%;
             border: 1px solid #d1d5db;
@@ -147,6 +132,7 @@
         }
 
         .input-group input:focus,
+        .input-group select:focus,
         .input-group textarea:focus {
             border-color: #198754;
             background: white;
@@ -158,9 +144,97 @@
             resize: vertical;
         }
 
-        /* =========================
-           زر الحفظ
-        ========================= */
+
+        /* =====================================================
+           شكل رقم العربية
+        ===================================================== */
+
+        .car-number-preview {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr
+                1fr
+                1fr;
+
+            gap: 8px;
+
+            margin-top: 10px;
+
+            direction: ltr;
+
+        }
+
+
+        .number-part {
+
+            background: #f8fafc;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 12px;
+
+            padding: 10px 5px;
+
+            text-align: center;
+
+            min-height: 78px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+        }
+
+
+        .number-part span {
+
+            display: block;
+
+            font-size: 12px;
+
+            color: #64748b;
+
+            margin-bottom: 5px;
+
+            direction: rtl;
+
+        }
+
+
+        .number-part strong {
+
+            display: block;
+
+            font-size: 22px;
+
+            color: #344354;
+
+            direction: ltr;
+
+        }
+
+
+        .car-name-part {
+
+            background: #f0fdf4;
+
+            border: 2px solid #198754;
+
+        }
+
+
+        .car-name-part strong {
+
+            color: #198754;
+
+            font-size: 23px;
+
+        }
+
 
         .save-btn {
             width: 100%;
@@ -179,15 +253,17 @@
             background: #157347;
         }
 
+        .save-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
         #ltMessage {
             text-align: center;
             font-weight: bold;
-            margin-bottom: 0;
+            margin-top: 18px;
+            line-height: 1.7;
         }
-
-        /* =========================
-           البيانات المسجلة
-        ========================= */
 
         #ltRecords {
             display: flex;
@@ -195,9 +271,45 @@
             gap: 15px;
         }
 
-        /* =========================
-           الموبايل
-        ========================= */
+        .record {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-right: 5px solid #0d6efd;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .record h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #0d6efd;
+        }
+
+        .record p {
+            margin: 9px 0;
+            line-height: 1.7;
+        }
+
+        .record strong {
+            color: #374151;
+        }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+            padding: 20px;
+        }
+
+        .error-box {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            color: #b42318;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            line-height: 1.7;
+        }
+
 
         @media (max-width: 750px) {
 
@@ -223,6 +335,26 @@
                 padding: 20px;
             }
 
+            .car-number-preview {
+                gap: 6px;
+            }
+
+            .number-part {
+                padding: 10px 5px;
+            }
+
+            .number-part span {
+                font-size: 11px;
+            }
+
+            .number-part strong {
+                font-size: 18px;
+            }
+
+            .car-name-part strong {
+                font-size: 19px;
+            }
+
         }
 
     </style>
@@ -232,194 +364,1211 @@
 
 <body>
 
-    <div class="dashboard">
+<div class="dashboard">
 
 
-        <!-- =========================
-             رأس الصفحة
-        ========================= -->
+    <header class="header">
 
-        <header class="header">
+        <div>
 
-            <div>
+            <h1>
+                ⚡ قسم LT
+            </h1>
 
-                <h1>
-                    🔧 قسم LT
-                </h1>
+            <p>
+                تسجيل ومتابعة أعمال الـ LT
+            </p>
 
-                <p>
-                    تسجيل ومتابعة أعمال الـ LT
-                </p>
+        </div>
+
+
+        <button
+            class="logout-btn"
+            type="button"
+            onclick="goHome()">
+
+            🏠 الأقسام الرئيسية
+
+        </button>
+
+    </header>
+
+
+
+    <main class="form-page">
+
+
+        <div class="form-card">
+
+            <h2>
+                📝 تسجيل بيانات جديدة
+            </h2>
+
+
+            <!-- =================================================
+                 اسم العربية
+            ================================================== -->
+
+            <div class="input-group">
+
+                <label>
+                    🚆 اسم العربية
+                </label>
+
+                <select
+                    id="ltCarName"
+                    onchange="updateLTCarNumber()">
+
+                    <option value="">
+                        اختر اسم العربية
+                    </option>
+
+                    <option value="DTC">
+                        DTC
+                    </option>
+
+                    <option value="MC1">
+                        MC1
+                    </option>
+
+                    <option value="MC2">
+                        MC2
+                    </option>
+
+                    <option value="MCI">
+                        MCI
+                    </option>
+
+                </select>
 
             </div>
 
 
-            <button
-                class="logout-btn"
-                onclick="goHome()">
 
-                🏠 الأقسام الرئيسية
+            <!-- =================================================
+                 رقم الوحدة
+            ================================================== -->
+
+            <div class="input-group">
+
+                <label>
+                    🔢 رقم الوحدة
+                </label>
+
+                <input
+                    type="number"
+                    id="ltUnitNumber"
+                    placeholder="مثال: 17"
+                    min="17"
+                    oninput="updateLTCarNumber()">
+
+            </div>
+
+
+
+            <!-- =================================================
+                 رقم العربية
+            ================================================== -->
+
+            <div class="input-group">
+
+                <label>
+                    🚆 رقم العربية
+                </label>
+
+
+                <div class="car-number-preview">
+
+
+                    <!-- الشمال -->
+
+                    <div class="number-part">
+
+                        <span>
+                            رقم العربية
+                        </span>
+
+                        <strong id="ltCarDisplay">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <!-- المنتصف -->
+
+                    <div class="number-part car-name-part">
+
+                        <span>
+                            اسم العربية
+                        </span>
+
+                        <strong id="ltNameDisplay">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <!-- اليمين -->
+
+                    <div class="number-part">
+
+                        <span>
+                            رقم الوحدة
+                        </span>
+
+                        <strong id="ltUnitDisplay">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- القيمة الكاملة التي سيتم حفظها -->
+
+                <input
+                    type="hidden"
+                    id="ltCarNumber">
+
+            </div>
+
+
+
+            <!-- =================================================
+                 الجهاز
+            ================================================== -->
+
+            <div class="input-group">
+
+                <label>
+                    🔌 اسم الجهاز
+                </label>
+
+                <input
+                    type="text"
+                    id="ltDevice"
+                    placeholder="اكتب اسم الجهاز">
+
+            </div>
+
+
+
+            <!-- =================================================
+                 السوكيت
+            ================================================== -->
+
+            <div class="input-group">
+
+                <label>
+                    🔗 اسم السوكيت
+                </label>
+
+                <input
+                    type="text"
+                    id="ltSocket"
+                    placeholder="اكتب اسم السوكيت">
+
+            </div>
+
+
+
+            <!-- =================================================
+                 الملاحظات
+            ================================================== -->
+
+            <div class="input-group">
+
+                <label>
+                    📝 ملاحظات
+                </label>
+
+                <textarea
+                    id="ltNotes"
+                    placeholder="اكتب الملاحظات"></textarea>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 حفظ
+            ================================================== -->
+
+            <button
+                type="button"
+                class="save-btn"
+                id="saveLTButton"
+                onclick="saveLT()">
+
+                💾 حفظ البيانات
 
             </button>
 
-        </header>
+
+            <p id="ltMessage"></p>
+
+        </div>
 
 
-        <!-- =========================
-             المحتوى
-        ========================= -->
 
-        <main class="form-page">
+        <!-- =====================================================
+             RECORDS
+        ====================================================== -->
 
+        <div class="records-card">
 
-            <!-- =========================
-                 نموذج تسجيل البيانات
-            ========================= -->
-
-            <div class="form-card">
-
-                <h2>
-                    📝 تسجيل بيانات جديدة
-                </h2>
+            <h2>
+                📋 البيانات المسجلة
+            </h2>
 
 
-                <!-- اسم العربية -->
+            <div id="ltRecords">
 
-                <div class="input-group">
-
-                    <label>
-                        🚆 اسم العربية
-                    </label>
-
-                    <input
-                        type="text"
-                        id="ltCarName"
-                        placeholder="اكتب اسم العربية">
-
-                </div>
-
-
-                <!-- رقم العربية -->
-
-                <div class="input-group">
-
-                    <label>
-                        🔢 رقم العربية
-                    </label>
-
-                    <input
-                        type="text"
-                        id="ltCarNumber"
-                        placeholder="اكتب رقم العربية">
-
-                </div>
-
-
-                <!-- اسم الجهاز -->
-
-                <div class="input-group">
-
-                    <label>
-                        ⚙️ اسم الجهاز
-                    </label>
-
-                    <input
-                        type="text"
-                        id="ltDevice"
-                        placeholder="اكتب اسم الجهاز">
-
-                </div>
-
-
-                <!-- اسم السوكيت -->
-
-                <div class="input-group">
-
-                    <label>
-                        🔌 اسم السوكيت
-                    </label>
-
-                    <input
-                        type="text"
-                        id="ltSocket"
-                        placeholder="اكتب اسم السوكيت">
-
-                </div>
-
-
-                <!-- الملاحظات -->
-
-                <div class="input-group">
-
-                    <label>
-                        📝 ملاحظات
-                    </label>
-
-                    <textarea
-                        id="ltNotes"
-                        placeholder="اكتب الملاحظات"></textarea>
-
-                </div>
-
-
-                <!-- اسم الشخص -->
-
-                <div class="input-group">
-
-                    <label>
-                        👤 اسم الشخص
-                    </label>
-
-                    <input
-                        type="text"
-                        id="ltPerson"
-                        placeholder="اكتب اسم الشخص">
-
-                </div>
-
-
-                <!-- زر الحفظ -->
-
-                <button
-                    class="save-btn"
-                    onclick="saveLT()">
-
-                    💾 حفظ البيانات
-
-                </button>
-
-
-                <p id="ltMessage"></p>
-
-            </div>
-
-
-            <!-- =========================
-                 البيانات المسجلة
-            ========================= -->
-
-            <div class="records-card">
-
-                <h2>
-                    📋 البيانات المسجلة
-                </h2>
-
-
-                <div id="ltRecords">
-
+                <div class="empty">
+                    ⏳ جاري تحميل البيانات...
                 </div>
 
             </div>
 
-
-        </main>
-
-    </div>
+        </div>
 
 
-    <!-- ملف JavaScript الأصلي -->
+    </main>
 
-    <script src="script.js"></script>
+</div>
+
+
+
+<!-- =====================================================
+     SUPABASE
+====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://gzyybadyaunizdlvmcle.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+
+
+let supabaseClient = null;
+
+
+try {
+
+    if (
+        window.supabase &&
+        typeof window.supabase.createClient === "function"
+    ) {
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+    }
+
+} catch (error) {
+
+    console.error(
+        "SUPABASE CLIENT ERROR:",
+        error
+    );
+
+}
+
+
+
+/* =====================================================
+   CURRENT USER
+===================================================== */
+
+function getCurrentUsername() {
+
+    try {
+
+        const currentUser =
+            JSON.parse(
+                sessionStorage.getItem(
+                    "currentUser"
+                )
+            );
+
+
+        if (
+            currentUser &&
+            currentUser.name
+        ) {
+
+            return currentUser.name;
+
+        }
+
+
+        if (
+            currentUser &&
+            currentUser.username
+        ) {
+
+            return currentUser.username;
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Could not read current user"
+        );
+
+    }
+
+    return "Unknown";
+
+}
+
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+
+/* =====================================================
+   FORMAT DATE
+===================================================== */
+
+function formatArabicDate(value) {
+
+    if (!value) {
+        return "غير محدد";
+    }
+
+    const date =
+        new Date(value);
+
+    if (isNaN(date.getTime())) {
+        return escapeHTML(value);
+    }
+
+    return new Intl.DateTimeFormat(
+        "ar-EG",
+        {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true
+        }
+    ).format(date);
+
+}
+
+
+
+/* =====================================================
+   GENERATE LT CAR NUMBER
+===================================================== */
+
+function updateLTCarNumber() {
+
+    const carName =
+        document.getElementById(
+            "ltCarName"
+        ).value;
+
+
+    const unitNumber =
+        document.getElementById(
+            "ltUnitNumber"
+        ).value.trim();
+
+
+    const carNumberInput =
+        document.getElementById(
+            "ltCarNumber"
+        );
+
+
+    const carDisplay =
+        document.getElementById(
+            "ltCarDisplay"
+        );
+
+
+    const nameDisplay =
+        document.getElementById(
+            "ltNameDisplay"
+        );
+
+
+    const unitDisplay =
+        document.getElementById(
+            "ltUnitDisplay"
+        );
+
+
+    /* =================================================
+       UPDATE DISPLAY
+    ================================================= */
+
+    nameDisplay.textContent =
+        carName || "--";
+
+
+    unitDisplay.textContent =
+        unitNumber || "--";
+
+
+    /* =================================================
+       CHECK
+    ================================================= */
+
+    if (
+        !carName ||
+        !unitNumber
+    ) {
+
+        carDisplay.textContent =
+            "--";
+
+        carNumberInput.value =
+            "";
+
+        return;
+
+    }
+
+
+    /* =================================================
+       CAR ORDER
+    ================================================= */
+
+    const carPositions = {
+
+        DTC: 0,
+
+        MC1: 1,
+
+        MC2: 2,
+
+        MCI: 3
+
+    };
+
+
+    const position =
+        carPositions[carName];
+
+
+    /* =================================================
+       NUMBER CALCULATION
+       
+       17 → 65
+       18 → 69
+       19 → 73
+    ================================================= */
+
+    const baseNumber =
+        65 +
+        (
+            (Number(unitNumber) - 17)
+            * 4
+        );
+
+
+    const finalNumber =
+        baseNumber + position;
+
+
+    /* =================================================
+       DISPLAY
+    ================================================= */
+
+    carDisplay.textContent =
+        finalNumber;
+
+
+    /* =================================================
+       SAVE VALUE
+       
+       Example:
+       65-DTC-17
+       66-MC1-17
+       72-MCI-18
+    ================================================= */
+
+    carNumberInput.value =
+        finalNumber +
+        "-" +
+        carName +
+        "-" +
+        unitNumber;
+
+
+    console.log(
+        "🚆 Generated LT car number:",
+        carNumberInput.value
+    );
+
+}
+
+
+
+/* =====================================================
+   SAVE LT
+===================================================== */
+
+async function saveLT() {
+
+    const carNameElement =
+        document.getElementById(
+            "ltCarName"
+        );
+
+
+    const carNumberElement =
+        document.getElementById(
+            "ltCarNumber"
+        );
+
+
+    const deviceElement =
+        document.getElementById(
+            "ltDevice"
+        );
+
+
+    const socketElement =
+        document.getElementById(
+            "ltSocket"
+        );
+
+
+    const notesElement =
+        document.getElementById(
+            "ltNotes"
+        );
+
+
+    const message =
+        document.getElementById(
+            "ltMessage"
+        );
+
+
+    const button =
+        document.getElementById(
+            "saveLTButton"
+        );
+
+
+    const carName =
+        carNameElement.value.trim();
+
+
+    const carNumber =
+        carNumberElement.value.trim();
+
+
+    const device =
+        deviceElement.value.trim();
+
+
+    const socket =
+        socketElement.value.trim();
+
+
+    const notes =
+        notesElement.value.trim();
+
+
+
+    /* =================================================
+       CHECK
+    ================================================= */
+
+    if (
+        !carName ||
+        !carNumber
+    ) {
+
+        message.innerText =
+            "❌ من فضلك اختر اسم العربية ورقم الوحدة";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+    if (
+        Number(
+            document.getElementById(
+                "ltUnitNumber"
+            ).value
+        ) < 17
+    ) {
+
+        message.innerText =
+            "❌ رقم الوحدة يجب أن يبدأ من 17";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+
+    /* =================================================
+       SUPABASE
+    ================================================= */
+
+    if (!supabaseClient) {
+
+        message.innerText =
+            "❌ Supabase غير متصل";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+
+    /* =================================================
+       LOADING
+    ================================================= */
+
+    button.disabled =
+        true;
+
+    button.innerText =
+        "⏳ جاري الحفظ...";
+
+    message.innerText =
+        "⏳ جاري حفظ البيانات...";
+
+    message.style.color =
+        "#0d6efd";
+
+
+
+    /* =================================================
+       PAYLOAD
+    ================================================= */
+
+    const payload = {
+
+        department:
+            "lt",
+
+        car_name:
+            carName,
+
+        car_number:
+            carNumber,
+
+        device:
+            device,
+
+        socket:
+            socket,
+
+        notes:
+            notes,
+
+        created_by:
+            getCurrentUsername()
+
+    };
+
+
+    console.log(
+        "📤 LT DATA:",
+        payload
+    );
+
+
+
+    try {
+
+        const result =
+            await supabaseClient
+                .from("records")
+                .insert(payload)
+                .select()
+                .single();
+
+
+
+        /* =================================================
+           ERROR
+        ================================================= */
+
+        if (result.error) {
+
+            console.error(
+                "❌ LT INSERT ERROR:",
+                result.error
+            );
+
+
+            message.innerText =
+                "❌ فشل الحفظ:\n" +
+                result.error.message;
+
+
+            message.style.color =
+                "#dc3545";
+
+
+            button.disabled =
+                false;
+
+
+            button.innerText =
+                "💾 حفظ البيانات";
+
+
+            return;
+
+        }
+
+
+
+        /* =================================================
+           SUCCESS
+        ================================================= */
+
+        console.log(
+            "✅ LT SAVED:",
+            result.data
+        );
+
+
+        message.innerText =
+            "✅ تم حفظ البيانات بنجاح في Supabase";
+
+
+        message.style.color =
+            "#198754";
+
+
+
+        /* =================================================
+           CLEAR
+        ================================================= */
+
+        carNameElement.value =
+            "";
+
+
+        document.getElementById(
+            "ltUnitNumber"
+        ).value =
+            "";
+
+
+        carNumberElement.value =
+            "";
+
+
+        document.getElementById(
+            "ltCarDisplay"
+        ).textContent =
+            "--";
+
+
+        document.getElementById(
+            "ltNameDisplay"
+        ).textContent =
+            "--";
+
+
+        document.getElementById(
+            "ltUnitDisplay"
+        ).textContent =
+            "--";
+
+
+        deviceElement.value =
+            "";
+
+
+        socketElement.value =
+            "";
+
+
+        notesElement.value =
+            "";
+
+
+
+        /* =================================================
+           BUTTON
+        ================================================= */
+
+        button.disabled =
+            false;
+
+
+        button.innerText =
+            "💾 حفظ البيانات";
+
+
+
+        /* =================================================
+           RELOAD
+        ================================================= */
+
+        await loadLTRecords();
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ LT SAVE ERROR:",
+            error
+        );
+
+
+        message.innerText =
+            "❌ حصل خطأ أثناء الحفظ:\n" +
+            error.message;
+
+
+        message.style.color =
+            "#dc3545";
+
+
+        button.disabled =
+            false;
+
+
+        button.innerText =
+            "💾 حفظ البيانات";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   LOAD LT RECORDS
+===================================================== */
+
+async function loadLTRecords() {
+
+    const container =
+        document.getElementById(
+            "ltRecords"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (!supabaseClient) {
+
+        container.innerHTML =
+            '<div class="error-box">❌ Supabase غير متصل</div>';
+
+        return;
+
+    }
+
+
+    try {
+
+        const result =
+            await supabaseClient
+                .from("records")
+                .select("*")
+                .eq(
+                    "department",
+                    "lt"
+                );
+
+
+        if (result.error) {
+
+            console.error(
+                "❌ LT LOAD ERROR:",
+                result.error
+            );
+
+
+            container.innerHTML =
+                '<div class="error-box">❌ ' +
+                escapeHTML(
+                    result.error.message
+                ) +
+                '</div>';
+
+            return;
+
+        }
+
+
+        const records =
+            result.data || [];
+
+
+        if (!records.length) {
+
+            container.innerHTML =
+                '<div class="empty">' +
+                'لا توجد بيانات مسجلة حتى الآن' +
+                '</div>';
+
+            return;
+
+        }
+
+
+        /* =================================================
+           SORT BY REGISTRATION DATE
+        ================================================= */
+
+        records.sort(
+            function(a, b) {
+
+                return new Date(
+                    b.created_at || 0
+                ) -
+                new Date(
+                    a.created_at || 0
+                );
+
+            }
+        );
+
+
+        container.innerHTML =
+            "";
+
+
+        /* =================================================
+           DISPLAY
+        ================================================= */
+
+        records.forEach(
+            function(record) {
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "record";
+
+
+                /* =================================================
+                   IMPORTANT FOR DELETE SYSTEM
+                ================================================= */
+
+                if (
+                    record.id !== undefined &&
+                    record.id !== null
+                ) {
+
+                    div.dataset.recordId =
+                        record.id;
+
+                }
+
+
+                div.innerHTML = `
+
+                    <h3>
+
+                        🚆
+                        ${escapeHTML(
+                            record.car_name
+                        )}
+
+                    </h3>
+
+
+                    <p>
+
+                        <strong>
+                            🔢 رقم العربية:
+                        </strong>
+
+                        ${escapeHTML(
+                            record.car_number
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            🔌 الجهاز:
+                        </strong>
+
+                        ${escapeHTML(
+                            record.device
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            🔗 السوكيت:
+                        </strong>
+
+                        ${escapeHTML(
+                            record.socket
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            📝 الملاحظات:
+                        </strong>
+
+                        ${escapeHTML(
+                            record.notes || ""
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            👤 المستخدم:
+                        </strong>
+
+                        ${escapeHTML(
+                            record.created_by || ""
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            🕐 وقت التسجيل:
+                        </strong>
+
+                        ${formatArabicDate(
+                            record.created_at
+                        )}
+
+                    </p>
+
+                `;
+
+
+                container.appendChild(
+                    div
+                );
+
+            }
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ LT LOAD ERROR:",
+            error
+        );
+
+
+        container.innerHTML =
+            '<div class="error-box">' +
+            '❌ حصل خطأ أثناء تحميل البيانات' +
+            '</div>';
+
+    }
+
+}
+
+
+
+/* =====================================================
+   GO HOME
+===================================================== */
+
+function goHome() {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadLTRecords();
+
+    }
+);
+
+</script>
+
+
+
+<!-- =====================================================
+     DELETE SYSTEM
+====================================================== -->
+
+<script src="delete-system.js?v=3"></script>
 
 
 </body>
