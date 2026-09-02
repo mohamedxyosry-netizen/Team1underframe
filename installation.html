@@ -27,6 +27,10 @@
             min-height: 100vh;
         }
 
+        /* =========================
+           HEADER
+        ========================= */
+
         .header {
             background: rgb(52, 67, 84);
             padding: 20px 30px;
@@ -65,6 +69,11 @@
             opacity: 0.9;
         }
 
+
+        /* =========================
+           PAGE
+        ========================= */
+
         .form-page {
             width: min(1100px, 94%);
             margin: 30px auto;
@@ -73,6 +82,11 @@
             gap: 25px;
             align-items: start;
         }
+
+
+        /* =========================
+           CARDS
+        ========================= */
 
         .form-card,
         .records-card {
@@ -105,6 +119,11 @@
         .records-card h2 {
             color: #0d6efd;
         }
+
+
+        /* =========================
+           INPUTS
+        ========================= */
 
         .input-group {
             margin-bottom: 18px;
@@ -144,6 +163,100 @@
             resize: vertical;
         }
 
+
+        /* =========================
+           CAR NUMBER - نفس HT/LT
+        ========================= */
+
+        .car-number-preview {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+            direction: ltr;
+        }
+
+        .number-part {
+            background: #f8fafc;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 10px 5px;
+            text-align: center;
+            min-height: 78px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .number-part span {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 5px;
+            direction: rtl;
+        }
+
+        .number-part strong {
+            font-size: 22px;
+            color: #344354;
+            direction: ltr;
+        }
+
+        .car-name-part {
+            background: #f0fdf4;
+            border: 2px solid #198754;
+        }
+
+        .car-name-part strong {
+            color: #198754;
+            font-size: 23px;
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .not-completed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+
+        /* =========================
+           REASON
+        ========================= */
+
+        .reason-box {
+            display: none;
+        }
+
+
+        /* =========================
+           SAVE BUTTON
+        ========================= */
+
         .save-btn {
             width: 100%;
             border: none;
@@ -166,12 +279,23 @@
             cursor: not-allowed;
         }
 
+
+        /* =========================
+           MESSAGE
+        ========================= */
+
         #installationMessage {
             text-align: center;
             font-weight: bold;
             margin-top: 18px;
             line-height: 1.7;
+            white-space: pre-line;
         }
+
+
+        /* =========================
+           RECORDS
+        ========================= */
 
         #installationRecords {
             display: flex;
@@ -218,6 +342,11 @@
             line-height: 1.7;
         }
 
+
+        /* =========================
+           MOBILE
+        ========================= */
+
         @media (max-width: 750px) {
 
             .header {
@@ -242,6 +371,14 @@
                 padding: 20px;
             }
 
+            .number-part strong {
+                font-size: 18px;
+            }
+
+            .car-name-part strong {
+                font-size: 19px;
+            }
+
         }
 
     </style>
@@ -253,6 +390,10 @@
 
 <div class="dashboard">
 
+
+    <!-- =========================
+         HEADER
+    ========================== -->
 
     <header class="header">
 
@@ -282,8 +423,16 @@
 
 
 
+    <!-- =========================
+         MAIN
+    ========================== -->
+
     <main class="form-page">
 
+
+        <!-- =========================
+             FORM
+        ========================== -->
 
         <div class="form-card">
 
@@ -352,19 +501,96 @@
             <div class="input-group">
 
                 <label>
-                    🚆 رقم العربية
+                    🚆 بيانات العربية
                 </label>
 
+
+                <div class="car-number-preview">
+
+
+                    <!-- رقم العربية -->
+
+                    <div class="number-part">
+
+                        <span>
+                            رقم العربية
+                        </span>
+
+                        <strong id="installationCarDisplay">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <!-- اسم العربية -->
+
+                    <div class="number-part car-name-part">
+
+                        <span>
+                            اسم العربية
+                        </span>
+
+                        <strong id="installationNameDisplay">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <!-- رقم الوحدة -->
+
+                    <div class="number-part">
+
+                        <span>
+                            رقم الوحدة
+                        </span>
+
+                        <strong id="installationUnitDisplay">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- القيمة الفعلية التي يتم حفظها -->
+
                 <input
-                    type="text"
-                    id="installationCarNumber"
-                    placeholder="سيظهر تلقائياً"
-                    readonly>
+                    type="hidden"
+                    id="installationCarNumber">
 
             </div>
 
 
-            <!-- الحالة -->
+            <!-- =========================
+                 التركيبة / الجهاز
+            ========================== -->
+
+            <div class="input-group">
+
+                <label>
+                    🔧 التركيبة
+                </label>
+
+                <select
+                    id="installationDevice"
+                    disabled>
+
+                    <option value="">
+                        اختر اسم العربية أولاً
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =========================
+                 الحالة
+            ========================== -->
 
             <div class="input-group">
 
@@ -372,7 +598,9 @@
                     ✅ حالة الانتهاء
                 </label>
 
-                <select id="installationDone">
+                <select
+                    id="installationDone"
+                    onchange="updateInstallationStatus()">
 
                     <option value="">
                         اختار الحالة
@@ -391,7 +619,28 @@
             </div>
 
 
-            <!-- الملاحظات -->
+            <!-- =========================
+                 سبب عدم الانتهاء
+            ========================== -->
+
+            <div
+                class="input-group reason-box"
+                id="installationReasonGroup">
+
+                <label>
+                    ⚠️ سبب عدم الانتهاء
+                </label>
+
+                <textarea
+                    id="installationReason"
+                    placeholder="اكتب سبب عدم الانتهاء"></textarea>
+
+            </div>
+
+
+            <!-- =========================
+                 الملاحظات
+            ========================== -->
 
             <div class="input-group">
 
@@ -405,6 +654,10 @@
 
             </div>
 
+
+            <!-- =========================
+                 SAVE
+            ========================== -->
 
             <button
                 type="button"
@@ -422,6 +675,10 @@
         </div>
 
 
+
+        <!-- =========================
+             RECORDS
+        ========================== -->
 
         <div class="records-card">
 
@@ -452,6 +709,10 @@
 
 <script>
 
+/* =========================================
+   SUPABASE
+========================================= */
+
 const SUPABASE_URL =
     "https://gzyybadyaunizdlvmcle.supabase.co";
 
@@ -477,7 +738,8 @@ try {
 
     }
 
-} catch (error) {
+}
+catch (error) {
 
     console.error(
         "SUPABASE CLIENT ERROR:",
@@ -487,6 +749,148 @@ try {
 }
 
 
+
+/* =========================================
+   قوائم التركيبات
+   نفس قوائم HT بالضبط
+========================================= */
+
+const INSTALLATION_DEVICES = {
+
+
+    /* =========================
+       DTC
+    ========================= */
+
+    DTC: [
+
+        "APU1",
+        "APU2",
+        "MS BOX",
+        "HTJP",
+        "STINGER-L",
+        "STINGER-R",
+        "HTGTB1",
+        "HTGTB2",
+        "EB1",
+        "EB2",
+        "EB3",
+        "EB4"
+
+    ],
+
+
+
+    /* =========================
+       MC1
+    ========================= */
+
+    MC1: [
+
+        "FL",
+        "VVVF",
+        "MS BOX",
+        "HTJP",
+        "STINGER-L",
+        "STINGER-R",
+        "HTGTB1",
+        "HTGTB2",
+        "EB1",
+        "EB2",
+        "EB3",
+        "EB4",
+        "HSCB",
+        "LB BOX",
+        "SA",
+        "BCG",
+        "BCB",
+        "TMJP1 / BG",
+        "TMJP2 / BG",
+        "TMJP3 / BG",
+        "TMJP4 / BG",
+        "TMJP1",
+        "TMJP2",
+        "TMJP3",
+        "TMJP4"
+
+    ],
+
+
+
+    /* =========================
+       MC2
+    ========================= */
+
+    MC2: [
+
+        "FL",
+        "VVVF",
+        "MS BOX",
+        "STINGER-L",
+        "STINGER-R",
+        "HTGTB1",
+        "HTGTB2",
+        "EB1",
+        "EB2",
+        "EB3",
+        "EB4",
+        "HSCB",
+        "LB BOX",
+        "SA",
+        "BCG",
+        "BCB",
+        "TMJP1 / BG",
+        "TMJP2 / BG",
+        "TMJP3 / BG",
+        "TMJP4 / BG",
+        "TMJP1",
+        "TMJP2",
+        "TMJP3",
+        "TMJP4"
+
+    ],
+
+
+
+    /* =========================
+       MCI
+    ========================= */
+
+    MCI: [
+
+        "FL",
+        "VVVF1",
+        "VVVF2",
+        "MS BOX",
+        "STINGER-L",
+        "STINGER-R",
+        "HTGTB1",
+        "HTGTB2",
+        "EB1",
+        "EB2",
+        "EB3",
+        "EB4",
+        "HSCB",
+        "LB BOX",
+        "SA",
+        "TMJP1 / BG",
+        "TMJP2 / BG",
+        "TMJP3 / BG",
+        "TMJP4 / BG",
+        "TMJP1",
+        "TMJP2",
+        "TMJP3",
+        "TMJP4"
+
+    ]
+
+};
+
+
+
+/* =========================================
+   المستخدم الحالي
+========================================= */
 
 function getCurrentUsername() {
 
@@ -499,6 +903,7 @@ function getCurrentUsername() {
                 )
             );
 
+
         if (
             currentUser &&
             currentUser.name
@@ -507,6 +912,7 @@ function getCurrentUsername() {
             return currentUser.name;
 
         }
+
 
         if (
             currentUser &&
@@ -517,7 +923,8 @@ function getCurrentUsername() {
 
         }
 
-    } catch (error) {
+    }
+    catch (error) {
 
         console.log(
             "Could not read current user"
@@ -525,11 +932,16 @@ function getCurrentUsername() {
 
     }
 
+
     return "Unknown";
 
 }
 
 
+
+/* =========================================
+   حماية HTML
+========================================= */
 
 function escapeHTML(value) {
 
@@ -544,30 +956,81 @@ function escapeHTML(value) {
 
 
 
-function formatArabicDate(value) {
+/* =========================================
+   تحديث قائمة التركيبات
+========================================= */
 
-    if (!value) {
-        return "غير محدد";
+function updateInstallationDevices() {
+
+    const carName =
+        document.getElementById(
+            "installationCarName"
+        ).value;
+
+
+    const deviceSelect =
+        document.getElementById(
+            "installationDevice"
+        );
+
+
+    deviceSelect.innerHTML = "";
+
+
+    if (!carName) {
+
+        const option =
+            document.createElement("option");
+
+        option.value = "";
+
+        option.textContent =
+            "اختر اسم العربية أولاً";
+
+        deviceSelect.appendChild(option);
+
+        deviceSelect.disabled = true;
+
+        return;
+
     }
 
-    const date =
-        new Date(value);
 
-    if (isNaN(date.getTime())) {
-        return value;
-    }
+    const defaultOption =
+        document.createElement("option");
 
-    return new Intl.DateTimeFormat(
-        "ar-EG",
-        {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true
+    defaultOption.value = "";
+
+    defaultOption.textContent =
+        "اختر التركيبة";
+
+    deviceSelect.appendChild(
+        defaultOption
+    );
+
+
+    const devices =
+        INSTALLATION_DEVICES[carName] || [];
+
+
+    devices.forEach(
+        function(device) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = device;
+
+            option.textContent = device;
+
+            deviceSelect.appendChild(option);
+
         }
-    ).format(date);
+    );
+
+
+    deviceSelect.disabled =
+        devices.length === 0;
 
 }
 
@@ -575,7 +1038,7 @@ function formatArabicDate(value) {
 
 /* =========================================
    توليد رقم العربية
-   ========================================= */
+========================================= */
 
 function updateInstallationCarNumber() {
 
@@ -597,6 +1060,36 @@ function updateInstallationCarNumber() {
         );
 
 
+    const carDisplay =
+        document.getElementById(
+            "installationCarDisplay"
+        );
+
+
+    const nameDisplay =
+        document.getElementById(
+            "installationNameDisplay"
+        );
+
+
+    const unitDisplay =
+        document.getElementById(
+            "installationUnitDisplay"
+        );
+
+
+    /* اسم العربية */
+
+    nameDisplay.textContent =
+        carName || "—";
+
+
+    /* رقم الوحدة */
+
+    unitDisplay.textContent =
+        unitNumber || "—";
+
+
     if (
         !carName ||
         !unitNumber ||
@@ -604,6 +1097,11 @@ function updateInstallationCarNumber() {
     ) {
 
         carNumberInput.value = "";
+
+        carDisplay.textContent =
+            "—";
+
+        updateInstallationDevices();
 
         return;
 
@@ -613,11 +1111,8 @@ function updateInstallationCarNumber() {
     const carPositions = {
 
         DTC: 0,
-
         MC1: 1,
-
         MC2: 2,
-
         MCI: 3
 
     };
@@ -640,51 +1135,121 @@ function updateInstallationCarNumber() {
         position;
 
 
-    carNumberInput.value =
+    const carNumber =
         finalNumber +
         "-" +
         carName +
         "-" +
         unitNumber;
 
+
+    carNumberInput.value =
+        carNumber;
+
+
+    carDisplay.textContent =
+        finalNumber;
+
+
+    updateInstallationDevices();
+
 }
 
 
 
 /* =========================================
-   حفظ بيانات Installation
-   ========================================= */
+   تحديث الحالة
+========================================= */
+
+function updateInstallationStatus() {
+
+    const done =
+        document.getElementById(
+            "installationDone"
+        ).value;
+
+
+    const reasonGroup =
+        document.getElementById(
+            "installationReasonGroup"
+        );
+
+
+    const reason =
+        document.getElementById(
+            "installationReason"
+        );
+
+
+    if (done === "لا") {
+
+        reasonGroup.style.display =
+            "block";
+
+        reason.required = true;
+
+    }
+    else {
+
+        reasonGroup.style.display =
+            "none";
+
+        reason.required = false;
+
+        reason.value = "";
+
+    }
+
+}
+
+
+
+/* =========================================
+   حفظ البيانات
+========================================= */
 
 async function saveInstallation() {
 
-    const carNameElement =
+    const carName =
         document.getElementById(
             "installationCarName"
-        );
+        ).value.trim();
 
 
-    const unitNumberElement =
+    const unitNumber =
         document.getElementById(
             "installationUnitNumber"
-        );
+        ).value.trim();
 
 
-    const carNumberElement =
+    const carNumber =
         document.getElementById(
             "installationCarNumber"
-        );
+        ).value.trim();
 
 
-    const doneElement =
+    const device =
+        document.getElementById(
+            "installationDevice"
+        ).value.trim();
+
+
+    const done =
         document.getElementById(
             "installationDone"
-        );
+        ).value;
 
 
-    const notesElement =
+    const reason =
+        document.getElementById(
+            "installationReason"
+        ).value.trim();
+
+
+    const notes =
         document.getElementById(
             "installationNotes"
-        );
+        ).value.trim();
 
 
     const message =
@@ -699,36 +1264,21 @@ async function saveInstallation() {
         );
 
 
-    const carName =
-        carNameElement.value.trim();
 
-
-    const unitNumber =
-        unitNumberElement.value.trim();
-
-
-    const carNumber =
-        carNumberElement.value.trim();
-
-
-    const done =
-        doneElement.value;
-
-
-    const notes =
-        notesElement.value.trim();
-
-
+    /* =========================
+       التحقق
+    ========================= */
 
     if (
         !carName ||
         !unitNumber ||
         !carNumber ||
+        !device ||
         !done
     ) {
 
         message.innerText =
-            "❌ من فضلك اختر اسم العربية ورقم الوحدة واختر الحالة";
+            "❌ من فضلك أكمل اسم العربية ورقم الوحدة والتركيبة والحالة";
 
         message.style.color =
             "#dc3545";
@@ -736,7 +1286,6 @@ async function saveInstallation() {
         return;
 
     }
-
 
 
     if (
@@ -754,6 +1303,21 @@ async function saveInstallation() {
     }
 
 
+    if (
+        done === "لا" &&
+        !reason
+    ) {
+
+        message.innerText =
+            "❌ من فضلك اكتب سبب عدم الانتهاء";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
 
     if (!supabaseClient) {
 
@@ -769,6 +1333,10 @@ async function saveInstallation() {
 
 
 
+    /* =========================
+       منع الضغط المتكرر
+    ========================= */
+
     button.disabled = true;
 
     button.innerText =
@@ -783,6 +1351,10 @@ async function saveInstallation() {
 
 
 
+    /* =========================
+       البيانات
+    ========================= */
+
     const payload = {
 
         department:
@@ -794,6 +1366,9 @@ async function saveInstallation() {
         car_number:
             carNumber,
 
+        device:
+            device,
+
         done:
             done,
 
@@ -801,7 +1376,12 @@ async function saveInstallation() {
             notes,
 
         created_by:
-            getCurrentUsername()
+            getCurrentUsername(),
+
+        not_completed_reason:
+            done === "لا"
+                ? reason
+                : null
 
     };
 
@@ -837,7 +1417,6 @@ async function saveInstallation() {
                 "❌ فشل الحفظ:\n" +
                 result.error.message;
 
-
             message.style.color =
                 "#dc3545";
 
@@ -853,6 +1432,10 @@ async function saveInstallation() {
 
 
 
+        /* =========================
+           نجاح الحفظ
+        ========================= */
+
         console.log(
             "✅ INSTALLATION SAVED:",
             result.data
@@ -860,7 +1443,7 @@ async function saveInstallation() {
 
 
         message.innerText =
-            "✅ تم حفظ البيانات بنجاح في Supabase";
+            "✅ تم حفظ بيانات التركيبة بنجاح";
 
 
         message.style.color =
@@ -868,15 +1451,69 @@ async function saveInstallation() {
 
 
 
-        carNameElement.value = "";
+        /* =========================
+           تفريغ الفورم
+        ========================= */
 
-        unitNumberElement.value = "";
+        document.getElementById(
+            "installationCarName"
+        ).value = "";
 
-        carNumberElement.value = "";
 
-        doneElement.value = "";
+        document.getElementById(
+            "installationUnitNumber"
+        ).value = "";
 
-        notesElement.value = "";
+
+        document.getElementById(
+            "installationCarNumber"
+        ).value = "";
+
+
+        document.getElementById(
+            "installationCarDisplay"
+        ).textContent = "—";
+
+
+        document.getElementById(
+            "installationNameDisplay"
+        ).textContent = "—";
+
+
+        document.getElementById(
+            "installationUnitDisplay"
+        ).textContent = "—";
+
+
+        document.getElementById(
+            "installationDevice"
+        ).innerHTML =
+            '<option value="">اختر اسم العربية أولاً</option>';
+
+
+        document.getElementById(
+            "installationDevice"
+        ).disabled = true;
+
+
+        document.getElementById(
+            "installationDone"
+        ).value = "";
+
+
+        document.getElementById(
+            "installationReason"
+        ).value = "";
+
+
+        document.getElementById(
+            "installationReasonGroup"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "installationNotes"
+        ).value = "";
 
 
 
@@ -921,8 +1558,8 @@ async function saveInstallation() {
 
 
 /* =========================================
-   تحميل سجلات Installation
-   ========================================= */
+   تحميل السجلات
+========================================= */
 
 async function loadInstallationRecords() {
 
@@ -935,7 +1572,6 @@ async function loadInstallationRecords() {
     if (!container) {
         return;
     }
-
 
 
     if (!supabaseClient) {
@@ -1039,14 +1675,36 @@ async function loadInstallationRecords() {
                     record.id;
 
 
+                const statusClass =
+                    record.done === "نعم"
+                        ? "completed"
+                        : "not-completed";
+
+
+                const statusText =
+                    record.done === "نعم"
+                        ? "✅ تم الانتهاء"
+                        : "⚠️ لم يتم الانتهاء";
+
+
                 div.innerHTML = `
 
                     <h3>
-                        🚆
+                        🔧
+                        ${escapeHTML(
+                            record.device || "تركيبة"
+                        )}
+                    </h3>
+
+
+                    <p>
+                        <strong>
+                            🚆 العربية:
+                        </strong>
                         ${escapeHTML(
                             record.car_name
                         )}
-                    </h3>
+                    </p>
 
 
                     <p>
@@ -1063,10 +1721,29 @@ async function loadInstallationRecords() {
                         <strong>
                             ✅ الحالة:
                         </strong>
-                        ${escapeHTML(
-                            record.done
-                        )}
+
+                        <span class="status-badge ${statusClass}">
+                            ${statusText}
+                        </span>
                     </p>
+
+
+                    ${
+                        record.done !== "نعم"
+                        ?
+                        `
+                        <p>
+                            <strong>
+                                ⚠️ سبب عدم الانتهاء:
+                            </strong>
+                            ${escapeHTML(
+                                record.not_completed_reason || "غير محدد"
+                            )}
+                        </p>
+                        `
+                        :
+                        ""
+                    }
 
 
                     <p>
@@ -1074,7 +1751,7 @@ async function loadInstallationRecords() {
                             📝 الملاحظات:
                         </strong>
                         ${escapeHTML(
-                            record.notes || ""
+                            record.notes || "لا توجد"
                         )}
                     </p>
 
@@ -1085,16 +1762,6 @@ async function loadInstallationRecords() {
                         </strong>
                         ${escapeHTML(
                             record.created_by || ""
-                        )}
-                    </p>
-
-
-                    <p>
-                        <strong>
-                            🕐 وقت التسجيل:
-                        </strong>
-                        ${formatArabicDate(
-                            record.created_at
                         )}
                     </p>
 
@@ -1132,7 +1799,7 @@ async function loadInstallationRecords() {
 
 /* =========================================
    العودة للرئيسية
-   ========================================= */
+========================================= */
 
 function goHome() {
 
@@ -1145,7 +1812,7 @@ function goHome() {
 
 /* =========================================
    تشغيل الصفحة
-   ========================================= */
+========================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -1158,6 +1825,8 @@ document.addEventListener(
 
 </script>
 
+
+<!-- نظام الحذف -->
 
 <script src="delete-system.js?v=2"></script>
 

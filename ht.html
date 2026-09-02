@@ -3,464 +3,704 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <title>NERIC - HT</title>
+<title>NERIC - HT</title>
 
-    <style>
+<style>
 
-        * {
-            box-sizing: border-box;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            margin: 0;
-            font-family: Arial, Tahoma, sans-serif;
-            background: #f1f5f9;
-            color: #1f2937;
-        }
+body {
+    margin: 0;
+    font-family: Arial, Tahoma, sans-serif;
+    background: #f1f5f9;
+    color: #1f2937;
+}
 
-        .dashboard {
-            min-height: 100vh;
-        }
+.dashboard {
+    min-height: 100vh;
+}
 
-        .header {
-            background: rgb(52, 67, 84);
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-            border-bottom: 3px solid #5928e0;
-        }
+/* =====================================================
+   HEADER
+===================================================== */
 
-        .header h1 {
-            margin: 0 0 7px;
-            font-size: 28px;
-            color: #ffffff;
-        }
+.header {
+    background: rgb(52, 67, 84);
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    border-bottom: 3px solid #5928e0;
+}
 
-        .header p {
-            margin: 0;
-            color: #d1d5db;
-            font-size: 14px;
-        }
+.header h1 {
+    margin: 0 0 7px;
+    font-size: 28px;
+    color: white;
+}
 
-        .logout-btn {
-            border: none;
-            background: #198754;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-        }
+.header p {
+    margin: 0;
+    color: #d1d5db;
+    font-size: 14px;
+}
 
-        .logout-btn:hover {
-            opacity: 0.9;
-        }
+.logout-btn {
+    border: none;
+    background: #198754;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
 
-        .form-page {
-            width: min(1100px, 94%);
-            margin: 30px auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            align-items: start;
-        }
+.logout-btn:hover {
+    opacity: .9;
+}
 
-        .form-card,
-        .records-card {
-            background: white;
-            border-radius: 18px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            border: 1px solid #e5e7eb;
-        }
+/* =====================================================
+   PAGE
+===================================================== */
 
-        .form-card {
-            border-top: 5px solid #198754;
-        }
+.form-page {
+    width: min(1100px, 94%);
+    margin: 30px auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    align-items: start;
+}
 
-        .records-card {
-            border-top: 5px solid #0d6efd;
-        }
+/* =====================================================
+   CARDS
+===================================================== */
 
-        .form-card h2,
-        .records-card h2 {
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 21px;
-        }
+.form-card,
+.records-card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    border: 1px solid #e5e7eb;
+}
 
-        .form-card h2 {
-            color: #198754;
-        }
+.form-card {
+    border-top: 5px solid #198754;
+}
 
-        .records-card h2 {
-            color: #0d6efd;
-        }
+.records-card {
+    border-top: 5px solid #0d6efd;
+}
 
-        .input-group {
-            margin-bottom: 18px;
-        }
+.form-card h2,
+.records-card h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 21px;
+}
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #374151;
-        }
+.form-card h2 {
+    color: #198754;
+}
 
-        .input-group input,
-        .input-group select,
-        .input-group textarea {
-            width: 100%;
-            border: 1px solid #d1d5db;
-            border-radius: 10px;
-            padding: 13px;
-            font-size: 15px;
-            background: #f9fafb;
-            outline: none;
-            transition: 0.2s;
-            font-family: inherit;
-        }
+.records-card h2 {
+    color: #0d6efd;
+}
 
-        .input-group input:focus,
-        .input-group select:focus,
-        .input-group textarea:focus {
-            border-color: #198754;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(25,135,84,0.12);
-        }
+/* =====================================================
+   INPUTS
+===================================================== */
 
-        .input-group textarea {
-            min-height: 110px;
-            resize: vertical;
-        }
+.input-group {
+    margin-bottom: 18px;
+}
 
-        .save-btn {
-            width: 100%;
-            border: none;
-            background: #198754;
-            color: white;
-            padding: 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 5px;
-        }
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #374151;
+}
 
-        .save-btn:hover {
-            background: #157347;
-        }
+.input-group input,
+.input-group select,
+.input-group textarea {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 15px;
+    background: #f9fafb;
+    outline: none;
+    transition: .2s;
+    font-family: inherit;
+}
 
-        .save-btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+    border-color: #198754;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(25,135,84,.12);
+}
 
-        #htMessage {
-            text-align: center;
-            font-weight: bold;
-            margin-top: 18px;
-            line-height: 1.7;
-        }
+.input-group textarea {
+    min-height: 110px;
+    resize: vertical;
+}
 
-        #htRecords {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+/* =====================================================
+   DEVICE
+===================================================== */
 
-        .record {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-right: 5px solid #0d6efd;
-            border-radius: 12px;
-            padding: 18px;
-        }
+#htDevice {
+    cursor: pointer;
+    background: #f9fafb;
+}
 
-        .record h3 {
-            margin-top: 0;
-            font-size: 16px;
-            color: #0d6efd;
-        }
+/* =====================================================
+   رقم العربية - نفس شكل LT
+===================================================== */
 
-        .record p {
-            margin: 9px 0;
-            line-height: 1.7;
-        }
+.car-number-preview {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+    direction: ltr;
+}
 
-        .record strong {
-            color: #374151;
-        }
+.number-part {
+    background: #f8fafc;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 10px 5px;
+    text-align: center;
+    min-height: 78px;
 
-        .empty {
-            text-align: center;
-            color: #64748b;
-            padding: 20px;
-        }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 
-        .error-box {
-            background: #fff1f2;
-            border: 1px solid #fecdd3;
-            color: #b42318;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            line-height: 1.7;
-        }
+.number-part span {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 5px;
+    direction: rtl;
+}
 
-        @media (max-width: 750px) {
+.number-part strong {
+    display: block;
+    font-size: 22px;
+    color: #344354;
+    direction: ltr;
+}
 
-            .header {
-                padding: 18px;
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-            }
+.car-name-part {
+    background: #f0fdf4;
+    border: 2px solid #198754;
+}
 
-            .logout-btn {
-                width: 100%;
-            }
+.car-name-part strong {
+    color: #198754;
+    font-size: 23px;
+}
 
-            .form-page {
-                grid-template-columns: 1fr;
-                width: 94%;
-                margin: 20px auto;
-            }
+/* =====================================================
+   SAVE BUTTON
+===================================================== */
 
-            .form-card,
-            .records-card {
-                padding: 20px;
-            }
+.save-btn {
+    width: 100%;
+    border: none;
+    background: #198754;
+    color: white;
+    padding: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 5px;
+}
 
-        }
+.save-btn:hover {
+    background: #157347;
+}
 
-    </style>
+.save-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+#htMessage {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 18px;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+/* =====================================================
+   RECORDS
+===================================================== */
+
+#htRecords {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.record {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-right: 5px solid #0d6efd;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.record h3 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #0d6efd;
+}
+
+.record p {
+    margin: 9px 0;
+    line-height: 1.7;
+}
+
+.record strong {
+    color: #374151;
+}
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.status-completed {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-pending {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty {
+    text-align: center;
+    color: #64748b;
+    padding: 20px;
+}
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.error-box {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #b42318;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    line-height: 1.7;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 750px) {
+
+    .header {
+        padding: 18px;
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .logout-btn {
+        width: 100%;
+    }
+
+    .form-page {
+        grid-template-columns: 1fr;
+        width: 94%;
+        margin: 20px auto;
+    }
+
+    .form-card,
+    .records-card {
+        padding: 20px;
+    }
+
+    .car-number-preview {
+        gap: 6px;
+    }
+
+    .number-part {
+        padding: 10px 5px;
+    }
+
+    .number-part span {
+        font-size: 11px;
+    }
+
+    .number-part strong {
+        font-size: 18px;
+    }
+
+    .car-name-part strong {
+        font-size: 19px;
+    }
+
+}
+
+</style>
 
 </head>
-
 
 <body>
 
 <div class="dashboard">
 
+<header class="header">
 
-    <header class="header">
+<div>
 
-        <div>
+<h1>
+⚡ قسم HT
+</h1>
 
-            <h1>
-                ⚡ قسم HT
-            </h1>
+<p>
+تسجيل ومتابعة أعمال الـ HT
+</p>
 
-            <p>
-                تسجيل ومتابعة أعمال الـ HT
-            </p>
+</div>
 
-        </div>
+<button
+class="logout-btn"
+type="button"
+onclick="goHome()">
 
+🏠 الأقسام الرئيسية
 
-        <button
-            class="logout-btn"
-            type="button"
-            onclick="goHome()">
+</button>
 
-            🏠 الأقسام الرئيسية
+</header>
 
-        </button>
 
-    </header>
+<main class="form-page">
 
 
+<!-- =====================================================
+     FORM
+===================================================== -->
 
-    <main class="form-page">
+<div class="form-card">
 
+<h2>
+📝 تسجيل بيانات جديدة
+</h2>
 
-        <div class="form-card">
 
-            <h2>
-                📝 تسجيل بيانات جديدة
-            </h2>
+<!-- اسم العربية -->
 
+<div class="input-group">
 
-            <!-- اسم العربية -->
+<label>
+🚆 اسم العربية
+</label>
 
-            <div class="input-group">
+<select
+id="htCarName"
+onchange="updateHTDevices(); updateHTCarNumber();">
 
-                <label>
-                    🚆 اسم العربية
-                </label>
+<option value="">
+اختر اسم العربية
+</option>
 
-                <select
-                    id="htCarName"
-                    onchange="updateHTCarNumber()">
+<option value="DTC">
+DTC
+</option>
 
-                    <option value="">
-                        اختر اسم العربية
-                    </option>
+<option value="MC1">
+MC1
+</option>
 
-                    <option value="DTC">
-                        DTC
-                    </option>
+<option value="MC2">
+MC2
+</option>
 
-                    <option value="MC1">
-                        MC1
-                    </option>
+<option value="MCI">
+MCI
+</option>
 
-                    <option value="MC2">
-                        MC2
-                    </option>
-
-                    <option value="MCI">
-                        MCI
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- رقم الوحدة -->
-
-            <div class="input-group">
-
-                <label>
-                    🔢 رقم الوحدة
-                </label>
-
-                <input
-                    type="number"
-                    id="htUnitNumber"
-                    placeholder="مثال: 17"
-                    min="17"
-                    oninput="updateHTCarNumber()">
-
-            </div>
-
-
-            <!-- رقم العربية -->
-
-            <div class="input-group">
-
-                <label>
-                    🚆 رقم العربية
-                </label>
-
-                <input
-                    type="text"
-                    id="htCarNumber"
-                    placeholder="سيظهر تلقائياً"
-                    readonly>
-
-            </div>
-
-
-            <!-- الحالة -->
-
-            <div class="input-group">
-
-                <label>
-                    ✅ تم الانتهاء
-                </label>
-
-                <select id="htDone">
-
-                    <option value="">
-                        اختار الحالة
-                    </option>
-
-                    <option value="نعم">
-                        نعم - تم الانتهاء
-                    </option>
-
-                    <option value="لا">
-                        لا - لم يتم الانتهاء
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- الملاحظات -->
-
-            <div class="input-group">
-
-                <label>
-                    📝 ملاحظات
-                </label>
-
-                <textarea
-                    id="htNotes"
-                    placeholder="اكتب الملاحظات"></textarea>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="save-btn"
-                id="saveHTButton"
-                onclick="saveHT()">
-
-                💾 حفظ البيانات
-
-            </button>
-
-
-            <p id="htMessage"></p>
-
-        </div>
-
-
-
-        <div class="records-card">
-
-            <h2>
-                📋 البيانات المسجلة
-            </h2>
-
-
-            <div id="htRecords">
-
-                <div class="empty">
-                    ⏳ جاري تحميل البيانات...
-                </div>
-
-            </div>
-
-        </div>
-
-
-    </main>
+</select>
 
 </div>
 
 
+<!-- رقم الوحدة -->
+
+<div class="input-group">
+
+<label>
+🔢 رقم الوحدة
+</label>
+
+<input
+type="number"
+id="htUnitNumber"
+placeholder="مثال: 17"
+min="17"
+oninput="updateHTCarNumber()">
+
+</div>
+
+
+<!-- =====================================================
+     رقم العربية - 3 مربعات مثل LT
+===================================================== -->
+
+<div class="input-group">
+
+<label>
+🚆 رقم العربية
+</label>
+
+<div class="car-number-preview">
+
+
+    <!-- رقم العربية -->
+
+    <div class="number-part">
+
+        <span>
+            رقم العربية
+        </span>
+
+        <strong id="htCarDisplay">
+            --
+        </strong>
+
+    </div>
+
+
+    <!-- اسم العربية -->
+
+    <div class="number-part car-name-part">
+
+        <span>
+            اسم العربية
+        </span>
+
+        <strong id="htNameDisplay">
+            --
+        </strong>
+
+    </div>
+
+
+    <!-- رقم الوحدة -->
+
+    <div class="number-part">
+
+        <span>
+            رقم الوحدة
+        </span>
+
+        <strong id="htUnitDisplay">
+            --
+        </strong>
+
+    </div>
+
+
+</div>
+
+
+<input
+type="hidden"
+id="htCarNumber">
+
+</div>
+
+
+<!-- =====================================================
+     اسم الجهاز
+===================================================== -->
+
+<div class="input-group">
+
+<label>
+🔧 اسم الجهاز
+</label>
+
+<select
+id="htDevice"
+disabled>
+
+<option value="">
+اختر اسم العربية أولاً
+</option>
+
+</select>
+
+</div>
+
+
+<!-- =====================================================
+     الحالة
+===================================================== -->
+
+<div class="input-group">
+
+<label>
+✅ تم الانتهاء
+</label>
+
+<select id="htDone">
+
+<option value="">
+اختار الحالة
+</option>
+
+<option value="نعم">
+نعم - تم الانتهاء
+</option>
+
+<option value="لا">
+لا - لم يتم الانتهاء
+</option>
+
+</select>
+
+</div>
+
+
+<!-- =====================================================
+     سبب عدم الانتهاء
+===================================================== -->
+
+<div
+class="input-group"
+id="htReasonGroup"
+style="display:none;">
+
+<label>
+❌ سبب عدم الانتهاء
+</label>
+
+<textarea
+id="htReason"
+placeholder="اكتب سبب عدم الانتهاء"></textarea>
+
+</div>
+
+
+<!-- =====================================================
+     الملاحظات
+===================================================== -->
+
+<div class="input-group">
+
+<label>
+📝 ملاحظات
+</label>
+
+<textarea
+id="htNotes"
+placeholder="اكتب الملاحظات"></textarea>
+
+</div>
+
+
+<button
+type="button"
+class="save-btn"
+id="saveHTButton"
+onclick="saveHT()">
+
+💾 حفظ البيانات
+
+</button>
+
+<p id="htMessage"></p>
+
+</div>
+
+
+<!-- =====================================================
+     RECORDS
+===================================================== -->
+
+<div class="records-card">
+
+<h2>
+📋 البيانات المسجلة
+</h2>
+
+<div id="htRecords">
+
+<div class="empty">
+⏳ جاري تحميل البيانات...
+</div>
+
+</div>
+
+</div>
+
+
+</main>
+
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
 <script>
 
+/* =====================================================
+   SUPABASE
+===================================================== */
+
 const SUPABASE_URL =
-    "https://gzyybadyaunizdlvmcle.supabase.co";
+"https://gzyybadyaunizdlvmcle.supabase.co";
 
 const SUPABASE_KEY =
-    "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
-
+"sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
 
 let supabaseClient = null;
-
 
 try {
 
@@ -477,7 +717,8 @@ try {
 
     }
 
-} catch (error) {
+}
+catch(error) {
 
     console.error(
         "SUPABASE CLIENT ERROR:",
@@ -487,6 +728,122 @@ try {
 }
 
 
+/* =====================================================
+   أجهزة HT
+===================================================== */
+
+const HT_DEVICES = {
+
+DTC: [
+
+"APU1",
+"APU2",
+"MS BOX",
+"HTJP",
+"STINGER-L",
+"STINGER-R",
+"HTGTB1",
+"HTGTB2",
+"EB1",
+"EB2",
+"EB3",
+"EB4"
+
+],
+
+MC1: [
+
+"FL",
+"VVVF",
+"MS BOX",
+"HTJP",
+"STINGER-L",
+"STINGER-R",
+"HTGTB1",
+"HTGTB2",
+"EB1",
+"EB2",
+"EB3",
+"EB4",
+"HSCB",
+"LB BOX",
+"SA",
+"BCG",
+"BCB",
+"TMJP1 / BG",
+"TMJP2 / BG",
+"TMJP3 / BG",
+"TMJP4 / BG",
+"TMJP1",
+"TMJP2",
+"TMJP3",
+"TMJP4"
+
+],
+
+MC2: [
+
+"FL",
+"VVVF",
+"MS BOX",
+"STINGER-L",
+"STINGER-R",
+"HTGTB1",
+"HTGTB2",
+"EB1",
+"EB2",
+"EB3",
+"EB4",
+"HSCB",
+"LB BOX",
+"SA",
+"BCG",
+"BCB",
+"TMJP1 / BG",
+"TMJP2 / BG",
+"TMJP3 / BG",
+"TMJP4 / BG",
+"TMJP1",
+"TMJP2",
+"TMJP3",
+"TMJP4"
+
+],
+
+MCI: [
+
+"FL",
+"VVVF1",
+"VVVF2",
+"MS BOX",
+"STINGER-L",
+"STINGER-R",
+"HTGTB1",
+"HTGTB2",
+"EB1",
+"EB2",
+"EB3",
+"EB4",
+"HSCB",
+"LB BOX",
+"SA",
+"TMJP1 / BG",
+"TMJP2 / BG",
+"TMJP3 / BG",
+"TMJP4 / BG",
+"TMJP1",
+"TMJP2",
+"TMJP3",
+"TMJP4"
+
+]
+
+};
+
+
+/* =====================================================
+   المستخدم الحالي
+===================================================== */
 
 function getCurrentUsername() {
 
@@ -494,9 +851,7 @@ function getCurrentUsername() {
 
         const currentUser =
             JSON.parse(
-                sessionStorage.getItem(
-                    "currentUser"
-                )
+                sessionStorage.getItem("currentUser")
             );
 
         if (
@@ -517,7 +872,8 @@ function getCurrentUsername() {
 
         }
 
-    } catch (error) {
+    }
+    catch(error) {
 
         console.log(
             "Could not read current user"
@@ -530,6 +886,9 @@ function getCurrentUsername() {
 }
 
 
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
 
 function escapeHTML(value) {
 
@@ -543,6 +902,9 @@ function escapeHTML(value) {
 }
 
 
+/* =====================================================
+   DATE
+===================================================== */
 
 function formatArabicDate(value) {
 
@@ -550,8 +912,7 @@ function formatArabicDate(value) {
         return "غير محدد";
     }
 
-    const date =
-        new Date(value);
+    const date = new Date(value);
 
     if (isNaN(date.getTime())) {
         return value;
@@ -572,30 +933,102 @@ function formatArabicDate(value) {
 }
 
 
+/* =====================================================
+   تحديث الأجهزة
+===================================================== */
 
-/* =========================================
+function updateHTDevices() {
+
+    const carName =
+        document.getElementById("htCarName").value;
+
+    const deviceSelect =
+        document.getElementById("htDevice");
+
+    if (!deviceSelect) {
+        return;
+    }
+
+    deviceSelect.innerHTML = "";
+
+    if (!carName) {
+
+        deviceSelect.disabled = true;
+
+        deviceSelect.innerHTML = `
+            <option value="">
+                اختر اسم العربية أولاً
+            </option>
+        `;
+
+        return;
+    }
+
+    const devices =
+        HT_DEVICES[carName] || [];
+
+    deviceSelect.disabled = false;
+
+    deviceSelect.innerHTML = `
+        <option value="">
+            ⬇️ اختر اسم الجهاز
+        </option>
+    `;
+
+    devices.forEach(function(device) {
+
+        const option =
+            document.createElement("option");
+
+        option.value = device;
+        option.textContent = device;
+
+        deviceSelect.appendChild(option);
+
+    });
+
+}
+
+
+/* =====================================================
    توليد رقم العربية
-   ========================================= */
+   نفس معادلة LT
+===================================================== */
 
 function updateHTCarNumber() {
 
     const carName =
-        document.getElementById(
-            "htCarName"
-        ).value;
-
+        document.getElementById("htCarName").value;
 
     const unitNumber =
-        document.getElementById(
-            "htUnitNumber"
-        ).value.trim();
-
+        document.getElementById("htUnitNumber").value.trim();
 
     const carNumberInput =
-        document.getElementById(
-            "htCarNumber"
-        );
+        document.getElementById("htCarNumber");
 
+    const carDisplay =
+        document.getElementById("htCarDisplay");
+
+    const nameDisplay =
+        document.getElementById("htNameDisplay");
+
+    const unitDisplay =
+        document.getElementById("htUnitDisplay");
+
+
+    /* عرض اسم العربية */
+
+    nameDisplay.textContent =
+        carName || "--";
+
+
+    /* عرض رقم الوحدة */
+
+    unitDisplay.textContent =
+        unitNumber || "--";
+
+
+    /* لو البيانات ناقصة */
 
     if (
         !carName ||
@@ -603,21 +1036,24 @@ function updateHTCarNumber() {
         Number(unitNumber) < 17
     ) {
 
-        carNumberInput.value = "";
+        carDisplay.textContent =
+            "--";
+
+        carNumberInput.value =
+            "";
 
         return;
 
     }
 
 
+    /* ترتيب العربيات */
+
     const carPositions = {
 
         DTC: 0,
-
         MC1: 1,
-
         MC2: 2,
-
         MCI: 3
 
     };
@@ -626,6 +1062,8 @@ function updateHTCarNumber() {
     const position =
         carPositions[carName];
 
+
+    /* نفس حساب LT */
 
     const baseNumber =
         65 +
@@ -636,9 +1074,16 @@ function updateHTCarNumber() {
 
 
     const finalNumber =
-        baseNumber +
-        position;
+        baseNumber + position;
 
+
+    /* عرض الرقم في المربع */
+
+    carDisplay.textContent =
+        finalNumber;
+
+
+    /* الرقم الكامل الذي سيتم حفظه */
 
     carNumberInput.value =
         finalNumber +
@@ -650,85 +1095,122 @@ function updateHTCarNumber() {
 }
 
 
+/* =====================================================
+   حالة الجهاز
+===================================================== */
 
-/* =========================================
-   حفظ بيانات HT
-   ========================================= */
+document
+.getElementById("htDone")
+.addEventListener(
+    "change",
+    function() {
+
+        const group =
+            document.getElementById(
+                "htReasonGroup"
+            );
+
+        const reason =
+            document.getElementById(
+                "htReason"
+            );
+
+        if (this.value === "لا") {
+
+            group.style.display =
+                "block";
+
+            reason.required =
+                true;
+
+        }
+        else {
+
+            group.style.display =
+                "none";
+
+            reason.required =
+                false;
+
+            reason.value =
+                "";
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   حفظ HT
+===================================================== */
 
 async function saveHT() {
 
     const carNameElement =
-        document.getElementById(
-            "htCarName"
-        );
-
+        document.getElementById("htCarName");
 
     const unitNumberElement =
-        document.getElementById(
-            "htUnitNumber"
-        );
-
+        document.getElementById("htUnitNumber");
 
     const carNumberElement =
-        document.getElementById(
-            "htCarNumber"
-        );
+        document.getElementById("htCarNumber");
 
+    const deviceElement =
+        document.getElementById("htDevice");
 
     const doneElement =
-        document.getElementById(
-            "htDone"
-        );
+        document.getElementById("htDone");
 
+    const reasonElement =
+        document.getElementById("htReason");
 
     const notesElement =
-        document.getElementById(
-            "htNotes"
-        );
-
+        document.getElementById("htNotes");
 
     const message =
-        document.getElementById(
-            "htMessage"
-        );
-
+        document.getElementById("htMessage");
 
     const button =
-        document.getElementById(
-            "saveHTButton"
-        );
+        document.getElementById("saveHTButton");
 
 
     const carName =
         carNameElement.value.trim();
 
-
     const unitNumber =
         unitNumberElement.value.trim();
-
 
     const carNumber =
         carNumberElement.value.trim();
 
+    const device =
+        deviceElement.value.trim();
 
     const done =
         doneElement.value;
 
+    const reason =
+        reasonElement.value.trim();
 
     const notes =
         notesElement.value.trim();
 
 
+    /* =================================================
+       التحقق
+    ================================================= */
 
     if (
         !carName ||
         !unitNumber ||
         !carNumber ||
+        !device ||
         !done
     ) {
 
         message.innerText =
-            "❌ من فضلك اختر اسم العربية ورقم الوحدة واختر الحالة";
+            "❌ من فضلك اختر اسم العربية ورقم الوحدة واسم الجهاز والحالة";
 
         message.style.color =
             "#dc3545";
@@ -736,7 +1218,6 @@ async function saveHT() {
         return;
 
     }
-
 
 
     if (
@@ -754,6 +1235,21 @@ async function saveHT() {
     }
 
 
+    if (
+        done === "لا" &&
+        !reason
+    ) {
+
+        message.innerText =
+            "❌ من فضلك اكتب سبب عدم الانتهاء";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
 
     if (!supabaseClient) {
 
@@ -768,12 +1264,11 @@ async function saveHT() {
     }
 
 
-
-    button.disabled = true;
+    button.disabled =
+        true;
 
     button.innerText =
         "⏳ جاري الحفظ...";
-
 
     message.innerText =
         "⏳ جاري حفظ البيانات...";
@@ -782,6 +1277,9 @@ async function saveHT() {
         "#0d6efd";
 
 
+    /* =================================================
+       البيانات
+    ================================================= */
 
     const payload = {
 
@@ -791,15 +1289,21 @@ async function saveHT() {
 
         car_number: carNumber,
 
+        device: device,
+
         done: done,
 
         notes: notes,
 
         created_by:
-            getCurrentUsername()
+            getCurrentUsername(),
+
+        not_completed_reason:
+            done === "لا"
+                ? reason
+                : null
 
     };
-
 
 
     try {
@@ -812,7 +1316,6 @@ async function saveHT() {
                 .single();
 
 
-
         if (result.error) {
 
             console.error(
@@ -820,17 +1323,15 @@ async function saveHT() {
                 result.error
             );
 
-
             message.innerText =
                 "❌ فشل الحفظ:\n" +
                 result.error.message;
 
-
             message.style.color =
                 "#dc3545";
 
-
-            button.disabled = false;
+            button.disabled =
+                false;
 
             button.innerText =
                 "💾 حفظ البيانات";
@@ -840,58 +1341,97 @@ async function saveHT() {
         }
 
 
+        /* =================================================
+           نجاح
+        ================================================= */
 
         message.innerText =
-            "✅ تم حفظ البيانات بنجاح في Supabase";
-
+            "✅ تم حفظ البيانات بنجاح";
 
         message.style.color =
             "#198754";
 
 
+        /* =================================================
+           تفريغ البيانات
+        ================================================= */
 
-        carNameElement.value = "";
+        carNameElement.value =
+            "";
 
-        unitNumberElement.value = "";
+        unitNumberElement.value =
+            "";
 
-        carNumberElement.value = "";
+        carNumberElement.value =
+            "";
 
-        doneElement.value = "";
+        document.getElementById(
+            "htCarDisplay"
+        ).textContent =
+            "--";
 
-        notesElement.value = "";
+        document.getElementById(
+            "htNameDisplay"
+        ).textContent =
+            "--";
+
+        document.getElementById(
+            "htUnitDisplay"
+        ).textContent =
+            "--";
 
 
+        deviceElement.innerHTML = `
+            <option value="">
+                اختر اسم العربية أولاً
+            </option>
+        `;
 
-        button.disabled = false;
+        deviceElement.disabled =
+            true;
+
+        doneElement.value =
+            "";
+
+        reasonElement.value =
+            "";
+
+        notesElement.value =
+            "";
+
+        document.getElementById(
+            "htReasonGroup"
+        ).style.display =
+            "none";
+
+
+        button.disabled =
+            false;
 
         button.innerText =
             "💾 حفظ البيانات";
-
 
 
         await loadHTRecords();
 
     }
 
-
-    catch (error) {
+    catch(error) {
 
         console.error(
             "HT SAVE ERROR:",
             error
         );
 
-
         message.innerText =
             "❌ حصل خطأ أثناء الحفظ:\n" +
             error.message;
 
-
         message.style.color =
             "#dc3545";
 
-
-        button.disabled = false;
+        button.disabled =
+            false;
 
         button.innerText =
             "💾 حفظ البيانات";
@@ -901,10 +1441,9 @@ async function saveHT() {
 }
 
 
-
-/* =========================================
-   تحميل سجلات HT
-   ========================================= */
+/* =====================================================
+   تحميل السجلات
+===================================================== */
 
 async function loadHTRecords() {
 
@@ -913,22 +1452,20 @@ async function loadHTRecords() {
             "htRecords"
         );
 
-
     if (!container) {
         return;
     }
 
-
-
     if (!supabaseClient) {
 
-        container.innerHTML =
-            '<div class="error-box">❌ Supabase غير متصل</div>';
+        container.innerHTML = `
+            <div class="error-box">
+                ❌ Supabase غير متصل
+            </div>
+        `;
 
         return;
-
     }
-
 
 
     try {
@@ -937,44 +1474,40 @@ async function loadHTRecords() {
             await supabaseClient
                 .from("records")
                 .select("*")
-                .eq(
-                    "department",
-                    "ht"
-                );
-
+                .eq("department", "ht");
 
 
         if (result.error) {
 
-            container.innerHTML =
-                '<div class="error-box">❌ ' +
-                escapeHTML(
-                    result.error.message
-                ) +
-                '</div>';
+            container.innerHTML = `
+                <div class="error-box">
+                    ❌
+                    ${escapeHTML(
+                        result.error.message
+                    )}
+                </div>
+            `;
 
             return;
 
         }
-
 
 
         const records =
             result.data || [];
 
 
-
         if (!records.length) {
 
-            container.innerHTML =
-                '<div class="empty">' +
-                'لا توجد بيانات مسجلة حتى الآن' +
-                '</div>';
+            container.innerHTML = `
+                <div class="empty">
+                    لا توجد بيانات مسجلة حتى الآن
+                </div>
+            `;
 
             return;
 
         }
-
 
 
         records.sort(
@@ -991,9 +1524,8 @@ async function loadHTRecords() {
         );
 
 
-
-        container.innerHTML = "";
-
+        container.innerHTML =
+            "";
 
 
         records.forEach(
@@ -1004,69 +1536,146 @@ async function loadHTRecords() {
                         "div"
                     );
 
-
                 div.className =
                     "record";
 
 
-                /* مهم جدًا لنظام الحذف */
+                /* مهم لنظام الحذف */
 
                 div.dataset.recordId =
                     record.id;
 
 
+                const isCompleted =
+                    String(
+                        record.done || ""
+                    ).trim() === "نعم";
+
+
                 div.innerHTML = `
 
                     <h3>
-                        🚆
+
+                        🔧
+
                         ${escapeHTML(
-                            record.car_name
+                            record.device ||
+                            "جهاز HT"
                         )}
+
                     </h3>
 
+
                     <p>
+
+                        <strong>
+                            🚆 اسم العربية:
+                        </strong>
+
+                        ${escapeHTML(
+                            record.car_name ||
+                            ""
+                        )}
+
+                    </p>
+
+
+                    <p>
+
                         <strong>
                             🔢 رقم العربية:
                         </strong>
+
                         ${escapeHTML(
-                            record.car_number
+                            record.car_number ||
+                            ""
                         )}
+
                     </p>
 
+
                     <p>
+
                         <strong>
-                            ✅ الحالة:
+                            📌 الحالة:
                         </strong>
-                        ${escapeHTML(
-                            record.done
-                        )}
+
+                        <span
+                            class="status-badge
+                            ${
+                                isCompleted
+                                ?
+                                "status-completed"
+                                :
+                                "status-pending"
+                            }">
+
+                            ${
+                                isCompleted
+                                ?
+                                "✅ تم التقفيل"
+                                :
+                                "❌ لم يتم التقفيل"
+                            }
+
+                        </span>
+
                     </p>
 
+
+                    ${
+                        !isCompleted &&
+                        record.not_completed_reason
+
+                        ?
+
+                        `
+
+                        <p>
+
+                            <strong>
+                                ❌ سبب عدم الانتهاء:
+                            </strong>
+
+                            ${escapeHTML(
+                                record.not_completed_reason
+                            )}
+
+                        </p>
+
+                        `
+
+                        :
+
+                        ""
+                    }
+
+
                     <p>
+
                         <strong>
                             📝 الملاحظات:
                         </strong>
+
                         ${escapeHTML(
-                            record.notes || ""
+                            record.notes ||
+                            "لا يوجد"
                         )}
+
                     </p>
 
+
                     <p>
+
                         <strong>
                             👤 المستخدم:
                         </strong>
-                        ${escapeHTML(
-                            record.created_by || ""
-                        )}
-                    </p>
 
-                    <p>
-                        <strong>
-                            🕐 وقت التسجيل:
-                        </strong>
-                        ${formatArabicDate(
-                            record.created_at
+                        ${escapeHTML(
+                            record.created_by ||
+                            ""
                         )}
+
                     </p>
 
                 `;
@@ -1081,29 +1690,27 @@ async function loadHTRecords() {
 
     }
 
-
-    catch (error) {
+    catch(error) {
 
         console.error(
             "HT LOAD ERROR:",
             error
         );
 
-
-        container.innerHTML =
-            '<div class="error-box">' +
-            '❌ حصل خطأ أثناء تحميل البيانات' +
-            '</div>';
+        container.innerHTML = `
+            <div class="error-box">
+                ❌ حصل خطأ أثناء تحميل البيانات
+            </div>
+        `;
 
     }
 
 }
 
 
-
-/* =========================================
+/* =====================================================
    الرئيسية
-   ========================================= */
+===================================================== */
 
 function goHome() {
 
@@ -1113,14 +1720,17 @@ function goHome() {
 }
 
 
-
-/* =========================================
-   تشغيل الصفحة
-   ========================================= */
+/* =====================================================
+   تشغيل
+===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     function() {
+
+        updateHTDevices();
+
+        updateHTCarNumber();
 
         loadHTRecords();
 
@@ -1131,7 +1741,6 @@ document.addEventListener(
 
 
 <script src="delete-system.js?v=2"></script>
-
 
 </body>
 

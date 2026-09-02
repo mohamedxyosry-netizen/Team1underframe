@@ -116,6 +116,7 @@
 
                 </button>
 
+
                 <!-- تسجيل الخروج -->
 
                 <button
@@ -572,6 +573,14 @@
     <script src="script.js"></script>
 
 
+    <!-- ==============================
+         نظام الإشعارات
+         المدير فقط
+    ============================== -->
+
+    <script src="notifications.js"></script>
+
+
     <script>
 
         // ==================================
@@ -602,7 +611,6 @@
 
         // ==================================
         // فتح الأقسام
-        // نسخة مضمونة للحسابات
         // ==================================
 
         function openSection(section) {
@@ -612,8 +620,6 @@
                     "currentUser"
                 );
 
-
-            // لو مفيش مستخدم مسجل
 
             if (!userData) {
 
@@ -889,6 +895,8 @@
                                     data
                                 );
 
+                            }
+
                         }
 
                     } catch (error) {}
@@ -1017,6 +1025,41 @@
 
         function homeSearch() {
 
+            let user = null;
+
+
+            try {
+
+                user =
+                    JSON.parse(
+                        sessionStorage.getItem(
+                            "currentUser"
+                        )
+                    );
+
+            } catch (error) {
+
+                user = null;
+
+            }
+
+
+            // منع الفني من البحث
+
+            if (
+                !user ||
+                user.role !== "admin"
+            ) {
+
+                alert(
+                    "❌ ليس لديك صلاحية للبحث"
+                );
+
+                return;
+
+            }
+
+
             const input =
                 document.getElementById(
                     "homeSearchNumber"
@@ -1037,7 +1080,7 @@
             if (!number) {
 
                 alert(
-                    "من فضلك اكتب رقم العربية"
+                    "⚠️ اكتب رقم العربية أولاً"
                 );
 
                 return;
@@ -1125,12 +1168,14 @@
             3000
         );
 
+
     </script>
 
 
     <img
         src="train.-bg.jpeg"
         alt="yoo">
+
 
 </body>
 
