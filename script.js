@@ -20,6 +20,8 @@ window.supabaseClient =
         SUPABASE_URL,
         SUPABASE_KEY
     );
+
+
 // ============================================================
 // الحسابات
 // ============================================================
@@ -116,7 +118,7 @@ const permissions = {
         "final.html",
         "search.html",
         "deleterequests.html",
-        "deleterequests.html",
+        "deleteRequests.html",
         "chat.html"
     ],
 
@@ -159,20 +161,11 @@ const permissions = {
 
 const departmentNames = {
 
-    wiring:
-        "قسم Wiring",
-
-    lt:
-        "قسم LT",
-
-    ht:
-        "قسم HT",
-
-    installation:
-        "قسم التركيبات",
-
-    final:
-        "قسم الفنش النهائي"
+    wiring: "قسم Wiring",
+    lt: "قسم LT",
+    ht: "قسم HT",
+    installation: "قسم التركيبات",
+    final: "قسم الفنش النهائي"
 
 };
 
@@ -198,8 +191,12 @@ function getCurrentUser() {
 
     } catch (error) {
 
-        return null;
+        console.error(
+            "Current user error:",
+            error
+        );
 
+        return null;
     }
 
 }
@@ -270,79 +267,133 @@ function getHomePage() {
 
 function login() {
 
-    const usernameInput = document.getElementById("username");
-    const passwordInput = document.getElementById("password");
-    const message = document.getElementById("message");
+    const usernameInput =
+        document.getElementById(
+            "username"
+        );
 
-    if (!usernameInput || !passwordInput) {
+    const passwordInput =
+        document.getElementById(
+            "password"
+        );
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    if (
+        !usernameInput ||
+        !passwordInput
+    ) {
+
         return;
     }
 
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
 
-    if (!username || !password) {
+    const username =
+        usernameInput.value.trim();
+
+    const password =
+        passwordInput.value.trim();
+
+
+    if (
+        !username ||
+        !password
+    ) {
 
         if (message) {
+
             message.innerText =
                 "من فضلك اكتب اسم المستخدم وكلمة السر";
-            message.style.color = "red";
+
+            message.style.color =
+                "red";
         }
 
         return;
     }
 
-    // البحث عن المستخدم بدون حساسية لحالة الحروف
-    const foundUsername = Object.keys(users).find(function(name) {
 
-        return name.toLowerCase() === username.toLowerCase();
+    const foundUsername =
+        Object.keys(users).find(
+            function(name) {
 
-    });
+                return (
+                    name.toLowerCase() ===
+                    username.toLowerCase()
+                );
+
+            }
+        );
+
 
     if (!foundUsername) {
 
         if (message) {
+
             message.innerText =
                 "اسم المستخدم غير موجود ❌";
-            message.style.color = "red";
+
+            message.style.color =
+                "red";
         }
 
         return;
     }
 
-    const userData = users[foundUsername];
 
-    if (String(userData.password) !== String(password)) {
+    const userData =
+        users[foundUsername];
+
+
+    if (
+        String(userData.password) !==
+        String(password)
+    ) {
 
         if (message) {
+
             message.innerText =
                 "كلمة المرور غير صحيحة ❌";
-            message.style.color = "red";
+
+            message.style.color =
+                "red";
         }
 
         return;
     }
+
 
     const currentUser = {
 
-        username: foundUsername,
+        username:
+            foundUsername,
 
-        role: userData.role,
+        role:
+            userData.role,
 
-        name: userData.name
+        name:
+            userData.name
 
     };
 
-    // حفظ تسجيل الدخول
+
     sessionStorage.setItem(
         "currentUser",
-        JSON.stringify(currentUser)
+        JSON.stringify(
+            currentUser
+        )
     );
 
-    // الانتقال للرئيسية
-    window.location.href = "index.html";
+
+    window.location.href =
+        "index.html";
 
 }
+
 
 // ============================================================
 // العودة للرئيسية
@@ -360,7 +411,6 @@ function goHome() {
             "login.html";
 
         return;
-
     }
 
 
@@ -383,6 +433,7 @@ function protectPage() {
     if (
         currentPage === "login.html"
     ) {
+
         return;
     }
 
@@ -397,13 +448,13 @@ function protectPage() {
             "login.html";
 
         return;
-
     }
 
 
     if (
         user.role === "admin"
     ) {
+
         return;
     }
 
@@ -411,6 +462,7 @@ function protectPage() {
     if (
         currentPage === "index.html"
     ) {
+
         return;
     }
 
@@ -433,7 +485,6 @@ function protectPage() {
             "index.html";
 
         return;
-
     }
 
 
@@ -456,7 +507,6 @@ function protectPage() {
             "index.html";
 
         return;
-
     }
 
 }
@@ -478,7 +528,6 @@ function openSection(section) {
             "login.html";
 
         return;
-
     }
 
 
@@ -487,35 +536,44 @@ function openSection(section) {
     ) {
 
         if (section === "wiring") {
-            window.location.href = "wiring.html";
+            window.location.href =
+                "wiring.html";
         }
 
         else if (section === "lt") {
-            window.location.href = "lt.html";
+            window.location.href =
+                "lt.html";
         }
 
         else if (section === "ht") {
-            window.location.href = "ht.html";
+            window.location.href =
+                "ht.html";
         }
 
         else if (section === "installation") {
-            window.location.href = "installation.html";
+            window.location.href =
+                "installation.html";
         }
 
         else if (section === "final") {
-            window.location.href = "final.html";
+            window.location.href =
+                "final.html";
         }
 
         else if (section === "search") {
-            window.location.href = "search.html";
+            window.location.href =
+                "search.html";
         }
 
-        else if (section === "deleteRequests") {
-            window.location.href = "deleteRequests.html";
+        else if (
+            section === "deleteRequests"
+        ) {
+
+            window.location.href =
+                "deleteRequests.html";
         }
 
         return;
-
     }
 
 
@@ -528,7 +586,6 @@ function openSection(section) {
         );
 
         return;
-
     }
 
 
@@ -541,7 +598,6 @@ function openSection(section) {
         );
 
         return;
-
     }
 
 
@@ -555,7 +611,6 @@ function openSection(section) {
                 "final.html";
 
             return;
-
         }
 
 
@@ -564,7 +619,6 @@ function openSection(section) {
         );
 
         return;
-
     }
 
 
@@ -577,31 +631,38 @@ function openSection(section) {
         );
 
         return;
-
     }
 
 
     if (section === "wiring") {
-        window.location.href = "wiring.html";
+
+        window.location.href =
+            "wiring.html";
     }
 
     else if (section === "lt") {
-        window.location.href = "lt.html";
+
+        window.location.href =
+            "lt.html";
     }
 
     else if (section === "ht") {
-        window.location.href = "ht.html";
+
+        window.location.href =
+            "ht.html";
     }
 
     else if (section === "installation") {
-        window.location.href = "installation.html";
+
+        window.location.href =
+            "installation.html";
     }
 
 }
 
 
 // ============================================================
-// تجهيز Dashboard
+// Dashboard
 // ============================================================
 
 function setupDashboard() {
@@ -625,7 +686,6 @@ function setupDashboard() {
 
         nameElement.innerText =
             user.name;
-
     }
 
 
@@ -639,22 +699,27 @@ function setupDashboard() {
 
         const roles = {
 
-            admin: "Admin",
+            admin:
+                "Admin",
 
-            wiring: "Wiring",
+            wiring:
+                "Wiring",
 
-            lt: "LT",
+            lt:
+                "LT",
 
-            ht: "HT",
+            ht:
+                "HT",
 
-            installation: "Installation"
+            installation:
+                "Installation"
 
         };
 
 
         roleElement.innerText =
-            roles[user.role] || "Worker";
-
+            roles[user.role] ||
+            "Worker";
     }
 
 
@@ -667,7 +732,8 @@ function setupDashboard() {
     sectionCards.forEach(
         function(card) {
 
-            card.style.display = "";
+            card.style.display =
+                "";
 
         }
     );
@@ -685,7 +751,6 @@ function setupDashboard() {
             user.role === "admin"
                 ? ""
                 : "none";
-
     }
 
 
@@ -701,7 +766,6 @@ function setupDashboard() {
             user.role === "admin"
                 ? ""
                 : "none";
-
     }
 
 
@@ -724,17 +788,23 @@ function getCurrentDateTime() {
         "ar-EG",
         {
 
-            day: "2-digit",
+            day:
+                "2-digit",
 
-            month: "2-digit",
+            month:
+                "2-digit",
 
-            year: "numeric",
+            year:
+                "numeric",
 
-            hour: "2-digit",
+            hour:
+                "2-digit",
 
-            minute: "2-digit",
+            minute:
+                "2-digit",
 
-            hour12: true
+            hour12:
+                true
 
         }
     );
@@ -743,7 +813,7 @@ function getCurrentDateTime() {
 
 
 // ============================================================
-// تحويل القسم إلى اسم Supabase
+// تحويل القسم
 // ============================================================
 
 function getDepartmentFromStorage(
@@ -779,7 +849,7 @@ function getDepartmentFromStorage(
 
 
 // ============================================================
-// تحويل قسم Supabase إلى اسم التخزين القديم
+// تحويل القسم إلى Storage
 // ============================================================
 
 function getStorageFromDepartment(
@@ -819,82 +889,93 @@ function getStorageFromDepartment(
 // ============================================================
 
 function normalizeRecord(record) {
-
     if (!record) {
         return null;
     }
 
-
     return {
-
-        recordId:
-            record.id,
-
-        id:
-            record.id,
+        recordId: record.Id ?? record.id ?? "",
+        id: record.Id ?? record.id ?? "",
 
         carName:
-            record.car_name || "",
+            record.Car_name ??
+            record.car_name ??
+            "",
 
         carNumber:
-            record.car_number || "",
+            record.Car_number ??
+            record.car_number ??
+            "",
 
         done:
-            record.done || "",
+            record.Done ??
+            record.done ??
+            "",
 
         notes:
-            record.notes || "",
+            record.Notes ??
+            record.notes ??
+            "",
 
         date:
-            record.date || "",
+            record.Created_at ??
+            record.created_at ??
+            "",
 
         addedBy:
-            record.added_by || "",
+            record.Created_by ??
+            record.created_by ??
+            "",
 
         department:
-            record.department || "",
+            record.Department ??
+            record.department ??
+            "",
 
         device:
-            record.device || "",
+            record.Device ??
+            record.device ??
+            "",
 
         socket:
-            record.socket || "",
+            record.Socket ??
+            record.socket ??
+            "",
 
         person:
-            record.person || ""
-
+            record.Person ??
+            record.person ??
+            ""
     };
-
 }
 
-
 // ============================================================
-// جلب السجلات من Supabase
+// جلب كل السجلات من Supabase
 // ============================================================
 
 async function getAllSupabaseRecords() {
 
-    if (!supabaseClient) {
+    if (!window.supabaseClient) {
 
         console.error(
             "Supabase client غير موجود"
         );
 
         return [];
-
     }
 
 
     try {
 
         const result =
-            await supabaseClient
+            await window.supabaseClient
                 .from("records")
                 .select("*")
                 .order(
                     "id",
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 );
 
@@ -907,7 +988,6 @@ async function getAllSupabaseRecords() {
             );
 
             return [];
-
         }
 
 
@@ -931,7 +1011,6 @@ async function getAllSupabaseRecords() {
         );
 
         return [];
-
     }
 
 }
@@ -951,7 +1030,8 @@ async function getDepartmentRecordsFromSupabase(
         );
 
 
-    if (!supabaseClient) {
+    if (!window.supabaseClient) {
+
         return [];
     }
 
@@ -959,7 +1039,7 @@ async function getDepartmentRecordsFromSupabase(
     try {
 
         const result =
-            await supabaseClient
+            await window.supabaseClient
                 .from("records")
                 .select("*")
                 .eq(
@@ -969,7 +1049,8 @@ async function getDepartmentRecordsFromSupabase(
                 .order(
                     "id",
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 );
 
@@ -982,7 +1063,6 @@ async function getDepartmentRecordsFromSupabase(
             );
 
             return [];
-
         }
 
 
@@ -1005,7 +1085,6 @@ async function getDepartmentRecordsFromSupabase(
         );
 
         return [];
-
     }
 
 }
@@ -1014,45 +1093,111 @@ async function getDepartmentRecordsFromSupabase(
 // ============================================================
 // حفظ سجل في Supabase
 // ============================================================
+// مهم:
+// أسماء الأعمدة هنا مطابقة 100% لجدول records
+//
+// department
+// car_name
+// car_number
+// device
+// socket
+// done
+// notes
+// person
+// created_by
+//
+// created_at لا نرسله.
+// Supabase يقوم بإنشائه تلقائيًا.
+// ============================================================
 
-async function saveRecordToSupabase(
-    department,
-    data
-) {
+async function saveRecordToSupabase(department, data) {
 
-    if (!supabaseClient) {
+    if (!window.supabaseClient) {
+        alert("❌ Supabase غير متصل");
+        return null;
+    }
+
+    const user = getCurrentUser();
+
+const payload = {
+    department: department || "wiring",
+    car_name: data.carName || "",
+    car_number: data.carNumber || "",
+    done: data.done || "",
+    notes: data.notes || "",
+    date: data.date || "",
+    added_by: data.addedBy || "",
+    device: data.device || "",
+    socket: data.socket || "",
+    person: data.person || ""
+};
+    console.log("📤 البيانات التي سيتم إرسالها:", payload);
+
+    try {
+
+        const result = await window.supabaseClient
+            .from("records")
+            .insert(payload)
+            .select()
+            .single();
+
+        if (result.error) {
+
+            console.error(
+                "❌ Supabase INSERT Error:",
+                result.error
+            );
+
+            alert(
+                "❌ فشل حفظ البيانات\n\n" +
+                result.error.message
+            );
+
+            return null;
+        }
+
+        console.log(
+            "✅ تم الحفظ في Supabase:",
+            result.data
+        );
+
+        return normalizeRecord(result.data);
+
+    } catch (error) {
+
+        console.error(
+            "❌ Supabase Connection Error:",
+            error
+        );
 
         alert(
-            "❌ Supabase غير متصل"
+            "❌ حدث خطأ أثناء الاتصال بـ Supabase"
         );
 
         return null;
+    }
+}
 
+    if (!department) {
+
+        alert(
+            "❌ خطأ: اسم القسم غير موجود"
+        );
+
+        return null;
     }
 
 
     const payload = {
 
         department:
-            department,
+            String(department),
 
         car_name:
-            data.carName,
+            data.carName || "",
 
         car_number:
-            data.carNumber,
-
-        done:
-            data.done,
-
-        notes:
-            data.notes || "",
-
-        date:
-            data.date,
-
-        added_by:
-            data.addedBy || "",
+            data.carNumber || "",
 
         device:
             data.device || "",
@@ -1060,20 +1205,37 @@ async function saveRecordToSupabase(
         socket:
             data.socket || "",
 
+        done:
+            data.done || "",
+
+        notes:
+            data.notes || "",
+
         person:
-            data.person || ""
+            data.person || "",
+
+        created_by:
+            data.addedBy ||
+            data.createdBy ||
+            "Unknown"
 
     };
+
+
+    console.log(
+        "Supabase payload:",
+        payload
+    );
 
 
     try {
 
         const result =
-            await supabaseClient
+            await window.supabaseClient
                 .from("records")
-                .insert(
+                .insert([
                     payload
-                )
+                ])
                 .select()
                 .single();
 
@@ -1093,8 +1255,13 @@ async function saveRecordToSupabase(
 
 
             return null;
-
         }
+
+
+        console.log(
+            "تم الحفظ بنجاح:",
+            result.data
+        );
 
 
         return normalizeRecord(
@@ -1106,20 +1273,23 @@ async function saveRecordToSupabase(
     catch (error) {
 
         console.error(
+            "Supabase Error:",
             error
         );
 
 
         alert(
-            "❌ تعذر الاتصال بـ Supabase"
+            "❌ حدث خطأ أثناء حفظ البيانات\n\n" +
+            (
+                error.message ||
+                "خطأ غير معروف"
+            )
         );
 
 
         return null;
-
     }
 
-}
 
 
 // ============================================================
@@ -1130,21 +1300,20 @@ async function deleteRecordFromSupabase(
     recordId
 ) {
 
-    if (!supabaseClient) {
+    if (!window.supabaseClient) {
 
         alert(
             "❌ Supabase غير متصل"
         );
 
         return false;
-
     }
 
 
     try {
 
         const result =
-            await supabaseClient
+            await window.supabaseClient
                 .from("records")
                 .delete()
                 .eq(
@@ -1168,7 +1337,6 @@ async function deleteRecordFromSupabase(
 
 
             return false;
-
         }
 
 
@@ -1189,7 +1357,6 @@ async function deleteRecordFromSupabase(
 
 
         return false;
-
     }
 
 }
@@ -1220,12 +1387,16 @@ function getDeleteRequests() {
         ) {
 
             return requests;
-
         }
 
     }
 
-    catch (error) {}
+    catch (error) {
+
+        console.error(
+            error
+        );
+    }
 
 
     return [];
@@ -1239,7 +1410,9 @@ function saveDeleteRequests(
 
     localStorage.setItem(
         DELETE_REQUESTS_STORAGE,
-        JSON.stringify(requests)
+        JSON.stringify(
+            requests
+        )
     );
 
 }
@@ -1255,7 +1428,8 @@ function getPendingDeleteRequestsCount() {
         function(request) {
 
             return (
-                request.status === "pending"
+                request.status ===
+                "pending"
             );
 
         }
@@ -1290,7 +1464,6 @@ function updateDeleteRequestsCount() {
             "none";
 
         return;
-
     }
 
 
@@ -1329,7 +1502,6 @@ async function requestDeleteRecord(
             "login.html";
 
         return;
-
     }
 
 
@@ -1349,15 +1521,12 @@ async function requestDeleteRecord(
         );
 
         return;
-
     }
 
 
     const record =
         records[index];
 
-
-    // المدير يحذف مباشرة
 
     if (
         user.role === "admin"
@@ -1368,11 +1537,8 @@ async function requestDeleteRecord(
         );
 
         return;
-
     }
 
-
-    // التأكد من صلاحية القسم
 
     const ownDepartments = {
 
@@ -1402,7 +1568,6 @@ async function requestDeleteRecord(
     ) {
 
         allowed = true;
-
     }
 
 
@@ -1413,7 +1578,6 @@ async function requestDeleteRecord(
         );
 
         return;
-
     }
 
 
@@ -1427,7 +1591,8 @@ async function requestDeleteRecord(
 
                 return (
 
-                    request.status === "pending" &&
+                    request.status ===
+                    "pending" &&
 
                     String(
                         request.recordId
@@ -1449,7 +1614,6 @@ async function requestDeleteRecord(
         );
 
         return;
-
     }
 
 
@@ -1459,12 +1623,8 @@ async function requestDeleteRecord(
         );
 
 
-    if (
-        reason === null
-    ) {
-
+    if (reason === null) {
         return;
-
     }
 
 
@@ -1479,7 +1639,6 @@ async function requestDeleteRecord(
         );
 
         return;
-
     }
 
 
@@ -1540,6 +1699,7 @@ async function requestDeleteRecord(
 
     updateDeleteRequestsCount();
 
+
     await displayDepartmentRecords(
         storageName,
         storageName
@@ -1549,7 +1709,7 @@ async function requestDeleteRecord(
 
 
 // ============================================================
-// حذف مباشر للمدير باستخدام ID
+// حذف مباشر للمدير
 // ============================================================
 
 async function deleteRecordDirectlyById(
@@ -1570,7 +1730,6 @@ async function deleteRecordDirectlyById(
         );
 
         return;
-
     }
 
 
@@ -1650,7 +1809,6 @@ async function deleteRecordDirectly(
         );
 
         return;
-
     }
 
 
@@ -1677,7 +1835,10 @@ function generateRequestId() {
 
         Math.random()
             .toString(36)
-            .substring(2, 10)
+            .substring(
+                2,
+                10
+            )
 
     );
 
@@ -1729,25 +1890,25 @@ async function saveWiring() {
     const carName =
         document.getElementById(
             "wiringCarName"
-        ).value.trim();
+        )?.value.trim();
 
 
     const carNumber =
         document.getElementById(
             "wiringCarNumber"
-        ).value.trim();
+        )?.value.trim();
 
 
     const done =
         document.getElementById(
             "wiringDone"
-        ).value;
+        )?.value;
 
 
     const notes =
         document.getElementById(
             "wiringNotes"
-        ).value.trim();
+        )?.value.trim();
 
 
     const message =
@@ -1767,10 +1928,11 @@ async function saveWiring() {
             message.innerText =
                 "من فضلك املأ البيانات المطلوبة";
 
+            message.style.color =
+                "#d92d20";
         }
 
         return;
-
     }
 
 
@@ -1792,9 +1954,6 @@ async function saveWiring() {
         notes:
             notes,
 
-        date:
-            getCurrentDateTime(),
-
         addedBy:
             user
                 ? user.name
@@ -1808,6 +1967,8 @@ async function saveWiring() {
         message.innerText =
             "⏳ جاري حفظ البيانات...";
 
+        message.style.color =
+            "#555";
     }
 
 
@@ -1827,11 +1988,9 @@ async function saveWiring() {
 
             message.style.color =
                 "#d92d20";
-
         }
 
         return;
-
     }
 
 
@@ -1842,14 +2001,24 @@ async function saveWiring() {
 
         message.style.color =
             "#198754";
-
     }
 
 
-    clearInput("wiringCarName");
-    clearInput("wiringCarNumber");
-    clearInput("wiringDone");
-    clearInput("wiringNotes");
+    clearInput(
+        "wiringCarName"
+    );
+
+    clearInput(
+        "wiringCarNumber"
+    );
+
+    clearInput(
+        "wiringDone"
+    );
+
+    clearInput(
+        "wiringNotes"
+    );
 
 
     await displayWiringRecords();
@@ -1882,37 +2051,37 @@ async function saveLT() {
     const carName =
         document.getElementById(
             "ltCarName"
-        ).value.trim();
+        )?.value.trim();
 
 
     const carNumber =
         document.getElementById(
             "ltCarNumber"
-        ).value.trim();
+        )?.value.trim();
 
 
     const device =
         document.getElementById(
             "ltDevice"
-        ).value.trim();
+        )?.value.trim();
 
 
     const socket =
         document.getElementById(
             "ltSocket"
-        ).value.trim();
+        )?.value.trim();
 
 
     const notes =
         document.getElementById(
             "ltNotes"
-        ).value.trim();
+        )?.value.trim();
 
 
     const person =
         document.getElementById(
             "ltPerson"
-        ).value.trim();
+        )?.value.trim();
 
 
     const message =
@@ -1934,10 +2103,11 @@ async function saveLT() {
             message.innerText =
                 "من فضلك املأ البيانات المطلوبة";
 
+            message.style.color =
+                "#d92d20";
         }
 
         return;
-
     }
 
 
@@ -1968,9 +2138,6 @@ async function saveLT() {
         done:
             "نعم",
 
-        date:
-            getCurrentDateTime(),
-
         addedBy:
             user
                 ? user.name
@@ -1984,6 +2151,8 @@ async function saveLT() {
         message.innerText =
             "⏳ جاري حفظ البيانات...";
 
+        message.style.color =
+            "#555";
     }
 
 
@@ -2001,10 +2170,11 @@ async function saveLT() {
             message.innerText =
                 "❌ فشل حفظ البيانات";
 
+            message.style.color =
+                "#d92d20";
         }
 
         return;
-
     }
 
 
@@ -2013,6 +2183,8 @@ async function saveLT() {
         message.innerText =
             "تم حفظ البيانات بنجاح في Supabase ✅";
 
+        message.style.color =
+            "#198754";
     }
 
 
@@ -2054,25 +2226,25 @@ async function saveHT() {
     const carName =
         document.getElementById(
             "htCarName"
-        ).value.trim();
+        )?.value.trim();
 
 
     const carNumber =
         document.getElementById(
             "htCarNumber"
-        ).value.trim();
+        )?.value.trim();
 
 
     const done =
         document.getElementById(
             "htDone"
-        ).value;
+        )?.value;
 
 
     const notes =
         document.getElementById(
             "htNotes"
-        ).value.trim();
+        )?.value.trim();
 
 
     const message =
@@ -2092,10 +2264,11 @@ async function saveHT() {
             message.innerText =
                 "من فضلك املأ البيانات المطلوبة";
 
+            message.style.color =
+                "#d92d20";
         }
 
         return;
-
     }
 
 
@@ -2117,9 +2290,6 @@ async function saveHT() {
         notes:
             notes,
 
-        date:
-            getCurrentDateTime(),
-
         addedBy:
             user
                 ? user.name
@@ -2133,6 +2303,8 @@ async function saveHT() {
         message.innerText =
             "⏳ جاري حفظ البيانات...";
 
+        message.style.color =
+            "#555";
     }
 
 
@@ -2150,10 +2322,11 @@ async function saveHT() {
             message.innerText =
                 "❌ فشل حفظ البيانات";
 
+            message.style.color =
+                "#d92d20";
         }
 
         return;
-
     }
 
 
@@ -2162,6 +2335,8 @@ async function saveHT() {
         message.innerText =
             "تم حفظ البيانات بنجاح في Supabase ✅";
 
+        message.style.color =
+            "#198754";
     }
 
 
@@ -2201,25 +2376,25 @@ async function saveInstallation() {
     const carName =
         document.getElementById(
             "installationCarName"
-        ).value.trim();
+        )?.value.trim();
 
 
     const carNumber =
         document.getElementById(
             "installationCarNumber"
-        ).value.trim();
+        )?.value.trim();
 
 
     const done =
         document.getElementById(
             "installationDone"
-        ).value;
+        )?.value;
 
 
     const notes =
         document.getElementById(
             "installationNotes"
-        ).value.trim();
+        )?.value.trim();
 
 
     const message =
@@ -2239,10 +2414,11 @@ async function saveInstallation() {
             message.innerText =
                 "من فضلك املأ البيانات المطلوبة";
 
+            message.style.color =
+                "#d92d20";
         }
 
         return;
-
     }
 
 
@@ -2264,9 +2440,6 @@ async function saveInstallation() {
         notes:
             notes,
 
-        date:
-            getCurrentDateTime(),
-
         addedBy:
             user
                 ? user.name
@@ -2280,6 +2453,8 @@ async function saveInstallation() {
         message.innerText =
             "⏳ جاري حفظ البيانات...";
 
+        message.style.color =
+            "#555";
     }
 
 
@@ -2297,10 +2472,11 @@ async function saveInstallation() {
             message.innerText =
                 "❌ فشل حفظ البيانات";
 
+            message.style.color =
+                "#d92d20";
         }
 
         return;
-
     }
 
 
@@ -2309,13 +2485,26 @@ async function saveInstallation() {
         message.innerText =
             "تم حفظ البيانات بنجاح في Supabase ✅";
 
+        message.style.color =
+            "#198754";
     }
 
 
-    clearInput("installationCarName");
-    clearInput("installationCarNumber");
-    clearInput("installationDone");
-    clearInput("installationNotes");
+    clearInput(
+        "installationCarName"
+    );
+
+    clearInput(
+        "installationCarNumber"
+    );
+
+    clearInput(
+        "installationDone"
+    );
+
+    clearInput(
+        "installationNotes"
+    );
 
 
     await displayInstallationRecords();
@@ -2363,32 +2552,31 @@ async function saveFinal() {
             "index.html";
 
         return;
-
     }
 
 
     const carName =
         document.getElementById(
             "finalCarName"
-        ).value.trim();
+        )?.value.trim();
 
 
     const carNumber =
         document.getElementById(
             "finalCarNumber"
-        ).value.trim();
+        )?.value.trim();
 
 
     const done =
         document.getElementById(
             "finalDone"
-        ).value;
+        )?.value;
 
 
     const notes =
         document.getElementById(
             "finalNotes"
-        ).value.trim();
+        )?.value.trim();
 
 
     const message =
@@ -2408,10 +2596,11 @@ async function saveFinal() {
             message.innerText =
                 "من فضلك املأ البيانات المطلوبة";
 
+            message.style.color =
+                "#d92d20";
         }
 
         return;
-
     }
 
 
@@ -2429,9 +2618,6 @@ async function saveFinal() {
         notes:
             notes,
 
-        date:
-            getCurrentDateTime(),
-
         addedBy:
             user.name
 
@@ -2443,6 +2629,8 @@ async function saveFinal() {
         message.innerText =
             "⏳ جاري حفظ البيانات...";
 
+        message.style.color =
+            "#555";
     }
 
 
@@ -2460,10 +2648,11 @@ async function saveFinal() {
             message.innerText =
                 "❌ فشل حفظ البيانات";
 
+            message.style.color =
+                "#d92d20";
         }
 
         return;
-
     }
 
 
@@ -2472,6 +2661,8 @@ async function saveFinal() {
         message.innerText =
             "تم حفظ البيانات بنجاح في Supabase ✅";
 
+        message.style.color =
+            "#198754";
     }
 
 
@@ -2528,7 +2719,8 @@ async function displayDepartmentRecords(
         );
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
     const user =
@@ -2552,7 +2744,6 @@ async function displayDepartmentRecords(
         `;
 
         return;
-
     }
 
 
@@ -2569,7 +2760,8 @@ async function displayDepartmentRecords(
 
                         return (
 
-                            request.status === "pending" &&
+                            request.status ===
+                            "pending" &&
 
                             String(
                                 request.recordId
@@ -2584,7 +2776,8 @@ async function displayDepartmentRecords(
                 );
 
 
-            let deleteButton = "";
+            let deleteButton =
+                "";
 
 
             if (user) {
@@ -2620,7 +2813,9 @@ async function displayDepartmentRecords(
 
                 else {
 
-                    if (hasPendingRequest) {
+                    if (
+                        hasPendingRequest
+                    ) {
 
                         deleteButton = `
 
@@ -2676,7 +2871,8 @@ async function displayDepartmentRecords(
             }
 
 
-            let extraFields = "";
+            let extraFields =
+                "";
 
 
             if (record.device) {
@@ -2689,7 +2885,9 @@ async function displayDepartmentRecords(
                             اسم الجهاز:
                         </strong>
 
-                        ${escapeHTML(record.device)}
+                        ${escapeHTML(
+                            record.device
+                        )}
 
                     </p>
 
@@ -2708,7 +2906,9 @@ async function displayDepartmentRecords(
                             اسم السوكيت:
                         </strong>
 
-                        ${escapeHTML(record.socket)}
+                        ${escapeHTML(
+                            record.socket
+                        )}
 
                     </p>
 
@@ -2727,7 +2927,9 @@ async function displayDepartmentRecords(
                             اسم الشخص:
                         </strong>
 
-                        ${escapeHTML(record.person)}
+                        ${escapeHTML(
+                            record.person
+                        )}
 
                     </p>
 
@@ -2868,7 +3070,6 @@ async function searchCar() {
     ) {
 
         return;
-
     }
 
 
@@ -2889,11 +3090,10 @@ async function searchCar() {
         `;
 
         return;
-
     }
 
 
-    if (!supabaseClient) {
+    if (!window.supabaseClient) {
 
         result.innerHTML = `
 
@@ -2906,14 +3106,13 @@ async function searchCar() {
         `;
 
         return;
-
     }
 
 
     try {
 
         const response =
-            await supabaseClient
+            await window.supabaseClient
                 .from("records")
                 .select("*")
                 .eq(
@@ -2923,7 +3122,8 @@ async function searchCar() {
                 .order(
                     "id",
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 );
 
@@ -2952,7 +3152,6 @@ async function searchCar() {
             `;
 
             return;
-
         }
 
 
@@ -2976,7 +3175,9 @@ async function searchCar() {
 
                     بيانات العربية رقم:
 
-                    ${escapeHTML(number)}
+                    ${escapeHTML(
+                        number
+                    )}
 
                 </h2>
 
@@ -3025,7 +3226,8 @@ async function searchCar() {
 
 
                 if (
-                    departmentRecords.length === 0
+                    departmentRecords.length ===
+                    0
                 ) {
 
                     result.innerHTML += `
@@ -3048,14 +3250,14 @@ async function searchCar() {
                     `;
 
                     return;
-
                 }
 
 
                 departmentRecords.forEach(
                     function(record) {
 
-                        let extraFields = "";
+                        let extraFields =
+                            "";
 
 
                         if (record.device) {
@@ -3250,6 +3452,13 @@ async function searchCar() {
 
                 ❌ حدث خطأ أثناء البحث
 
+                <br><br>
+
+                ${escapeHTML(
+                    error.message ||
+                    "خطأ غير معروف"
+                )}
+
             </div>
 
         `;
@@ -3273,7 +3482,8 @@ function clearInput(id) {
 
     if (element) {
 
-        element.value = "";
+        element.value =
+            "";
 
     }
 
@@ -3335,9 +3545,7 @@ async function updateDashboardStats() {
     };
 
 
-    if (
-        !supabaseClient
-    ) {
+    if (!window.supabaseClient) {
         return;
     }
 
@@ -3345,7 +3553,7 @@ async function updateDashboardStats() {
     try {
 
         const result =
-            await supabaseClient
+            await window.supabaseClient
                 .from("records")
                 .select("*");
 
@@ -3357,7 +3565,6 @@ async function updateDashboardStats() {
             );
 
             return;
-
         }
 
 
@@ -3370,7 +3577,8 @@ async function updateDashboardStats() {
                 function(record) {
 
                     return (
-                        record.done === "نعم"
+                        record.done ===
+                        "نعم"
                     );
 
                 }
@@ -3382,17 +3590,19 @@ async function updateDashboardStats() {
                 function(record) {
 
                     return (
-                        record.done === "لا"
+                        record.done ===
+                        "لا"
                     );
 
                 }
             ).length;
 
 
+        // حساب بيانات اليوم من created_at
         const today =
             new Date()
                 .toLocaleDateString(
-                    "ar-EG"
+                    "en-CA"
                 );
 
 
@@ -3400,15 +3610,35 @@ async function updateDashboardStats() {
             records.filter(
                 function(record) {
 
-                    if (!record.date) {
+                    if (
+                        !record.created_at
+                    ) {
+
                         return false;
                     }
 
 
-                    return String(
-                        record.date
-                    )
-                    .includes(
+                    const recordDate =
+                        new Date(
+                            record.created_at
+                        );
+
+
+                    if (
+                        isNaN(
+                            recordDate.getTime()
+                        )
+                    ) {
+
+                        return false;
+                    }
+
+
+                    return (
+                        recordDate
+                            .toLocaleDateString(
+                                "en-CA"
+                            ) ===
                         today
                     );
 
@@ -3420,7 +3650,6 @@ async function updateDashboardStats() {
 
             elements.total.innerText =
                 records.length;
-
         }
 
 
@@ -3428,7 +3657,6 @@ async function updateDashboardStats() {
 
             elements.completed.innerText =
                 completed;
-
         }
 
 
@@ -3436,7 +3664,6 @@ async function updateDashboardStats() {
 
             elements.pending.innerText =
                 pending;
-
         }
 
 
@@ -3444,7 +3671,6 @@ async function updateDashboardStats() {
 
             elements.delayed.innerText =
                 0;
-
         }
 
 
@@ -3452,7 +3678,6 @@ async function updateDashboardStats() {
 
             elements.today.innerText =
                 todayCount;
-
         }
 
     }
@@ -3466,8 +3691,6 @@ async function updateDashboardStats() {
     }
 
 }
-
-
 // ============================================================
 // صفحة طلبات الحذف
 // ============================================================
@@ -3505,7 +3728,6 @@ function displayDeleteRequests() {
         `;
 
         return;
-
     }
 
 
@@ -3513,11 +3735,13 @@ function displayDeleteRequests() {
         getDeleteRequests();
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
     if (
-        requests.length === 0
+        requests.length ===
+        0
     ) {
 
         container.innerHTML = `
@@ -3541,7 +3765,6 @@ function displayDeleteRequests() {
         updateDeleteRequestsCount();
 
         return;
-
     }
 
 
@@ -3565,11 +3788,13 @@ function displayDeleteRequests() {
                 );
 
 
-            let buttons = "";
+            let buttons =
+                "";
 
 
             if (
-                request.status === "pending"
+                request.status ===
+                "pending"
             ) {
 
                 buttons = `
@@ -3627,7 +3852,8 @@ function displayDeleteRequests() {
             }
 
             else if (
-                request.status === "approved"
+                request.status ===
+                "approved"
             ) {
 
                 buttons = `
@@ -3646,6 +3872,7 @@ function displayDeleteRequests() {
                         <br>
 
                         <small>
+
                             بواسطة:
                             ${escapeHTML(
                                 request.reviewedBy ||
@@ -3658,6 +3885,7 @@ function displayDeleteRequests() {
                                 request.reviewDate ||
                                 ""
                             )}
+
                         </small>
 
                     </div>
@@ -3667,7 +3895,8 @@ function displayDeleteRequests() {
             }
 
             else if (
-                request.status === "rejected"
+                request.status ===
+                "rejected"
             ) {
 
                 buttons = `
@@ -3686,6 +3915,7 @@ function displayDeleteRequests() {
                         <br>
 
                         <small>
+
                             بواسطة:
                             ${escapeHTML(
                                 request.reviewedBy ||
@@ -3698,6 +3928,7 @@ function displayDeleteRequests() {
                                 request.reviewDate ||
                                 ""
                             )}
+
                         </small>
 
                     </div>
@@ -3715,10 +3946,13 @@ function displayDeleteRequests() {
                      ">
 
                     <h2>
+
                         🗑️ طلب حذف
                         ${escapeHTML(
-                            request.section || ""
+                            request.section ||
+                            ""
                         )}
+
                     </h2>
 
 
@@ -3813,9 +4047,11 @@ function displayDeleteRequests() {
                         </strong>
 
                         ${
-                            request.status === "pending"
+                            request.status ===
+                            "pending"
                                 ? "⏳ في انتظار الموافقة"
-                                : request.status === "approved"
+                                : request.status ===
+                                  "approved"
                                     ? "✅ تمت الموافقة"
                                     : "❌ مرفوض"
                         }
@@ -3860,7 +4096,6 @@ async function approveDeleteRequest(
         );
 
         return;
-
     }
 
 
@@ -3879,12 +4114,12 @@ async function approveDeleteRequest(
         );
 
         return;
-
     }
 
 
     if (
-        request.status !== "pending"
+        request.status !==
+        "pending"
     ) {
 
         alert(
@@ -3892,7 +4127,6 @@ async function approveDeleteRequest(
         );
 
         return;
-
     }
 
 
@@ -3921,11 +4155,14 @@ async function approveDeleteRequest(
     request.status =
         "approved";
 
+
     request.reviewedBy =
         user.name;
 
+
     request.reviewDate =
         getCurrentDateTime();
+
 
     request.result =
         "تم حذف البيان";
@@ -3976,7 +4213,6 @@ function rejectDeleteRequest(
         );
 
         return;
-
     }
 
 
@@ -3995,12 +4231,12 @@ function rejectDeleteRequest(
         );
 
         return;
-
     }
 
 
     if (
-        request.status !== "pending"
+        request.status !==
+        "pending"
     ) {
 
         alert(
@@ -4008,7 +4244,6 @@ function rejectDeleteRequest(
         );
 
         return;
-
     }
 
 
@@ -4018,23 +4253,22 @@ function rejectDeleteRequest(
         );
 
 
-    if (
-        reason === null
-    ) {
-
+    if (reason === null) {
         return;
-
     }
 
 
     request.status =
         "rejected";
 
+
     request.reviewedBy =
         user.name;
 
+
     request.reviewDate =
         getCurrentDateTime();
+
 
     request.rejectionReason =
         reason.trim();
@@ -4060,7 +4294,7 @@ function rejectDeleteRequest(
 
 
 // ============================================================
-// حماية HTML من الأكواد
+// حماية HTML
 // ============================================================
 
 function escapeHTML(value) {
@@ -4071,27 +4305,31 @@ function escapeHTML(value) {
     ) {
 
         return "";
-
     }
 
 
     return String(value)
+
         .replace(
             /&/g,
             "&amp;"
         )
+
         .replace(
             /</g,
             "&lt;"
         )
+
         .replace(
             />/g,
             "&gt;"
         )
+
         .replace(
             /"/g,
             "&quot;"
         )
+
         .replace(
             /'/g,
             "&#039;"
@@ -4120,7 +4358,8 @@ async function initializeSystem() {
 
 
     if (
-        currentPage !== "login.html"
+        currentPage !==
+        "login.html"
     ) {
 
         await displayAllRecords();
@@ -4137,7 +4376,8 @@ async function initializeSystem() {
 // ============================================================
 
 if (
-    document.readyState === "loading"
+    document.readyState ===
+    "loading"
 ) {
 
     document.addEventListener(
@@ -4153,20 +4393,30 @@ else {
 
 }
 
+
 // ============================================================
-// تحديث تلقائي للبيانات من كل الأجهزة
+// تحديث تلقائي من Supabase
 // ============================================================
 
-setInterval(async function () {
+setInterval(
+    async function() {
 
-    updateDeleteRequestsCount();
+        updateDeleteRequestsCount();
 
-    displayDeleteRequests();
+        displayDeleteRequests();
 
-    // جلب أحدث البيانات من Supabase
-    await displayAllRecords();
 
-    // تحديث أرقام Dashboard
-    await updateDashboardStats();
+        if (
+            getCurrentPage() !==
+            "login.html"
+        ) {
 
-}, 3000);
+            await displayAllRecords();
+
+            await updateDashboardStats();
+
+        }
+
+    },
+    3000
+);

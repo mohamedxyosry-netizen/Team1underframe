@@ -8,7 +8,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Wiring</title>
+    <title>NERIC - Wiring</title>
 
     <style>
 
@@ -27,10 +27,6 @@
             min-height: 100vh;
         }
 
-        /* =========================
-           Header
-        ========================= */
-
         .header {
             background: rgb(52, 67, 84);
             padding: 20px 30px;
@@ -38,19 +34,19 @@
             justify-content: space-between;
             align-items: center;
             gap: 20px;
-            box-shadow: 0 3px 15px rgba(185, 168, 168, 0.08);
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
             border-bottom: 3px solid #5928e0;
         }
 
         .header h1 {
             margin: 0 0 7px;
             font-size: 28px;
-            color: #2623f8;
+            color: #ffffff;
         }
 
         .header p {
             margin: 0;
-            color: #6b7280;
+            color: #d1d5db;
             font-size: 14px;
         }
 
@@ -69,10 +65,6 @@
             opacity: 0.9;
         }
 
-        /* =========================
-           Main
-        ========================= */
-
         .form-page {
             width: min(1100px, 94%);
             margin: 30px auto;
@@ -81,10 +73,6 @@
             gap: 25px;
             align-items: start;
         }
-
-        /* =========================
-           Cards
-        ========================= */
 
         .form-card,
         .records-card {
@@ -117,10 +105,6 @@
         .records-card h2 {
             color: #0d6efd;
         }
-
-        /* =========================
-           Inputs
-        ========================= */
 
         .input-group {
             margin-bottom: 18px;
@@ -160,10 +144,6 @@
             resize: vertical;
         }
 
-        /* =========================
-           Save Button
-        ========================= */
-
         .save-btn {
             width: 100%;
             border: none;
@@ -181,15 +161,17 @@
             background: #157347;
         }
 
+        .save-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
         #wiringMessage {
             text-align: center;
             font-weight: bold;
-            margin-bottom: 0;
+            margin-top: 18px;
+            line-height: 1.7;
         }
-
-        /* =========================
-           Records
-        ========================= */
 
         #wiringRecords {
             display: flex;
@@ -207,8 +189,8 @@
 
         .record h3 {
             margin-top: 0;
-            font-size: 14px;
-            color: #64748b;
+            font-size: 16px;
+            color: #0d6efd;
         }
 
         .record p {
@@ -220,9 +202,21 @@
             color: #374151;
         }
 
-        /* =========================
-           Mobile
-        ========================= */
+        .empty {
+            text-align: center;
+            color: #64748b;
+            padding: 20px;
+        }
+
+        .error-box {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            color: #b42318;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            line-height: 1.7;
+        }
 
         @media (max-width: 750px) {
 
@@ -257,191 +251,188 @@
 
 <body>
 
-    <div class="dashboard">
+<div class="dashboard">
 
 
-        <!-- =========================
-             Header
-        ========================= -->
+    <header class="header">
 
-        <header class="header">
+        <div>
 
-            <div>
+            <h1>
+                🔌 قسم Wiring
+            </h1>
 
-                <h1>
-                    🔌 قسم Wiring
-                </h1>
+            <p>
+                تسجيل ومتابعة أعمال الـ Wiring
+            </p>
 
-                <p>
-                    تسجيل ومتابعة أعمال الـ Wiring
-                </p>
+        </div>
+
+
+        <button
+            class="logout-btn"
+            type="button"
+            onclick="goHome()">
+
+            🏠 الأقسام الرئيسية
+
+        </button>
+
+    </header>
+
+
+
+    <main class="form-page">
+
+
+        <div class="form-card">
+
+            <h2>
+                📝 تسجيل بيانات جديدة
+            </h2>
+
+
+            <div class="input-group">
+
+                <label>
+                    🚆 اسم العربية
+                </label>
+
+                <input
+                    type="text"
+                    id="wiringCarName"
+                    placeholder="اكتب اسم العربية">
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label>
+                    🔢 رقم العربية
+                </label>
+
+                <input
+                    type="text"
+                    id="wiringCarNumber"
+                    placeholder="اكتب رقم العربية">
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label>
+                    ✅ تم الانتهاء
+                </label>
+
+                <select id="wiringDone">
+
+                    <option value="">
+                        اختار الحالة
+                    </option>
+
+                    <option value="نعم">
+                        نعم - تم الانتهاء
+                    </option>
+
+                    <option value="لا">
+                        لا - لم يتم الانتهاء
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label>
+                    📝 ملاحظات
+                </label>
+
+                <textarea
+                    id="wiringNotes"
+                    placeholder="اكتب الملاحظات"></textarea>
 
             </div>
 
 
             <button
-                class="logout-btn"
-                onclick="goHome()">
+                type="button"
+                class="save-btn"
+                id="saveWiringButton"
+                onclick="saveWiring()">
 
-                🏠 الأقسام الرئيسية
+                💾 حفظ البيانات
 
             </button>
 
-        </header>
+
+            <p id="wiringMessage"></p>
+
+        </div>
 
 
-        <!-- =========================
-             Main
-        ========================= -->
 
-        <main class="form-page">
+        <div class="records-card">
 
-
-            <!-- =========================
-                 Form Card
-            ========================= -->
-
-            <div class="form-card">
-
-                <h2>
-                    📝 تسجيل بيانات جديدة
-                </h2>
+            <h2>
+                📋 البيانات المسجلة
+            </h2>
 
 
-                <div class="input-group">
+            <div id="wiringRecords">
 
-                    <label>
-                        🚆 اسم العربية
-                    </label>
-
-                    <input
-                        type="text"
-                        id="wiringCarName"
-                        placeholder="اكتب اسم العربية">
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>
-                        🔢 رقم العربية
-                    </label>
-
-                    <input
-                        type="text"
-                        id="wiringCarNumber"
-                        placeholder="اكتب رقم العربية">
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>
-                        ✅ تم الانتهاء
-                    </label>
-
-                    <select id="wiringDone">
-
-                        <option value="">
-                            اختار الحالة
-                        </option>
-
-                        <option value="نعم">
-                            نعم - تم الانتهاء
-                        </option>
-
-                        <option value="لا">
-                            لا - لم يتم الانتهاء
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>
-                        📝 ملاحظات
-                    </label>
-
-                    <textarea
-                        id="wiringNotes"
-                        placeholder="اكتب الملاحظات">
-                    </textarea>
-
-                </div>
-
-
-                <button
-                    class="save-btn"
-                    onclick="saveWiring()">
-
-                    💾 حفظ البيانات
-
-                </button>
-
-
-                <p id="wiringMessage"></p>
-
-            </div>
-
-
-            <!-- =========================
-                 Records Card
-            ========================= -->
-
-            <div class="records-card">
-
-                <h2>
-                    📋 البيانات المسجلة
-                </h2>
-
-
-                <div id="wiringRecords">
-
+                <div class="empty">
+                    ⏳ جاري تحميل البيانات...
                 </div>
 
             </div>
 
-
-        </main>
-
-    </div>
+        </div>
 
 
-    <!-- =====================================================
-         Supabase
-         مهم: لازم يتم تحميل المكتبة قبل script.js
-    ====================================================== -->
+    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</div>
 
 
-    <script>
 
-        // =====================================================
-        // إعداد Supabase
-        // =====================================================
+<!-- =====================================================
+     SUPABASE
+====================================================== -->
 
-        const SUPABASE_URL =
-            "https://gzyybadyaunizdlvmcle.supabase.co";
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
-        const SUPABASE_KEY =
-            "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+<script>
+
+    // =====================================================
+    // SUPABASE SETTINGS
+    // =====================================================
+
+    const SUPABASE_URL =
+        "https://gzyybadyaunizdlvmcle.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
 
 
-        // التأكد من تحميل مكتبة Supabase
+    // =====================================================
+    // CREATE SUPABASE CLIENT
+    // =====================================================
+
+    let supabaseClient = null;
+
+    try {
 
         if (
             window.supabase &&
             typeof window.supabase.createClient === "function"
         ) {
 
-            window.supabaseClient =
+            supabaseClient =
                 window.supabase.createClient(
                     SUPABASE_URL,
                     SUPABASE_KEY
@@ -449,111 +440,577 @@
 
         }
 
-    </script>
+    }
 
+    catch (error) {
 
-    <!-- =====================================================
-         ملف النظام الرئيسي
-    ====================================================== -->
-
-    <script src="script.js"></script>
-
-
-    <!-- =====================================================
-         فحص اتصال Supabase
-    ====================================================== -->
-
-    <script>
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            async function() {
-
-                const message =
-                    document.getElementById(
-                        "wiringMessage"
-                    );
-
-
-                if (
-                    !window.supabaseClient
-                ) {
-
-                    if (message) {
-
-                        message.innerText =
-                            "❌ تعذر تحميل Supabase";
-
-                        message.style.color =
-                            "#d92d20";
-
-                    }
-
-                    return;
-
-                }
-
-
-                try {
-
-                    const result =
-                        await window.supabaseClient
-                            .from("records")
-                            .select("id")
-                            .limit(1);
-
-
-                    if (result.error) {
-
-                        console.error(
-                            "Supabase Error:",
-                            result.error
-                        );
-
-                        if (message) {
-
-                            message.innerText =
-                                "❌ يوجد خطأ في اتصال Supabase أو صلاحيات جدول records";
-
-                            message.style.color =
-                                "#d92d20";
-
-                        }
-
-                        return;
-
-                    }
-
-
-                    console.log(
-                        "Supabase Connected Successfully"
-                    );
-
-                }
-
-                catch (error) {
-
-                    console.error(
-                        "Supabase Connection Error:",
-                        error
-                    );
-
-                    if (message) {
-
-                        message.innerText =
-                            "❌ غير متصل بـ Supabase";
-
-                        message.style.color =
-                            "#d92d20";
-
-                    }
-
-                }
-
-            }
+        console.error(
+            "SUPABASE CLIENT ERROR:",
+            error
         );
 
-    </script>
+    }
+
+
+
+    // =====================================================
+    // CURRENT USER
+    // =====================================================
+
+    function getCurrentUsername() {
+
+        try {
+
+            const currentUser =
+                JSON.parse(
+                    sessionStorage.getItem(
+                        "currentUser"
+                    )
+                );
+
+            if (
+                currentUser &&
+                currentUser.name
+            ) {
+
+                return currentUser.name;
+
+            }
+
+            if (
+                currentUser &&
+                currentUser.username
+            ) {
+
+                return currentUser.username;
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.log(
+                "Could not read current user"
+            );
+
+        }
+
+        return "Unknown";
+
+    }
+
+
+
+    // =====================================================
+    // ESCAPE HTML
+    // =====================================================
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+
+    // =====================================================
+    // SAVE WIRING
+    // =====================================================
+
+    async function saveWiring() {
+
+        const carNameElement =
+            document.getElementById(
+                "wiringCarName"
+            );
+
+        const carNumberElement =
+            document.getElementById(
+                "wiringCarNumber"
+            );
+
+        const doneElement =
+            document.getElementById(
+                "wiringDone"
+            );
+
+        const notesElement =
+            document.getElementById(
+                "wiringNotes"
+            );
+
+        const message =
+            document.getElementById(
+                "wiringMessage"
+            );
+
+        const button =
+            document.getElementById(
+                "saveWiringButton"
+            );
+
+
+        const carName =
+            carNameElement
+                ? carNameElement.value.trim()
+                : "";
+
+        const carNumber =
+            carNumberElement
+                ? carNumberElement.value.trim()
+                : "";
+
+        const done =
+            doneElement
+                ? doneElement.value
+                : "";
+
+        const notes =
+            notesElement
+                ? notesElement.value.trim()
+                : "";
+
+
+        // =================================================
+        // CHECK INPUTS
+        // =================================================
+
+        if (
+            !carName ||
+            !carNumber ||
+            !done
+        ) {
+
+            message.innerText =
+                "❌ من فضلك اكتب اسم العربية ورقم العربية واختر الحالة";
+
+            message.style.color =
+                "#dc3545";
+
+            return;
+
+        }
+
+
+        // =================================================
+        // CHECK SUPABASE
+        // =================================================
+
+        if (!supabaseClient) {
+
+            message.innerText =
+                "❌ Supabase غير متصل";
+
+            message.style.color =
+                "#dc3545";
+
+            console.error(
+                "Supabase client is not available"
+            );
+
+            return;
+
+        }
+
+
+        // =================================================
+        // USER
+        // =================================================
+
+        const username =
+            getCurrentUsername();
+
+
+        // =================================================
+        // LOADING
+        // =================================================
+
+        button.disabled = true;
+
+        button.innerText =
+            "⏳ جاري الحفظ...";
+
+        message.innerText =
+            "⏳ جاري الاتصال بـ Supabase...";
+
+        message.style.color =
+            "#0d6efd";
+
+
+        try {
+
+            // =================================================
+            // PAYLOAD
+            // =================================================
+
+            const payload = {
+
+                department:
+                    "wiring",
+
+                car_name:
+                    carName,
+
+                car_number:
+                    carNumber,
+
+                done:
+                    done,
+
+                notes:
+                    notes,
+
+                created_by:
+                    username
+
+            };
+
+
+            console.log(
+                "📤 DATA SENT TO SUPABASE:",
+                payload
+            );
+
+
+            // =================================================
+            // INSERT
+            // =================================================
+
+            const result =
+                await supabaseClient
+                    .from("records")
+                    .insert(payload)
+                    .select()
+                    .single();
+
+
+            // =================================================
+            // SUPABASE ERROR
+            // =================================================
+
+            if (result.error) {
+
+                console.error(
+                    "❌ SUPABASE INSERT ERROR:",
+                    result.error
+                );
+
+                message.innerText =
+                    "❌ فشل الحفظ:\n" +
+                    result.error.message;
+
+                message.style.color =
+                    "#dc3545";
+
+                button.disabled = false;
+
+                button.innerText =
+                    "💾 حفظ البيانات";
+
+                return;
+
+            }
+
+
+            // =================================================
+            // SUCCESS
+            // =================================================
+
+            console.log(
+                "✅ SAVED:",
+                result.data
+            );
+
+
+            message.innerText =
+                "✅ تم حفظ البيانات بنجاح في Supabase";
+
+            message.style.color =
+                "#198754";
+
+
+            // =================================================
+            // CLEAR INPUTS
+            // =================================================
+
+            carNameElement.value = "";
+
+            carNumberElement.value = "";
+
+            doneElement.value = "";
+
+            notesElement.value = "";
+
+
+            // =================================================
+            // BUTTON
+            // =================================================
+
+            button.disabled = false;
+
+            button.innerText =
+                "💾 حفظ البيانات";
+
+
+            // =================================================
+            // RELOAD RECORDS
+            // =================================================
+
+            await loadWiringRecords();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "❌ SAVE ERROR:",
+                error
+            );
+
+
+            message.innerText =
+                "❌ حصل خطأ أثناء الاتصال بـ Supabase:\n" +
+                error.message;
+
+            message.style.color =
+                "#dc3545";
+
+
+            button.disabled = false;
+
+            button.innerText =
+                "💾 حفظ البيانات";
+
+        }
+
+    }
+
+
+
+    // =====================================================
+    // LOAD WIRING RECORDS
+    // =====================================================
+
+    async function loadWiringRecords() {
+
+        const container =
+            document.getElementById(
+                "wiringRecords"
+            );
+
+
+        if (!container) {
+            return;
+        }
+
+
+        container.innerHTML =
+            '<div class="empty">⏳ جاري تحميل البيانات...</div>';
+
+
+        if (!supabaseClient) {
+
+            container.innerHTML =
+                '<div class="error-box">❌ Supabase غير متصل</div>';
+
+            return;
+
+        }
+
+
+        try {
+
+            const result =
+                await supabaseClient
+                    .from("records")
+                    .select("*")
+                    .eq(
+                        "department",
+                        "wiring"
+                    )
+                    .order(
+                        "id",
+                        {
+                            ascending: false
+                        }
+                    );
+
+
+            if (result.error) {
+
+                console.error(
+                    "❌ LOAD ERROR:",
+                    result.error
+                );
+
+
+                container.innerHTML =
+                    '<div class="error-box">❌ ' +
+                    escapeHTML(
+                        result.error.message
+                    ) +
+                    '</div>';
+
+                return;
+
+            }
+
+
+            const records =
+                result.data || [];
+
+
+            if (
+                records.length === 0
+            ) {
+
+                container.innerHTML =
+                    '<div class="empty">' +
+                    'لا توجد بيانات مسجلة حتى الآن' +
+                    '</div>';
+
+                return;
+
+            }
+
+
+            container.innerHTML = "";
+
+
+            records.forEach(
+                function(record) {
+
+                    const div =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    div.className =
+                        "record";
+
+
+                    div.innerHTML = `
+
+                        <h3>
+                            🚆
+                            ${escapeHTML(
+                                record.car_name
+                            )}
+                        </h3>
+
+                        <p>
+
+                            <strong>
+                                🔢 رقم العربية:
+                            </strong>
+
+                            ${escapeHTML(
+                                record.car_number
+                            )}
+
+                        </p>
+
+                        <p>
+
+                            <strong>
+                                ✅ الحالة:
+                            </strong>
+
+                            ${escapeHTML(
+                                record.done
+                            )}
+
+                        </p>
+
+                        <p>
+
+                            <strong>
+                                📝 الملاحظات:
+                            </strong>
+
+                            ${escapeHTML(
+                                record.notes || ""
+                            )}
+
+                        </p>
+
+                        <p>
+
+                            <strong>
+                                👤 المستخدم:
+                            </strong>
+
+                            ${escapeHTML(
+                                record.created_by || ""
+                            )}
+
+                        </p>
+
+                    `;
+
+
+                    container.appendChild(
+                        div
+                    );
+
+                }
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "❌ LOAD ERROR:",
+                error
+            );
+
+
+            container.innerHTML =
+                '<div class="error-box">' +
+                '❌ حصل خطأ أثناء تحميل البيانات' +
+                '</div>';
+
+        }
+
+    }
+
+
+
+    // =====================================================
+    // GO HOME
+    // =====================================================
+
+    function goHome() {
+
+        window.location.href =
+            "index.html";
+
+    }
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            loadWiringRecords();
+
+        }
+    );
+
+</script>
 
 
 </body>
