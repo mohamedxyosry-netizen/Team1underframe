@@ -116,7 +116,6 @@
 
                 </button>
 
-
                 <!-- تسجيل الخروج -->
 
                 <button
@@ -573,14 +572,6 @@
     <script src="script.js"></script>
 
 
-    <!-- ==============================
-         نظام الإشعارات
-         المدير فقط
-    ============================== -->
-
-    <script src="notifications.js"></script>
-
-
     <script>
 
         // ==================================
@@ -611,6 +602,7 @@
 
         // ==================================
         // فتح الأقسام
+        // نسخة مضمونة للحسابات
         // ==================================
 
         function openSection(section) {
@@ -620,6 +612,8 @@
                     "currentUser"
                 );
 
+
+            // لو مفيش مستخدم مسجل
 
             if (!userData) {
 
@@ -895,8 +889,6 @@
                                     data
                                 );
 
-                            }
-
                         }
 
                     } catch (error) {}
@@ -1023,82 +1015,33 @@
         // البحث من الصفحة الرئيسية
         // ==================================
 
-        function homeSearch() {
+function homeSearch() {
 
-            let user = null;
+    const user = JSON.parse(
+        sessionStorage.getItem("currentUser")
+    );
 
+    // منع الفني من البحث
+    if (!user || user.role !== "admin") {
+        alert("❌ ليس لديك صلاحية للبحث");
+        return;
+    }
 
-            try {
+    const input = document.getElementById("homeSearchNumber");
 
-                user =
-                    JSON.parse(
-                        sessionStorage.getItem(
-                            "currentUser"
-                        )
-                    );
+    if (!input) return;
 
-            } catch (error) {
+    const number = input.value.trim();
 
-                user = null;
+    if (!number) {
+        alert("⚠️ اكتب رقم العربية أولاً");
+        return;
+    }
 
-            }
+    localStorage.setItem("searchNumber", number);
 
-
-            // منع الفني من البحث
-
-            if (
-                !user ||
-                user.role !== "admin"
-            ) {
-
-                alert(
-                    "❌ ليس لديك صلاحية للبحث"
-                );
-
-                return;
-
-            }
-
-
-            const input =
-                document.getElementById(
-                    "homeSearchNumber"
-                );
-
-
-            if (!input) {
-
-                return;
-
-            }
-
-
-            const number =
-                input.value.trim();
-
-
-            if (!number) {
-
-                alert(
-                    "⚠️ اكتب رقم العربية أولاً"
-                );
-
-                return;
-
-            }
-
-
-            localStorage.setItem(
-                "searchNumber",
-                number
-            );
-
-
-            window.location.href =
-                "search.html";
-
-        }
-
+    window.location.href = "search.html";
+}
 
         // ==================================
         // التاريخ والوقت
@@ -1168,14 +1111,12 @@
             3000
         );
 
-
     </script>
 
 
     <img
         src="train.-bg.jpeg"
         alt="yoo">
-
 
 </body>
 
