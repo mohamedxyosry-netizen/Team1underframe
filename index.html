@@ -7,9 +7,6 @@
     <title>نظام إدارة بيانات العمل</title>
     <link rel="stylesheet" href="style.css">
 
-
-
-
 <style>
 /* ترتيب كروت لوحة التحكم: جنب بعض وبشكل ثابت */
 .stats {
@@ -43,6 +40,44 @@
     .stats {
         grid-template-columns: 1fr !important;
     }
+}
+
+/* =========================================
+   عداد الرسائل غير المقروءة - الدردشة
+========================================= */
+#chatMenu {
+    position: relative;
+}
+
+.chat-menu-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+#chatUnreadCount {
+    display: none;
+    position: absolute;
+    top: -9px;
+    right: -10px;
+    min-width: 21px;
+    height: 21px;
+    padding: 0 5px;
+    background: #d92d20;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 17px;
+    text-align: center;
+    box-sizing: border-box;
+    z-index: 20;
+    box-shadow: 0 2px 5px rgba(0,0,0,.18);
 }
 </style>
 
@@ -104,13 +139,19 @@
                     </strong>
 
                 </button>
+
                 <!-- الإشعارات - للمدير فقط -->
                 <button
                     id="notificationsMenu"
                     class="menu-item"
                     onclick="openNotificationsPage()">
+
                     <span>🔔</span>
-                    <strong>الإشعارات</strong>
+
+                    <strong>
+                        الإشعارات
+                    </strong>
+
                     <span
                         id="notificationsCountMenu"
                         style="
@@ -124,7 +165,10 @@
                             font-size:12px;
                             font-weight:bold;
                             margin-right:auto;
-                        ">0</span>
+                        ">
+                        0
+                    </span>
+
                 </button>
 
 
@@ -135,7 +179,15 @@
                     class="menu-item"
                     onclick="openChat()">
 
-                    <span>💬</span>
+                    <span class="chat-menu-icon">
+
+                        💬
+
+                        <span id="chatUnreadCount">
+                            0
+                        </span>
+
+                    </span>
 
                     <strong>
                         الدردشة
@@ -219,7 +271,8 @@
                     </p>
 
                 </div>
-<div class="user-info">
+
+                <div class="user-info">
 
                     <div class="user-icon">
                         👤
@@ -472,11 +525,11 @@
                         </div>
 
                         <strong>
-                             Installation
+                            قسم التركيبات
                         </strong>
 
                         <small>
-                            تسجيل أعمال Installation
+                            تسجيل أعمال التركيبات
                         </small>
 
                         <span class="enter-btn">
@@ -486,7 +539,7 @@
                     </button>
 
 
-                    <!--  Final -->
+                    <!-- الفنش النهائي -->
 
                     <button
                         id="section-final"
@@ -498,11 +551,11 @@
                         </div>
 
                         <strong>
-                            قسم final
+                            قسم الفنش النهائي
                         </strong>
 
                         <small>
-                            تسجيل final 
+                            تسجيل الفنش النهائي
                         </small>
 
                         <span class="enter-btn">
@@ -794,7 +847,7 @@
 
 
             // ==================================
-            // Final 
+            // الفنش النهائي
             // ==================================
 
             if (section === "final") {
@@ -813,7 +866,7 @@
                 }
 
                 alert(
-                    "ليس لديك صلاحية للدخول إلى  final ❌"
+                    "ليس لديك صلاحية للدخول إلى الفنش النهائي ❌"
                 );
 
                 return;
@@ -881,21 +934,36 @@
         // ==================================
         // الإشعارات - صفحة مستقلة للمدير
         // ==================================
+
         function openNotificationsPage() {
-            const user = getCurrentUser();
+
+            const user =
+                getCurrentUser();
 
             if (!user) {
-                window.location.href = "login.html";
+
+                window.location.href =
+                    "login.html";
+
                 return;
+
             }
 
             if (user.role !== "admin") {
-                alert("🔔 الإشعارات متاحة للمدير فقط");
+
+                alert(
+                    "🔔 الإشعارات متاحة للمدير فقط"
+                );
+
                 return;
+
             }
 
-            window.location.href = "notifications.html";
+            window.location.href =
+                "notifications.html";
+
         }
+
 
         // ==================================
         // مشاكل العربيات
@@ -1063,41 +1131,371 @@
     <img
         src="train.-bg.jpeg"
         alt="yoo">
+
+
+    <!-- =========================================
+         عداد الدردشة اللحظي
+         لا يحتاج Refresh ولا setInterval
+    ========================================== -->
+
     <script>
-        // عداد الإشعارات في القائمة الجانبية - المدير فقط.
-        async function syncNotificationsMenuCount() {
-            const menu = document.getElementById("notificationsMenu");
-            const badge = document.getElementById("notificationsCountMenu");
-            if (!menu || !badge) return;
 
-            const user = typeof getCurrentUser === "function"
-                ? getCurrentUser()
-                : null;
+        let chatUnreadRealtimeChannel = null;
 
-            if (!user || user.role !== "admin") {
-                menu.style.display = "none";
+
+        async function updateChatUnreadCount() {
+
+            const badge =
+                document.getElementById(
+                    "chatUnreadCount"
+                );
+
+
+            if (!badge) {
                 return;
             }
 
-            menu.style.display = "flex";
-
-            if (typeof getNotificationsData !== "function") return;
 
             try {
-                const notifications = await getNotificationsData();
-                badge.textContent = notifications.length;
-                badge.style.display = notifications.length ? "inline-flex" : "none";
+
+                const user =
+                    typeof getCurrentUser === "function"
+                        ? getCurrentUser()
+                        : null;
+
+
+                if (!user) {
+
+                    badge.style.display =
+                        "none";
+
+                    return;
+
+                }
+
+
+                const username =
+                    user.username ||
+                    user.userName ||
+                    user.name;
+
+
+                if (!username) {
+
+                    badge.style.display =
+                        "none";
+
+                    return;
+
+                }
+
+
+                if (
+                    !window.supabaseClient
+                ) {
+
+                    console.warn(
+                        "supabaseClient غير موجود"
+                    );
+
+                    return;
+
+                }
+
+
+                const {
+                    count,
+                    error
+                } =
+                    await window.supabaseClient
+                        .from("private_messages")
+                        .select(
+                            "id",
+                            {
+                                count: "exact",
+                                head: true
+                            }
+                        )
+                        .eq(
+                            "receiver_username",
+                            username
+                        )
+                        .eq(
+                            "is_read",
+                            false
+                        );
+
+
+                if (error) {
+
+                    console.error(
+                        "Chat unread count error:",
+                        error
+                    );
+
+                    return;
+
+                }
+
+
+                const unread =
+                    count || 0;
+
+
+                if (unread > 0) {
+
+                    badge.textContent =
+                        unread > 99
+                            ? "99+"
+                            : unread;
+
+                    badge.style.display =
+                        "inline-block";
+
+                } else {
+
+                    badge.textContent =
+                        "0";
+
+                    badge.style.display =
+                        "none";
+
+                }
+
+
             } catch (error) {
-                console.error("Notifications count error:", error);
+
+                console.error(
+                    "Chat unread count error:",
+                    error
+                );
+
             }
+
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            setTimeout(syncNotificationsMenuCount, 800);
-        });
 
-        setInterval(syncNotificationsMenuCount, 3000);
+        // =========================================
+        // Realtime للرسائل
+        // INSERT = رسالة جديدة
+        // UPDATE = الرسالة اتقريت
+        // =========================================
+
+        function startChatUnreadRealtime() {
+
+            if (
+                !window.supabaseClient ||
+                chatUnreadRealtimeChannel
+            ) {
+
+                return;
+
+            }
+
+
+            chatUnreadRealtimeChannel =
+                window.supabaseClient
+                    .channel(
+                        "index-chat-unread-" +
+                        Date.now()
+                    )
+                    .on(
+                        "postgres_changes",
+                        {
+                            event: "*",
+                            schema: "public",
+                            table: "private_messages"
+                        },
+                        function (payload) {
+
+                            /*
+                             * أي رسالة جديدة أو تغيير
+                             * في is_read سيعيد حساب
+                             * العدد فوراً.
+                             */
+
+                            updateChatUnreadCount();
+
+                        }
+                    )
+                    .subscribe(
+                        function (status) {
+
+                            console.log(
+                                "Chat unread realtime:",
+                                status
+                            );
+
+                        }
+                    );
+
+        }
+
+
+        // =========================================
+        // تشغيل العداد بعد تحميل الصفحة
+        // =========================================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                /*
+                 * حساب أولي عند فتح الصفحة
+                 */
+                updateChatUnreadCount();
+
+
+                /*
+                 * تشغيل التحديث اللحظي
+                 */
+                startChatUnreadRealtime();
+
+            }
+        );
+
+
+        // =========================================
+        // تنظيف الاتصال عند مغادرة الصفحة
+        // =========================================
+
+        window.addEventListener(
+            "beforeunload",
+            function () {
+
+                try {
+
+                    if (
+                        chatUnreadRealtimeChannel &&
+                        window.supabaseClient
+                    ) {
+
+                        window.supabaseClient
+                            .removeChannel(
+                                chatUnreadRealtimeChannel
+                            );
+
+                    }
+
+                } catch (error) {
+
+                    console.log(error);
+
+                }
+
+            }
+        );
+
     </script>
+
+
+    <!-- =========================================
+         عداد الإشعارات في القائمة الجانبية
+         المدير فقط
+    ========================================== -->
+
+    <script>
+
+        async function syncNotificationsMenuCount() {
+
+            const menu =
+                document.getElementById(
+                    "notificationsMenu"
+                );
+
+
+            const badge =
+                document.getElementById(
+                    "notificationsCountMenu"
+                );
+
+
+            if (!menu || !badge) {
+                return;
+            }
+
+
+            const user =
+                typeof getCurrentUser === "function"
+                    ? getCurrentUser()
+                    : null;
+
+
+            if (
+                !user ||
+                user.role !== "admin"
+            ) {
+
+                menu.style.display =
+                    "none";
+
+                return;
+
+            }
+
+
+            menu.style.display =
+                "flex";
+
+
+            if (
+                typeof getNotificationsData !==
+                "function"
+            ) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const notifications =
+                    await getNotificationsData();
+
+
+                badge.textContent =
+                    notifications.length;
+
+
+                badge.style.display =
+                    notifications.length
+                        ? "inline-flex"
+                        : "none";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Notifications count error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                setTimeout(
+                    syncNotificationsMenuCount,
+                    800
+                );
+
+            }
+        );
+
+
+        setInterval(
+            syncNotificationsMenuCount,
+            3000
+        );
+
+    </script>
+
 </body>
 
 </html>
