@@ -1,595 +1,449 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>الدردشة</title>
 
     <link rel="stylesheet" href="style.css">
 
-    <style>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        /* =========================================
-           صفحة الدردشة
-        ========================================= */
+    <style>
+        body {
+            background: #f4f7fb;
+        }
 
         .chat-page {
-
-            padding: 25px;
-
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 15px;
         }
-
 
         .chat-header {
-
             background: white;
-
-            border-radius: 15px;
-
+            border-radius: 18px;
             padding: 20px;
-
-            margin-bottom: 20px;
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            box-shadow:
-                0 3px 15px rgba(0,0,0,0.08);
-
+            margin-bottom: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.08);
         }
-
 
         .chat-header h1 {
-
-            margin: 0;
-
+            margin: 0 0 8px;
+            color: #1f2937;
         }
 
-
-        .chat-header p {
-
-            margin: 5px 0 0;
-
-            color: #777;
-
+        .current-user {
+            color: #64748b;
+            font-size: 15px;
         }
 
-
-        .back-button {
-
-            border: none;
-
-            background: #333;
-
-            color: white;
-
-            padding: 10px 18px;
-
-            border-radius: 8px;
-
-            cursor: pointer;
-
-            font-size: 14px;
-
-        }
-
-
-        /* =========================================
-           قائمة المستخدمين
-        ========================================= */
-
-        .users-container {
-
+        .chat-layout {
             display: grid;
-
-            grid-template-columns:
-                repeat(auto-fill, minmax(250px, 1fr));
-
-            gap: 15px;
-
+            grid-template-columns: 300px 1fr;
+            gap: 18px;
+            direction: ltr;
         }
 
-
-        .user-card {
-
+        .users-card,
+        .conversation-card {
             background: white;
-
-            border-radius: 15px;
-
-            padding: 18px;
-
-            cursor: pointer;
-
-            border: 2px solid transparent;
-
-            box-shadow:
-                0 3px 15px rgba(0,0,0,0.08);
-
-            transition: 0.2s;
-
-            position: relative;
-
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.08);
+            overflow: hidden;
+            direction: rtl;
         }
 
-
-        .user-card:hover {
-
-            transform: translateY(-3px);
-
-            border-color: #198754;
-
+        .card-title {
+            padding: 17px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: bold;
+            font-size: 18px;
         }
 
+        .users-list {
+            padding: 10px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
 
-        .user-card-top {
-
+        .user-item {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 13px;
+            border-radius: 12px;
             display: flex;
-
             align-items: center;
-
             gap: 12px;
-
+            cursor: pointer;
+            text-align: right;
+            margin-bottom: 5px;
+            transition: .2s;
         }
 
+        .user-item:hover {
+            background: #f1f5f9;
+        }
+
+        .user-item.active {
+            background: #e8f5ee;
+        }
 
         .user-avatar {
-
-            width: 50px;
-
-            height: 50px;
-
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-
-            background: #eee;
-
+            background: #198754;
+            color: white;
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
-            font-size: 25px;
-
+            font-weight: bold;
+            flex-shrink: 0;
         }
 
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
 
         .user-name {
-
             font-weight: bold;
-
-            font-size: 17px;
-
+            color: #1f2937;
         }
 
-
-        .user-role {
-
-            color: #777;
-
-            font-size: 13px;
-
-            margin-top: 4px;
-
+        .user-status {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 3px;
         }
-
 
         .online-dot {
-
-            width: 10px;
-
-            height: 10px;
-
-            border-radius: 50%;
-
-            background: #20c997;
-
             display: inline-block;
-
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
             margin-left: 5px;
-
         }
 
-
-        .new-message {
-
-            position: absolute;
-
-            top: 12px;
-
-            left: 12px;
-
-            background: #d92d20;
-
+        .unread-badge {
+            min-width: 23px;
+            height: 23px;
+            padding: 0 6px;
+            border-radius: 50px;
+            background: #dc3545;
             color: white;
-
-            border-radius: 20px;
-
-            padding: 3px 8px;
-
-            font-size: 11px;
-
-            font-weight: bold;
-
-        }
-
-
-        /* =========================================
-           شاشة المحادثة
-        ========================================= */
-
-        .chat-window {
-
-            display: none;
-
-            background: white;
-
-            border-radius: 15px;
-
-            overflow: hidden;
-
-            box-shadow:
-                0 3px 15px rgba(0,0,0,0.08);
-
-        }
-
-
-        .chat-person {
-
-            padding: 18px;
-
-            background: #f5f5f5;
-
             display: flex;
-
             align-items: center;
-
-            gap: 12px;
-
-            border-bottom: 1px solid #ddd;
-
-        }
-
-
-        .chat-person-name {
-
+            justify-content: center;
+            font-size: 12px;
             font-weight: bold;
-
-            font-size: 18px;
-
         }
 
-
-        .chat-person-role {
-
-            font-size: 13px;
-
-            color: #777;
-
+        .conversation {
+            height: 600px;
+            display: flex;
+            flex-direction: column;
         }
 
+        .conversation-header {
+            min-height: 72px;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 13px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .conversation-header .avatar {
+            width: 43px;
+            height: 43px;
+            border-radius: 50%;
+            background: #198754;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .conversation-user-name {
+            font-weight: bold;
+            font-size: 17px;
+        }
 
         .messages {
-
-            height: 450px;
-
+            flex: 1;
+            padding: 18px;
             overflow-y: auto;
-
-            padding: 20px;
-
-            background: #fafafa;
-
+            background: #f8fafc;
         }
 
+        .empty-chat {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            text-align: center;
+            padding: 30px;
+        }
 
-        .message {
+        .message-row {
+            display: flex;
+            margin-bottom: 12px;
+        }
 
-            margin-bottom: 15px;
+        .message-row.mine {
+            justify-content: flex-start;
+        }
 
+        .message-row.theirs {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
             max-width: 75%;
-
             padding: 10px 14px;
-
-            border-radius: 12px;
-
-            word-wrap: break-word;
-
+            border-radius: 15px;
+            line-height: 1.6;
+            word-break: break-word;
         }
 
-
-        .message.mine {
-
-            margin-right: auto;
-
+        .message-row.mine .message-bubble {
             background: #198754;
-
             color: white;
-
-            border-bottom-left-radius: 3px;
-
+            border-bottom-left-radius: 4px;
         }
 
-
-        .message.theirs {
-
-            margin-left: auto;
-
+        .message-row.theirs .message-bubble {
             background: white;
-
-            border: 1px solid #ddd;
-
-            border-bottom-right-radius: 3px;
-
+            color: #1f2937;
+            border: 1px solid #e2e8f0;
+            border-bottom-right-radius: 4px;
         }
 
-
-        .message-sender {
-
-            font-size: 11px;
-
-            font-weight: bold;
-
-            margin-bottom: 5px;
-
-            opacity: 0.8;
-
+        .message-text {
+            white-space: pre-wrap;
         }
-
 
         .message-time {
-
             font-size: 10px;
-
-            margin-top: 5px;
-
-            opacity: 0.7;
-
+            opacity: .7;
+            margin-top: 4px;
+            text-align: left;
         }
-
 
         .message-input-area {
-
-            display: flex;
-
-            gap: 10px;
-
-            padding: 15px;
-
-            border-top: 1px solid #ddd;
-
+            border-top: 1px solid #e5e7eb;
+            padding: 12px;
             background: white;
-
+            display: flex;
+            gap: 10px;
         }
-
 
         .message-input {
-
             flex: 1;
-
-            padding: 12px;
-
-            border: 1px solid #ccc;
-
-            border-radius: 10px;
-
-            outline: none;
-
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 11px 14px;
+            font-family: inherit;
             font-size: 15px;
-
+            outline: none;
+            resize: none;
+            min-height: 45px;
+            max-height: 120px;
         }
 
+        .message-input:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 2px rgba(25,135,84,.1);
+        }
 
-        .send-button {
-
+        .send-btn {
             border: none;
-
             background: #198754;
-
             color: white;
-
-            padding: 12px 22px;
-
-            border-radius: 10px;
-
+            border-radius: 12px;
+            padding: 0 20px;
             cursor: pointer;
-
+            font-family: inherit;
             font-weight: bold;
-
+            min-width: 80px;
         }
 
-
-        .send-button:hover {
-
-            opacity: 0.9;
-
+        .send-btn:hover {
+            background: #157347;
         }
 
-
-        .back-users {
-
-            border: none;
-
-            background: #555;
-
-            color: white;
-
-            padding: 8px 14px;
-
-            border-radius: 7px;
-
-            cursor: pointer;
-
+        .send-btn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
         }
 
-
-        .empty-users {
-
-            background: white;
-
-            padding: 30px;
-
+        .no-users {
             text-align: center;
-
-            border-radius: 15px;
-
+            padding: 30px 15px;
+            color: #94a3b8;
         }
 
+        .loading {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
 
-        @media (max-width: 600px) {
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin: 10px;
+            font-size: 13px;
+        }
 
+        @media (max-width: 800px) {
+            .chat-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .users-card {
+                max-height: 280px;
+            }
+
+            .users-list {
+                max-height: 210px;
+            }
+
+            .conversation {
+                height: 550px;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+
+        @media (max-width: 500px) {
             .chat-page {
-
-                padding: 12px;
-
+                padding: 8px;
+                margin: 10px auto;
             }
 
-            .messages {
-
-                height: 55vh;
-
+            .chat-header {
+                padding: 15px;
             }
 
-            .message {
-
-                max-width: 88%;
-
+            .chat-header h1 {
+                font-size: 22px;
             }
 
+            .conversation {
+                height: 500px;
+            }
+
+            .message-input-area {
+                padding: 8px;
+            }
+
+            .send-btn {
+                min-width: 65px;
+                padding: 0 12px;
+            }
         }
-
     </style>
-
 </head>
-
 
 <body>
 
-    <div class="chat-page">
+<div class="chat-page">
 
+    <div class="chat-header">
+        <h1>💬 الدردشة</h1>
+        <div class="current-user" id="currentUserText">
+            جاري تحميل المستخدم...
+        </div>
+    </div>
 
-        <!-- =========================================
-             رأس الصفحة
-        ========================================= -->
+    <div class="chat-layout">
 
-        <div class="chat-header">
+        <!-- المستخدمين -->
+        <div class="users-card">
 
-            <div>
-
-                <h1>
-                    💬 الدردشة
-                </h1>
-
-                <p id="currentUserText">
-                    جاري التحميل...
-                </p>
-
+            <div class="card-title">
+                👥 المستخدمين
             </div>
 
-
-            <button
-                class="back-button"
-                onclick="goHome()">
-
-                🏠 الرئيسية
-
-            </button>
-
-        </div>
-
-
-        <!-- =========================================
-             قائمة الحسابات
-        ========================================= -->
-
-        <div id="usersSection">
-
-            <div class="users-container"
-                 id="usersContainer">
-
+            <div id="usersList" class="users-list">
+                <div class="loading">
+                    جاري تحميل المستخدمين...
+                </div>
             </div>
 
         </div>
 
 
-        <!-- =========================================
-             نافذة المحادثة
-        ========================================= -->
+        <!-- المحادثة -->
+        <div class="conversation-card">
 
-        <div
-            class="chat-window"
-            id="chatWindow">
+            <div class="conversation">
 
+                <div class="conversation-header" id="conversationHeader">
+                    <div class="avatar">💬</div>
 
-            <div class="chat-person">
+                    <div>
+                        <div class="conversation-user-name">
+                            اختر مستخدماً
+                        </div>
 
-                <button
-                    class="back-users"
-                    onclick="showUsers()">
-
-                    ↩ رجوع
-
-                </button>
-
-
-                <div class="user-avatar">
-
-                    👤
-
+                        <div class="user-status">
+                            لبدء المحادثة
+                        </div>
+                    </div>
                 </div>
 
 
-                <div>
+                <div id="messages" class="messages">
 
-                    <div
-                        class="chat-person-name"
-                        id="chatPersonName">
+                    <div class="empty-chat">
+                        <div>
+                            <div style="font-size:45px;margin-bottom:10px;">
+                                💬
+                            </div>
 
-                    </div>
-
-                    <div
-                        class="chat-person-role"
-                        id="chatPersonRole">
-
+                            <div>
+                                اختر شخصاً من القائمة لبدء الدردشة
+                            </div>
+                        </div>
                     </div>
 
                 </div>
 
-            </div>
 
+                <div class="message-input-area">
 
-            <!-- الرسائل -->
+                    <textarea
+                        id="messageInput"
+                        class="message-input"
+                        placeholder="اكتب رسالتك..."
+                        rows="1"
+                        disabled
+                    ></textarea>
 
-            <div
-                class="messages"
-                id="messages">
+                    <button
+                        id="sendButton"
+                        class="send-btn"
+                        onclick="sendMessage()"
+                        disabled
+                    >
+                        إرسال
+                    </button>
 
-            </div>
-
-
-            <!-- كتابة الرسالة -->
-
-            <div class="message-input-area">
-
-                <input
-                    type="text"
-                    id="messageInput"
-                    class="message-input"
-                    placeholder="اكتب رسالتك هنا...">
-
-                <button
-                    class="send-button"
-                    onclick="sendMessage()">
-
-                    إرسال ➤
-
-                </button>
+                </div>
 
             </div>
 
@@ -597,838 +451,1159 @@
 
     </div>
 
+</div>
 
-    <script src="script.js"></script>
 
+<!-- نظام المستخدمين الموجود عندك -->
+<script src="script.js"></script>
 
-    <script>
+<script>
 
-        // =========================================
-        // المستخدم الحالي
-        // =========================================
+    /* =========================================================
+       SUPABASE
+    ========================================================= */
 
-        let currentUser = null;
+    const SUPABASE_URL =
+        "https://gzyybadyaunizdlvmcle.supabase.co";
 
-        let selectedUser = null;
+    const SUPABASE_KEY =
+        "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
 
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
 
-        // =========================================
-        // أسماء الأقسام
-        // =========================================
 
-        const roleNames = {
+    /* =========================================================
+       VARIABLES
+    ========================================================= */
 
-            admin:
-                "المدير",
+    let currentUser = null;
+    let selectedUser = null;
 
-            wiring:
-                "قسم Wiring",
+    let realtimeChannel = null;
 
-            lt:
-                "قسم LT",
+    let messagesLoading = false;
+    let usersLoading = false;
 
-            ht:
-                "قسم HT",
 
-            installation:
-                "قسم التركيبات",
+    /* =========================================================
+       HELPERS
+    ========================================================= */
 
-            final:
-                "قسم الفنش النهائي"
+    function escapeHTML(value) {
 
-        };
+        const div = document.createElement("div");
 
+        div.textContent = value == null ? "" : String(value);
 
-        // =========================================
-        // الحصول على المستخدم الحالي
-        // =========================================
+        return div.innerHTML;
+    }
 
-        function loadCurrentUser() {
 
-            currentUser =
-                getCurrentUser();
+    function getUserUsername(user) {
 
+        if (!user) return "";
 
-            if (!currentUser) {
+        return (
+            user.username ||
+            user.userName ||
+            user.name ||
+            ""
+        ).toString();
+    }
 
-                window.location.href =
-                    "login.html";
 
-                return false;
+    function getUserDisplayName(username) {
 
-            }
-
-
-            const text =
-                document.getElementById(
-                    "currentUserText"
-                );
-
-
-            if (text) {
-
-                text.innerText =
-                    "مرحبًا " +
-                    currentUser.name +
-                    " — " +
-                    (
-                        roleNames[
-                            currentUser.role
-                        ] ||
-                        "مستخدم"
-                    );
-
-            }
-
-
-            return true;
-
-        }
-
-
-        // =========================================
-        // إنشاء قائمة الحسابات
-        // =========================================
-
-        function displayUsers() {
-
-            const container =
-                document.getElementById(
-                    "usersContainer"
-                );
-
-
-            if (!container) {
-                return;
-            }
-
-
-            container.innerHTML = "";
-
-
-            const usernames =
-                Object.keys(users);
-
-
-            let foundOtherUser = false;
-
-
-            usernames.forEach(
-                function(username) {
-
-                    const user =
-                        users[username];
-
-
-                    // لا تعرض حساب المستخدم الحالي
-
-                    if (
-                        username ===
-                        currentUser.username
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    foundOtherUser = true;
-
-
-                    const unread =
-                        getUnreadCount(
-                            username
-                        );
-
-
-                    const card =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    card.className =
-                        "user-card";
-
-
-                    card.onclick =
-                        function() {
-
-                            openPrivateChat(
-                                username
-                            );
-
-                        };
-
-
-                    card.innerHTML = `
-
-                        <div class="user-card-top">
-
-                            <div class="user-avatar">
-                                👤
-                            </div>
-
-                            <div>
-
-                                <div class="user-name">
-
-                                    <span class="online-dot"></span>
-
-                                    ${escapeHtml(
-                                        user.name
-                                    )}
-
-                                </div>
-
-                                <div class="user-role">
-
-                                    ${
-                                        roleNames[
-                                            user.role
-                                        ] ||
-                                        "مستخدم"
-                                    }
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        ${
-                            unread > 0
-                            ? `
-
-                                <div class="new-message">
-
-                                    🔴 ${unread} جديدة
-
-                                </div>
-
-                            `
-                            : ""
-
-                        }
-
-                    `;
-
-
-                    container.appendChild(
-                        card
-                    );
-
-                }
-            );
-
-
-            if (!foundOtherUser) {
-
-                container.innerHTML = `
-
-                    <div class="empty-users">
-
-                        لا يوجد مستخدمون آخرون للدردشة.
-
-                    </div>
-
-                `;
-
-            }
-
-        }
-
-
-        // =========================================
-        // مفتاح تخزين الرسائل
-        // =========================================
-
-        function getChatStorageKey(
-            username1,
-            username2
+        if (
+            typeof users !== "undefined" &&
+            users &&
+            users[username]
         ) {
-
-            const names = [
-
-                username1,
-                username2
-
-            ].sort();
-
 
             return (
-                "privateChat_" +
-                names[0] +
-                "_" +
-                names[1]
-            );
-
-        }
-
-
-        // =========================================
-        // قراءة رسائل المحادثة
-        // =========================================
-
-        function getChatMessages(
-            username1,
-            username2
-        ) {
-
-            const key =
-                getChatStorageKey(
-                    username1,
-                    username2
-                );
-
-
-            try {
-
-                const data =
-                    JSON.parse(
-                        localStorage.getItem(
-                            key
-                        ) || "[]"
-                    );
-
-
-                return Array.isArray(data)
-                    ? data
-                    : [];
-
-            } catch (error) {
-
-                return [];
-
-            }
-
-        }
-
-
-        // =========================================
-        // حفظ الرسائل
-        // =========================================
-
-        function saveChatMessages(
-            username1,
-            username2,
-            messages
-        ) {
-
-            const key =
-                getChatStorageKey(
-                    username1,
-                    username2
-                );
-
-
-            localStorage.setItem(
-                key,
-                JSON.stringify(messages)
-            );
-
-        }
-
-
-        // =========================================
-        // فتح محادثة خاصة
-        // =========================================
-
-        function openPrivateChat(
-            username
-        ) {
-
-            const user =
-                users[username];
-
-
-            if (!user) {
-                return;
-            }
-
-
-            selectedUser =
-                username;
-
-
-            document.getElementById(
-                "usersSection"
-            ).style.display =
-                "none";
-
-
-            document.getElementById(
-                "chatWindow"
-            ).style.display =
-                "block";
-
-
-            document.getElementById(
-                "chatPersonName"
-            ).innerText =
-                user.name;
-
-
-            document.getElementById(
-                "chatPersonRole"
-            ).innerText =
-                roleNames[
-                    user.role
-                ] || "مستخدم";
-
-
-            markMessagesAsRead(
+                users[username].name ||
+                users[username].username ||
                 username
             );
+        }
+
+        return username;
+    }
 
 
-            displayMessages();
+    function getInitial(name) {
+
+        name = String(name || "").trim();
+
+        if (!name) return "👤";
+
+        return name.charAt(0).toUpperCase();
+    }
 
 
-            const input =
-                document.getElementById(
-                    "messageInput"
-                );
+    function formatMessageDate(dateValue) {
+
+        if (!dateValue) return "";
+
+        const date = new Date(dateValue);
+
+        if (isNaN(date.getTime())) {
+            return "";
+        }
+
+        return date.toLocaleString(
+            "ar-EG",
+            {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+    }
 
 
-            if (input) {
+    /* =========================================================
+       GET CURRENT USER
+    ========================================================= */
 
-                input.focus();
+    function loadCurrentUser() {
+
+        try {
+
+            if (typeof getCurrentUser === "function") {
+
+                const user = getCurrentUser();
+
+                if (user) {
+                    return user;
+                }
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "getCurrentUser error:",
+                error
+            );
+        }
+
+
+        try {
+
+            const sessionUser =
+                sessionStorage.getItem("currentUser");
+
+            if (sessionUser) {
+
+                return JSON.parse(sessionUser);
 
             }
+
+        } catch (error) {
+
+            console.warn(
+                "sessionStorage error:",
+                error
+            );
+        }
+
+
+        return null;
+    }
+
+
+    /* =========================================================
+       USERS
+    ========================================================= */
+
+    function getAllUsers() {
+
+        if (
+            typeof users === "undefined" ||
+            !users
+        ) {
+
+            return [];
 
         }
 
 
-        // =========================================
-        // الرجوع لقائمة المستخدمين
-        // =========================================
+        return Object.keys(users)
+            .map(username => {
 
-        function showUsers() {
+                const user = users[username] || {};
 
-            selectedUser =
-                null;
-
-
-            document.getElementById(
-                "chatWindow"
-            ).style.display =
-                "none";
-
-
-            document.getElementById(
-                "usersSection"
-            ).style.display =
-                "block";
-
-
-            displayUsers();
-
-        }
-
-
-        // =========================================
-        // إرسال رسالة
-        // =========================================
-
-        function sendMessage() {
-
-            if (!selectedUser) {
-
-                return;
-
-            }
-
-
-            const input =
-                document.getElementById(
-                    "messageInput"
-                );
-
-
-            if (!input) {
-                return;
-            }
-
-
-            const text =
-                input.value.trim();
-
-
-            if (!text) {
-                return;
-            }
-
-
-            const messages =
-                getChatMessages(
-                    currentUser.username,
-                    selectedUser
-                );
-
-
-            messages.push({
-
-                id:
-                    "msg_" +
-                    Date.now() +
-                    "_" +
-                    Math.random()
-                        .toString(36)
-                        .substring(2,8),
-
-                sender:
-                    currentUser.username,
-
-                senderName:
-                    currentUser.name,
-
-                receiver:
-                    selectedUser,
-
-                text:
-                    text,
-
-                date:
-                    getCurrentDateTime(),
-
-                read:
-                    false
+                return {
+                    username: username,
+                    name:
+                        user.name ||
+                        user.username ||
+                        username,
+                    role: user.role || ""
+                };
 
             });
+    }
 
 
-            saveChatMessages(
-                currentUser.username,
-                selectedUser,
-                messages
-            );
+    /* =========================================================
+       LOAD UNREAD COUNTS
+    ========================================================= */
+
+    async function getUnreadCounts() {
+
+        const counts = {};
 
 
-            input.value =
-                "";
-
-
-            displayMessages();
-
+        if (!currentUser) {
+            return counts;
         }
 
 
-        // =========================================
-        // عرض الرسائل
-        // =========================================
-
-        function displayMessages() {
-
-            if (!selectedUser) {
-                return;
-            }
+        const currentUsername =
+            getUserUsername(currentUser);
 
 
-            const container =
-                document.getElementById(
-                    "messages"
+        const { data, error } =
+            await supabaseClient
+                .from("private_messages")
+                .select("sender_username")
+                .eq(
+                    "receiver_username",
+                    currentUsername
+                )
+                .eq(
+                    "is_read",
+                    false
                 );
 
 
-            if (!container) {
-                return;
-            }
+        if (error) {
+
+            console.error(
+                "Unread error:",
+                error
+            );
+
+            return counts;
+        }
 
 
-            const messages =
-                getChatMessages(
-                    currentUser.username,
-                    selectedUser
-                );
+        (data || []).forEach(row => {
+
+            const username =
+                row.sender_username;
+
+            counts[username] =
+                (counts[username] || 0) + 1;
+
+        });
 
 
-            container.innerHTML = "";
+        return counts;
+    }
 
 
-            if (
-                messages.length === 0
-            ) {
+    /* =========================================================
+       DISPLAY USERS
+    ========================================================= */
+
+    async function displayUsers() {
+
+        if (usersLoading) return;
+
+        usersLoading = true;
+
+
+        const container =
+            document.getElementById("usersList");
+
+
+        try {
+
+            const allUsers =
+                getAllUsers();
+
+
+            if (!allUsers.length) {
 
                 container.innerHTML = `
-
-                    <div style="
-                        text-align:center;
-                        color:#888;
-                        padding:40px 10px;
-                    ">
-
-                        💬 لا توجد رسائل بعد
-
-                        <br>
-
-                        ابدأ المحادثة الآن
-
+                    <div class="no-users">
+                        لا يوجد مستخدمون
                     </div>
-
                 `;
 
                 return;
-
             }
 
 
-            messages.forEach(
-                function(message) {
-
-                    const mine =
-                        message.sender ===
-                        currentUser.username;
+            const unreadCounts =
+                await getUnreadCounts();
 
 
-                    const div =
-                        document.createElement(
-                            "div"
+            container.innerHTML =
+                allUsers
+                    .filter(user => {
+
+                        return (
+                            user.username !==
+                            getUserUsername(currentUser)
                         );
 
+                    })
+                    .map(user => {
 
-                    div.className =
-                        "message " +
-                        (
-                            mine
-                            ? "mine"
-                            : "theirs"
-                        );
+                        const isActive =
+                            selectedUser ===
+                            user.username;
 
 
-                    div.innerHTML = `
+                        const unread =
+                            unreadCounts[
+                                user.username
+                            ] || 0;
 
-                        <div class="message-sender">
 
-                            ${escapeHtml(
-                                message.senderName ||
-                                message.sender
-                            )}
+                        return `
+                            <button
+                                class="user-item ${isActive ? "active" : ""}"
+                                onclick="openChat('${escapeHTML(user.username)}')"
+                            >
 
-                        </div>
+                                <div class="user-avatar">
+                                    ${escapeHTML(
+                                        getInitial(user.name)
+                                    )}
+                                </div>
 
+                                <div class="user-info">
+
+                                    <div class="user-name">
+                                        ${escapeHTML(user.name)}
+                                    </div>
+
+                                    <div class="user-status">
+                                        <span class="online-dot"></span>
+                                        ${escapeHTML(
+                                            user.role || "مستخدم"
+                                        )}
+                                    </div>
+
+                                </div>
+
+                                ${
+                                    unread > 0
+                                    ? `
+                                        <div class="unread-badge">
+                                            ${unread > 99 ? "99+" : unread}
+                                        </div>
+                                    `
+                                    : ""
+                                }
+
+                            </button>
+                        `;
+
+                    })
+                    .join("");
+
+
+        } catch (error) {
+
+            console.error(
+                "Display users error:",
+                error
+            );
+
+
+            container.innerHTML = `
+                <div class="error-message">
+                    حدث خطأ أثناء تحميل المستخدمين
+                </div>
+            `;
+
+        } finally {
+
+            usersLoading = false;
+
+        }
+
+    }
+
+
+    /* =========================================================
+       OPEN CHAT
+    ========================================================= */
+
+    async function openChat(username) {
+
+        if (!username) return;
+
+
+        selectedUser = username;
+
+
+        const displayName =
+            getUserDisplayName(username);
+
+
+        document.getElementById(
+            "conversationHeader"
+        ).innerHTML = `
+
+            <div class="avatar">
+                ${escapeHTML(
+                    getInitial(displayName)
+                )}
+            </div>
+
+            <div>
+
+                <div class="conversation-user-name">
+                    ${escapeHTML(displayName)}
+                </div>
+
+                <div class="user-status">
+                    <span class="online-dot"></span>
+                    متصل
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.getElementById(
+            "messageInput"
+        ).disabled = false;
+
+
+        document.getElementById(
+            "sendButton"
+        ).disabled = false;
+
+
+        await markMessagesAsRead(username);
+
+
+        await displayMessages();
+
+
+        await displayUsers();
+
+
+        setTimeout(() => {
+
+            document
+                .getElementById("messageInput")
+                .focus();
+
+        }, 100);
+
+    }
+
+
+    /* =========================================================
+       GET CHAT MESSAGES
+    ========================================================= */
+
+    async function getChatMessages(username) {
+
+        if (!currentUser || !username) {
+            return [];
+        }
+
+
+        const currentUsername =
+            getUserUsername(currentUser);
+
+
+        const [
+            sentResult,
+            receivedResult
+        ] = await Promise.all([
+
+            supabaseClient
+                .from("private_messages")
+                .select("*")
+                .eq(
+                    "sender_username",
+                    currentUsername
+                )
+                .eq(
+                    "receiver_username",
+                    username
+                ),
+
+            supabaseClient
+                .from("private_messages")
+                .select("*")
+                .eq(
+                    "sender_username",
+                    username
+                )
+                .eq(
+                    "receiver_username",
+                    currentUsername
+                )
+
+        ]);
+
+
+        if (sentResult.error) {
+
+            console.error(
+                "Sent messages error:",
+                sentResult.error
+            );
+
+            throw sentResult.error;
+
+        }
+
+
+        if (receivedResult.error) {
+
+            console.error(
+                "Received messages error:",
+                receivedResult.error
+            );
+
+            throw receivedResult.error;
+
+        }
+
+
+        const messages = [
+
+            ...(sentResult.data || []),
+            ...(receivedResult.data || [])
+
+        ];
+
+
+        messages.sort((a, b) => {
+
+            return (
+                new Date(a.created_at).getTime() -
+                new Date(b.created_at).getTime()
+            );
+
+        });
+
+
+        return messages;
+    }
+
+
+    /* =========================================================
+       DISPLAY MESSAGES
+    ========================================================= */
+
+    async function displayMessages() {
+
+        if (!selectedUser || !currentUser) {
+            return;
+        }
+
+
+        if (messagesLoading) return;
+
+        messagesLoading = true;
+
+
+        const container =
+            document.getElementById("messages");
+
+
+        try {
+
+            const messages =
+                await getChatMessages(
+                    selectedUser
+                );
+
+
+            if (!messages.length) {
+
+                container.innerHTML = `
+                    <div class="empty-chat">
 
                         <div>
 
-                            ${escapeHtml(
-                                message.text
-                            )}
+                            <div style="
+                                font-size:45px;
+                                margin-bottom:10px;
+                            ">
+                                💬
+                            </div>
+
+                            <div>
+                                لا توجد رسائل بعد
+                            </div>
+
+                            <div style="
+                                margin-top:6px;
+                                font-size:13px;
+                                color:#94a3b8;
+                            ">
+                                ابدأ المحادثة الآن
+                            </div>
 
                         </div>
 
+                    </div>
+                `;
 
-                        <div class="message-time">
-
-                            ${escapeHtml(
-                                message.date ||
-                                ""
-                            )}
-
-                        </div>
-
-                    `;
+                return;
+            }
 
 
-                    container.appendChild(
-                        div
-                    );
+            const currentUsername =
+                getUserUsername(currentUser);
 
-                }
-            );
+
+            container.innerHTML =
+                messages
+                    .map(message => {
+
+                        const mine =
+                            message.sender_username ===
+                            currentUsername;
+
+
+                        return `
+                            <div class="message-row ${
+                                mine
+                                    ? "mine"
+                                    : "theirs"
+                            }">
+
+                                <div class="message-bubble">
+
+                                    <div class="message-text">
+                                        ${escapeHTML(
+                                            message.message
+                                        )}
+                                    </div>
+
+                                    <div class="message-time">
+                                        ${escapeHTML(
+                                            formatMessageDate(
+                                                message.created_at
+                                            )
+                                        )}
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        `;
+
+                    })
+                    .join("");
 
 
             container.scrollTop =
                 container.scrollHeight;
 
-        }
 
+        } catch (error) {
 
-        // =========================================
-        // عدد الرسائل غير المقروءة
-        // =========================================
-
-        function getUnreadCount(
-            username
-        ) {
-
-            if (!currentUser) {
-                return 0;
-            }
-
-
-            const messages =
-                getChatMessages(
-                    currentUser.username,
-                    username
-                );
-
-
-            return messages.filter(
-                function(message) {
-
-                    return (
-                        message.receiver ===
-                        currentUser.username &&
-                        message.read !== true
-                    );
-
-                }
-            ).length;
-
-        }
-
-
-        // =========================================
-        // تعليم الرسائل كمقروءة
-        // =========================================
-
-        function markMessagesAsRead(
-            username
-        ) {
-
-            const messages =
-                getChatMessages(
-                    currentUser.username,
-                    username
-                );
-
-
-            let changed = false;
-
-
-            messages.forEach(
-                function(message) {
-
-                    if (
-                        message.receiver ===
-                        currentUser.username &&
-                        message.read !== true
-                    ) {
-
-                        message.read =
-                            true;
-
-                        changed =
-                            true;
-
-                    }
-
-                }
+            console.error(
+                "Display messages error:",
+                error
             );
 
 
-            if (changed) {
+            container.innerHTML = `
+                <div class="error-message">
+                    حدث خطأ أثناء تحميل الرسائل
+                </div>
+            `;
 
-                saveChatMessages(
-                    currentUser.username,
-                    username,
-                    messages
+        } finally {
+
+            messagesLoading = false;
+
+        }
+
+    }
+
+
+    /* =========================================================
+       SEND MESSAGE
+    ========================================================= */
+
+    async function sendMessage() {
+
+        if (!currentUser) {
+
+            alert(
+                "لم يتم التعرف على المستخدم الحالي"
+            );
+
+            return;
+        }
+
+
+        if (!selectedUser) {
+
+            alert(
+                "اختر مستخدماً أولاً"
+            );
+
+            return;
+        }
+
+
+        const input =
+            document.getElementById(
+                "messageInput"
+            );
+
+
+        const button =
+            document.getElementById(
+                "sendButton"
+            );
+
+
+        const text =
+            input.value.trim();
+
+
+        if (!text) return;
+
+
+        const currentUsername =
+            getUserUsername(currentUser);
+
+
+        if (!currentUsername) {
+
+            alert(
+                "اسم المستخدم غير موجود"
+            );
+
+            return;
+        }
+
+
+        button.disabled = true;
+
+
+        try {
+
+            const { error } =
+                await supabaseClient
+                    .from("private_messages")
+                    .insert({
+
+                        sender_username:
+                            currentUsername,
+
+                        sender_name:
+                            currentUser.name ||
+                            currentUsername,
+
+                        receiver_username:
+                            selectedUser,
+
+                        message:
+                            text
+
+                    });
+
+
+            if (error) {
+
+                console.error(
+                    "Send message error:",
+                    error
                 );
+
+                throw error;
 
             }
 
+
+            input.value = "";
+
+
+            input.style.height =
+                "45px";
+
+
+            await displayMessages();
+
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            alert(
+                "حدث خطأ أثناء إرسال الرسالة"
+            );
+
+        } finally {
+
+            button.disabled = false;
+
+            input.focus();
+
+        }
+
+    }
+
+
+    /* =========================================================
+       MARK MESSAGES AS READ
+    ========================================================= */
+
+    async function markMessagesAsRead(username) {
+
+        if (!currentUser || !username) {
+            return;
         }
 
 
-        // =========================================
-        // حماية النص
-        // =========================================
+        const currentUsername =
+            getUserUsername(currentUser);
 
-        function escapeHtml(
-            text
-        ) {
 
-            const div =
-                document.createElement(
-                    "div"
+        const { error } =
+            await supabaseClient
+                .from("private_messages")
+                .update({
+                    is_read: true
+                })
+                .eq(
+                    "sender_username",
+                    username
+                )
+                .eq(
+                    "receiver_username",
+                    currentUsername
+                )
+                .eq(
+                    "is_read",
+                    false
                 );
 
 
-            div.innerText =
-                text == null
-                    ? ""
-                    : String(text);
+        if (error) {
+
+            console.error(
+                "Mark read error:",
+                error
+            );
+
+        }
+
+    }
 
 
-            return div.innerHTML;
+    /* =========================================================
+       REALTIME
+    ========================================================= */
+
+    function startRealtime() {
+
+        if (realtimeChannel) {
+
+            try {
+
+                supabaseClient.removeChannel(
+                    realtimeChannel
+                );
+
+            } catch (e) {}
 
         }
 
 
-        // =========================================
-        // الضغط على Enter للإرسال
-        // =========================================
+        realtimeChannel =
+            supabaseClient
+                .channel(
+                    "private-messages-" +
+                    Date.now()
+                )
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "*",
+                        schema: "public",
+                        table: "private_messages"
+                    },
+                    async payload => {
 
-        document.addEventListener(
-            "keydown",
-            function(event) {
-
-                if (
-                    event.key ===
-                    "Enter"
-                ) {
-
-                    const active =
-                        document.activeElement;
+                        const row =
+                            payload.new ||
+                            payload.old;
 
 
-                    if (
-                        active &&
-                        active.id ===
-                        "messageInput"
-                    ) {
+                        if (!row || !currentUser) {
+                            return;
+                        }
 
-                        event.preventDefault();
 
-                        sendMessage();
+                        const currentUsername =
+                            getUserUsername(
+                                currentUser
+                            );
+
+
+                        const belongsToMe =
+                            row.sender_username ===
+                                currentUsername ||
+
+                            row.receiver_username ===
+                                currentUsername;
+
+
+                        if (!belongsToMe) {
+                            return;
+                        }
+
+
+                        const isCurrentChat =
+                            selectedUser && (
+
+                                (
+                                    row.sender_username ===
+                                    currentUsername &&
+
+                                    row.receiver_username ===
+                                    selectedUser
+                                )
+
+                                ||
+
+                                (
+                                    row.sender_username ===
+                                    selectedUser &&
+
+                                    row.receiver_username ===
+                                    currentUsername
+                                )
+
+                            );
+
+
+                        if (isCurrentChat) {
+
+                            if (
+                                row.receiver_username ===
+                                currentUsername
+                            ) {
+
+                                await markMessagesAsRead(
+                                    selectedUser
+                                );
+
+                            }
+
+
+                            await displayMessages();
+
+                        }
+
+
+                        await displayUsers();
 
                     }
+                )
+                .subscribe(
+                    status => {
+
+                        console.log(
+                            "Chat realtime:",
+                            status
+                        );
+
+                    }
+                );
+
+    }
+
+
+    /* =========================================================
+       TEXTAREA
+    ========================================================= */
+
+    function setupMessageInput() {
+
+        const input =
+            document.getElementById(
+                "messageInput"
+            );
+
+
+        input.addEventListener(
+            "input",
+            function () {
+
+                this.style.height =
+                    "45px";
+
+                this.style.height =
+                    Math.min(
+                        this.scrollHeight,
+                        120
+                    ) + "px";
+
+            }
+        );
+
+
+        input.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    sendMessage();
 
                 }
 
             }
         );
 
-
-        // =========================================
-        // تحديث الرسائل تلقائيًا
-        // =========================================
-
-        setInterval(
-            function() {
-
-                if (selectedUser) {
-
-                    displayMessages();
-
-                }
-
-                else {
-
-                    displayUsers();
-
-                }
-
-            },
-            2000
-        );
+    }
 
 
-        // =========================================
-        // تشغيل الصفحة
-        // =========================================
+    /* =========================================================
+       INITIALIZE
+    ========================================================= */
 
-        if (
-            loadCurrentUser()
-        ) {
+    async function initChat() {
 
-            displayUsers();
+        currentUser =
+            loadCurrentUser();
 
+
+        const userText =
+            document.getElementById(
+                "currentUserText"
+            );
+
+
+        if (!currentUser) {
+
+            userText.innerHTML = `
+                ⚠️ لم يتم تسجيل الدخول
+            `;
+
+            document.getElementById(
+                "usersList"
+            ).innerHTML = `
+                <div class="error-message">
+                    لم يتم العثور على المستخدم الحالي.
+                </div>
+            `;
+
+            return;
         }
 
-    </script>
+
+        const username =
+            getUserUsername(
+                currentUser
+            );
+
+
+        userText.innerHTML = `
+            👤 أنت الآن:
+            <strong>
+                ${escapeHTML(
+                    currentUser.name ||
+                    username
+                )}
+            </strong>
+        `;
+
+
+        setupMessageInput();
+
+
+        await displayUsers();
+
+
+        startRealtime();
+
+    }
+
+
+    /* =========================================================
+       START
+    ========================================================= */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        initChat
+    );
+
+
+    /* =========================================================
+       FALLBACK REFRESH
+       في حالة انقطاع Realtime
+    ========================================================= */
+
+    setInterval(
+        async function () {
+
+            if (!currentUser) return;
+
+            await displayUsers();
+
+            if (selectedUser) {
+                await displayMessages();
+            }
+
+        },
+        10000
+    );
+
+
+    /* =========================================================
+       CLEANUP
+    ========================================================= */
+
+    window.addEventListener(
+        "beforeunload",
+        function () {
+
+            if (realtimeChannel) {
+
+                try {
+
+                    supabaseClient.removeChannel(
+                        realtimeChannel
+                    );
+
+                } catch (e) {}
+
+            }
+
+        }
+    );
+
+</script>
 
 </body>
-
 </html>
