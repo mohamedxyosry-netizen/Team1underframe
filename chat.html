@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>الدردشة</title>
 
@@ -12,6 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
+
         body {
             background: #f4f7fb;
         }
@@ -23,7 +30,7 @@
         }
 
         .chat-header {
-            background: white;
+            background: #fff;
             border-radius: 18px;
             padding: 20px;
             margin-bottom: 18px;
@@ -49,7 +56,7 @@
 
         .users-card,
         .conversation-card {
-            background: white;
+            background: #fff;
             border-radius: 18px;
             box-shadow: 0 4px 15px rgba(0,0,0,.08);
             overflow: hidden;
@@ -82,6 +89,7 @@
             text-align: right;
             margin-bottom: 5px;
             transition: .2s;
+            font-family: inherit;
         }
 
         .user-item:hover {
@@ -97,7 +105,7 @@
             height: 44px;
             border-radius: 50%;
             background: #198754;
-            color: white;
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -118,16 +126,32 @@
         .user-status {
             font-size: 12px;
             color: #64748b;
-            margin-top: 3px;
+            margin-top: 4px;
         }
 
-        .online-dot {
+        .status-online {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .status-offline {
+            color: #94a3b8;
+        }
+
+        .status-dot {
             display: inline-block;
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #22c55e;
             margin-left: 5px;
+        }
+
+        .status-dot.online {
+            background: #22c55e;
+        }
+
+        .status-dot.offline {
+            background: #94a3b8;
         }
 
         .unread-badge {
@@ -136,7 +160,7 @@
             padding: 0 6px;
             border-radius: 50px;
             background: #dc3545;
-            color: white;
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -164,7 +188,7 @@
             height: 43px;
             border-radius: 50%;
             background: #198754;
-            color: white;
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -216,12 +240,12 @@
 
         .message-row.mine .message-bubble {
             background: #198754;
-            color: white;
+            color: #fff;
             border-bottom-left-radius: 4px;
         }
 
         .message-row.theirs .message-bubble {
-            background: white;
+            background: #fff;
             color: #1f2937;
             border: 1px solid #e2e8f0;
             border-bottom-right-radius: 4px;
@@ -241,7 +265,7 @@
         .message-input-area {
             border-top: 1px solid #e5e7eb;
             padding: 12px;
-            background: white;
+            background: #fff;
             display: flex;
             gap: 10px;
         }
@@ -267,7 +291,7 @@
         .send-btn {
             border: none;
             background: #198754;
-            color: white;
+            color: #fff;
             border-radius: 12px;
             padding: 0 20px;
             cursor: pointer;
@@ -307,6 +331,7 @@
         }
 
         @media (max-width: 800px) {
+
             .chat-layout {
                 grid-template-columns: 1fr;
             }
@@ -326,9 +351,11 @@
             .message-bubble {
                 max-width: 85%;
             }
+
         }
 
         @media (max-width: 500px) {
+
             .chat-page {
                 padding: 8px;
                 margin: 10px auto;
@@ -354,48 +381,93 @@
                 min-width: 65px;
                 padding: 0 12px;
             }
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
+
 <div class="chat-page">
 
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
     <div class="chat-header">
-        <h1>💬 الدردشة</h1>
-        <div class="current-user" id="currentUserText">
+
+        <h1>
+            💬 الدردشة
+        </h1>
+
+        <div
+            class="current-user"
+            id="currentUserText"
+        >
             جاري تحميل المستخدم...
         </div>
+
     </div>
+
+
+    <!-- =========================
+         CHAT LAYOUT
+    ========================== -->
 
     <div class="chat-layout">
 
-        <!-- المستخدمين -->
+
+        <!-- =========================
+             USERS
+        ========================== -->
+
         <div class="users-card">
 
             <div class="card-title">
                 👥 المستخدمين
             </div>
 
-            <div id="usersList" class="users-list">
+            <div
+                id="usersList"
+                class="users-list"
+            >
+
                 <div class="loading">
                     جاري تحميل المستخدمين...
                 </div>
+
             </div>
 
         </div>
 
 
-        <!-- المحادثة -->
+        <!-- =========================
+             CONVERSATION
+        ========================== -->
+
         <div class="conversation-card">
 
             <div class="conversation">
 
-                <div class="conversation-header" id="conversationHeader">
-                    <div class="avatar">💬</div>
+
+                <!-- Conversation Header -->
+
+                <div
+                    class="conversation-header"
+                    id="conversationHeader"
+                >
+
+                    <div class="avatar">
+                        💬
+                    </div>
 
                     <div>
+
                         <div class="conversation-user-name">
                             اختر مستخدماً
                         </div>
@@ -403,26 +475,44 @@
                         <div class="user-status">
                             لبدء المحادثة
                         </div>
+
                     </div>
+
                 </div>
 
 
-                <div id="messages" class="messages">
+                <!-- Messages -->
+
+                <div
+                    id="messages"
+                    class="messages"
+                >
 
                     <div class="empty-chat">
+
                         <div>
-                            <div style="font-size:45px;margin-bottom:10px;">
+
+                            <div
+                                style="
+                                    font-size:45px;
+                                    margin-bottom:10px;
+                                "
+                            >
                                 💬
                             </div>
 
                             <div>
                                 اختر شخصاً من القائمة لبدء الدردشة
                             </div>
+
                         </div>
+
                     </div>
 
                 </div>
 
+
+                <!-- Input -->
 
                 <div class="message-input-area">
 
@@ -445,492 +535,955 @@
 
                 </div>
 
+
             </div>
 
         </div>
+
 
     </div>
 
 </div>
 
 
-<!-- نظام المستخدمين الموجود عندك -->
+<!-- =========================
+     SCRIPT.JS
+========================= -->
+
 <script src="script.js"></script>
+
 
 <script>
 
-    /* =========================================================
-       SUPABASE
-    ========================================================= */
+/* =========================================================
+   IMPORTANT
+=========================================================
 
-    const SUPABASE_URL =
-        "https://gzyybadyaunizdlvmcle.supabase.co";
+   script.js عندك هو الذي ينشئ:
 
-    const SUPABASE_KEY =
-        "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+   window.supabaseClient
 
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
-        );
+   لذلك لا نعمل createClient مرة ثانية هنا.
+========================================================= */
 
 
-    /* =========================================================
-       VARIABLES
-    ========================================================= */
-
-    let currentUser = null;
-    let selectedUser = null;
-
-    let realtimeChannel = null;
-
-    let messagesLoading = false;
-    let usersLoading = false;
+const chatSupabaseClient =
+    window.supabaseClient;
 
 
-    /* =========================================================
-       HELPERS
-    ========================================================= */
+/* =========================================================
+   VARIABLES
+========================================================= */
 
-    function escapeHTML(value) {
+let currentUser = null;
 
-        const div = document.createElement("div");
+let selectedUser = null;
 
-        div.textContent = value == null ? "" : String(value);
+let realtimeChannel = null;
 
-        return div.innerHTML;
+let presenceChannel = null;
+
+let onlineUsers = new Set();
+
+let messagesLoading = false;
+
+let usersLoading = false;
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value == null
+            ? ""
+            : String(value);
+
+    return div.innerHTML;
+}
+
+
+/* =========================================================
+   GET USERNAME
+========================================================= */
+
+function getUserUsername(user) {
+
+    if (!user) {
+        return "";
     }
 
+    return (
+        user.username ||
+        user.userName ||
+        user.name ||
+        ""
+    ).toString();
+}
 
-    function getUserUsername(user) {
 
-        if (!user) return "";
+/* =========================================================
+   GET DISPLAY NAME
+========================================================= */
+
+function getUserDisplayName(username) {
+
+    if (
+        typeof users !== "undefined" &&
+        users &&
+        users[username]
+    ) {
 
         return (
-            user.username ||
-            user.userName ||
-            user.name ||
-            ""
-        ).toString();
-    }
-
-
-    function getUserDisplayName(username) {
-
-        if (
-            typeof users !== "undefined" &&
-            users &&
-            users[username]
-        ) {
-
-            return (
-                users[username].name ||
-                users[username].username ||
-                username
-            );
-        }
-
-        return username;
-    }
-
-
-    function getInitial(name) {
-
-        name = String(name || "").trim();
-
-        if (!name) return "👤";
-
-        return name.charAt(0).toUpperCase();
-    }
-
-
-    function formatMessageDate(dateValue) {
-
-        if (!dateValue) return "";
-
-        const date = new Date(dateValue);
-
-        if (isNaN(date.getTime())) {
-            return "";
-        }
-
-        return date.toLocaleString(
-            "ar-EG",
-            {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit"
-            }
+            users[username].name ||
+            users[username].username ||
+            username
         );
+
     }
 
-
-    /* =========================================================
-       GET CURRENT USER
-    ========================================================= */
-
-    function loadCurrentUser() {
-
-        try {
-
-            if (typeof getCurrentUser === "function") {
-
-                const user = getCurrentUser();
-
-                if (user) {
-                    return user;
-                }
-            }
-
-        } catch (error) {
-
-            console.warn(
-                "getCurrentUser error:",
-                error
-            );
-        }
+    return username;
+}
 
 
-        try {
+/* =========================================================
+   INITIAL
+========================================================= */
 
-            const sessionUser =
-                sessionStorage.getItem("currentUser");
+function getInitial(name) {
 
-            if (sessionUser) {
+    name =
+        String(name || "").trim();
 
-                return JSON.parse(sessionUser);
-
-            }
-
-        } catch (error) {
-
-            console.warn(
-                "sessionStorage error:",
-                error
-            );
-        }
-
-
-        return null;
+    if (!name) {
+        return "👤";
     }
 
+    return name
+        .charAt(0)
+        .toUpperCase();
+}
 
-    /* =========================================================
-       USERS
-    ========================================================= */
 
-    function getAllUsers() {
+/* =========================================================
+   FORMAT DATE
+========================================================= */
+
+function formatMessageDate(dateValue) {
+
+    if (!dateValue) {
+        return "";
+    }
+
+    const date =
+        new Date(dateValue);
+
+    if (isNaN(date.getTime())) {
+        return "";
+    }
+
+    return date.toLocaleString(
+        "ar-EG",
+        {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+}
+
+
+/* =========================================================
+   LOAD CURRENT USER
+========================================================= */
+
+function loadCurrentUser() {
+
+    try {
 
         if (
-            typeof users === "undefined" ||
-            !users
+            typeof getCurrentUser ===
+            "function"
         ) {
 
-            return [];
+            const user =
+                getCurrentUser();
+
+            if (user) {
+                return user;
+            }
 
         }
 
+    } catch (error) {
 
-        return Object.keys(users)
-            .map(username => {
+        console.warn(
+            "getCurrentUser error:",
+            error
+        );
 
-                const user = users[username] || {};
+    }
 
-                return {
-                    username: username,
-                    name:
-                        user.name ||
-                        user.username ||
-                        username,
-                    role: user.role || ""
-                };
+
+    try {
+
+        const sessionUser =
+            sessionStorage.getItem(
+                "currentUser"
+            );
+
+        if (sessionUser) {
+
+            return JSON.parse(
+                sessionUser
+            );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "sessionStorage error:",
+            error
+        );
+
+    }
+
+
+    return null;
+}
+
+
+/* =========================================================
+   GET ALL USERS
+========================================================= */
+
+function getAllUsers() {
+
+    if (
+        typeof users === "undefined" ||
+        !users
+    ) {
+
+        return [];
+
+    }
+
+
+    return Object.keys(users)
+        .map(username => {
+
+            const user =
+                users[username] || {};
+
+            return {
+
+                username:
+                    username,
+
+                name:
+                    user.name ||
+                    user.username ||
+                    username,
+
+                role:
+                    user.role ||
+                    ""
+
+            };
+
+        });
+
+}
+
+
+/* =========================================================
+   ONLINE CHECK
+========================================================= */
+
+function isUserOnline(username) {
+
+    return onlineUsers.has(
+        username
+    );
+
+}
+
+
+/* =========================================================
+   STATUS HTML
+========================================================= */
+
+function getUserStatusHTML(username) {
+
+    if (
+        isUserOnline(username)
+    ) {
+
+        return `
+            <span class="status-online">
+
+                <span
+                    class="status-dot online"
+                ></span>
+
+                متصل
+
+            </span>
+        `;
+
+    }
+
+
+    return `
+        <span class="status-offline">
+
+            <span
+                class="status-dot offline"
+            ></span>
+
+            غير متصل
+
+        </span>
+    `;
+
+}
+
+
+/* =========================================================
+   UPDATE ONLINE USERS
+========================================================= */
+
+function updateOnlineUsers() {
+
+    if (!presenceChannel) {
+        return;
+    }
+
+
+    const state =
+        presenceChannel.presenceState();
+
+
+    onlineUsers.clear();
+
+
+    Object.keys(state)
+        .forEach(key => {
+
+            const usersInKey =
+                state[key] || [];
+
+
+            usersInKey.forEach(user => {
+
+                if (
+                    user &&
+                    user.username
+                ) {
+
+                    onlineUsers.add(
+                        user.username
+                    );
+
+                }
 
             });
-    }
-
-
-    /* =========================================================
-       LOAD UNREAD COUNTS
-    ========================================================= */
-
-    async function getUnreadCounts() {
-
-        const counts = {};
-
-
-        if (!currentUser) {
-            return counts;
-        }
-
-
-        const currentUsername =
-            getUserUsername(currentUser);
-
-
-        const { data, error } =
-            await supabaseClient
-                .from("private_messages")
-                .select("sender_username")
-                .eq(
-                    "receiver_username",
-                    currentUsername
-                )
-                .eq(
-                    "is_read",
-                    false
-                );
-
-
-        if (error) {
-
-            console.error(
-                "Unread error:",
-                error
-            );
-
-            return counts;
-        }
-
-
-        (data || []).forEach(row => {
-
-            const username =
-                row.sender_username;
-
-            counts[username] =
-                (counts[username] || 0) + 1;
 
         });
 
 
+    displayUsers();
+
+
+    if (selectedUser) {
+
+        updateSelectedUserStatus();
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE SELECTED USER STATUS
+========================================================= */
+
+function updateSelectedUserStatus() {
+
+    if (!selectedUser) {
+        return;
+    }
+
+
+    const statusElement =
+        document.getElementById(
+            "selectedUserStatus"
+        );
+
+
+    if (!statusElement) {
+        return;
+    }
+
+
+    statusElement.innerHTML =
+        getUserStatusHTML(
+            selectedUser
+        );
+
+}
+
+
+/* =========================================================
+   START PRESENCE
+========================================================= */
+
+async function startPresence() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    const username =
+        getUserUsername(
+            currentUser
+        );
+
+
+    if (!username) {
+        return;
+    }
+
+
+    if (presenceChannel) {
+
+        try {
+
+            await chatSupabaseClient
+                .removeChannel(
+                    presenceChannel
+                );
+
+        } catch (error) {}
+
+    }
+
+
+    presenceChannel =
+        chatSupabaseClient.channel(
+            "neric-online-users",
+            {
+                config: {
+
+                    presence: {
+                        key: username
+                    }
+
+                }
+            }
+        );
+
+
+    /* =========================
+       SYNC
+    ========================== */
+
+    presenceChannel.on(
+        "presence",
+        {
+            event: "sync"
+        },
+        () => {
+
+            updateOnlineUsers();
+
+        }
+    );
+
+
+    /* =========================
+       JOIN
+    ========================== */
+
+    presenceChannel.on(
+        "presence",
+        {
+            event: "join"
+        },
+        () => {
+
+            updateOnlineUsers();
+
+        }
+    );
+
+
+    /* =========================
+       LEAVE
+    ========================== */
+
+    presenceChannel.on(
+        "presence",
+        {
+            event: "leave"
+        },
+        () => {
+
+            updateOnlineUsers();
+
+        }
+    );
+
+
+    /* =========================
+       SUBSCRIBE
+    ========================== */
+
+    presenceChannel.subscribe(
+        async status => {
+
+            console.log(
+                "Presence:",
+                status
+            );
+
+
+            if (
+                status ===
+                "SUBSCRIBED"
+            ) {
+
+                await presenceChannel.track({
+
+                    username:
+                        username,
+
+                    name:
+                        currentUser.name ||
+                        username,
+
+                    online:
+                        true,
+
+                    timestamp:
+                        new Date().toISOString()
+
+                });
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   UNREAD COUNTS
+========================================================= */
+
+async function getUnreadCounts() {
+
+    const counts = {};
+
+
+    if (!currentUser) {
         return counts;
     }
 
 
-    /* =========================================================
-       DISPLAY USERS
-    ========================================================= */
-
-    async function displayUsers() {
-
-        if (usersLoading) return;
-
-        usersLoading = true;
+    const currentUsername =
+        getUserUsername(
+            currentUser
+        );
 
 
-        const container =
-            document.getElementById("usersList");
-
-
-        try {
-
-            const allUsers =
-                getAllUsers();
-
-
-            if (!allUsers.length) {
-
-                container.innerHTML = `
-                    <div class="no-users">
-                        لا يوجد مستخدمون
-                    </div>
-                `;
-
-                return;
-            }
-
-
-            const unreadCounts =
-                await getUnreadCounts();
-
-
-            container.innerHTML =
-                allUsers
-                    .filter(user => {
-
-                        return (
-                            user.username !==
-                            getUserUsername(currentUser)
-                        );
-
-                    })
-                    .map(user => {
-
-                        const isActive =
-                            selectedUser ===
-                            user.username;
-
-
-                        const unread =
-                            unreadCounts[
-                                user.username
-                            ] || 0;
-
-
-                        return `
-                            <button
-                                class="user-item ${isActive ? "active" : ""}"
-                                onclick="openChat('${escapeHTML(user.username)}')"
-                            >
-
-                                <div class="user-avatar">
-                                    ${escapeHTML(
-                                        getInitial(user.name)
-                                    )}
-                                </div>
-
-                                <div class="user-info">
-
-                                    <div class="user-name">
-                                        ${escapeHTML(user.name)}
-                                    </div>
-
-                                    <div class="user-status">
-                                        <span class="online-dot"></span>
-                                        ${escapeHTML(
-                                            user.role || "مستخدم"
-                                        )}
-                                    </div>
-
-                                </div>
-
-                                ${
-                                    unread > 0
-                                    ? `
-                                        <div class="unread-badge">
-                                            ${unread > 99 ? "99+" : unread}
-                                        </div>
-                                    `
-                                    : ""
-                                }
-
-                            </button>
-                        `;
-
-                    })
-                    .join("");
-
-
-        } catch (error) {
-
-            console.error(
-                "Display users error:",
-                error
+    const {
+        data,
+        error
+    } =
+        await chatSupabaseClient
+            .from("private_messages")
+            .select(
+                "sender_username"
+            )
+            .eq(
+                "receiver_username",
+                currentUsername
+            )
+            .eq(
+                "is_read",
+                false
             );
 
 
+    if (error) {
+
+        console.error(
+            "Unread error:",
+            error
+        );
+
+        return counts;
+
+    }
+
+
+    (data || [])
+        .forEach(row => {
+
+            const username =
+                row.sender_username;
+
+
+            counts[username] =
+                (
+                    counts[username] ||
+                    0
+                ) + 1;
+
+        });
+
+
+    return counts;
+
+}
+
+
+/* =========================================================
+   DISPLAY USERS
+========================================================= */
+
+async function displayUsers() {
+
+    if (usersLoading) {
+        return;
+    }
+
+
+    usersLoading = true;
+
+
+    const container =
+        document.getElementById(
+            "usersList"
+        );
+
+
+    try {
+
+        const allUsers =
+            getAllUsers();
+
+
+        if (!allUsers.length) {
+
             container.innerHTML = `
-                <div class="error-message">
-                    حدث خطأ أثناء تحميل المستخدمين
+                <div class="no-users">
+                    لا يوجد مستخدمون
                 </div>
             `;
 
-        } finally {
-
-            usersLoading = false;
+            return;
 
         }
 
-    }
 
-
-    /* =========================================================
-       OPEN CHAT
-    ========================================================= */
-
-    async function openChat(username) {
-
-        if (!username) return;
-
-
-        selectedUser = username;
-
-
-        const displayName =
-            getUserDisplayName(username);
-
-
-        document.getElementById(
-            "conversationHeader"
-        ).innerHTML = `
-
-            <div class="avatar">
-                ${escapeHTML(
-                    getInitial(displayName)
-                )}
-            </div>
-
-            <div>
-
-                <div class="conversation-user-name">
-                    ${escapeHTML(displayName)}
-                </div>
-
-                <div class="user-status">
-                    <span class="online-dot"></span>
-                    متصل
-                </div>
-
-            </div>
-
-        `;
-
-
-        document.getElementById(
-            "messageInput"
-        ).disabled = false;
-
-
-        document.getElementById(
-            "sendButton"
-        ).disabled = false;
-
-
-        await markMessagesAsRead(username);
-
-
-        await displayMessages();
-
-
-        await displayUsers();
-
-
-        setTimeout(() => {
-
-            document
-                .getElementById("messageInput")
-                .focus();
-
-        }, 100);
-
-    }
-
-
-    /* =========================================================
-       GET CHAT MESSAGES
-    ========================================================= */
-
-    async function getChatMessages(username) {
-
-        if (!currentUser || !username) {
-            return [];
-        }
+        const unreadCounts =
+            await getUnreadCounts();
 
 
         const currentUsername =
-            getUserUsername(currentUser);
+            getUserUsername(
+                currentUser
+            );
 
 
-        const [
-            sentResult,
-            receivedResult
-        ] = await Promise.all([
+        container.innerHTML =
+            allUsers
+                .filter(user => {
 
-            supabaseClient
-                .from("private_messages")
+                    return (
+                        user.username !==
+                        currentUsername
+                    );
+
+                })
+                .map(user => {
+
+                    const isActive =
+                        selectedUser ===
+                        user.username;
+
+
+                    const unread =
+                        unreadCounts[
+                            user.username
+                        ] || 0;
+
+
+                    return `
+
+                        <button
+                            class="user-item ${
+                                isActive
+                                    ? "active"
+                                    : ""
+                            }"
+                            data-username="${escapeHTML(
+                                user.username
+                            )}"
+                        >
+
+                            <div class="user-avatar">
+
+                                ${escapeHTML(
+                                    getInitial(
+                                        user.name
+                                    )
+                                )}
+
+                            </div>
+
+
+                            <div class="user-info">
+
+                                <div class="user-name">
+
+                                    ${escapeHTML(
+                                        user.name
+                                    )}
+
+                                </div>
+
+
+                                <div class="user-status">
+
+                                    ${getUserStatusHTML(
+                                        user.username
+                                    )}
+
+                                    <span
+                                        style="
+                                            margin-right:6px;
+                                        "
+                                    >
+
+                                        ${escapeHTML(
+                                            user.role ||
+                                            "مستخدم"
+                                        )}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            ${
+                                unread > 0
+                                ? `
+                                    <div class="unread-badge">
+
+                                        ${
+                                            unread > 99
+                                                ? "99+"
+                                                : unread
+                                        }
+
+                                    </div>
+                                `
+                                : ""
+                            }
+
+                        </button>
+
+                    `;
+
+                })
+                .join("");
+
+
+        /* =========================
+           CLICK EVENTS
+        ========================== */
+
+        container
+            .querySelectorAll(
+                ".user-item"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        openChat(
+                            button.dataset.username
+                        );
+
+                    }
+                );
+
+            });
+
+
+    } catch (error) {
+
+        console.error(
+            "Display users error:",
+            error
+        );
+
+
+        container.innerHTML = `
+            <div class="error-message">
+                حدث خطأ أثناء تحميل المستخدمين
+            </div>
+        `;
+
+    } finally {
+
+        usersLoading = false;
+
+    }
+
+}
+
+
+/* =========================================================
+   OPEN CHAT
+========================================================= */
+
+async function openChat(username) {
+
+    if (!username) {
+        return;
+    }
+
+
+    selectedUser =
+        username;
+
+
+    const displayName =
+        getUserDisplayName(
+            username
+        );
+
+
+    document.getElementById(
+        "conversationHeader"
+    ).innerHTML = `
+
+        <div class="avatar">
+
+            ${escapeHTML(
+                getInitial(
+                    displayName
+                )
+            )}
+
+        </div>
+
+
+        <div>
+
+            <div class="conversation-user-name">
+
+                ${escapeHTML(
+                    displayName
+                )}
+
+            </div>
+
+
+            <div
+                class="user-status"
+                id="selectedUserStatus"
+            >
+
+                ${getUserStatusHTML(
+                    username
+                )}
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.getElementById(
+        "messageInput"
+    ).disabled = false;
+
+
+    document.getElementById(
+        "sendButton"
+    ).disabled = false;
+
+
+    await markMessagesAsRead(
+        username
+    );
+
+
+    await displayMessages();
+
+
+    await displayUsers();
+
+
+    document.getElementById(
+        "messageInput"
+    ).focus();
+
+}
+
+
+/* =========================================================
+   GET CHAT MESSAGES
+========================================================= */
+
+async function getChatMessages(username) {
+
+    if (
+        !currentUser ||
+        !username
+    ) {
+
+        return [];
+
+    }
+
+
+    const currentUsername =
+        getUserUsername(
+            currentUser
+        );
+
+
+    const [
+        sentResult,
+        receivedResult
+    ] =
+        await Promise.all([
+
+            chatSupabaseClient
+                .from(
+                    "private_messages"
+                )
                 .select("*")
                 .eq(
                     "sender_username",
@@ -941,8 +1494,10 @@
                     username
                 ),
 
-            supabaseClient
-                .from("private_messages")
+            chatSupabaseClient
+                .from(
+                    "private_messages"
+                )
                 .select("*")
                 .eq(
                     "sender_username",
@@ -956,654 +1511,761 @@
         ]);
 
 
-        if (sentResult.error) {
+    if (sentResult.error) {
 
-            console.error(
-                "Sent messages error:",
-                sentResult.error
-            );
+        throw sentResult.error;
 
-            throw sentResult.error;
-
-        }
-
-
-        if (receivedResult.error) {
-
-            console.error(
-                "Received messages error:",
-                receivedResult.error
-            );
-
-            throw receivedResult.error;
-
-        }
-
-
-        const messages = [
-
-            ...(sentResult.data || []),
-            ...(receivedResult.data || [])
-
-        ];
-
-
-        messages.sort((a, b) => {
-
-            return (
-                new Date(a.created_at).getTime() -
-                new Date(b.created_at).getTime()
-            );
-
-        });
-
-
-        return messages;
     }
 
 
-    /* =========================================================
-       DISPLAY MESSAGES
-    ========================================================= */
+    if (receivedResult.error) {
 
-    async function displayMessages() {
+        throw receivedResult.error;
 
-        if (!selectedUser || !currentUser) {
-            return;
+    }
+
+
+    const messages = [
+
+        ...(sentResult.data || []),
+
+        ...(receivedResult.data || [])
+
+    ];
+
+
+    messages.sort(
+        (a, b) => {
+
+            return (
+                new Date(
+                    a.created_at
+                ).getTime()
+                -
+                new Date(
+                    b.created_at
+                ).getTime()
+            );
+
         }
+    );
 
 
-        if (messagesLoading) return;
+    return messages;
 
-        messagesLoading = true;
-
-
-        const container =
-            document.getElementById("messages");
+}
 
 
-        try {
+/* =========================================================
+   DISPLAY MESSAGES
+========================================================= */
 
-            const messages =
-                await getChatMessages(
-                    selectedUser
-                );
+async function displayMessages() {
+
+    if (
+        !selectedUser ||
+        !currentUser
+    ) {
+
+        return;
+
+    }
 
 
-            if (!messages.length) {
+    if (messagesLoading) {
+        return;
+    }
 
-                container.innerHTML = `
-                    <div class="empty-chat">
 
-                        <div>
+    messagesLoading = true;
 
-                            <div style="
+
+    const container =
+        document.getElementById(
+            "messages"
+        );
+
+
+    try {
+
+        const messages =
+            await getChatMessages(
+                selectedUser
+            );
+
+
+        if (!messages.length) {
+
+            container.innerHTML = `
+
+                <div class="empty-chat">
+
+                    <div>
+
+                        <div
+                            style="
                                 font-size:45px;
                                 margin-bottom:10px;
-                            ">
-                                💬
-                            </div>
+                            "
+                        >
+                            💬
+                        </div>
 
-                            <div>
-                                لا توجد رسائل بعد
-                            </div>
+                        <div>
+                            لا توجد رسائل بعد
+                        </div>
 
-                            <div style="
+                        <div
+                            style="
                                 margin-top:6px;
                                 font-size:13px;
                                 color:#94a3b8;
-                            ">
-                                ابدأ المحادثة الآن
-                            </div>
-
+                            "
+                        >
+                            ابدأ المحادثة الآن
                         </div>
 
                     </div>
-                `;
 
-                return;
-            }
-
-
-            const currentUsername =
-                getUserUsername(currentUser);
-
-
-            container.innerHTML =
-                messages
-                    .map(message => {
-
-                        const mine =
-                            message.sender_username ===
-                            currentUsername;
-
-
-                        return `
-                            <div class="message-row ${
-                                mine
-                                    ? "mine"
-                                    : "theirs"
-                            }">
-
-                                <div class="message-bubble">
-
-                                    <div class="message-text">
-                                        ${escapeHTML(
-                                            message.message
-                                        )}
-                                    </div>
-
-                                    <div class="message-time">
-                                        ${escapeHTML(
-                                            formatMessageDate(
-                                                message.created_at
-                                            )
-                                        )}
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        `;
-
-                    })
-                    .join("");
-
-
-            container.scrollTop =
-                container.scrollHeight;
-
-
-        } catch (error) {
-
-            console.error(
-                "Display messages error:",
-                error
-            );
-
-
-            container.innerHTML = `
-                <div class="error-message">
-                    حدث خطأ أثناء تحميل الرسائل
                 </div>
+
             `;
 
-        } finally {
-
-            messagesLoading = false;
-
-        }
-
-    }
-
-
-    /* =========================================================
-       SEND MESSAGE
-    ========================================================= */
-
-    async function sendMessage() {
-
-        if (!currentUser) {
-
-            alert(
-                "لم يتم التعرف على المستخدم الحالي"
-            );
-
             return;
-        }
 
-
-        if (!selectedUser) {
-
-            alert(
-                "اختر مستخدماً أولاً"
-            );
-
-            return;
-        }
-
-
-        const input =
-            document.getElementById(
-                "messageInput"
-            );
-
-
-        const button =
-            document.getElementById(
-                "sendButton"
-            );
-
-
-        const text =
-            input.value.trim();
-
-
-        if (!text) return;
-
-
-        const currentUsername =
-            getUserUsername(currentUser);
-
-
-        if (!currentUsername) {
-
-            alert(
-                "اسم المستخدم غير موجود"
-            );
-
-            return;
-        }
-
-
-        button.disabled = true;
-
-
-        try {
-
-            const { error } =
-                await supabaseClient
-                    .from("private_messages")
-                    .insert({
-
-                        sender_username:
-                            currentUsername,
-
-                        sender_name:
-                            currentUser.name ||
-                            currentUsername,
-
-                        receiver_username:
-                            selectedUser,
-
-                        message:
-                            text
-
-                    });
-
-
-            if (error) {
-
-                console.error(
-                    "Send message error:",
-                    error
-                );
-
-                throw error;
-
-            }
-
-
-            input.value = "";
-
-
-            input.style.height =
-                "45px";
-
-
-            await displayMessages();
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            alert(
-                "حدث خطأ أثناء إرسال الرسالة"
-            );
-
-        } finally {
-
-            button.disabled = false;
-
-            input.focus();
-
-        }
-
-    }
-
-
-    /* =========================================================
-       MARK MESSAGES AS READ
-    ========================================================= */
-
-    async function markMessagesAsRead(username) {
-
-        if (!currentUser || !username) {
-            return;
         }
 
 
         const currentUsername =
-            getUserUsername(currentUser);
-
-
-        const { error } =
-            await supabaseClient
-                .from("private_messages")
-                .update({
-                    is_read: true
-                })
-                .eq(
-                    "sender_username",
-                    username
-                )
-                .eq(
-                    "receiver_username",
-                    currentUsername
-                )
-                .eq(
-                    "is_read",
-                    false
-                );
-
-
-        if (error) {
-
-            console.error(
-                "Mark read error:",
-                error
-            );
-
-        }
-
-    }
-
-
-    /* =========================================================
-       REALTIME
-    ========================================================= */
-
-    function startRealtime() {
-
-        if (realtimeChannel) {
-
-            try {
-
-                supabaseClient.removeChannel(
-                    realtimeChannel
-                );
-
-            } catch (e) {}
-
-        }
-
-
-        realtimeChannel =
-            supabaseClient
-                .channel(
-                    "private-messages-" +
-                    Date.now()
-                )
-                .on(
-                    "postgres_changes",
-                    {
-                        event: "*",
-                        schema: "public",
-                        table: "private_messages"
-                    },
-                    async payload => {
-
-                        const row =
-                            payload.new ||
-                            payload.old;
-
-
-                        if (!row || !currentUser) {
-                            return;
-                        }
-
-
-                        const currentUsername =
-                            getUserUsername(
-                                currentUser
-                            );
-
-
-                        const belongsToMe =
-                            row.sender_username ===
-                                currentUsername ||
-
-                            row.receiver_username ===
-                                currentUsername;
-
-
-                        if (!belongsToMe) {
-                            return;
-                        }
-
-
-                        const isCurrentChat =
-                            selectedUser && (
-
-                                (
-                                    row.sender_username ===
-                                    currentUsername &&
-
-                                    row.receiver_username ===
-                                    selectedUser
-                                )
-
-                                ||
-
-                                (
-                                    row.sender_username ===
-                                    selectedUser &&
-
-                                    row.receiver_username ===
-                                    currentUsername
-                                )
-
-                            );
-
-
-                        if (isCurrentChat) {
-
-                            if (
-                                row.receiver_username ===
-                                currentUsername
-                            ) {
-
-                                await markMessagesAsRead(
-                                    selectedUser
-                                );
-
-                            }
-
-
-                            await displayMessages();
-
-                        }
-
-
-                        await displayUsers();
-
-                    }
-                )
-                .subscribe(
-                    status => {
-
-                        console.log(
-                            "Chat realtime:",
-                            status
-                        );
-
-                    }
-                );
-
-    }
-
-
-    /* =========================================================
-       TEXTAREA
-    ========================================================= */
-
-    function setupMessageInput() {
-
-        const input =
-            document.getElementById(
-                "messageInput"
-            );
-
-
-        input.addEventListener(
-            "input",
-            function () {
-
-                this.style.height =
-                    "45px";
-
-                this.style.height =
-                    Math.min(
-                        this.scrollHeight,
-                        120
-                    ) + "px";
-
-            }
-        );
-
-
-        input.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (
-                    event.key === "Enter" &&
-                    !event.shiftKey
-                ) {
-
-                    event.preventDefault();
-
-                    sendMessage();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* =========================================================
-       INITIALIZE
-    ========================================================= */
-
-    async function initChat() {
-
-        currentUser =
-            loadCurrentUser();
-
-
-        const userText =
-            document.getElementById(
-                "currentUserText"
-            );
-
-
-        if (!currentUser) {
-
-            userText.innerHTML = `
-                ⚠️ لم يتم تسجيل الدخول
-            `;
-
-            document.getElementById(
-                "usersList"
-            ).innerHTML = `
-                <div class="error-message">
-                    لم يتم العثور على المستخدم الحالي.
-                </div>
-            `;
-
-            return;
-        }
-
-
-        const username =
             getUserUsername(
                 currentUser
             );
 
 
-        userText.innerHTML = `
-            👤 أنت الآن:
-            <strong>
-                ${escapeHTML(
-                    currentUser.name ||
-                    username
-                )}
-            </strong>
+        container.innerHTML =
+            messages
+                .map(message => {
+
+                    const mine =
+                        message.sender_username ===
+                        currentUsername;
+
+
+                    return `
+
+                        <div
+                            class="message-row ${
+                                mine
+                                    ? "mine"
+                                    : "theirs"
+                            }"
+                        >
+
+                            <div class="message-bubble">
+
+                                <div class="message-text">
+
+                                    ${escapeHTML(
+                                        message.message
+                                    )}
+
+                                </div>
+
+
+                                <div class="message-time">
+
+                                    ${escapeHTML(
+                                        formatMessageDate(
+                                            message.created_at
+                                        )
+                                    )}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                })
+                .join("");
+
+
+        container.scrollTop =
+            container.scrollHeight;
+
+
+    } catch (error) {
+
+        console.error(
+            "Display messages error:",
+            error
+        );
+
+
+        container.innerHTML = `
+            <div class="error-message">
+                حدث خطأ أثناء تحميل الرسائل
+            </div>
         `;
 
+    } finally {
 
-        setupMessageInput();
+        messagesLoading = false;
+
+    }
+
+}
 
 
-        await displayUsers();
+/* =========================================================
+   SEND MESSAGE
+========================================================= */
 
+async function sendMessage() {
 
-        startRealtime();
+    if (!currentUser) {
+
+        alert(
+            "لم يتم التعرف على المستخدم الحالي"
+        );
+
+        return;
 
     }
 
 
-    /* =========================================================
-       START
-    ========================================================= */
+    if (!selectedUser) {
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        initChat
-    );
+        alert(
+            "اختر مستخدماً أولاً"
+        );
 
+        return;
 
-    /* =========================================================
-       FALLBACK REFRESH
-       في حالة انقطاع Realtime
-    ========================================================= */
-
-    setInterval(
-        async function () {
-
-            if (!currentUser) return;
-
-            await displayUsers();
-
-            if (selectedUser) {
-                await displayMessages();
-            }
-
-        },
-        10000
-    );
+    }
 
 
-    /* =========================================================
-       CLEANUP
-    ========================================================= */
+    const input =
+        document.getElementById(
+            "messageInput"
+        );
 
-    window.addEventListener(
-        "beforeunload",
-        function () {
 
-            if (realtimeChannel) {
+    const button =
+        document.getElementById(
+            "sendButton"
+        );
 
-                try {
 
-                    supabaseClient.removeChannel(
-                        realtimeChannel
+    const text =
+        input.value.trim();
+
+
+    if (!text) {
+        return;
+    }
+
+
+    const currentUsername =
+        getUserUsername(
+            currentUser
+        );
+
+
+    if (!currentUsername) {
+
+        alert(
+            "اسم المستخدم غير موجود"
+        );
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+
+
+    try {
+
+        const {
+            error
+        } =
+            await chatSupabaseClient
+                .from(
+                    "private_messages"
+                )
+                .insert({
+
+                    sender_username:
+                        currentUsername,
+
+                    sender_name:
+                        currentUser.name ||
+                        currentUsername,
+
+                    receiver_username:
+                        selectedUser,
+
+                    message:
+                        text
+
+                });
+
+
+        if (error) {
+
+            console.error(
+                "Send message error:",
+                error
+            );
+
+            throw error;
+
+        }
+
+
+        input.value = "";
+
+        input.style.height =
+            "45px";
+
+
+        await displayMessages();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        alert(
+            "حدث خطأ أثناء إرسال الرسالة"
+        );
+
+    } finally {
+
+        button.disabled = false;
+
+        input.focus();
+
+    }
+
+}
+
+
+/* =========================================================
+   MARK AS READ
+========================================================= */
+
+async function markMessagesAsRead(
+    username
+) {
+
+    if (
+        !currentUser ||
+        !username
+    ) {
+
+        return;
+
+    }
+
+
+    const currentUsername =
+        getUserUsername(
+            currentUser
+        );
+
+
+    const {
+        error
+    } =
+        await chatSupabaseClient
+            .from(
+                "private_messages"
+            )
+            .update({
+                is_read: true
+            })
+            .eq(
+                "sender_username",
+                username
+            )
+            .eq(
+                "receiver_username",
+                currentUsername
+            )
+            .eq(
+                "is_read",
+                false
+            );
+
+
+    if (error) {
+
+        console.error(
+            "Mark read error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   REALTIME MESSAGES
+========================================================= */
+
+function startRealtime() {
+
+    if (realtimeChannel) {
+
+        try {
+
+            chatSupabaseClient
+                .removeChannel(
+                    realtimeChannel
+                );
+
+        } catch (error) {}
+
+    }
+
+
+    realtimeChannel =
+        chatSupabaseClient
+            .channel(
+                "neric-private-messages-" +
+                Date.now()
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "private_messages"
+                },
+                async payload => {
+
+                    const row =
+                        payload.new ||
+                        payload.old;
+
+
+                    if (
+                        !row ||
+                        !currentUser
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const currentUsername =
+                        getUserUsername(
+                            currentUser
+                        );
+
+
+                    const belongsToMe =
+
+                        row.sender_username ===
+                            currentUsername
+
+                        ||
+
+                        row.receiver_username ===
+                            currentUsername;
+
+
+                    if (!belongsToMe) {
+                        return;
+                    }
+
+
+                    const isCurrentChat =
+
+                        selectedUser && (
+
+                            (
+                                row.sender_username ===
+                                currentUsername
+
+                                &&
+
+                                row.receiver_username ===
+                                selectedUser
+                            )
+
+                            ||
+
+                            (
+                                row.sender_username ===
+                                selectedUser
+
+                                &&
+
+                                row.receiver_username ===
+                                currentUsername
+                            )
+
+                        );
+
+
+                    if (isCurrentChat) {
+
+                        if (
+                            row.receiver_username ===
+                            currentUsername
+                        ) {
+
+                            await markMessagesAsRead(
+                                selectedUser
+                            );
+
+                        }
+
+
+                        await displayMessages();
+
+                    }
+
+
+                    await displayUsers();
+
+                }
+            )
+            .subscribe(
+                status => {
+
+                    console.log(
+                        "Chat realtime:",
+                        status
                     );
 
-                } catch (e) {}
+                }
+            );
+
+}
+
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+function setupMessageInput() {
+
+    const input =
+        document.getElementById(
+            "messageInput"
+        );
+
+
+    input.addEventListener(
+        "input",
+        function () {
+
+            this.style.height =
+                "45px";
+
+
+            this.style.height =
+                Math.min(
+                    this.scrollHeight,
+                    120
+                ) + "px";
+
+        }
+    );
+
+
+    input.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                sendMessage();
 
             }
 
         }
     );
 
+}
+
+
+/* =========================================================
+   INIT CHAT
+========================================================= */
+
+async function initChat() {
+
+    currentUser =
+        loadCurrentUser();
+
+
+    const userText =
+        document.getElementById(
+            "currentUserText"
+        );
+
+
+    if (!currentUser) {
+
+        userText.innerHTML = `
+            ⚠️ لم يتم تسجيل الدخول
+        `;
+
+
+        document.getElementById(
+            "usersList"
+        ).innerHTML = `
+            <div class="error-message">
+                لم يتم العثور على المستخدم الحالي.
+            </div>
+        `;
+
+
+        return;
+
+    }
+
+
+    const username =
+        getUserUsername(
+            currentUser
+        );
+
+
+    userText.innerHTML = `
+
+        👤 أنت الآن:
+
+        <strong>
+            ${escapeHTML(
+                currentUser.name ||
+                username
+            )}
+        </strong>
+
+    `;
+
+
+    setupMessageInput();
+
+
+    /*
+       أولاً نبدأ Presence
+    */
+
+    await startPresence();
+
+
+    /*
+       ثم المستخدمين
+    */
+
+    await displayUsers();
+
+
+    /*
+       ثم الرسائل Realtime
+    */
+
+    startRealtime();
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    initChat
+);
+
+
+/* =========================================================
+   FALLBACK
+========================================================= */
+
+setInterval(
+    async function () {
+
+        if (!currentUser) {
+            return;
+        }
+
+
+        await displayUsers();
+
+
+        if (selectedUser) {
+
+            await displayMessages();
+
+        }
+
+    },
+    10000
+);
+
+
+/* =========================================================
+   CLEANUP
+========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        try {
+
+            if (presenceChannel) {
+
+                chatSupabaseClient
+                    .removeChannel(
+                        presenceChannel
+                    );
+
+            }
+
+
+            if (realtimeChannel) {
+
+                chatSupabaseClient
+                    .removeChannel(
+                        realtimeChannel
+                    );
+
+            }
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+    }
+);
+
 </script>
 
 </body>
+
 </html>
