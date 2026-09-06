@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشاكل العربيات</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        .problems-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .problems-header {
+            background: linear-gradient(135deg, #182338, #293b5f);
+            color: #fff;
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 25px rgba(0,0,0,.08);
+        }
+
+        .problems-header h1 {
+            margin: 0 0 8px;
+            font-size: 27px;
+        }
+
+        .problems-header p {
+            margin: 0;
+            opacity: .85;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .top-actions button {
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .home-btn {
+            background: #fff;
+            color: #182338;
+        }
+
+        .refresh-btn {
+            background: #e8eefc;
+            color: #253b69;
+        }
+
+        .selector-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.06);
+        }
+
+        .selector-box label {
+            display: block;
+            margin-bottom: 9px;
+            font-weight: bold;
+        }
+
+        #problemCarNumber {
+            width: 100%;
+            border: 1px solid #d7deea;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 16px;
+            background: #fff;
+            outline: none;
+        }
+
+        #problemCarNumber:focus {
+            border-color: #526fae;
+        }
+
+        #problemsResult {
+            min-height: 100px;
+        }
+
+        .empty-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px 18px;
+            text-align: center;
+            color: #69758a;
+            box-shadow: 0 5px 20px rgba(0,0,0,.05);
+        }
+
+        .department-section {
+            background: #fff;
+            border-radius: 17px;
+            margin-bottom: 18px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,.06);
+        }
+
+        .department-title {
+            padding: 16px 18px;
+            background: #eef3fa;
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid #e0e6ef;
+        }
+
+        .problem-devices {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            padding: 18px;
+        }
+
+        .problem-device {
+            border: 1px solid #e0e5ee;
+            background: #fafbfd;
+            border-radius: 13px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .problem-device button {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            text-align: right;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: bold;
+            color: #233a68;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .problem-device button:hover {
+            background: #f0f4fa;
+        }
+
+        .problem-device-label {
+            display: block;
+            margin: 0 0 8px;
+            font-weight: bold;
+            color: #233a68;
+        }
+
+        .problem-device-select {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d5dce7;
+            border-radius: 10px;
+            background: #fff;
+            padding: 11px 12px;
+            font-family: inherit;
+            font-size: 16px;
+            color: #233a68;
+            cursor: pointer;
+        }
+
+        .problem-device-select:focus {
+            outline: none;
+            border-color: #7c93b8;
+            box-shadow: 0 0 0 2px rgba(124, 147, 184, .15);
+        }
+
+        .problem-device-count {
+            display: inline-block;
+            flex: 0 0 auto;
+            background: #ffe7e7;
+            color: #b42318;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .problem-details {
+            margin-top: 12px;
+            border-top: 1px solid #e5e9f0;
+            padding-top: 12px;
+        }
+
+        .problem-card {
+            border: 1px solid #e0e5ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+
+        .problem-card:last-child { margin-bottom: 0; }
+
+        .problem-card .line {
+            margin: 7px 0;
+            line-height: 1.55;
+        }
+
+        .problem-status {
+            display: inline-block;
+            border-radius: 20px;
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: bold;
+            background: #fff1d6;
+            color: #9a5b00;
+        }
+
+        .problem-status.review {
+            background: #e7efff;
+            color: #2855a5;
+        }
+
+        .problem-status.resolved {
+            background: #e5f8ec;
+            color: #18723d;
+        }
+
+        .problem-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .problem-actions button {
+            border: 0;
+            border-radius: 9px;
+            padding: 9px 13px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .resolve-btn {
+            background: #198754;
+            color: #fff;
+        }
+
+        .approve-btn {
+            background: #1769aa;
+            color: #fff;
+        }
+
+        .reject-btn {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .reason-box {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .reason-box textarea {
+            width: 100%;
+            min-height: 85px;
+            resize: vertical;
+            border: 1px solid #d5dce7;
+            border-radius: 9px;
+            padding: 10px;
+            font-family: inherit;
+        }
+
+        .reason-box button {
+            margin-top: 8px;
+            background: #198754;
+            color: #fff;
+        }
+
+        .review-box {
+            background: #fff;
+            border: 1px solid #dbe4f0;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .review-box h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .review-item {
+            border: 1px solid #e0e5ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .problems-page { padding: 12px; }
+            .problems-header h1 { font-size: 22px; }
+            .problem-devices { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="problems-page">
+
+    <header class="problems-header">
+        <h1>⚠️ مشاكل العربيات</h1>
+        <p id="problemsSubtitle">اختار رقم العربية لعرض المشاكل المسجلة</p>
+
+        <div class="top-actions">
+            <button class="home-btn" onclick="goHome()">🏠 الرئيسية</button>
+            <button class="refresh-btn" onclick="manualRefreshProblemsPage()">🔄 تحديث</button>
+        </div>
+    </header>
+
+    <section class="selector-box">
+        <label for="problemCarNumber">🚆 رقم العربية</label>
+        <select id="problemCarNumber">
+            <option value="">اختر رقم العربية</option>
+        </select>
+    </section>
+
+    <div id="adminReviewArea"></div>
+
+    <main id="problemsResult">
+        <div class="empty-box">
+            اختر رقم العربية لعرض المشاكل.
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+
+<script>
+(function () {
+    // حفظ الجهاز المختار حتى لا يختفي عند التحديث التلقائي كل 3 ثوانٍ
+    let selectedProblemCar = "";
+    const selectedProblemDevices = {};
+
+    function ready() {
+        if (typeof protectPage === "function") protectPage();
+
+        const select = document.getElementById("problemCarNumber");
+
+        if (select) {
+            select.addEventListener("change", function () {
+                if (this.value !== selectedProblemCar) {
+                    Object.keys(selectedProblemDevices).forEach(function (key) {
+                        delete selectedProblemDevices[key];
+                    });
+                }
+                selectedProblemCar = this.value;
+                renderProblemsForSelectedCar(this.value);
+            });
+        }
+
+        // تهيئة الصفحة المحلية: تعبئة أرقام العربيات + عرض مشاكل العربية عند الاختيار
+        if (typeof initializeProblemsPage === "function") {
+            initializeProblemsPage();
+        } else if (typeof window.loadProblemsPage === "function") {
+            window.loadProblemsPage();
+        }
+    }
+
+    async function initializeProblemsPage() {
+        const select = document.getElementById("problemCarNumber");
+        if (!select) return;
+
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        if (!user) return;
+
+        const currentCar = select.value;
+        selectedProblemCar = currentCar || selectedProblemCar;
+
+        const records = typeof getAllSupabaseRecords === "function"
+            ? await getAllSupabaseRecords()
+            : [];
+
+        const allowedRecords = records.filter(function (record) {
+            if (user.role === "admin") return true;
+            return String(record.department || "").toLowerCase() === String(user.role || "").toLowerCase();
+        });
+
+        const cars = [...new Set(
+            allowedRecords
+                .filter(isProblemRecord)
+                .map(function (r) { return r.carNumber; })
+                .filter(Boolean)
+        )].sort();
+
+        select.innerHTML = '<option value="">اختر رقم العربية</option>';
+
+        cars.forEach(function (car) {
+            const option = document.createElement("option");
+            option.value = car;
+            option.textContent = car;
+            select.appendChild(option);
+        });
+
+        // مهم: لا نُسقط العربية المختارة أثناء التحديث التلقائي كل 3 ثوانٍ.
+        if (currentCar && cars.includes(currentCar)) {
+            select.value = currentCar;
+        }
+
+        renderAdminReview(records);
+
+        if (select.value) {
+            selectedProblemCar = select.value;
+            await renderProblemsForSelectedCar(select.value, false);
+        } else {
+            document.getElementById("problemsResult").innerHTML =
+                '<div class="empty-box">اختر رقم العربية لعرض المشاكل.</div>';
+        }
+    }
+
+    function isProblemRecord(record) {
+        if (!record) return false;
+
+        const done = String(record.done || "").trim();
+
+        if (done !== "لا") {
+            return false;
+        }
+
+        const status = String(record.problemStatus || "open").toLowerCase();
+
+        return status !== "resolved";
+    }
+
+    function getStatus(record) {
+        const status = String(record.problemStatus || "open").toLowerCase();
+
+        if (status === "pending_review") {
+            return {
+                text: "في انتظار مراجعة المدير",
+                className: "review"
+            };
+        }
+
+        if (status === "resolved") {
+            return {
+                text: "تم الحل",
+                className: "resolved"
+            };
+        }
+
+        return {
+            text: "في انتظار حل المشكلة",
+            className: ""
+        };
+    }
+
+    async function renderProblemsForSelectedCar(carNumber, showLoading = true) {
+        const result = document.getElementById("problemsResult");
+
+        if (!result) return;
+
+        if (!carNumber) {
+            result.innerHTML =
+                '<div class="empty-box">اختر رقم العربية لعرض المشاكل.</div>';
+            return;
+        }
+
+        if (showLoading) {
+            result.innerHTML =
+                '<div class="empty-box">⏳ جاري تحميل المشاكل...</div>';
+        }
+
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        const records = typeof getAllSupabaseRecords === "function"
+            ? await getAllSupabaseRecords()
+            : [];
+
+        const filtered = records.filter(function (record) {
+            if (String(record.carNumber) !== String(carNumber)) return false;
+
+            if (!isProblemRecord(record)) return false;
+
+            if (user && user.role !== "admin") {
+                return String(record.department || "").toLowerCase() ===
+                       String(user.role || "").toLowerCase();
+            }
+
+            return true;
+        });
+
+        if (!filtered.length) {
+            result.innerHTML =
+                '<div class="empty-box">✅ لا توجد مشاكل مفتوحة على هذه العربية.</div>';
+            return;
+        }
+
+        const groups = {};
+
+        filtered.forEach(function (record) {
+            const department = record.department || "غير محدد";
+            const device = record.device || "جهاز غير محدد";
+
+            if (!groups[department]) groups[department] = {};
+            if (!groups[department][device]) groups[department][device] = [];
+
+            groups[department][device].push(record);
+        });
+
+        result.innerHTML = "";
+
+        Object.keys(groups).sort().forEach(function (department) {
+            const section = document.createElement("section");
+            section.className = "department-section";
+
+            const title = document.createElement("div");
+            title.className = "department-title";
+            title.textContent = getDepartmentName(department);
+
+            section.appendChild(title);
+
+            const devices = document.createElement("div");
+            devices.className = "problem-devices";
+
+            // اختيار الجهاز الذي توجد به المشكلة
+            const deviceBox = document.createElement("div");
+            deviceBox.className = "problem-device";
+
+            const label = document.createElement("label");
+            label.className = "problem-device-label";
+            label.textContent = "⚠️ اختر الجهاز الذي فيه المشكلة";
+
+            const deviceSelect = document.createElement("select");
+            deviceSelect.className = "problem-device-select";
+            deviceSelect.dataset.department = department;
+            deviceSelect.innerHTML = '<option value="">اختر الجهاز الذي فيه المشكلة</option>';
+
+            Object.keys(groups[department]).sort().forEach(function (device) {
+                const recordsForDevice = groups[department][device];
+                const option = document.createElement("option");
+                option.value = device;
+                option.textContent = `${device} — ${recordsForDevice.length} مشكلة`;
+                deviceSelect.appendChild(option);
+            });
+
+            const details = document.createElement("div");
+            details.className = "problem-details";
+            details.style.display = "none";
+
+            deviceSelect.addEventListener("change", function () {
+                selectedProblemDevices[department] = this.value;
+                details.innerHTML = "";
+                const selectedDevice = this.value;
+
+                if (!selectedDevice) {
+                    details.style.display = "none";
+                    return;
+                }
+
+                const selectedRecords = groups[department][selectedDevice] || [];
+                selectedRecords.forEach(function (record) {
+                    details.appendChild(createProblemCard(record));
+                });
+
+                details.style.display = "block";
+            });
+
+            if (selectedProblemDevices[department] &&
+                Object.prototype.hasOwnProperty.call(groups[department], selectedProblemDevices[department])) {
+                deviceSelect.value = selectedProblemDevices[department];
+                const restoredRecords = groups[department][deviceSelect.value] || [];
+                restoredRecords.forEach(function (record) {
+                    details.appendChild(createProblemCard(record));
+                });
+                details.style.display = "block";
+            }
+
+            deviceBox.appendChild(label);
+            deviceBox.appendChild(deviceSelect);
+            deviceBox.appendChild(details);
+            devices.appendChild(deviceBox);
+
+            section.appendChild(devices);
+            result.appendChild(section);
+        });
+    }
+
+    function createProblemCard(record) {
+        const card = document.createElement("div");
+        card.className = "problem-card";
+
+        const status = getStatus(record);
+
+        const problemText =
+            record.problemReason ||
+            record.notes ||
+            "لم يتم كتابة وصف للمشكلة";
+
+        const dateText = formatDate(record.date);
+
+        card.innerHTML = `
+            <div class="line"><strong>المشكلة:</strong> ${escapeHTML(problemText)}</div>
+            <div class="line"><strong>الجهاز:</strong> ${escapeHTML(record.device || "-")}</div>
+            <div class="line"><strong>مين سجلها:</strong> ${escapeHTML(record.addedBy || record.person || "-")}</div>
+            <div class="line"><strong>الوقت والتاريخ:</strong> ${escapeHTML(dateText)}</div>
+            <div class="line"><strong>الحالة:</strong>
+                <span class="problem-status ${status.className}">
+                    ${status.text}
+                </span>
+            </div>
+        `;
+
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        if (String(record.problemStatus || "open").toLowerCase() === "open" &&
+            user &&
+            user.role !== "admin") {
+
+            const actions = document.createElement("div");
+            actions.className = "problem-actions";
+
+            const resolveButton = document.createElement("button");
+            resolveButton.className = "resolve-btn";
+            resolveButton.textContent = "✅ تم حل المشكلة";
+
+            const reasonBox = document.createElement("div");
+            reasonBox.className = "reason-box";
+
+            const textarea = document.createElement("textarea");
+            textarea.placeholder = "اكتب سبب حل المشكلة";
+
+            const saveButton = document.createElement("button");
+            saveButton.textContent = "تأكيد الحل وإرساله للمدير";
+
+            resolveButton.onclick = function () {
+                reasonBox.style.display =
+                    reasonBox.style.display === "block" ? "none" : "block";
+            };
+
+            saveButton.onclick = async function () {
+                const reason = textarea.value.trim();
+
+                if (!reason) {
+                    alert("اكتب سبب حل المشكلة أولاً.");
+                    return;
+                }
+
+                if (typeof resolveProblem === "function") {
+                    const ok = await resolveProblem(record.recordId, reason);
+
+                    if (ok) {
+                        alert("✅ تم تسجيل حل المشكلة. الحالة الآن: في انتظار مراجعة المدير.");
+                        await initializeProblemsPage();
+                    }
+                }
+            };
+
+            reasonBox.appendChild(textarea);
+            reasonBox.appendChild(saveButton);
+
+            actions.appendChild(resolveButton);
+            actions.appendChild(reasonBox);
+            card.appendChild(actions);
+        }
+
+        return card;
+    }
+
+    async function renderAdminReview(records) {
+        // تم نقل إشعار مراجعة الحلول إلى صفحة "الإشعارات" فقط.
+        // لا يظهر هنا أي إشعار أو قائمة مشاكل في انتظار المراجعة.
+        const area = document.getElementById("adminReviewArea");
+        if (area) {
+            area.innerHTML = "";
+        }
+    }
+
+    function getDepartmentName(department) {
+        const names = {
+            wiring: "قسم Wiring",
+            lt: "قسم LT",
+            ht: "قسم HT",
+            installation: "قسم التركيبات",
+            final: "قسم الفنش النهائي"
+        };
+
+        return names[String(department || "").toLowerCase()] ||
+               department ||
+               "قسم غير محدد";
+    }
+
+    function formatDate(value) {
+        if (!value) return "-";
+
+        try {
+            return new Date(value).toLocaleString("ar-EG", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+            });
+        } catch (e) {
+            return String(value);
+        }
+    }
+
+    function escapeHTML(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // حل نهائي لمشكلة الاختفاء: script.js يعمل تحديثًا تلقائيًا كل 3 ثوانٍ،
+    // لذلك نجعل loadProblemsPage تستخدم نفس واجهة هذه الصفحة بدل الواجهة القديمة،
+    // مع الاحتفاظ بالعربية المختارة.
+    // منع التحديث التلقائي من script.js.
+    // الصفحة تتحدث فقط عند فتحها من جديد أو عند الضغط على زر "تحديث".
+    window.loadProblemsPage = async function () {
+        return;
+    };
+
+    // تحديث يدوي فقط من زر الصفحة.
+    window.manualRefreshProblemsPage = async function () {
+        await initializeProblemsPage();
+    };
+
+    window.initializeProblemsPage = initializeProblemsPage;
+    window.renderProblemsForSelectedCar = renderProblemsForSelectedCar;
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ready);
+    } else {
+        ready();
+    }
+})();
+</script>
+
+
+
+</body>
+</html>

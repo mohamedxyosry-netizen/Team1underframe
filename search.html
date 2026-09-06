@@ -452,7 +452,6 @@ MCI: [
 
 /* =========================================================
    التركيبات
-   نفس قوائم HT بالضبط
 ========================================================= */
 
 const INSTALLATION_DEVICES_SEARCH = {
@@ -514,6 +513,47 @@ let htGroupCounter = 0;
 let installationDeviceGroups = {};
 let installationPendingGroups = {};
 let installationGroupCounter = 0;
+
+
+/* =========================================================
+   مجموعات Wiring
+========================================================= */
+
+const WIRING_TASKS_SEARCH = {
+
+DTC: [
+"Cleat",
+"Bracket",
+"Cable",
+"Earth cable"
+],
+
+MC1: [
+"Cleat",
+"Bracket",
+"Cable",
+"Earth cable"
+],
+
+MC2: [
+"Cleat",
+"Bracket",
+"Cable",
+"Earth cable"
+],
+
+MCI: [
+"Cleat",
+"Bracket",
+"Cable",
+"Earth cable"
+]
+
+};
+
+let wiringDeviceGroups = {};
+let wiringPendingGroups = {};
+let wiringGroupCounter = 0;
 
 
 /* =========================================================
@@ -836,7 +876,7 @@ ${escapeHTML(record.notes || "لا يوجد")}
 📌 الحالة:
 </span>
 
-✅ تم التقفيل
+✅  تم التوصيل
 
 </div>
 
@@ -905,7 +945,7 @@ ${escapeHTML(device)}
 📌 الحالة:
 </span>
 
-❌ لم يتم التقفيل
+❌ لم يتم التوصيل
 
 </div>
 
@@ -1129,7 +1169,7 @@ pendingDevices;
 let closedOptionsHTML = `
 
 <option value="">
-⬇️ اختر الجهاز الذي تم تقفيله
+⬇️ اختر الجهاز الذي تم التوصيل
 </option>
 
 `;
@@ -1139,7 +1179,7 @@ closedDevices.forEach(function(group,index) {
 closedOptionsHTML += `
 
 <option value="${index}">
-🔒 ${escapeHTML(group.device)}
+✅ ${escapeHTML(group.device)}
 </option>
 
 `;
@@ -1153,7 +1193,7 @@ if(pendingDevices.length === 0) {
 pendingHTML = `
 
 <div class="complete-box">
-✅ تم تقفيل جميع أجهزة LT
+✅ تم توصيل جميع أجهزة LT
 </div>
 
 `;
@@ -1189,7 +1229,7 @@ onclick="togglePendingDevice('${detailId}')">
 ${
 registered
 ?
-"⚠️ الجهاز مسجل ولكن لم يتم تقفيله — اضغط لعرض البيانات"
+"⚠️ الجهاز مسجل ولكن لم يتم التوصيل — اضغط لعرض البيانات"
 :
 "⚠️ الجهاز غير مسجل — اضغط لعرض الحالة"
 }
@@ -1229,8 +1269,7 @@ return `
 
 <div class="work-title closed-title">
 
-🔒 الأجهزة التي تم تقفيلها
-
+✅ الأجهزة التي تم التوصيل
 </div>
 
 ${
@@ -1249,7 +1288,7 @@ ${closedOptionsHTML}
 
 <div class="info-box">
 
-إجمالي الأجهزة التي تم تقفيلها:
+إجمالي الأجهزة التي تم التوصيل:
 
 <strong>
 ${closedDevices.length}
@@ -1267,7 +1306,7 @@ class="device-details">
 `
 
 <div class="no-records-box">
-❌ لم يتم تقفيل أي جهاز حتى الآن
+❌ لم يتم توصيل أي جهاز حتى الآن
 </div>
 
 `
@@ -1318,7 +1357,7 @@ type="button"
 class="pending-button"
 onclick="togglePending('${pendingListId}')">
 
-🔴 الأجهزة التي لم يتم تقفيلها:
+🔴 الأجهزة التي لم يتم التوصيل:
 
 <strong>
 ${pendingDevices.length}
@@ -1348,7 +1387,7 @@ ${devices.length}
 
 &nbsp; | &nbsp;
 
-تم التقفيل:
+تم التوصيل:
 
 <strong>
 ${closedDevices.length}
@@ -1356,7 +1395,7 @@ ${closedDevices.length}
 
 &nbsp; | &nbsp;
 
-لم يتم التقفيل:
+لم يتم التوصيل:
 
 <strong>
 ${pendingDevices.length}
@@ -1469,7 +1508,7 @@ ${escapeHTML(record.notes || "لا يوجد")}
 📌 الحالة:
 </span>
 
-✅ تم التقفيل
+✅ تم التوصيل
 
 </div>
 
@@ -1538,7 +1577,7 @@ ${escapeHTML(device)}
 📌 الحالة:
 </span>
 
-❌ لم يتم التقفيل
+❌ لم يتم التوصيل
 
 </div>
 
@@ -1764,7 +1803,7 @@ pendingDevices;
 let closedOptionsHTML = `
 
 <option value="">
-⬇️ اختر الجهاز الذي تم تقفيله
+⬇️ اختر الجهاز الذي تم التوصيل
 </option>
 
 `;
@@ -1864,7 +1903,7 @@ return `
 
 <div class="work-title closed-title">
 
-🔒 الأجهزة التي تم تقفيلها
+✅ الأجهزة التي تم التوصيل
 
 </div>
 
@@ -1884,7 +1923,7 @@ ${closedOptionsHTML}
 
 <div class="info-box">
 
-إجمالي الأجهزة التي تم تقفيلها:
+إجمالي الأجهزة التي تم التوصيل:
 
 <strong>
 ${closedDevices.length}
@@ -1902,7 +1941,7 @@ class="device-details">
 `
 
 <div class="no-records-box">
-❌ لم يتم تقفيل أي جهاز حتى الآن
+❌ لم يتم التوصيل أي جهاز حتى الآن
 </div>
 
 `
@@ -1983,7 +2022,7 @@ ${devices.length}
 
 &nbsp; | &nbsp;
 
-تم التقفيل:
+تم التوصيل :
 
 <strong>
 ${closedDevices.length}
@@ -1991,7 +2030,7 @@ ${closedDevices.length}
 
 &nbsp; | &nbsp;
 
-لم يتم التقفيل:
+لم يتم التوصيل:
 
 <strong>
 ${pendingDevices.length}
@@ -2010,7 +2049,6 @@ ${pendingDevices.length}
 
 /* =========================================================
    التركيبات
-   نفس HT بالضبط
 ========================================================= */
 
 function showInstallationDeviceDetails(selectElement) {
@@ -2086,7 +2124,7 @@ ${escapeHTML(worker)}
 <div class="detail-row">
 
 <span class="detail-label">
-🔌 اسم السوكيت:
+🔌 اسم الجهاز:
 </span>
 
 ${escapeHTML(
@@ -2115,7 +2153,7 @@ record.notes ||
 📌 الحالة:
 </span>
 
-✅ تم التقفيل
+✅ تم التركيب
 
 </div>
 
@@ -2197,7 +2235,7 @@ ${escapeHTML(device)}
 📌 الحالة:
 </span>
 
-❌ لم يتم التقفيل
+❌ لم يتم التركيب
 
 </div>
 
@@ -2218,7 +2256,7 @@ record.person ||
 <div class="pending-detail-row">
 
 <span class="pending-detail-label">
-🔌 السوكيت:
+🔌 الجهاز:
 </span>
 
 ${escapeHTML(
@@ -2384,8 +2422,6 @@ records:groupRecords
 });
 
 
-/* أجهزة إضافية موجودة في قاعدة البيانات */
-
 Object.keys(groupsMap).forEach(function(device) {
 
 if(!devices.includes(device)) {
@@ -2480,12 +2516,10 @@ installationPendingGroups[pendingListId] =
 pendingDevices;
 
 
-/* قائمة المقفلة */
-
 let closedOptionsHTML = `
 
 <option value="">
-⬇️ اختر الجهاز الذي تم تقفيله
+⬇️ اختر الجهاز الذي تم التركيب
 </option>
 
 `;
@@ -2505,8 +2539,6 @@ closedOptionsHTML += `
 });
 
 
-/* قائمة غير المقفلة */
-
 let pendingHTML = "";
 
 if(pendingDevices.length === 0) {
@@ -2515,7 +2547,7 @@ pendingHTML = `
 
 <div class="complete-box">
 
-✅ تم تقفيل جميع أجهزة التركيبات
+✅ تم تركيب جميع أجهزة التركيبات
 
 </div>
 
@@ -2552,7 +2584,7 @@ onclick="togglePendingDevice('${detailId}')">
 ${
 registered
 ?
-"⚠️ الجهاز مسجل ولكن لم يتم تقفيله — اضغط لعرض البيانات"
+"⚠️ الجهاز مسجل ولكن لم يتم التركيب — اضغط لعرض البيانات"
 :
 "⚠️ الجهاز غير مسجل — اضغط لعرض الحالة"
 }
@@ -2590,13 +2622,11 @@ return `
 </h2>
 
 
-<!-- المقفلة -->
-
 <div class="work-box closed-box">
 
 <div class="work-title closed-title">
 
-🔒 الأجهزة التي تم تقفيلها
+🔧 الأجهزة التي تم التركيب
 
 </div>
 
@@ -2618,7 +2648,7 @@ ${closedOptionsHTML}
 
 <div class="info-box">
 
-إجمالي الأجهزة التي تم تقفيلها:
+إجمالي الأجهزة التي تم التركيب:
 
 <strong>
 ${closedDevices.length}
@@ -2639,7 +2669,7 @@ class="device-details">
 
 <div class="no-records-box">
 
-❌ لم يتم تقفيل أي جهاز حتى الآن
+❌ لم يتم تركيب أي جهاز حتى الآن
 
 </div>
 
@@ -2648,8 +2678,6 @@ class="device-details">
 
 </div>
 
-
-<!-- المسجلة -->
 
 <div class="work-box registered-box">
 
@@ -2693,8 +2721,6 @@ ${Object.keys(groupsMap).length}
 </div>
 
 
-<!-- غير المقفلة -->
-
 <div class="work-box">
 
 <button
@@ -2702,7 +2728,7 @@ type="button"
 class="pending-button"
 onclick="togglePending('${pendingListId}')">
 
-🔴 الأجهزة التي لم يتم تقفيلها:
+🔴 الأجهزة التي لم يتم التركيب:
 
 <strong>
 ${pendingDevices.length}
@@ -2734,7 +2760,7 @@ ${devices.length}
 
 &nbsp; | &nbsp;
 
-تم التقفيل:
+تم التركيب:
 
 <strong>
 ${closedDevices.length}
@@ -2742,10 +2768,762 @@ ${closedDevices.length}
 
 &nbsp; | &nbsp;
 
-لم يتم التقفيل:
+لم يتم التركيب:
 
 <strong>
 ${pendingDevices.length}
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+
+/* =========================================================
+   Wiring
+   نفس شكل وفكرة LT
+========================================================= */
+
+function showWiringTaskDetails(selectElement) {
+
+if(!selectElement) return;
+
+const groupId =
+selectElement.dataset.groupId;
+
+const details =
+document.getElementById(
+"wiringDetails_" + groupId
+);
+
+if(!details) return;
+
+const selectedIndex =
+selectElement.value;
+
+if(
+selectedIndex === "" ||
+!wiringDeviceGroups[groupId]
+) {
+
+details.innerHTML = "";
+
+return;
+
+}
+
+const group =
+wiringDeviceGroups[groupId][Number(selectedIndex)];
+
+if(!group) {
+
+details.innerHTML = "";
+
+return;
+
+}
+
+let html = "";
+
+group.records.forEach(function(record) {
+
+const worker =
+record.created_by ||
+record.person ||
+"غير معروف";
+
+html += `
+
+<div class="device-card">
+
+<div class="device-card-title">
+
+🔌 ${escapeHTML(group.device)}
+
+</div>
+
+<div class="detail-row">
+
+<span class="detail-label">
+👤 الشخص الذي سجل:
+</span>
+
+<span class="person">
+${escapeHTML(worker)}
+</span>
+
+</div>
+
+<div class="detail-row">
+
+<span class="detail-label">
+📌 الحالة:
+</span>
+
+✅ تم التنفيذ
+
+</div>
+
+<div class="detail-row">
+
+<span class="detail-label">
+📝 الملاحظات:
+</span>
+
+${escapeHTML(
+record.notes ||
+"لا يوجد"
+)}
+
+</div>
+
+<div class="detail-row">
+
+<span class="detail-label">
+🕐 تاريخ التسجيل:
+</span>
+
+${formatArabicDate(
+record.created_at
+)}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+details.innerHTML = html;
+
+}
+
+
+function createWiringPendingHTML(
+task,
+records
+) {
+
+if(
+!records ||
+records.length === 0
+) {
+
+return `
+
+<div class="not-registered">
+
+⚠️ هذه المهمة لم يتم تسجيلها حتى الآن
+
+</div>
+
+`;
+
+}
+
+const sortedRecords =
+[...records].sort(function(a,b) {
+
+return new Date(
+b.created_at || 0
+) -
+new Date(
+a.created_at || 0
+);
+
+});
+
+const record =
+sortedRecords[0];
+
+return `
+
+<div class="pending-detail-row">
+
+<span class="pending-detail-label">
+🔌 المهمة:
+</span>
+
+${escapeHTML(task)}
+
+</div>
+
+<div class="pending-detail-row">
+
+<span class="pending-detail-label">
+📌 الحالة:
+</span>
+
+❌ لم يتم التنفيذ
+
+</div>
+
+<div class="pending-detail-row">
+
+<span class="pending-detail-label">
+👤 المستخدم الذي سجل:
+</span>
+
+${escapeHTML(
+record.created_by ||
+record.person ||
+"غير معروف"
+)}
+
+</div>
+
+<div class="pending-detail-row">
+
+<span class="pending-detail-label">
+📝 الملاحظات:
+</span>
+
+${escapeHTML(
+record.notes ||
+"لا يوجد"
+)}
+
+</div>
+
+<div class="pending-detail-row">
+
+<span class="pending-detail-label">
+🕐 تاريخ التسجيل:
+</span>
+
+${formatArabicDate(
+record.created_at
+)}
+
+</div>
+
+${
+record.not_completed_reason
+?
+`
+
+<div class="reason">
+
+<strong>
+❌ سبب عدم التنفيذ:
+</strong>
+
+<br>
+
+${escapeHTML(
+record.not_completed_reason
+)}
+
+</div>
+
+`
+:
+""
+}
+
+`;
+
+}
+
+
+function createWiringWorkSection(
+records,
+carName
+) {
+
+const tasks =
+WIRING_TASKS_SEARCH[carName];
+
+if(!tasks) {
+
+return `
+
+<div class="department-result">
+
+<h2>
+🔌 قسم Wiring
+</h2>
+
+<div class="no-records-box">
+
+❌ لا توجد قائمة مهام لهذا النوع
+
+</div>
+
+</div>
+
+`;
+
+}
+
+
+const wiringRecords =
+records.filter(function(record) {
+
+return String(
+record.department || ""
+).trim().toLowerCase() ===
+"wiring";
+
+});
+
+
+const groupsMap = {};
+
+wiringRecords.forEach(function(record) {
+
+const task =
+String(
+record.device || ""
+).trim();
+
+if(!task) return;
+
+if(!groupsMap[task]) {
+
+groupsMap[task] = [];
+
+}
+
+groupsMap[task].push(record);
+
+});
+
+
+const completedTasks = [];
+
+const pendingTasks = [];
+
+
+tasks.forEach(function(task) {
+
+const groupRecords =
+groupsMap[task] || [];
+
+const completedRecords =
+groupRecords.filter(function(record) {
+
+return String(
+record.done || ""
+).trim() === "نعم";
+
+});
+
+
+if(completedRecords.length > 0) {
+
+completedTasks.push({
+
+device:task,
+
+records:completedRecords
+
+});
+
+}
+else {
+
+pendingTasks.push({
+
+device:task,
+
+records:groupRecords
+
+});
+
+}
+
+});
+
+
+/* =========================================================
+   مهام إضافية موجودة في قاعدة البيانات
+========================================================= */
+
+Object.keys(groupsMap).forEach(function(task) {
+
+if(!tasks.includes(task)) {
+
+const groupRecords =
+groupsMap[task];
+
+const completedRecords =
+groupRecords.filter(function(record) {
+
+return String(
+record.done || ""
+).trim() === "نعم";
+
+});
+
+
+if(completedRecords.length > 0) {
+
+completedTasks.push({
+
+device:task,
+
+records:completedRecords
+
+});
+
+}
+else {
+
+pendingTasks.push({
+
+device:task,
+
+records:groupRecords
+
+});
+
+}
+
+}
+
+});
+
+
+function sortTasks(a,b) {
+
+const indexA =
+tasks.indexOf(a.device);
+
+const indexB =
+tasks.indexOf(b.device);
+
+
+if(
+indexA === -1 &&
+indexB === -1
+) {
+
+return a.device.localeCompare(
+b.device,
+"en"
+);
+
+}
+
+if(indexA === -1) return 1;
+
+if(indexB === -1) return -1;
+
+return indexA - indexB;
+
+}
+
+
+completedTasks.sort(sortTasks);
+
+pendingTasks.sort(sortTasks);
+
+
+const groupId =
+"wiringGroup_" +
+(++wiringGroupCounter);
+
+wiringDeviceGroups[groupId] =
+completedTasks;
+
+
+const pendingListId =
+"wiringPending_" +
+(++wiringGroupCounter);
+
+wiringPendingGroups[pendingListId] =
+pendingTasks;
+
+
+/* =========================================================
+   قائمة المهام المنفذة
+========================================================= */
+
+let completedOptionsHTML = `
+
+<option value="">
+⬇️ اختر المهمة التي تم تنفيذها
+</option>
+
+`;
+
+
+completedTasks.forEach(function(group,index) {
+
+completedOptionsHTML += `
+
+<option value="${index}">
+
+🔌 ${escapeHTML(group.device)}
+
+</option>
+
+`;
+
+});
+
+
+/* =========================================================
+   قائمة المهام غير المنفذة
+========================================================= */
+
+let pendingHTML = "";
+
+
+if(pendingTasks.length === 0) {
+
+pendingHTML = `
+
+<div class="complete-box">
+
+✅ تم تنفيذ جميع مهام Wiring
+
+</div>
+
+`;
+
+}
+else {
+
+pendingHTML =
+pendingTasks.map(function(item,index) {
+
+const registered =
+item.records &&
+item.records.length > 0;
+
+
+const detailId =
+"wiringPendingDetails_" +
+pendingListId +
+"_" +
+index;
+
+
+return `
+
+<div>
+
+<div
+class="pending-item"
+onclick="togglePendingDevice('${detailId}')">
+
+🔴 ${escapeHTML(item.device)}
+
+<small>
+
+${
+registered
+?
+"⚠️ المهمة مسجلة ولكن لم يتم تنفيذها — اضغط لعرض البيانات"
+:
+"⚠️ المهمة غير مسجلة — اضغط لعرض الحالة"
+}
+
+</small>
+
+</div>
+
+
+<div
+id="${detailId}"
+class="pending-details">
+
+${createWiringPendingHTML(
+item.device,
+item.records
+)}
+
+</div>
+
+</div>
+
+`;
+
+}).join("");
+
+}
+
+
+return `
+
+<div class="department-result">
+
+<h2>
+🔌 قسم Wiring
+</h2>
+
+
+<!-- =====================================================
+     المهام المنفذة
+===================================================== -->
+
+<div class="work-box closed-box">
+
+<div class="work-title closed-title">
+
+✅ المهام التي تم تنفيذها
+
+</div>
+
+
+${
+completedTasks.length > 0
+?
+`
+
+<select
+class="device-select"
+data-group-id="${groupId}"
+onchange="showWiringTaskDetails(this)">
+
+${completedOptionsHTML}
+
+</select>
+
+
+<div class="info-box">
+
+إجمالي المهام التي تم تنفيذها:
+
+<strong>
+${completedTasks.length}
+</strong>
+
+</div>
+
+
+<div
+id="wiringDetails_${groupId}"
+class="device-details">
+
+</div>
+
+`
+:
+`
+
+<div class="no-records-box">
+
+❌ لم يتم تنفيذ أي مهمة حتى الآن
+
+</div>
+
+`
+}
+
+</div>
+
+
+<!-- =====================================================
+     المهام المسجلة
+===================================================== -->
+
+<div class="work-box registered-box">
+
+<div class="work-title">
+
+🔌 المهام المسجلة
+
+</div>
+
+
+${
+wiringRecords.length > 0
+?
+`
+
+<div class="info-box">
+
+يوجد
+
+<strong>
+${Object.keys(groupsMap).length}
+</strong>
+
+مهمة مسجلة في قاعدة البيانات لهذه العربية.
+
+</div>
+
+`
+:
+`
+
+<div class="no-records-box">
+
+❌ لا يوجد أي تسجيل Wiring لهذه العربية
+
+</div>
+
+`
+}
+
+</div>
+
+
+<!-- =====================================================
+     المهام غير المنفذة
+===================================================== -->
+
+<div class="work-box">
+
+<button
+type="button"
+class="pending-button"
+onclick="togglePending('${pendingListId}')">
+
+🔴 المهام التي لم يتم تنفيذها:
+
+<strong>
+${pendingTasks.length}
+</strong>
+
+<span style="float:left;">
+▼
+</span>
+
+</button>
+
+
+<div
+id="${pendingListId}"
+class="pending-list">
+
+${pendingHTML}
+
+</div>
+
+
+<div class="info-box">
+
+إجمالي المهام المطلوبة:
+
+<strong>
+${tasks.length}
+</strong>
+
+&nbsp; | &nbsp;
+
+تم التنفيذ:
+
+<strong>
+${completedTasks.length}
+</strong>
+
+&nbsp; | &nbsp;
+
+لم يتم التنفيذ:
+
+<strong>
+${pendingTasks.length}
 </strong>
 
 </div>
@@ -2961,6 +3739,23 @@ final:"✅ قسم الفنش النهائي"
 
 Object.keys(departments).forEach(
 function(department) {
+
+
+/* =================================================
+   Wiring
+================================================= */
+
+if(department === "wiring") {
+
+result.innerHTML +=
+createWiringWorkSection(
+records,
+carName
+);
+
+return;
+
+}
 
 
 /* =================================================

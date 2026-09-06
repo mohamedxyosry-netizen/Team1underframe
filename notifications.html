@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الإشعارات</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{font-family:Arial,Tahoma,sans-serif;background:#f4f7fb;margin:0}
+.notifications-page{max-width:900px;margin:30px auto;padding:20px}
+.page-head{background:#fff;border-radius:18px;padding:20px;box-shadow:0 4px 18px rgba(0,0,0,.08);margin-bottom:18px}
+.page-head h1{margin:0 0 8px;color:#233a68}
+.page-head p{margin:0;color:#697386}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.actions button{border:0;border-radius:10px;padding:10px 16px;font-family:inherit;font-weight:700;cursor:pointer}
+.home-btn{background:#315f9b;color:#fff}.refresh-btn{background:#e9eef6;color:#233a68}
+.notification-list{display:flex;flex-direction:column;gap:14px}
+.notification-card{background:#fff;border:1px solid #e0e6ef;border-radius:16px;padding:18px;box-shadow:0 3px 14px rgba(0,0,0,.06)}
+.notification-card.pending{border-right:5px solid #f0ad4e}
+.notification-card .title{font-size:18px;font-weight:800;color:#233a68;margin-bottom:10px}
+.notification-info{display:grid;gap:7px;color:#3e4858}
+.question{font-weight:800;margin-top:10px}
+.notification-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.notification-actions button{border:0;border-radius:10px;padding:10px 14px;color:#fff;font-family:inherit;font-weight:700;cursor:pointer}
+.approve{background:#198754}.reject{background:#dc3545}
+.empty{background:#fff;border-radius:16px;padding:35px;text-align:center;color:#697386}
+</style>
+</head>
+<body>
+<div class="notifications-page">
+  <div class="page-head">
+    <h1>🔔 الإشعارات</h1>
+    <p>الإشعارات المرسلة إلى المدير لمراجعة حلول المشاكل</p>
+    <div class="actions">
+      <button class="home-btn" onclick="location.href='index.html'">🏠 الرئيسية</button>
+      <button class="refresh-btn" onclick="loadNotificationsPage()">🔄 تحديث</button>
+    </div>
+  </div>
+  <div id="notificationsList" class="notification-list"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script>
+async function loadNotificationsPage(){
+  const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+  if (!user) { location.href="login.html"; return; }
+  if (user.role !== "admin") {
+    document.getElementById("notificationsList").innerHTML =
+      '<div class="empty">🔒 الإشعارات متاحة للمدير فقط</div>';
+    return;
+  }
+
+  const list = document.getElementById("notificationsList");
+  list.innerHTML = '<div class="empty">جاري تحميل الإشعارات...</div>';
+
+  try {
+    const notifications = await getNotificationsData();
+
+    if (!notifications.length) {
+      list.innerHTML = '<div class="empty">🔔 لا توجد إشعارات جديدة حاليًا</div>';
+      return;
+    }
+
+    list.innerHTML = notifications.map(record => `
+      <div class="notification-card pending">
+        <div class="title">🛠️ ${escapeHTML(record.problemResolvedBy || record.addedBy || "-")} قام بحل مشكلة</div>
+        <div class="notification-info">
+          <div><strong>رقم العربية:</strong> ${escapeHTML(record.carNumber || "-")}</div>
+          <div><strong>القسم:</strong> ${escapeHTML(record.department || "-")}</div>
+          <div><strong>الجهاز:</strong> ${escapeHTML(record.device || "-")}</div>
+          <div><strong>المشكلة:</strong> ${escapeHTML(record.problemReason || record.notes || "-")}</div>
+          <div><strong>وقت الحل:</strong> ${formatArabicDate(record.problemResolvedAt || record.date)}</div>
+          <div><strong>الحالة:</strong> ⏳ في انتظار مراجعة المدير</div>
+          <div class="question">هل تعتمد الحل؟</div>
+        </div>
+        <div class="notification-actions">
+          <button class="approve" onclick="approveFromPage('${escapeHTML(record.recordId)}')">✅ اعتماد الحل</button>
+          <button class="reject" onclick="rejectFromPage('${escapeHTML(record.recordId)}')">❌ عدم الاعتماد</button>
+        </div>
+      </div>
+    `).join("");
+  } catch(error) {
+    console.error(error);
+    list.innerHTML = '<div class="empty">❌ حدث خطأ أثناء تحميل الإشعارات</div>';
+  }
+}
+
+async function approveFromPage(id){
+  if(await approveResolvedProblem(id)) await loadNotificationsPage();
+}
+
+async function rejectFromPage(id){
+  const reason = prompt("اكتب سبب عدم اعتماد حل المشكلة:");
+  if(reason === null) return;
+  if(!reason.trim()){ alert("من فضلك اكتب السبب"); return; }
+  if(await rejectResolvedProblem(id, reason.trim())) await loadNotificationsPage();
+}
+
+document.addEventListener("DOMContentLoaded", loadNotificationsPage);
+</script>
+</body>
+</html>

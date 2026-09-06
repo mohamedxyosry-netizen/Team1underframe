@@ -144,97 +144,66 @@
             resize: vertical;
         }
 
-
-        /* =====================================================
-           شكل رقم العربية
-        ===================================================== */
+        /* ================================
+           رقم العربية
+        ================================= */
 
         .car-number-preview {
-
             display: grid;
-
-            grid-template-columns:
-                1fr
-                1fr
-                1fr;
-
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
-
             margin-top: 10px;
-
             direction: ltr;
-
         }
-
 
         .number-part {
-
             background: #f8fafc;
-
             border: 1px solid #d1d5db;
-
             border-radius: 12px;
-
             padding: 12px 8px;
-
             text-align: center;
-
             min-height: 78px;
-
             display: flex;
-
             flex-direction: column;
-
             justify-content: center;
-
         }
-
 
         .number-part span {
-
             display: block;
-
             font-size: 13px;
-
             color: #64748b;
-
             margin-bottom: 7px;
-
             direction: rtl;
-
         }
-
 
         .number-part strong {
-
             display: block;
-
             font-size: 21px;
-
             color: #344354;
-
             direction: ltr;
-
         }
-
 
         .car-name-part {
-
             border-color: #198754;
-
             background: #f0fdf4;
-
         }
-
 
         .car-name-part strong {
-
             color: #198754;
-
             font-size: 22px;
-
         }
 
+        /* ================================
+           سبب عدم الانتهاء
+        ================================= */
+
+        #wiringReasonGroup {
+            display: none;
+        }
+
+        /* ================================
+           زر الحفظ
+        ================================= */
 
         .save-btn {
             width: 100%;
@@ -263,7 +232,12 @@
             font-weight: bold;
             margin-top: 18px;
             line-height: 1.7;
+            white-space: pre-line;
         }
+
+        /* ================================
+           السجلات
+        ================================= */
 
         #wiringRecords {
             display: flex;
@@ -310,7 +284,6 @@
             line-height: 1.7;
         }
 
-
         @media (max-width: 750px) {
 
             .header {
@@ -335,7 +308,6 @@
                 padding: 20px;
             }
 
-
             .car-number-preview {
                 gap: 6px;
             }
@@ -355,7 +327,6 @@
             .car-name-part strong {
                 font-size: 19px;
             }
-
         }
 
     </style>
@@ -366,7 +337,6 @@
 <body>
 
 <div class="dashboard">
-
 
     <header class="header">
 
@@ -382,7 +352,6 @@
 
         </div>
 
-
         <button
             class="logout-btn"
             type="button"
@@ -395,9 +364,12 @@
     </header>
 
 
-
     <main class="form-page">
 
+
+        <!-- ================================================
+             FORM
+        ================================================= -->
 
         <div class="form-card">
 
@@ -406,9 +378,7 @@
             </h2>
 
 
-            <!-- =================================================
-                 اسم العربية
-            ================================================== -->
+            <!-- اسم العربية -->
 
             <div class="input-group">
 
@@ -418,7 +388,7 @@
 
                 <select
                     id="wiringCarName"
-                    onchange="updateWiringCarNumber()">
+                    onchange="updateWiringCarNumber(); updateWiringTasks();">
 
                     <option value="">
                         اختر اسم العربية
@@ -445,9 +415,7 @@
             </div>
 
 
-            <!-- =================================================
-                 رقم الوحدة
-            ================================================== -->
+            <!-- رقم الوحدة -->
 
             <div class="input-group">
 
@@ -465,9 +433,7 @@
             </div>
 
 
-            <!-- =================================================
-                 عرض رقم العربية بالشكل الجديد
-            ================================================== -->
+            <!-- رقم العربية -->
 
             <div class="input-group">
 
@@ -475,11 +441,7 @@
                     رقم العربية 🚆
                 </label>
 
-
                 <div class="car-number-preview">
-
-
-                    <!-- الشمال -->
 
                     <div class="number-part">
 
@@ -494,8 +456,6 @@
                     </div>
 
 
-                    <!-- المنتصف -->
-
                     <div class="number-part car-name-part">
 
                         <span>
@@ -509,8 +469,6 @@
                     </div>
 
 
-                    <!-- اليمين -->
-
                     <div class="number-part">
 
                         <span>
@@ -523,11 +481,8 @@
 
                     </div>
 
-
                 </div>
 
-
-                <!-- الرقم الكامل الذي سيتم حفظه -->
 
                 <input
                     type="hidden"
@@ -536,10 +491,32 @@
             </div>
 
 
+            <!-- ================================================
+                 مهمة Wiring
+            ================================================= -->
 
-            <!-- =================================================
+            <div class="input-group">
+
+                <label>
+                    🔌 مهمة Wiring
+                </label>
+
+                <select
+                    id="wiringTask"
+                    disabled>
+
+                    <option value="">
+                        اختر العربية أولاً
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ================================================
                  الحالة
-            ================================================== -->
+            ================================================= -->
 
             <div class="input-group">
 
@@ -547,7 +524,9 @@
                     ✅ تم الانتهاء
                 </label>
 
-                <select id="wiringDone">
+                <select
+                    id="wiringDone"
+                    onchange="updateWiringStatus()">
 
                     <option value="">
                         اختار الحالة
@@ -566,10 +545,28 @@
             </div>
 
 
+            <!-- ================================================
+                 سبب عدم الانتهاء
+            ================================================= -->
 
-            <!-- =================================================
+            <div
+                class="input-group"
+                id="wiringReasonGroup">
+
+                <label>
+                    ⚠️ سبب عدم الانتهاء
+                </label>
+
+                <textarea
+                    id="wiringReason"
+                    placeholder="اكتب سبب عدم الانتهاء"></textarea>
+
+            </div>
+
+
+            <!-- ================================================
                  الملاحظات
-            ================================================== -->
+            ================================================= -->
 
             <div class="input-group">
 
@@ -584,10 +581,9 @@
             </div>
 
 
-
-            <!-- =================================================
+            <!-- ================================================
                  حفظ
-            ================================================== -->
+            ================================================= -->
 
             <button
                 type="button"
@@ -605,17 +601,15 @@
         </div>
 
 
-
-        <!-- =====================================================
+        <!-- ================================================
              RECORDS
-        ====================================================== -->
+        ================================================= -->
 
         <div class="records-card">
 
             <h2>
                 📋 البيانات المسجلة
             </h2>
-
 
             <div id="wiringRecords">
 
@@ -633,19 +627,18 @@
 </div>
 
 
-
-<!-- =====================================================
+<!-- ================================================
      SUPABASE
-====================================================== -->
+================================================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
 <script>
 
-    // =====================================================
-    // SUPABASE SETTINGS
-    // =====================================================
+    /* =====================================================
+       SUPABASE
+    ===================================================== */
 
     const SUPABASE_URL =
         "https://gzyybadyaunizdlvmcle.supabase.co";
@@ -654,10 +647,6 @@
         "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
 
 
-    // =====================================================
-    // CREATE SUPABASE CLIENT
-    // =====================================================
-
     const supabaseClient =
         window.supabase.createClient(
             SUPABASE_URL,
@@ -665,16 +654,13 @@
         );
 
 
-    // مهم جدًا لـ delete-system.js
-
     window.supabaseClient =
         supabaseClient;
 
 
-
-    // =====================================================
-    // CURRENT USER
-    // =====================================================
+    /* =====================================================
+       CURRENT USER
+    ===================================================== */
 
     function getCurrentUsername() {
 
@@ -687,7 +673,6 @@
                     )
                 );
 
-
             if (
                 currentUser &&
                 currentUser.name
@@ -696,7 +681,6 @@
                 return currentUser.name;
 
             }
-
 
             if (
                 currentUser &&
@@ -722,10 +706,9 @@
     }
 
 
-
-    // =====================================================
-    // ESCAPE HTML
-    // =====================================================
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
 
     function escapeHTML(value) {
 
@@ -739,10 +722,139 @@
     }
 
 
+    /* =====================================================
+       WIRING TASKS
+       
+       نفس المهام لكل العربيات:
+       Cleat
+       Bracket
+       Cable
+       Earth cable
+    ===================================================== */
 
-    // =====================================================
-    // GENERATE CAR NUMBER
-    // =====================================================
+    const WIRING_TASKS = {
+
+        DTC: [
+            "Cleat",
+            "Bracket",
+            "Cable",
+            "Earth cable"
+        ],
+
+        MC1: [
+            "Cleat",
+            "Bracket",
+            "Cable",
+            "Earth cable"
+        ],
+
+        MC2: [
+            "Cleat",
+            "Bracket",
+            "Cable",
+            "Earth cable"
+        ],
+
+        MCI: [
+            "Cleat",
+            "Bracket",
+            "Cable",
+            "Earth cable"
+        ]
+
+    };
+
+
+    /* =====================================================
+       UPDATE WIRING TASKS
+    ===================================================== */
+
+    function updateWiringTasks() {
+
+        const carNameElement =
+            document.getElementById(
+                "wiringCarName"
+            );
+
+        const taskElement =
+            document.getElementById(
+                "wiringTask"
+            );
+
+        if (
+            !carNameElement ||
+            !taskElement
+        ) {
+            return;
+        }
+
+
+        const carName =
+            carNameElement.value;
+
+
+        taskElement.innerHTML =
+            "";
+
+
+        if (!carName) {
+
+            taskElement.disabled =
+                true;
+
+            taskElement.innerHTML = `
+                <option value="">
+                    اختر العربية أولاً
+                </option>
+            `;
+
+            return;
+
+        }
+
+
+        const tasks =
+            WIRING_TASKS[carName] || [];
+
+
+        taskElement.disabled =
+            false;
+
+
+        taskElement.innerHTML = `
+            <option value="">
+                اختر مهمة Wiring
+            </option>
+        `;
+
+
+        tasks.forEach(
+            function(task) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    task;
+
+                option.textContent =
+                    task;
+
+                taskElement.appendChild(
+                    option
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       CAR NUMBER
+    ===================================================== */
 
     function updateWiringCarNumber() {
 
@@ -782,10 +894,6 @@
             );
 
 
-        // =================================================
-        // UPDATE DISPLAY
-        // =================================================
-
         nameDisplay.textContent =
             carName || "--";
 
@@ -793,10 +901,6 @@
         unitDisplay.textContent =
             unitNumber || "--";
 
-
-        // =================================================
-        // NO COMPLETE DATA
-        // =================================================
 
         if (
             !carName ||
@@ -813,10 +917,6 @@
 
         }
 
-
-        // =================================================
-        // CAR ORDER
-        // =================================================
 
         const carPositions = {
 
@@ -835,12 +935,6 @@
             carPositions[carName];
 
 
-        // =================================================
-        // UNIT 17 STARTS AT 65
-        // UNIT 18 STARTS AT 69
-        // UNIT 19 STARTS AT 73
-        // =================================================
-
         const baseNumber =
             65 +
             (
@@ -853,17 +947,9 @@
             baseNumber + position;
 
 
-        // =================================================
-        // DISPLAY ONLY THE CAR NUMBER
-        // =================================================
-
         carDisplay.textContent =
             finalNumber;
 
-
-        // =================================================
-        // FULL VALUE SAVED TO SUPABASE
-        // =================================================
 
         carNumberInput.value =
             finalNumber +
@@ -881,10 +967,59 @@
     }
 
 
+    /* =====================================================
+       UPDATE STATUS
+    ===================================================== */
 
-    // =====================================================
-    // SAVE WIRING
-    // =====================================================
+    function updateWiringStatus() {
+
+        const done =
+            document.getElementById(
+                "wiringDone"
+            ).value;
+
+
+        const reasonGroup =
+            document.getElementById(
+                "wiringReasonGroup"
+            );
+
+
+        const reasonElement =
+            document.getElementById(
+                "wiringReason"
+            );
+
+
+        if (done === "لا") {
+
+            reasonGroup.style.display =
+                "block";
+
+            reasonElement.required =
+                true;
+
+        }
+
+        else {
+
+            reasonGroup.style.display =
+                "none";
+
+            reasonElement.required =
+                false;
+
+            reasonElement.value =
+                "";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       SAVE WIRING
+    ===================================================== */
 
     async function saveWiring() {
 
@@ -894,15 +1029,33 @@
             );
 
 
+        const unitElement =
+            document.getElementById(
+                "wiringUnitNumber"
+            );
+
+
         const carNumberElement =
             document.getElementById(
                 "wiringCarNumber"
             );
 
 
+        const taskElement =
+            document.getElementById(
+                "wiringTask"
+            );
+
+
         const doneElement =
             document.getElementById(
                 "wiringDone"
+            );
+
+
+        const reasonElement =
+            document.getElementById(
+                "wiringReason"
             );
 
 
@@ -930,9 +1083,21 @@
                 : "";
 
 
+        const unitNumber =
+            unitElement
+                ? unitElement.value.trim()
+                : "";
+
+
         const carNumber =
             carNumberElement
                 ? carNumberElement.value.trim()
+                : "";
+
+
+        const task =
+            taskElement
+                ? taskElement.value.trim()
                 : "";
 
 
@@ -942,24 +1107,26 @@
                 : "";
 
 
+        const reason =
+            reasonElement
+                ? reasonElement.value.trim()
+                : "";
+
+
         const notes =
             notesElement
                 ? notesElement.value.trim()
                 : "";
 
 
-        // =================================================
-        // CHECK INPUTS
-        // =================================================
+        /* =================================================
+           VALIDATION
+        ================================================= */
 
-        if (
-            !carName ||
-            !carNumber ||
-            !done
-        ) {
+        if (!carName) {
 
             message.innerText =
-                "❌ من فضلك اختر اسم العربية ورقم الوحدة واختر الحالة";
+                "❌ من فضلك اختر اسم العربية";
 
             message.style.color =
                 "#dc3545";
@@ -969,10 +1136,76 @@
         }
 
 
+        if (
+            !unitNumber ||
+            Number(unitNumber) < 17
+        ) {
 
-        // =================================================
-        // CHECK SUPABASE
-        // =================================================
+            message.innerText =
+                "❌ من فضلك أدخل رقم وحدة صحيح يبدأ من 17";
+
+            message.style.color =
+                "#dc3545";
+
+            return;
+
+        }
+
+
+        if (!carNumber) {
+
+            message.innerText =
+                "❌ رقم العربية غير مكتمل";
+
+            message.style.color =
+                "#dc3545";
+
+            return;
+
+        }
+
+
+        if (!task) {
+
+            message.innerText =
+                "❌ من فضلك اختر مهمة Wiring";
+
+            message.style.color =
+                "#dc3545";
+
+            return;
+
+        }
+
+
+        if (!done) {
+
+            message.innerText =
+                "❌ من فضلك اختر حالة التنفيذ";
+
+            message.style.color =
+                "#dc3545";
+
+            return;
+
+        }
+
+
+        if (
+            done === "لا" &&
+            !reason
+        ) {
+
+            message.innerText =
+                "❌ من فضلك اكتب سبب عدم الانتهاء";
+
+            message.style.color =
+                "#dc3545";
+
+            return;
+
+        }
+
 
         if (!supabaseClient) {
 
@@ -987,19 +1220,17 @@
         }
 
 
-
-        // =================================================
-        // USER
-        // =================================================
+        /* =================================================
+           USER
+        ================================================= */
 
         const username =
             getCurrentUsername();
 
 
-
-        // =================================================
-        // LOADING
-        // =================================================
+        /* =================================================
+           LOADING
+        ================================================= */
 
         button.disabled =
             true;
@@ -1014,22 +1245,38 @@
             "#0d6efd";
 
 
-
         try {
 
-            // =================================================
-            // PAYLOAD
-            // =================================================
+            /* =============================================
+               PAYLOAD
+            ============================================= */
 
-const payload = {
-    department: "wiring",
-    car_name: carName,
-    car_number: carNumber,
-    done: done,
-    notes: notes,
-    created_by: username,
-    created_at: new Date().toISOString()
-};
+            const payload = {
+
+                department: "wiring",
+
+                car_name: carName,
+
+                car_number: carNumber,
+
+                device: task,
+
+                done: done,
+
+                notes: notes,
+
+                not_completed_reason:
+                    done === "لا"
+                        ? reason
+                        : "",
+
+                created_by: username,
+
+                created_at:
+                    new Date().toISOString()
+
+            };
+
 
             console.log(
                 "📤 DATA SENT TO SUPABASE:",
@@ -1037,10 +1284,9 @@ const payload = {
             );
 
 
-
-            // =================================================
-            // INSERT
-            // =================================================
+            /* =============================================
+               INSERT
+            ============================================= */
 
             const result =
                 await supabaseClient
@@ -1050,10 +1296,9 @@ const payload = {
                     .single();
 
 
-
-            // =================================================
-            // ERROR
-            // =================================================
+            /* =============================================
+               ERROR
+            ============================================= */
 
             if (result.error) {
 
@@ -1075,20 +1320,17 @@ const payload = {
                 button.disabled =
                     false;
 
-
                 button.innerText =
                     "💾 حفظ البيانات";
-
 
                 return;
 
             }
 
 
-
-            // =================================================
-            // SUCCESS
-            // =================================================
+            /* =============================================
+               SUCCESS
+            ============================================= */
 
             console.log(
                 "✅ SAVED:",
@@ -1104,17 +1346,14 @@ const payload = {
                 "#198754";
 
 
-
-            // =================================================
-            // CLEAR INPUTS
-            // =================================================
+            /* =============================================
+               CLEAR FORM
+            ============================================= */
 
             carNameElement.value =
                 "";
 
-            document.getElementById(
-                "wiringUnitNumber"
-            ).value =
+            unitElement.value =
                 "";
 
             carNumberElement.value =
@@ -1135,17 +1374,37 @@ const payload = {
             ).textContent =
                 "--";
 
+
+            taskElement.innerHTML = `
+                <option value="">
+                    اختر العربية أولاً
+                </option>
+            `;
+
+            taskElement.disabled =
+                true;
+
+
             doneElement.value =
                 "";
+
+
+            reasonElement.value =
+                "";
+
+            document.getElementById(
+                "wiringReasonGroup"
+            ).style.display =
+                "none";
+
 
             notesElement.value =
                 "";
 
 
-
-            // =================================================
-            // BUTTON
-            // =================================================
+            /* =============================================
+               BUTTON
+            ============================================= */
 
             button.disabled =
                 false;
@@ -1154,15 +1413,13 @@ const payload = {
                 "💾 حفظ البيانات";
 
 
-
-            // =================================================
-            // RELOAD RECORDS
-            // =================================================
+            /* =============================================
+               RELOAD RECORDS
+            ============================================= */
 
             await loadWiringRecords();
 
         }
-
 
         catch (error) {
 
@@ -1184,7 +1441,6 @@ const payload = {
             button.disabled =
                 false;
 
-
             button.innerText =
                 "💾 حفظ البيانات";
 
@@ -1193,10 +1449,9 @@ const payload = {
     }
 
 
-
-    // =====================================================
-    // LOAD WIRING RECORDS
-    // =====================================================
+    /* =====================================================
+       LOAD WIRING RECORDS
+    ===================================================== */
 
     async function loadWiringRecords() {
 
@@ -1298,12 +1553,11 @@ const payload = {
                         "record";
 
 
-                    /*
-                       مهم جدًا لـ delete-system.js
-                       نحفظ ID الحقيقي للسجل
-                    */
+                    /* مهم لـ delete-system.js */
 
-                    if (record.id !== undefined) {
+                    if (
+                        record.id !== undefined
+                    ) {
 
                         div.dataset.recordId =
                             record.id;
@@ -1311,16 +1565,50 @@ const payload = {
                     }
 
 
+                    const statusText =
+                        record.done === "نعم"
+                            ? "✅ تم الانتهاء"
+                            : "⚠️ لم يتم الانتهاء";
+
+
+                    const reasonHTML =
+                        record.done === "لا" &&
+                        record.not_completed_reason
+                            ? `
+                                <p>
+                                    <strong>
+                                        ⚠️ سبب عدم الانتهاء:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        record.not_completed_reason
+                                    )}
+                                </p>
+                              `
+                            : "";
+
+
                     div.innerHTML = `
 
                         <h3>
+                            🔌
+                            ${escapeHTML(
+                                record.device || "Wiring"
+                            )}
+                        </h3>
 
-                            🚆
+
+                        <p>
+
+                            <strong>
+                                🚆 العربية:
+                            </strong>
+
                             ${escapeHTML(
                                 record.car_name
                             )}
 
-                        </h3>
+                        </p>
 
 
                         <p>
@@ -1339,14 +1627,30 @@ const payload = {
                         <p>
 
                             <strong>
+                                🔌 المهمة:
+                            </strong>
+
+                            ${escapeHTML(
+                                record.device || ""
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
                                 ✅ الحالة:
                             </strong>
 
                             ${escapeHTML(
-                                record.done
+                                statusText
                             )}
 
                         </p>
+
+
+                        ${reasonHTML}
 
 
                         <p>
@@ -1373,24 +1677,32 @@ const payload = {
                             )}
 
                         </p>
+
+
                         <p>
 
-    <strong>
-        🕘 وقت التسجيل:
-    </strong>
+                            <strong>
+                                🕘 وقت التسجيل:
+                            </strong>
 
-    ${record.created_at
-        ? new Date(record.created_at).toLocaleString("ar-EG", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        })
-        : "غير متوفر"
-    }
+                            ${
+                                record.created_at
+                                    ? new Date(
+                                        record.created_at
+                                      ).toLocaleString(
+                                        "ar-EG",
+                                        {
+                                            day: "numeric",
+                                            month: "long",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit"
+                                        }
+                                      )
+                                    : "غير متوفر"
+                            }
 
-</p>
+                        </p>
 
                     `;
 
@@ -1423,10 +1735,9 @@ const payload = {
     }
 
 
-
-    // =====================================================
-    // GO HOME
-    // =====================================================
+    /* =====================================================
+       GO HOME
+    ===================================================== */
 
     function goHome() {
 
@@ -1436,14 +1747,17 @@ const payload = {
     }
 
 
-
-    // =====================================================
-    // START
-    // =====================================================
+    /* =====================================================
+       START
+    ===================================================== */
 
     document.addEventListener(
         "DOMContentLoaded",
         function() {
+
+            updateWiringTasks();
+
+            updateWiringStatus();
 
             loadWiringRecords();
 
@@ -1451,7 +1765,6 @@ const payload = {
     );
 
 </script>
-
 
 
 <!-- =====================================================

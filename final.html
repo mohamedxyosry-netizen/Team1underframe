@@ -218,6 +218,84 @@
             line-height: 1.7;
         }
 
+
+        /* =========================================
+           شكل رقم العربية في قسم Final
+           ========================================= */
+
+        .final-car-number-group {
+            text-align: center;
+        }
+
+        .final-car-number-group label {
+            text-align: right;
+        }
+
+        .final-car-number-box {
+            width: 100%;
+            min-height: 115px;
+
+            border: 3px solid #198754;
+
+            border-radius: 18px;
+
+            background: #f8fff9;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 15px;
+
+            box-shadow:
+                0 3px 12px rgba(25, 135, 84, 0.12);
+        }
+
+        #finalCarNumber {
+            width: 100%;
+
+            border: none !important;
+
+            background: transparent !important;
+
+            box-shadow: none !important;
+
+            outline: none !important;
+
+            text-align: center;
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            color: #198754;
+
+            padding: 10px;
+
+            direction: ltr;
+        }
+
+        #finalCarNumber:focus {
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        #finalCarNumber::placeholder {
+            color: #94a3b8;
+
+            font-size: 18px;
+
+            font-weight: normal;
+        }
+
+
+        /* =========================================
+           الموبايل
+           ========================================= */
+
         @media (max-width: 750px) {
 
             .header {
@@ -240,6 +318,14 @@
             .form-card,
             .records-card {
                 padding: 20px;
+            }
+
+            #finalCarNumber {
+                font-size: 27px;
+            }
+
+            .final-car-number-box {
+                min-height: 105px;
             }
 
         }
@@ -349,17 +435,21 @@
 
             <!-- رقم العربية -->
 
-            <div class="input-group">
+            <div class="input-group final-car-number-group">
 
                 <label>
                     🚆 رقم العربية
                 </label>
 
-                <input
-                    type="text"
-                    id="finalCarNumber"
-                    placeholder="سيظهر تلقائياً"
-                    readonly>
+                <div class="final-car-number-box">
+
+                    <input
+                        type="text"
+                        id="finalCarNumber"
+                        placeholder="سيظهر تلقائياً"
+                        readonly>
+
+                </div>
 
             </div>
 
