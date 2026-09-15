@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>كشف الحضور - Under Frame</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .attendance-page {
+            min-height: 100vh;
+            padding: 25px;
+        }
+
+        /* ==============================
+           الهيدر
+        ============================== */
+
+        .attendance-header {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,.08);
+        }
+
+        .attendance-title h1 {
+            margin: 0 0 7px;
+            color: #06345c;
+            font-size: 26px;
+        }
+
+        .attendance-title p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .back-btn {
+            border: none;
+            background: #06345c;
+            color: white;
+
+            padding: 12px 22px;
+            border-radius: 9px;
+
+            font-size: 14px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: #0879e8;
+        }
+
+        /* ==============================
+           الفلاتر
+        ============================== */
+
+        .filters {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+
+            margin-bottom: 20px;
+
+            display: flex;
+            align-items: end;
+            gap: 15px;
+            flex-wrap: wrap;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,.07);
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .filter-item label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #06345c;
+        }
+
+        .filter-item select {
+            min-width: 150px;
+
+            padding: 11px 14px;
+
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+
+            background: white;
+
+            font-size: 14px;
+
+            outline: none;
+        }
+
+        .filter-item select:focus {
+            border-color: #0879e8;
+        }
+
+        .show-btn {
+            border: none;
+
+            background: #0879e8;
+            color: white;
+
+            padding: 11px 25px;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+            font-size: 14px;
+
+            cursor: pointer;
+        }
+
+        .show-btn:hover {
+            background: #06345c;
+        }
+
+        /* ==============================
+           معلومات الشهر
+        ============================== */
+
+        .month-info {
+            background: #fff;
+
+            border-radius: 15px;
+
+            padding: 18px 20px;
+
+            margin-bottom: 20px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,.07);
+        }
+
+        .month-info strong {
+            color: #06345c;
+            font-size: 20px;
+        }
+
+        .month-info span {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* ==============================
+           الجدول
+        ============================== */
+
+        .attendance-container {
+            background: #fff;
+
+            border-radius: 15px;
+
+            padding: 20px;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,.07);
+
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+        .table-header h2 {
+            margin: 0;
+
+            color: #06345c;
+
+            font-size: 20px;
+        }
+
+        .refresh-btn {
+            border: none;
+
+            background: #0879e8;
+            color: white;
+
+            padding: 9px 16px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+        .refresh-btn:hover {
+            background: #06345c;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: max-content;
+            min-width: 100%;
+
+            border-collapse: collapse;
+
+            text-align: center;
+        }
+
+        th {
+            background: #06345c;
+            color: white;
+
+            padding: 12px 10px;
+
+            border: 1px solid #d1d5db;
+
+            white-space: nowrap;
+
+            font-size: 13px;
+        }
+
+        td {
+            padding: 9px 8px;
+
+            border: 1px solid #dfe4ea;
+
+            background: white;
+
+            font-size: 13px;
+
+            white-space: nowrap;
+        }
+
+        tbody tr:hover td {
+            background: #f5f9ff;
+        }
+
+        .person-name {
+            font-weight: bold;
+            color: #06345c;
+        }
+
+        .person-role {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        /* ==============================
+           خلية اليوم
+        ============================== */
+
+        .day-cell {
+            width: 65px;
+            min-width: 65px;
+            height: 55px;
+
+            cursor: pointer;
+
+            user-select: none;
+
+            transition: .15s;
+        }
+
+        .day-cell:hover {
+            background: #eaf3ff !important;
+            transform: scale(1.03);
+        }
+
+        .present-cell {
+            background: #e9f8ef !important;
+            color: #14833b;
+
+            font-size: 22px;
+
+            font-weight: bold;
+        }
+
+        .absent-cell {
+            background: #ffeaea !important;
+            color: #c62828;
+
+            font-size: 22px;
+
+            font-weight: bold;
+        }
+
+        .no-record-cell {
+            background: #f5f6f8 !important;
+            color: #9ca3af;
+
+            font-size: 18px;
+        }
+
+        .future-cell {
+            background: #eeeeee !important;
+            color: #9ca3af;
+
+            cursor: default;
+
+            font-size: 17px;
+        }
+
+        .future-cell:hover {
+            transform: none;
+            background: #eeeeee !important;
+        }
+
+        /* ==============================
+           رسالة أسفل الجدول
+        ============================== */
+
+        .table-note {
+            margin-top: 15px;
+
+            padding: 12px;
+
+            background: #f5f9ff;
+
+            border-radius: 8px;
+
+            color: #52606d;
+
+            font-size: 13px;
+
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+
+            padding: 40px;
+
+            color: #6b7280;
+        }
+
+        .empty {
+            text-align: center;
+
+            padding: 40px;
+
+            color: #6b7280;
+        }
+
+        /* ==============================
+           Responsive
+        ============================== */
+
+        @media (max-width: 700px) {
+
+            .attendance-page {
+                padding: 12px;
+            }
+
+            .attendance-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .back-btn {
+                width: 100%;
+            }
+
+            .month-info {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .filters {
+                align-items: stretch;
+            }
+
+            .filter-item {
+                width: 100%;
+            }
+
+            .filter-item select {
+                width: 100%;
+            }
+
+            .show-btn {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="attendance-page">
+
+    <!-- ==============================
+         الهيدر
+    ============================== -->
+
+    <header class="attendance-header">
+
+        <div class="attendance-title">
+
+            <h1>
+                📋 كشف الحضور
+            </h1>
+
+            <p>
+                متابعة حضور العاملين - Under Frame
+            </p>
+
+        </div>
+
+        <button
+            class="back-btn"
+            onclick="goBack()">
+
+            ← العودة للوحة التحكم
+
+        </button>
+
+    </header>
+
+
+    <!-- ==============================
+         الفلاتر
+    ============================== -->
+
+    <section class="filters">
+
+        <div class="filter-item">
+
+            <label>
+                السنة
+            </label>
+
+            <select id="yearSelect"></select>
+
+        </div>
+
+
+        <div class="filter-item">
+
+            <label>
+                الشهر
+            </label>
+
+            <select id="monthSelect">
+
+                <option value="1">يناير</option>
+                <option value="2">فبراير</option>
+                <option value="3">مارس</option>
+                <option value="4">أبريل</option>
+                <option value="5">مايو</option>
+                <option value="6">يونيو</option>
+                <option value="7">يوليو</option>
+                <option value="8">أغسطس</option>
+                <option value="9">سبتمبر</option>
+                <option value="10">أكتوبر</option>
+                <option value="11">نوفمبر</option>
+                <option value="12">ديسمبر</option>
+
+            </select>
+
+        </div>
+
+
+        <button
+            class="show-btn"
+            onclick="loadAttendance()">
+
+            🔎 عرض الشهر
+
+        </button>
+
+    </section>
+
+
+    <!-- ==============================
+         معلومات الشهر
+    ============================== -->
+
+    <section class="month-info">
+
+        <strong id="monthTitle">
+            كشف الحضور
+        </strong>
+
+        <span id="todayInfo">
+            --
+        </span>
+
+    </section>
+
+
+    <!-- ==============================
+         الجدول
+    ============================== -->
+
+    <section class="attendance-container">
+
+        <div class="table-header">
+
+            <h2>
+                📅 جدول الحضور
+            </h2>
+
+            <button
+                class="refresh-btn"
+                onclick="loadAttendance()">
+
+                🔄 تحديث
+
+            </button>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead id="attendanceHead"></thead>
+
+                <tbody id="attendanceBody">
+
+                    <tr>
+
+                        <td class="loading">
+
+                            جاري تحميل البيانات...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div class="table-note">
+
+            🟢 حاضر
+            &nbsp;&nbsp;
+            🔴 غائب
+            &nbsp;&nbsp;
+            ⚪ لا يوجد تسجيل
+
+            <br>
+
+            اضغط على اليوم لتغيير الحالة
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- ==============================
+     Supabase
+============================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="script.js"></script>
+
+
+<script>
+
+/* =========================================
+   متغيرات
+========================================= */
+
+let attendanceData = [];
+
+let selectedYear;
+
+let selectedMonth;
+
+
+/* =========================================
+   التأكد أن المستخدم مدير
+========================================= */
+
+function checkAdmin() {
+
+    let user = null;
+
+
+    try {
+
+        if (typeof getCurrentUser === "function") {
+
+            user = getCurrentUser();
+
+        }
+
+        else {
+
+            user = JSON.parse(
+                sessionStorage.getItem("currentUser")
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        user = null;
+
+    }
+
+
+    if (!user) {
+
+        window.location.href = "login.html";
+
+        return false;
+
+    }
+
+
+    if (
+        String(user.role || "").toLowerCase()
+        !== "admin"
+    ) {
+
+        alert(
+            "❌ صفحة كشف الحضور متاحة للمدير فقط"
+        );
+
+        window.location.href = "index.html";
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =========================================
+   الرجوع
+========================================= */
+
+function goBack() {
+
+    window.location.href = "index.html";
+
+}
+
+
+/* =========================================
+   أسماء الأقسام
+========================================= */
+
+function getRoleName(role) {
+
+    const roles = {
+
+        admin: "المدير",
+
+        wiring: "Wiring",
+
+        lt: "LT",
+
+        ht: "HT",
+
+        installation: "التركيبات",
+
+        final: "الفنش النهائي"
+
+    };
+
+
+    return roles[
+        String(role || "").toLowerCase()
+    ] || role || "-";
+
+}
+
+
+/* =========================================
+   إنشاء السنوات
+========================================= */
+
+function setupYears() {
+
+    const select =
+        document.getElementById("yearSelect");
+
+
+    if (!select) return;
+
+
+    const currentYear =
+        new Date().getFullYear();
+
+
+    select.innerHTML = "";
+
+
+    for (
+        let year = currentYear - 2;
+        year <= currentYear + 1;
+        year++
+    ) {
+
+        const option =
+            document.createElement("option");
+
+
+        option.value = year;
+
+        option.textContent = year;
+
+
+        select.appendChild(option);
+
+    }
+
+
+    select.value = currentYear;
+
+
+    document.getElementById(
+        "monthSelect"
+    ).value =
+        new Date().getMonth() + 1;
+
+}
+
+
+/* =========================================
+   عدد أيام الشهر
+========================================= */
+
+function getDaysInMonth(year, month) {
+
+    return new Date(
+        year,
+        month,
+        0
+    ).getDate();
+
+}
+
+
+/* =========================================
+   تاريخ بصيغة YYYY-MM-DD
+========================================= */
+
+function makeDate(year, month, day) {
+
+    return year +
+        "-" +
+        String(month).padStart(2, "0") +
+        "-" +
+        String(day).padStart(2, "0");
+
+}
+
+
+/* =========================================
+   تحميل بيانات الشهر
+========================================= */
+
+async function loadAttendance() {
+
+    if (!checkAdmin()) return;
+
+
+    const year =
+        Number(
+            document.getElementById(
+                "yearSelect"
+            ).value
+        );
+
+
+    const month =
+        Number(
+            document.getElementById(
+                "monthSelect"
+            ).value
+        );
+
+
+    selectedYear = year;
+
+    selectedMonth = month;
+
+
+    document.getElementById(
+        "monthTitle"
+    ).textContent =
+        "كشف حضور " +
+        new Date(
+            year,
+            month - 1,
+            1
+        ).toLocaleDateString(
+            "ar-EG",
+            {
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+
+    document.getElementById(
+        "todayInfo"
+    ).textContent =
+        "اضغط على أي يوم لتغيير حالة الحضور";
+
+
+    const head =
+        document.getElementById(
+            "attendanceHead"
+        );
+
+
+    const body =
+        document.getElementById(
+            "attendanceBody"
+        );
+
+
+    body.innerHTML = `
+
+        <tr>
+
+            <td class="loading">
+
+                جاري تحميل بيانات الحضور...
+
+            </td>
+
+        </tr>
+
+    `;
+
+
+    try {
+
+        if (!window.supabaseClient) {
+
+            throw new Error(
+                "supabaseClient غير موجود"
+            );
+
+        }
+
+
+        const firstDay =
+            makeDate(
+                year,
+                month,
+                1
+            );
+
+
+        const lastDay =
+            makeDate(
+                year,
+                month,
+                getDaysInMonth(
+                    year,
+                    month
+                )
+            );
+
+
+        /* =====================================
+           جلب بيانات الشهر
+        ===================================== */
+
+        const result =
+            await window.supabaseClient
+                .from("attendance")
+                .select(`
+                    id,
+                    username,
+                    full_name,
+                    role,
+                    attendance_date,
+                    attendance_time,
+                    status,
+                    created_at
+                `)
+                .gte(
+                    "attendance_date",
+                    firstDay
+                )
+                .lte(
+                    "attendance_date",
+                    lastDay
+                )
+                .order(
+                    "full_name",
+                    {
+                        ascending: true
+                    }
+                );
+
+
+        if (result.error) {
+
+            throw result.error;
+
+        }
+
+
+        attendanceData =
+            result.data || [];
+
+
+        renderTable(
+            attendanceData,
+            year,
+            month
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Attendance load error:",
+            error
+        );
+
+
+        head.innerHTML = "";
+
+
+        body.innerHTML = `
+
+            <tr>
+
+                <td
+                    class="empty">
+
+                    ❌ حصل خطأ أثناء تحميل بيانات الحضور
+
+                    <br><br>
+
+                    ${escapeHTML(
+                        error.message ||
+                        "خطأ غير معروف"
+                    )}
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================
+   إنشاء قائمة الأشخاص
+========================================= */
+
+function getPeople(data) {
+
+    const people = {};
+
+
+    data.forEach(function(row) {
+
+        const username =
+            row.username ||
+            row.full_name;
+
+
+        if (!username) return;
+
+
+        if (!people[username]) {
+
+            people[username] = {
+
+                username:
+                    row.username || "-",
+
+                full_name:
+                    row.full_name ||
+                    row.username ||
+                    "-",
+
+                role:
+                    row.role || "-"
+
+            };
+
+        }
+
+    });
+
+
+    return Object.values(people);
+
+}
+
+
+/* =========================================
+   رسم الجدول
+========================================= */
+
+function renderTable(
+    data,
+    year,
+    month
+) {
+
+    const head =
+        document.getElementById(
+            "attendanceHead"
+        );
+
+
+    const body =
+        document.getElementById(
+            "attendanceBody"
+        );
+
+
+    const days =
+        getDaysInMonth(
+            year,
+            month
+        );
+
+
+    const people =
+        getPeople(data);
+
+
+    /* =====================================
+       رأس الجدول
+    ===================================== */
+
+    let headHTML = `
+
+        <tr>
+
+            <th>#</th>
+
+            <th>اسم الفني</th>
+
+            <th>Username</th>
+
+            <th>القسم</th>
+
+    `;
+
+
+    for (
+        let day = 1;
+        day <= days;
+        day++
+    ) {
+
+        headHTML += `
+
+            <th>
+
+                ${day}
+
+            </th>
+
+        `;
+
+    }
+
+
+    headHTML += `
+
+            <th>
+                نسبة الحضور
+            </th>
+
+        </tr>
+
+    `;
+
+
+    head.innerHTML =
+        headHTML;
+
+
+    /* =====================================
+       لا يوجد أشخاص
+    ===================================== */
+
+    if (people.length === 0) {
+
+        body.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="${days + 5}"
+                    class="empty">
+
+                    📋 لا توجد أسماء مسجلة في هذا الشهر
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* =====================================
+       خريطة البيانات
+    ===================================== */
+
+    const attendanceMap = {};
+
+
+    data.forEach(function(row) {
+
+        const username =
+            row.username ||
+            row.full_name;
+
+
+        const date =
+            String(
+                row.attendance_date || ""
+            ).substring(0, 10);
+
+
+        if (!username || !date) return;
+
+
+        if (!attendanceMap[username]) {
+
+            attendanceMap[username] = {};
+
+        }
+
+
+        attendanceMap[username][date] =
+            row;
+
+    });
+
+
+    /* =====================================
+       جسم الجدول
+    ===================================== */
+
+    let bodyHTML = "";
+
+
+    people.forEach(
+        function(person, personIndex) {
+
+            let presentDays = 0;
+
+
+            let rowHTML = `
+
+                <tr>
+
+                    <td>
+                        ${personIndex + 1}
+                    </td>
+
+                    <td class="person-name">
+
+                        ${escapeHTML(
+                            person.full_name
+                        )}
+
+                    </td>
+
+                    <td>
+
+                        ${escapeHTML(
+                            person.username
+                        )}
+
+                    </td>
+
+                    <td class="person-role">
+
+                        ${escapeHTML(
+                            getRoleName(
+                                person.role
+                            )
+                        )}
+
+                    </td>
+
+            `;
+
+
+            for (
+                let day = 1;
+                day <= days;
+                day++
+            ) {
+
+                const date =
+                    makeDate(
+                        year,
+                        month,
+                        day
+                    );
+
+
+                const record =
+                    attendanceMap[
+                        person.username
+                    ] &&
+                    attendanceMap[
+                        person.username
+                    ][date];
+
+
+                const today =
+                    new Date();
+
+
+                const todayOnly =
+                    new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate()
+                    );
+
+
+                const cellDate =
+                    new Date(
+                        year,
+                        month - 1,
+                        day
+                    );
+
+
+                /* =================================
+                   اليوم المستقبلي
+                ================================= */
+
+                if (
+                    cellDate >
+                    todayOnly
+                ) {
+
+                    rowHTML += `
+
+                        <td
+                            class="day-cell future-cell">
+
+                            —
+
+                        </td>
+
+                    `;
+
+                    continue;
+
+                }
+
+
+                /* =================================
+                   يوجد تسجيل
+                ================================= */
+
+                if (record) {
+
+                    const status =
+                        String(
+                            record.status || ""
+                        )
+                        .trim()
+                        .toLowerCase();
+
+
+                    /* =============================
+                       حاضر
+                    ============================= */
+
+                    if (
+                        status === "present" ||
+                        status === "حاضر" ||
+                        status === "حضور"
+                    ) {
+
+                        presentDays++;
+
+
+                        rowHTML += `
+
+                            <td
+
+                                class="day-cell present-cell"
+
+                                title="حاضر - اضغط لتحويله إلى غياب"
+
+                                onclick="toggleAttendance(
+                                    '${escapeJS(
+                                        person.username
+                                    )}',
+                                    '${escapeJS(
+                                        person.full_name
+                                    )}',
+                                    '${escapeJS(
+                                        person.role
+                                    )}',
+                                    '${date}',
+                                    ${record.id}
+                                )">
+
+                                ✅
+
+                            </td>
+
+                        `;
+
+                    }
+
+                    /* =============================
+                       غياب
+                    ============================= */
+
+                    else {
+
+                        rowHTML += `
+
+                            <td
+
+                                class="day-cell absent-cell"
+
+                                title="غائب - اضغط لتسجيل الحضور"
+
+                                onclick="toggleAttendance(
+                                    '${escapeJS(
+                                        person.username
+                                    )}',
+                                    '${escapeJS(
+                                        person.full_name
+                                    )}',
+                                    '${escapeJS(
+                                        person.role
+                                    )}',
+                                    '${date}',
+                                    ${record.id}
+                                )">
+
+                                ❌
+
+                            </td>
+
+                        `;
+
+                    }
+
+                }
+
+                /* =================================
+                   لا يوجد تسجيل
+                ================================= */
+
+                else {
+
+                    rowHTML += `
+
+                        <td
+
+                            class="day-cell no-record-cell"
+
+                            title="لا يوجد تسجيل - اضغط لتسجيل الحضور"
+
+                            onclick="addAttendance(
+                                '${escapeJS(
+                                    person.username
+                                )}',
+                                '${escapeJS(
+                                    person.full_name
+                                )}',
+                                '${escapeJS(
+                                    person.role
+                                )}',
+                                '${date}'
+                            )">
+
+                            —
+
+                        </td>
+
+                    `;
+
+                }
+
+            }
+
+
+            /* =================================
+               نسبة الحضور
+            ================================= */
+
+            const percentage =
+                days > 0
+                    ? Math.round(
+                        (
+                            presentDays /
+                            days
+                        ) * 100
+                    )
+                    : 0;
+
+
+            rowHTML += `
+
+                    <td>
+
+                        <strong>
+
+                            ${percentage}%
+
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+
+            bodyHTML += rowHTML;
+
+        }
+    );
+
+
+    body.innerHTML =
+        bodyHTML;
+
+}
+
+
+/* =========================================
+   إضافة حضور
+========================================= */
+
+async function addAttendance(
+    username,
+    fullName,
+    role,
+    date
+) {
+
+    const confirmAdd =
+        confirm(
+            "تسجيل حضور لـ " +
+            fullName +
+            " بتاريخ " +
+            date +
+            " ؟"
+        );
+
+
+    if (!confirmAdd) return;
+
+
+    try {
+
+        if (!window.supabaseClient) {
+
+            throw new Error(
+                "supabaseClient غير موجود"
+            );
+
+        }
+
+
+        const now =
+            new Date();
+
+
+        const time =
+            now.toTimeString()
+                .substring(0, 8);
+
+
+        const result =
+            await window.supabaseClient
+                .from("attendance")
+                .insert({
+
+                    username:
+                        username,
+
+                    full_name:
+                        fullName,
+
+                    role:
+                        role,
+
+                    attendance_date:
+                        date,
+
+                    attendance_time:
+                        time,
+
+                    status:
+                        "present"
+
+                })
+                .select()
+                .single();
+
+
+        if (result.error) {
+
+            throw result.error;
+
+        }
+
+
+        if (!result.data) {
+
+            throw new Error(
+                "لم يتم إنشاء سجل الحضور"
+            );
+
+        }
+
+
+        /* =====================================
+           إضافة السجل للبيانات الحالية
+        ===================================== */
+
+        attendanceData.push(
+            result.data
+        );
+
+
+        /* =====================================
+           إعادة رسم الجدول
+        ===================================== */
+
+        renderTable(
+            attendanceData,
+            selectedYear,
+            selectedMonth
+        );
+
+
+        alert(
+            "🟢 تم تسجيل الحضور بنجاح"
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Add attendance error:",
+            error
+        );
+
+
+        alert(
+            "❌ لم يتم تسجيل الحضور\n\n" +
+            "السبب:\n" +
+            (
+                error.message ||
+                "خطأ غير معروف"
+            )
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   تغيير حالة الحضور
+========================================= */
+
+async function toggleAttendance(
+    username,
+    fullName,
+    role,
+    date,
+    recordId
+) {
+
+    /* =====================================
+       التأكد من Supabase
+    ===================================== */
+
+    if (!window.supabaseClient) {
+
+        alert(
+            "❌ اتصال Supabase غير موجود"
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================
+       البحث عن السجل
+    ===================================== */
+
+    const record =
+        attendanceData.find(
+            function(row) {
+
+                return (
+                    Number(row.id) ===
+                    Number(recordId)
+                );
+
+            }
+        );
+
+
+    if (!record) {
+
+        alert(
+            "❌ لم يتم العثور على سجل الحضور"
+        );
+
+        return;
+
+    }
+
+
+    const currentStatus =
+        String(
+            record.status || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    /* =====================================
+       حاضر ← غياب
+    ===================================== */
+
+    if (
+        currentStatus === "present" ||
+        currentStatus === "حاضر" ||
+        currentStatus === "حضور"
+    ) {
+
+        const confirmAbsent =
+            confirm(
+                "هل تريد تحويل " +
+                fullName +
+                " إلى غياب في يوم " +
+                date +
+                " ؟"
+            );
+
+
+        if (!confirmAbsent) return;
+
+
+        try {
+
+            console.log(
+                "محاولة تحويل إلى غياب:",
+                recordId
+            );
+
+
+            const result =
+                await window.supabaseClient
+                    .from("attendance")
+                    .update({
+
+                        status:
+                            "absent"
+
+                    })
+                    .eq(
+                        "id",
+                        recordId
+                    )
+                    .select(
+                        "id, status"
+                    )
+                    .single();
+
+
+            /* =================================
+               التحقق من الخطأ
+            ================================= */
+
+            if (result.error) {
+
+                console.error(
+                    "Supabase UPDATE ERROR:",
+                    result.error
+                );
+
+                throw result.error;
+
+            }
+
+
+            /* =================================
+               التأكد من أن الصف اتعدل
+            ================================= */
+
+            if (!result.data) {
+
+                throw new Error(
+                    "لم يتم تعديل أي سجل في قاعدة البيانات"
+                );
+
+            }
+
+
+            console.log(
+                "تم تحويل الحالة:",
+                result.data
+            );
+
+
+            /* =================================
+               تحديث البيانات الموجودة في الصفحة
+            ================================= */
+
+            const index =
+                attendanceData.findIndex(
+                    function(row) {
+
+                        return (
+                            Number(row.id) ===
+                            Number(recordId)
+                        );
+
+                    }
+                );
+
+
+            if (index !== -1) {
+
+                attendanceData[index].status =
+                    "absent";
+
+            }
+
+
+            /* =================================
+               إعادة رسم الجدول فوراً
+            ================================= */
+
+            renderTable(
+                attendanceData,
+                selectedYear,
+                selectedMonth
+            );
+
+
+            alert(
+                "🔴 تم تحويل " +
+                fullName +
+                " إلى غياب بنجاح"
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Absent update error:",
+                error
+            );
+
+
+            alert(
+                "❌ لم يتم تحويل اليوم إلى غياب\n\n" +
+                "السبب:\n" +
+                (
+                    error.message ||
+                    "خطأ غير معروف"
+                )
+            );
+
+        }
+
+
+        return;
+
+    }
+
+
+    /* =====================================
+       غياب ← حاضر
+    ===================================== */
+
+    const confirmPresent =
+        confirm(
+            "هل تريد تسجيل حضور " +
+            fullName +
+            " في يوم " +
+            date +
+            " ؟"
+        );
+
+
+    if (!confirmPresent) return;
+
+
+    try {
+
+        const now =
+            new Date();
+
+
+        const time =
+            now.toTimeString()
+                .substring(0, 8);
+
+
+        const result =
+            await window.supabaseClient
+                .from("attendance")
+                .update({
+
+                    status:
+                        "present",
+
+                    attendance_time:
+                        time
+
+                })
+                .eq(
+                    "id",
+                    recordId
+                )
+                .select(
+                    "id, status, attendance_time"
+                )
+                .single();
+
+
+        if (result.error) {
+
+            console.error(
+                "Supabase UPDATE ERROR:",
+                result.error
+            );
+
+            throw result.error;
+
+        }
+
+
+        if (!result.data) {
+
+            throw new Error(
+                "لم يتم تعديل أي سجل في قاعدة البيانات"
+            );
+
+        }
+
+
+        console.log(
+            "تم تسجيل الحضور:",
+            result.data
+        );
+
+
+        /* =================================
+           تحديث البيانات في الصفحة
+        ================================= */
+
+        const index =
+            attendanceData.findIndex(
+                function(row) {
+
+                    return (
+                        Number(row.id) ===
+                        Number(recordId)
+                    );
+
+                }
+            );
+
+
+        if (index !== -1) {
+
+            attendanceData[index].status =
+                "present";
+
+            attendanceData[index].attendance_time =
+                time;
+
+        }
+
+
+        /* =================================
+           إعادة رسم الجدول
+        ================================= */
+
+        renderTable(
+            attendanceData,
+            selectedYear,
+            selectedMonth
+        );
+
+
+        alert(
+            "🟢 تم تسجيل الحضور بنجاح"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Present update error:",
+            error
+        );
+
+
+        alert(
+            "❌ لم يتم تسجيل الحضور\n\n" +
+            "السبب:\n" +
+            (
+                error.message ||
+                "خطأ غير معروف"
+            )
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   حماية HTML
+========================================= */
+
+function escapeHTML(value) {
+
+    return String(value || "")
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================
+   حماية JavaScript
+========================================= */
+
+function escapeJS(value) {
+
+    return String(value || "")
+
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+
+        .replace(
+            /'/g,
+            "\\'"
+        )
+
+        .replace(
+            /"/g,
+            '\\"'
+        )
+
+        .replace(
+            /\n/g,
+            "\\n"
+        )
+
+        .replace(
+            /\r/g,
+            "\\r"
+        );
+
+}
+
+
+/* =========================================
+   تشغيل الصفحة
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        if (!checkAdmin()) {
+
+            return;
+
+        }
+
+
+        setupYears();
+
+
+        setTimeout(
+            loadAttendance,
+            500
+        );
+
+    }
+);
+
+
+/* =========================================
+   تحديث تلقائي كل 10 ثواني
+========================================= */
+
+setInterval(
+    function() {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            let user = null;
+
+
+            try {
+
+                user =
+                    typeof getCurrentUser === "function"
+
+                        ? getCurrentUser()
+
+                        : JSON.parse(
+                            sessionStorage.getItem(
+                                "currentUser"
+                            )
+                        );
+
+            }
+
+            catch (error) {
+
+                user = null;
+
+            }
+
+
+            if (
+                user &&
+                String(
+                    user.role || ""
+                ).toLowerCase()
+                === "admin"
+            ) {
+
+                loadAttendance();
+
+            }
+
+        }
+
+    },
+    10000
+);
+
+</script>
+
+</body>
+
+</html>

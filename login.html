@@ -135,6 +135,12 @@
                 name: "Abdo"
             },
 
+            "Mahmoud Khairy": {
+                password: "62473851",
+                role: "wiring",
+                name: "Mahmoud Khairy"
+            },
+
             "Osama": {
                 password: "29481736",
                 role: "lt",
@@ -171,6 +177,19 @@
                 name: "Ali"
             },
 
+            "Tarek": {
+                password: "48372615",
+                role: "ht",
+                name: "Tarek"
+            },
+
+            "Mohamed Khairy": {
+                password: "71938426",
+                role: "lt",
+                extraRoles: ["ht"],
+                name: "Mohamed Khairy"
+            },
+
             "Eid": {
                 password: "68421937",
                 role: "installation",
@@ -187,6 +206,18 @@
                 password: "83746192",
                 role: "installation",
                 name: "Mohamed Haitham"
+            },
+
+            "Elgenany": {
+                password: "56281749",
+                role: "installation",
+                name: "Elgenany"
+            },
+
+            "Ziad": {
+                password: "83519462",
+                role: "installation",
+                name: "Ziad"
             }
 
         };
@@ -235,13 +266,34 @@
                البحث عن المستخدم
             ========================= */
 
+            const foundUsername =
+                Object.keys(USERS).find(
+                    name =>
+                        name.toLowerCase() ===
+                        username.toLowerCase()
+                );
+
+
+            if (!foundUsername) {
+
+                message.innerText =
+                    "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+
+                message.style.color =
+                    "#dc3545";
+
+                return;
+
+            }
+
+
             const user =
-                USERS[username];
+                USERS[foundUsername];
 
 
             if (
-                !user ||
-                user.password !== password
+                String(user.password) !==
+                String(password)
             ) {
 
                 message.innerText =
@@ -262,13 +314,16 @@
             const currentUser = {
 
                 username:
-                    username,
+                    foundUsername,
 
                 name:
                     user.name,
 
                 role:
-                    user.role
+                    user.role,
+
+                extraRoles:
+                    user.extraRoles || []
 
             };
 
@@ -293,7 +348,7 @@
 
                 localStorage.setItem(
                     "rememberedUsername",
-                    username
+                    foundUsername
                 );
 
             } else {

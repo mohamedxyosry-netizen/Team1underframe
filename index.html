@@ -4,82 +4,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>نظام إدارة بيانات العمل</title>
+
     <link rel="stylesheet" href="style.css">
 
-<style>
-/* ترتيب كروت لوحة التحكم: جنب بعض وبشكل ثابت */
-.stats {
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(180px, 1fr)) !important;
-    gap: 18px !important;
-    align-items: stretch;
-    direction: rtl;
-}
+    <style>
+        /* ترتيب كروت لوحة التحكم */
+        .stats {
+            display: grid !important;
+            grid-template-columns: repeat(4, minmax(180px, 1fr)) !important;
+            gap: 18px !important;
+            align-items: stretch;
+            direction: rtl;
+        }
 
-.stats .stat-card {
-    width: auto !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-}
+        .stats .stat-card {
+            width: auto !important;
+            min-width: 0 !important;
+            margin: 0 !important;
+        }
 
-/* الترتيب من اليمين لليسار:
-   مكتملة | مشاكل العربيات | قيد التنفيذ | اليوم */
-.stats .stat-card:nth-child(1) { order: 1; } /* مكتملة */
-.stats .stat-card:nth-child(3) { order: 2; } /* مشاكل العربيات */
-.stats .stat-card:nth-child(2) { order: 3; } /* قيد التنفيذ */
-.stats .stat-card:nth-child(4) { order: 4; } /* اليوم */
+        /* الترتيب من اليمين لليسار:
+           مكتملة | مشاكل العربيات | قيد التنفيذ | تسجيل الحضور */
+        .stats .stat-card:nth-child(1) {
+            order: 1;
+        }
 
-@media (max-width: 900px) {
-    .stats {
-        grid-template-columns: repeat(2, minmax(160px, 1fr)) !important;
-    }
-}
+        .stats .stat-card:nth-child(3) {
+            order: 2;
+        }
 
-@media (max-width: 520px) {
-    .stats {
-        grid-template-columns: 1fr !important;
-    }
-}
+        .stats .stat-card:nth-child(2) {
+            order: 3;
+        }
 
-/* =========================================
-   عداد الرسائل غير المقروءة - الدردشة
-========================================= */
-#chatMenu {
-    position: relative;
-}
+        .stats .stat-card:nth-child(4) {
+            order: 4;
+        }
 
-.chat-menu-icon {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-}
+        @media (max-width: 900px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(160px, 1fr)) !important;
+            }
+        }
 
-#chatUnreadCount {
-    display: none;
-    position: absolute;
-    top: -9px;
-    right: -10px;
-    min-width: 21px;
-    height: 21px;
-    padding: 0 5px;
-    background: #d92d20;
-    color: #fff;
-    border: 2px solid #fff;
-    border-radius: 50px;
-    font-size: 11px;
-    font-weight: 800;
-    line-height: 17px;
-    text-align: center;
-    box-sizing: border-box;
-    z-index: 20;
-    box-shadow: 0 2px 5px rgba(0,0,0,.18);
-}
-</style>
+        @media (max-width: 520px) {
+            .stats {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* =========================================
+           عداد الرسائل غير المقروءة - الدردشة
+        ========================================= */
+
+        #chatMenu {
+            position: relative;
+        }
+
+        .chat-menu-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        #chatUnreadCount {
+            display: none;
+            position: absolute;
+            top: -9px;
+            right: -10px;
+            min-width: 21px;
+            height: 21px;
+            padding: 0 5px;
+            background: #d92d20;
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 17px;
+            text-align: center;
+            box-sizing: border-box;
+            z-index: 20;
+            box-shadow: 0 2px 5px rgba(0,0,0,.18);
+        }
+    </style>
 
 </head>
 
@@ -140,7 +154,9 @@
 
                 </button>
 
+
                 <!-- الإشعارات - للمدير فقط -->
+
                 <button
                     id="notificationsMenu"
                     class="menu-item"
@@ -329,26 +345,29 @@
                 </div>
 
 
-                <!-- قيد التنفيذ -->
+                <!-- Priority Item -->
 
-                <div class="stat-card">
+                <div
+                    class="stat-card priority-item-card"
+                    onclick="openPriorityPage()"
+                    style="cursor:pointer;">
 
                     <div class="stat-icon orange">
-                        ⏳
+                        ⚡
                     </div>
 
                     <div>
 
                         <span>
-                            قيد التنفيذ
+                            Priority Item
                         </span>
 
-                        <strong id="pendingRecords">
-                            0
+                        <strong>
+                            📢
                         </strong>
 
                         <small>
-                            إدخال
+                            إرسال تنبيه للفريق
                         </small>
 
                     </div>
@@ -356,7 +375,7 @@
                 </div>
 
 
-                <!-- مشاكل العربيات - بجانب مكتملة -->
+                <!-- مشاكل العربيات -->
 
                 <div
                     class="stat-card"
@@ -386,26 +405,31 @@
                 </div>
 
 
-                <!-- اليوم -->
+                <!-- =================================
+                     تسجيل الحضور
+                ================================== -->
 
-                <div class="stat-card">
+                <div
+                    class="stat-card"
+                    onclick="handleAttendanceLogin()"
+                    style="cursor:pointer;">
 
                     <div class="stat-icon purple">
-                        📅
+                        🔐
                     </div>
 
                     <div>
 
                         <span>
-                            اليوم
+                            تسجيل الحضور
                         </span>
 
-                        <strong id="todayRecords">
-                            0
+                        <strong>
+                            👤
                         </strong>
 
                         <small>
-                            إدخال جديد
+                            تسجيل حضور
                         </small>
 
                     </div>
@@ -513,7 +537,7 @@
                     </button>
 
 
-                    <!-- التركيبات -->
+                    <!-- Equipment -->
 
                     <button
                         id="section-installation"
@@ -525,11 +549,11 @@
                         </div>
 
                         <strong>
-                            قسم التركيبات
+                            قسم Equipment
                         </strong>
 
                         <small>
-                            تسجيل أعمال التركيبات
+                            تسجيل أعمال Equipment
                         </small>
 
                         <span class="enter-btn">
@@ -539,7 +563,7 @@
                     </button>
 
 
-                    <!-- الفنش النهائي -->
+                    <!-- Final -->
 
                     <button
                         id="section-final"
@@ -551,11 +575,11 @@
                         </div>
 
                         <strong>
-                            قسم الفنش النهائي
+                            Final
                         </strong>
 
                         <small>
-                            تسجيل الفنش النهائي
+                            تسجيل اعمالFinal
                         </small>
 
                         <span class="enter-btn">
@@ -646,6 +670,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
     <!-- ==============================
          JavaScript الرئيسي
     =============================== -->
@@ -654,6 +679,205 @@
 
 
     <script>
+
+        // ==================================
+        // تسجيل الحضور
+        // ==================================
+
+        async function handleAttendanceLogin() {
+
+            const user =
+                typeof getCurrentUser === "function"
+                    ? getCurrentUser()
+                    : null;
+
+
+            if (!user) {
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            if (
+                String(user.role || "").toLowerCase()
+                === "admin"
+            ) {
+
+                window.location.href =
+                    "attendance.html";
+
+                return;
+
+            }
+
+
+            try {
+
+                if (!window.supabaseClient) {
+
+                    alert(
+                        "❌ لا يوجد اتصال بقاعدة البيانات"
+                    );
+
+                    return;
+
+                }
+
+
+                const username =
+                    user.username ||
+                    user.userName ||
+                    user.name ||
+                    "";
+
+
+                const fullName =
+                    user.full_name ||
+                    user.fullName ||
+                    user.name ||
+                    username;
+
+
+                const role =
+                    String(
+                        user.role || ""
+                    ).toLowerCase();
+
+
+                if (!username) {
+
+                    alert(
+                        "❌ لم يتم العثور على Username الخاص بك"
+                    );
+
+                    return;
+
+                }
+
+
+                const now =
+                    new Date();
+
+
+                const attendanceDate =
+                    now.toISOString()
+                        .split("T")[0];
+
+
+                const attendanceTime =
+                    now.toTimeString()
+                        .split(" ")[0];
+
+
+                const checkResult =
+                    await window.supabaseClient
+                        .from("attendance")
+                        .select("id")
+                        .eq(
+                            "username",
+                            username
+                        )
+                        .eq(
+                            "attendance_date",
+                            attendanceDate
+                        )
+                        .maybeSingle();
+
+
+                if (checkResult.error) {
+
+                    console.error(
+                        "Attendance check error:",
+                        checkResult.error
+                    );
+
+                    alert(
+                        "❌ حصل خطأ أثناء التأكد من تسجيل الحضور"
+                    );
+
+                    return;
+
+                }
+
+
+                if (checkResult.data) {
+
+                    alert(
+                        "⚠️ تم تسجيل حضورك اليوم بالفعل"
+                    );
+
+                    return;
+
+                }
+
+
+                const insertResult =
+                    await window.supabaseClient
+                        .from("attendance")
+                        .insert([
+                            {
+                                username:
+                                    username,
+
+                                full_name:
+                                    fullName,
+
+                                role:
+                                    role,
+
+                                attendance_date:
+                                    attendanceDate,
+
+                                attendance_time:
+                                    attendanceTime,
+
+                                status:
+                                    "present"
+                            }
+                        ]);
+
+
+                if (insertResult.error) {
+
+                    console.error(
+                        "Attendance insert error:",
+                        insertResult.error
+                    );
+
+                    alert(
+                        "❌ لم يتم تسجيل الحضور\n\n" +
+                        insertResult.error.message
+                    );
+
+                    return;
+
+                }
+
+
+                alert(
+                    "تم تسجيل الحضور بنجاح ✅"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Attendance error:",
+                    error
+                );
+
+                alert(
+                    "❌ حصل خطأ أثناء تسجيل الحضور"
+                );
+
+            }
+
+        }
+
 
         // ==================================
         // فتح صفحة الدردشة
@@ -680,6 +904,55 @@
 
 
         // ==================================
+        // فتح صفحة Priority Item
+        // ==================================
+
+        function openPriorityPage() {
+
+            const user =
+                typeof getCurrentUser === "function"
+                    ? getCurrentUser()
+                    : null;
+
+            if (!user) {
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+            const allowedPriorityRoles = [
+                "admin",
+                "wiring",
+                "lt",
+                "ht",
+                "installation",
+                "final"
+            ];
+
+            if (
+                !allowedPriorityRoles.includes(
+                    String(user.role || "").toLowerCase()
+                )
+            ) {
+
+                alert(
+                    "❌ ليس لديك صلاحية لاستخدام Priority Item"
+                );
+
+                return;
+
+            }
+
+            window.location.href =
+                "priority.html";
+
+        }
+
+
+        // ==================================
         // فتح الأقسام
         // ==================================
 
@@ -690,7 +963,6 @@
                     "currentUser"
                 );
 
-            // لو مفيش مستخدم مسجل
 
             if (!userData) {
 
@@ -701,7 +973,9 @@
 
             }
 
+
             let user;
+
 
             try {
 
@@ -725,10 +999,45 @@
 
 
             // ==================================
+            // تجميع كل صلاحيات المستخدم
+            // ==================================
+
+            const userRoles = [
+
+                user.role,
+
+                user.secondRole,
+
+                ...(Array.isArray(user.extraRoles)
+                    ? user.extraRoles
+                    : [])
+
+            ]
+            .filter(Boolean)
+            .map(role =>
+                String(role).toLowerCase()
+            );
+
+
+            const currentRole =
+                String(
+                    user.role || ""
+                ).toLowerCase();
+
+
+            const requestedSection =
+                String(
+                    section || ""
+                ).toLowerCase();
+
+
+            // ==================================
             // مشاكل العربيات
             // ==================================
 
-            if (section === "problems") {
+            if (
+                requestedSection === "problems"
+            ) {
 
                 window.location.href =
                     "problems.html";
@@ -739,149 +1048,15 @@
 
 
             // ==================================
-            // Wiring
-            // ==================================
-
-            if (section === "wiring") {
-
-                if (
-                    user.role === "wiring" ||
-                    user.role === "admin"
-                ) {
-
-                    window.location.href =
-                        "wiring.html";
-
-                    return;
-
-                }
-
-                alert(
-                    "ليس لديك صلاحية للدخول إلى هذا القسم ❌"
-                );
-
-                return;
-
-            }
-
-
-            // ==================================
-            // LT
-            // ==================================
-
-            if (section === "lt") {
-
-                if (
-                    user.role === "lt" ||
-                    user.role === "admin"
-                ) {
-
-                    window.location.href =
-                        "lt.html";
-
-                    return;
-
-                }
-
-                alert(
-                    "ليس لديك صلاحية للدخول إلى هذا القسم ❌"
-                );
-
-                return;
-
-            }
-
-
-            // ==================================
-            // HT
-            // ==================================
-
-            if (section === "ht") {
-
-                if (
-                    user.role === "ht" ||
-                    user.role === "admin"
-                ) {
-
-                    window.location.href =
-                        "ht.html";
-
-                    return;
-
-                }
-
-                alert(
-                    "ليس لديك صلاحية للدخول إلى هذا القسم ❌"
-                );
-
-                return;
-
-            }
-
-
-            // ==================================
-            // التركيبات
-            // ==================================
-
-            if (section === "installation") {
-
-                if (
-                    user.role === "installation" ||
-                    user.role === "admin"
-                ) {
-
-                    window.location.href =
-                        "installation.html";
-
-                    return;
-
-                }
-
-                alert(
-                    "ليس لديك صلاحية للدخول إلى هذا القسم ❌"
-                );
-
-                return;
-
-            }
-
-
-            // ==================================
-            // الفنش النهائي
-            // ==================================
-
-            if (section === "final") {
-
-                if (
-                    user.role === "admin" ||
-                    user.username === "Osama" ||
-                    user.username === "Mamdouh"
-                ) {
-
-                    window.location.href =
-                        "final.html";
-
-                    return;
-
-                }
-
-                alert(
-                    "ليس لديك صلاحية للدخول إلى الفنش النهائي ❌"
-                );
-
-                return;
-
-            }
-
-
-            // ==================================
             // سجل البيانات
             // ==================================
 
-            if (section === "search") {
+            if (
+                requestedSection === "search"
+            ) {
 
                 if (
-                    user.role === "admin"
+                    currentRole === "admin"
                 ) {
 
                     window.location.href =
@@ -905,11 +1080,11 @@
             // ==================================
 
             if (
-                section === "deleteRequests"
+                requestedSection === "deleterequests"
             ) {
 
                 if (
-                    user.role === "admin"
+                    currentRole === "admin"
                 ) {
 
                     window.location.href =
@@ -927,8 +1102,95 @@
 
             }
 
-        }
 
+            // ==================================
+            // Final
+            // ==================================
+
+            if (
+                requestedSection === "final"
+            ) {
+
+                if (
+                    currentRole === "admin" ||
+                    user.username === "Osama" ||
+                    user.username === "Mamdouh"
+                ) {
+
+                    window.location.href =
+                        "final.html";
+
+                    return;
+
+                }
+
+                alert(
+                    "ليس لديك صلاحية للدخول إلى Final ❌"
+                );
+
+                return;
+
+            }
+
+
+            // ==================================
+            // صفحات الأقسام
+            // ==================================
+
+            const pages = {
+
+                wiring:
+                    "wiring.html",
+
+                lt:
+                    "lt.html",
+
+                ht:
+                    "ht.html",
+
+                installation:
+                    "installation.html",
+
+                final:
+                    "final.html"
+
+            };
+
+
+            // ==================================
+            // التحقق من الصلاحية
+            // ==================================
+
+            if (
+                currentRole !== "admin" &&
+                !userRoles.includes(
+                    requestedSection
+                )
+            ) {
+
+                alert(
+                    "ليس لديك صلاحية للدخول إلى هذا القسم ❌"
+                );
+
+                return;
+
+            }
+
+
+            // ==================================
+            // فتح الصفحة
+            // ==================================
+
+            if (
+                pages[requestedSection]
+            ) {
+
+                window.location.href =
+                    pages[requestedSection];
+
+            }
+
+        }
 
 
         // ==================================
@@ -949,7 +1211,10 @@
 
             }
 
-            if (user.role !== "admin") {
+
+            if (
+                user.role !== "admin"
+            ) {
 
                 alert(
                     "🔔 الإشعارات متاحة للمدير فقط"
@@ -958,6 +1223,7 @@
                 return;
 
             }
+
 
             window.location.href =
                 "notifications.html";
@@ -983,6 +1249,7 @@
 
             }
 
+
             window.location.href =
                 "problems.html";
 
@@ -997,13 +1264,15 @@
 
             let user = null;
 
+
             try {
 
-                user = JSON.parse(
-                    sessionStorage.getItem(
-                        "currentUser"
-                    )
-                );
+                user =
+                    JSON.parse(
+                        sessionStorage.getItem(
+                            "currentUser"
+                        )
+                    );
 
             } catch (error) {
 
@@ -1011,8 +1280,6 @@
 
             }
 
-
-            // منع الفني من البحث
 
             if (
                 !user ||
@@ -1032,6 +1299,7 @@
                 document.getElementById(
                     "homeSearchNumber"
                 );
+
 
             if (!input) return;
 
@@ -1111,12 +1379,6 @@
         }
 
 
-        // ==================================
-        // تشغيل التاريخ والوقت فقط
-        // إحصائيات Dashboard يتم تحديثها
-        // من script.js باستخدام Supabase
-        // ==================================
-
         updateDateTime();
 
 
@@ -1128,14 +1390,8 @@
     </script>
 
 
-    <img
-        src="train.-bg.jpeg"
-        alt="yoo">
-
-
     <!-- =========================================
          عداد الدردشة اللحظي
-         لا يحتاج Refresh ولا setInterval
     ========================================== -->
 
     <script>
@@ -1277,8 +1533,6 @@
 
         // =========================================
         // Realtime للرسائل
-        // INSERT = رسالة جديدة
-        // UPDATE = الرسالة اتقريت
         // =========================================
 
         function startChatUnreadRealtime() {
@@ -1306,13 +1560,7 @@
                             schema: "public",
                             table: "private_messages"
                         },
-                        function (payload) {
-
-                            /*
-                             * أي رسالة جديدة أو تغيير
-                             * في is_read سيعيد حساب
-                             * العدد فوراً.
-                             */
+                        function () {
 
                             updateChatUnreadCount();
 
@@ -1332,32 +1580,17 @@
         }
 
 
-        // =========================================
-        // تشغيل العداد بعد تحميل الصفحة
-        // =========================================
-
         document.addEventListener(
             "DOMContentLoaded",
             function () {
 
-                /*
-                 * حساب أولي عند فتح الصفحة
-                 */
                 updateChatUnreadCount();
 
-
-                /*
-                 * تشغيل التحديث اللحظي
-                 */
                 startChatUnreadRealtime();
 
             }
         );
 
-
-        // =========================================
-        // تنظيف الاتصال عند مغادرة الصفحة
-        // =========================================
 
         window.addEventListener(
             "beforeunload",
