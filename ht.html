@@ -170,7 +170,7 @@ body {
 }
 
 /* =====================================================
-   رقم العربية - نفس شكل LT
+   رقم العربية
 ===================================================== */
 
 .car-number-preview {
@@ -481,15 +481,16 @@ MCI
 <input
 type="number"
 id="htUnitNumber"
-placeholder="مثال: 17"
-min="17"
+placeholder="مثال: 1"
+min="1"
+step="1"
 oninput="updateHTCarNumber()">
 
 </div>
 
 
 <!-- =====================================================
-     رقم العربية - 3 مربعات مثل LT
+     رقم العربية
 ===================================================== -->
 
 <div class="input-group">
@@ -500,8 +501,6 @@ oninput="updateHTCarNumber()">
 
 <div class="car-number-preview">
 
-
-    <!-- رقم العربية -->
 
     <div class="number-part">
 
@@ -516,8 +515,6 @@ oninput="updateHTCarNumber()">
     </div>
 
 
-    <!-- اسم العربية -->
-
     <div class="number-part car-name-part">
 
         <span>
@@ -530,8 +527,6 @@ oninput="updateHTCarNumber()">
 
     </div>
 
-
-    <!-- رقم الوحدة -->
 
     <div class="number-part">
 
@@ -754,7 +749,8 @@ DTC: [
 MC1: [
 
 "FL",
-"VVVF",
+"VVVF1",
+"VVVF2",
 "MS BOX",
 "HTJP",
 "STINGER-L",
@@ -784,7 +780,8 @@ MC1: [
 MC2: [
 
 "FL",
-"VVVF",
+"VVVF1",
+"VVVF2",
 "MS BOX",
 "STINGER-L",
 "STINGER-R",
@@ -992,16 +989,20 @@ function updateHTDevices() {
 
 /* =====================================================
    توليد رقم العربية
-   نفس معادلة LT
 ===================================================== */
 
 function updateHTCarNumber() {
 
     const carName =
-        document.getElementById("htCarName").value;
+        document.getElementById("htCarName")
+            .value
+            .trim()
+            .toUpperCase();
 
     const unitNumber =
-        document.getElementById("htUnitNumber").value.trim();
+        document.getElementById("htUnitNumber")
+            .value
+            .trim();
 
     const carNumberInput =
         document.getElementById("htCarNumber");
@@ -1016,24 +1017,16 @@ function updateHTCarNumber() {
         document.getElementById("htUnitDisplay");
 
 
-    /* عرض اسم العربية */
-
     nameDisplay.textContent =
         carName || "--";
-
-
-    /* عرض رقم الوحدة */
 
     unitDisplay.textContent =
         unitNumber || "--";
 
 
-    /* لو البيانات ناقصة */
-
     if (
         !carName ||
-        !unitNumber ||
-        Number(unitNumber) < 17
+        !unitNumber
     ) {
 
         carDisplay.textContent =
@@ -1047,43 +1040,91 @@ function updateHTCarNumber() {
     }
 
 
-    /* ترتيب العربيات */
+    const unit =
+        Number(unitNumber);
 
-    const carPositions = {
 
-        DTC: 0,
-        MC1: 1,
-        MC2: 2,
-        MCI: 3
+    if (
+        !Number.isInteger(unit) ||
+        unit < 1
+    ) {
 
-    };
+        carDisplay.textContent =
+            "--";
+
+        carNumberInput.value =
+            "";
+
+        return;
+
+    }
+
+
+    /*
+       الوحدة الفردية:
+       DTC → MC1 → MC2 → MCI
+
+       الوحدة الزوجية:
+       MCI → MC2 → MC1 → DTC
+    */
+
+    const oddOrder = [
+        "DTC",
+        "MC1",
+        "MC2",
+        "MCI"
+    ];
+
+
+    const evenOrder = [
+        "MCI",
+        "MC2",
+        "MC1",
+        "DTC"
+    ];
+
+
+    const order =
+        unit % 2 === 1
+            ? oddOrder
+            : evenOrder;
 
 
     const position =
-        carPositions[carName];
+        order.indexOf(carName);
 
 
-    /* نفس حساب LT */
+    if (position === -1) {
+
+        carDisplay.textContent =
+            "--";
+
+        carNumberInput.value =
+            "";
+
+        return;
+
+    }
+
+
+    /*
+       Unit 1 → 1
+       Unit 2 → 5
+       Unit 3 → 9
+       Unit 4 → 13
+    */
 
     const baseNumber =
-        65 +
-        (
-            (Number(unitNumber) - 17)
-            * 4
-        );
+        ((unit - 1) * 4) + 1;
 
 
     const finalNumber =
         baseNumber + position;
 
 
-    /* عرض الرقم في المربع */
-
     carDisplay.textContent =
         finalNumber;
 
-
-    /* الرقم الكامل الذي سيتم حفظه */
 
     carNumberInput.value =
         finalNumber +
@@ -1091,6 +1132,18 @@ function updateHTCarNumber() {
         carName +
         "-" +
         unitNumber;
+
+
+    console.log(
+        "🚆 HT NUMBERING:",
+        {
+            unit: unit,
+            car: carName,
+            number: finalNumber,
+            database:
+                carNumberInput.value
+        }
+    );
 
 }
 
@@ -1201,16 +1254,10 @@ async function saveHT() {
        التحقق
     ================================================= */
 
-    if (
-        !carName ||
-        !unitNumber ||
-        !carNumber ||
-        !device ||
-        !done
-    ) {
+    if (!carName) {
 
         message.innerText =
-            "❌ من فضلك اختر اسم العربية ورقم الوحدة واسم الجهاز والحالة";
+            "❌ من فضلك اختر اسم العربية";
 
         message.style.color =
             "#dc3545";
@@ -1221,11 +1268,52 @@ async function saveHT() {
 
 
     if (
-        Number(unitNumber) < 17
+        !unitNumber ||
+        !Number.isInteger(Number(unitNumber)) ||
+        Number(unitNumber) < 1
     ) {
 
         message.innerText =
-            "❌ رقم الوحدة يجب أن يكون 17 أو أكبر";
+            "❌ من فضلك أدخل رقم وحدة صحيح يبدأ من 1";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+    if (!carNumber) {
+
+        message.innerText =
+            "❌ رقم العربية غير مكتمل";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+    if (!device) {
+
+        message.innerText =
+            "❌ من فضلك اختر اسم الجهاز";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+    if (!done) {
+
+        message.innerText =
+            "❌ من فضلك اختر حالة التنفيذ";
 
         message.style.color =
             "#dc3545";
@@ -1277,23 +1365,25 @@ async function saveHT() {
         "#0d6efd";
 
 
-    /* =================================================
-       البيانات
-    ================================================= */
-
     const payload = {
 
-        department: "ht",
+        department:
+            "ht",
 
-        car_name: carName,
+        car_name:
+            carName,
 
-        car_number: carNumber,
+        car_number:
+            carNumber,
 
-        device: device,
+        device:
+            device,
 
-        done: done,
+        done:
+            done,
 
-        notes: notes,
+        notes:
+            notes,
 
         created_by:
             getCurrentUsername(),
@@ -1304,6 +1394,12 @@ async function saveHT() {
                 : null
 
     };
+
+
+    console.log(
+        "📤 HT DATA:",
+        payload
+    );
 
 
     try {
@@ -1340,10 +1436,6 @@ async function saveHT() {
 
         }
 
-
-        /* =================================================
-           نجاح
-        ================================================= */
 
         message.innerText =
             "✅ تم حفظ البيانات بنجاح";
@@ -1390,14 +1482,18 @@ async function saveHT() {
         deviceElement.disabled =
             true;
 
+
         doneElement.value =
             "";
+
 
         reasonElement.value =
             "";
 
+
         notesElement.value =
             "";
+
 
         document.getElementById(
             "htReasonGroup"
@@ -1456,6 +1552,11 @@ async function loadHTRecords() {
         return;
     }
 
+
+    container.innerHTML =
+        '<div class="empty">⏳ جاري تحميل البيانات...</div>';
+
+
     if (!supabaseClient) {
 
         container.innerHTML = `
@@ -1465,6 +1566,7 @@ async function loadHTRecords() {
         `;
 
         return;
+
     }
 
 
@@ -1474,10 +1576,24 @@ async function loadHTRecords() {
             await supabaseClient
                 .from("records")
                 .select("*")
-                .eq("department", "ht");
+                .eq(
+                    "department",
+                    "ht"
+                )
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
+                );
 
 
         if (result.error) {
+
+            console.error(
+                "HT LOAD ERROR:",
+                result.error
+            );
 
             container.innerHTML = `
                 <div class="error-box">
@@ -1497,7 +1613,9 @@ async function loadHTRecords() {
             result.data || [];
 
 
-        if (!records.length) {
+        if (
+            records.length === 0
+        ) {
 
             container.innerHTML = `
                 <div class="empty">
@@ -1508,20 +1626,6 @@ async function loadHTRecords() {
             return;
 
         }
-
-
-        records.sort(
-            function(a, b) {
-
-                return new Date(
-                    b.created_at || 0
-                ) -
-                new Date(
-                    a.created_at || 0
-                );
-
-            }
-        );
 
 
         container.innerHTML =
@@ -1536,20 +1640,72 @@ async function loadHTRecords() {
                         "div"
                     );
 
+
                 div.className =
                     "record";
 
 
                 /* مهم لنظام الحذف */
 
-                div.dataset.recordId =
-                    record.id;
+                if (
+                    record.id !== undefined
+                ) {
+
+                    div.dataset.recordId =
+                        record.id;
+
+                }
 
 
                 const isCompleted =
                     String(
                         record.done || ""
                     ).trim() === "نعم";
+
+
+                const statusHTML =
+                    isCompleted
+
+                    ?
+
+                    `
+                    <span class="status-badge status-completed">
+                        ✅ تم التقفيل
+                    </span>
+                    `
+
+                    :
+
+                    `
+                    <span class="status-badge status-pending">
+                        ❌ لم يتم التقفيل
+                    </span>
+                    `;
+
+
+                const reasonHTML =
+                    !isCompleted &&
+                    record.not_completed_reason
+
+                    ?
+
+                    `
+                    <p>
+
+                        <strong>
+                            ❌ سبب عدم الانتهاء:
+                        </strong>
+
+                        ${escapeHTML(
+                            record.not_completed_reason
+                        )}
+
+                    </p>
+                    `
+
+                    :
+
+                    "";
 
 
                 div.innerHTML = `
@@ -1600,55 +1756,12 @@ async function loadHTRecords() {
                             📌 الحالة:
                         </strong>
 
-                        <span
-                            class="status-badge
-                            ${
-                                isCompleted
-                                ?
-                                "status-completed"
-                                :
-                                "status-pending"
-                            }">
-
-                            ${
-                                isCompleted
-                                ?
-                                "✅ تم التقفيل"
-                                :
-                                "❌ لم يتم التقفيل"
-                            }
-
-                        </span>
+                        ${statusHTML}
 
                     </p>
 
 
-                    ${
-                        !isCompleted &&
-                        record.not_completed_reason
-
-                        ?
-
-                        `
-
-                        <p>
-
-                            <strong>
-                                ❌ سبب عدم الانتهاء:
-                            </strong>
-
-                            ${escapeHTML(
-                                record.not_completed_reason
-                            )}
-
-                        </p>
-
-                        `
-
-                        :
-
-                        ""
-                    }
+                    ${reasonHTML}
 
 
                     <p>
@@ -1674,6 +1787,19 @@ async function loadHTRecords() {
                         ${escapeHTML(
                             record.created_by ||
                             ""
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            🕘 وقت التسجيل:
+                        </strong>
+
+                        ${formatArabicDate(
+                            record.created_at
                         )}
 
                     </p>

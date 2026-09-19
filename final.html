@@ -171,6 +171,7 @@
             font-weight: bold;
             margin-top: 18px;
             line-height: 1.7;
+            white-space: pre-line;
         }
 
         #finalRecords {
@@ -221,7 +222,7 @@
 
         /* =========================================
            شكل رقم العربية في قسم Final
-           ========================================= */
+        ========================================= */
 
         .final-car-number-group {
             text-align: center;
@@ -294,7 +295,7 @@
 
         /* =========================================
            الموبايل
-           ========================================= */
+        ========================================= */
 
         @media (max-width: 750px) {
 
@@ -345,11 +346,11 @@
         <div>
 
             <h1>
-                🏁 الفنش النهائي
+                🏁 Final
             </h1>
 
             <p>
-                تسجيل ومتابعة الفنش النهائي
+                تسجيل ومتابعة Final 
             </p>
 
         </div>
@@ -426,8 +427,9 @@
                 <input
                     type="number"
                     id="finalUnitNumber"
-                    placeholder="مثال: 17"
-                    min="17"
+                    placeholder="مثال: 1"
+                    min="1"
+                    step="1"
                     oninput="updateFinalCarNumber()">
 
             </div>
@@ -584,7 +586,7 @@ catch (error) {
 
 /* =========================================
    USER
-   ========================================= */
+========================================= */
 
 function getCurrentUsername() {
 
@@ -636,7 +638,7 @@ function getCurrentUsername() {
 
 /* =========================================
    ESCAPE HTML
-   ========================================= */
+========================================= */
 
 function escapeHTML(value) {
 
@@ -653,7 +655,7 @@ function escapeHTML(value) {
 
 /* =========================================
    ARABIC DATE
-   ========================================= */
+========================================= */
 
 function formatArabicDate(value) {
 
@@ -697,20 +699,24 @@ function formatArabicDate(value) {
 
 /* =========================================
    توليد رقم العربية
-   ========================================= */
+   النظام الجديد الموحد
+========================================= */
 
 function updateFinalCarNumber() {
 
     const carName =
         document.getElementById(
             "finalCarName"
-        ).value;
+        ).value
+        .trim()
+        .toUpperCase();
 
 
     const unitNumber =
         document.getElementById(
             "finalUnitNumber"
-        ).value.trim();
+        ).value
+        .trim();
 
 
     const carNumberInput =
@@ -721,8 +727,7 @@ function updateFinalCarNumber() {
 
     if (
         !carName ||
-        !unitNumber ||
-        Number(unitNumber) < 17
+        !unitNumber
     ) {
 
         carNumberInput.value = "";
@@ -732,42 +737,83 @@ function updateFinalCarNumber() {
     }
 
 
-    const carPositions = {
+    const unit =
+        Number(unitNumber);
 
-        DTC: 0,
 
-        MC1: 1,
+    if (
+        !Number.isInteger(unit) ||
+        unit < 1
+    ) {
 
-        MC2: 2,
+        carNumberInput.value = "";
 
-        MCI: 3
+        return;
 
-    };
+    }
+
+
+    /* =========================
+       ترتيب العربيات
+    ========================= */
+
+    const oddOrder = [
+        "DTC",
+        "MC1",
+        "MC2",
+        "MCI"
+    ];
+
+
+    const evenOrder = [
+        "MCI",
+        "MC2",
+        "MC1",
+        "DTC"
+    ];
+
+
+    const order =
+        unit % 2 === 1
+            ? oddOrder
+            : evenOrder;
 
 
     const position =
-        carPositions[carName];
+        order.indexOf(carName);
 
+
+    if (position === -1) {
+
+        carNumberInput.value = "";
+
+        return;
+
+    }
+
+
+    /* =========================
+       حساب رقم العربية
+    ========================= */
 
     const baseNumber =
-        65 +
-        (
-            (Number(unitNumber) - 17)
-            * 4
-        );
+        ((unit - 1) * 4) + 1;
 
 
     const finalNumber =
-        baseNumber +
-        position;
+        baseNumber + position;
 
+
+    /* =========================
+       القيمة المحفوظة
+    ========================= */
 
     carNumberInput.value =
         finalNumber +
         "-" +
         carName +
         "-" +
-        unitNumber;
+        unit;
 
 }
 
@@ -775,7 +821,7 @@ function updateFinalCarNumber() {
 
 /* =========================================
    SAVE FINAL
-   ========================================= */
+========================================= */
 
 async function saveFinal() {
 
@@ -842,6 +888,10 @@ async function saveFinal() {
 
 
 
+    /* =========================
+       التحقق الأساسي
+    ========================= */
+
     if (
         !carName ||
         !unitNumber ||
@@ -861,12 +911,21 @@ async function saveFinal() {
 
 
 
+    /* =========================
+       التحقق من رقم الوحدة
+    ========================= */
+
+    const unit =
+        Number(unitNumber);
+
+
     if (
-        Number(unitNumber) < 17
+        !Number.isInteger(unit) ||
+        unit < 1
     ) {
 
         message.innerText =
-            "❌ رقم الوحدة يجب أن يكون 17 أو أكبر";
+            "❌ رقم الوحدة يجب أن يكون رقمًا صحيحًا يبدأ من 1";
 
         message.style.color =
             "#dc3545";
@@ -891,6 +950,10 @@ async function saveFinal() {
 
 
 
+    /* =========================
+       منع الضغط المتكرر
+    ========================= */
+
     button.disabled = true;
 
     button.innerText =
@@ -905,6 +968,10 @@ async function saveFinal() {
         "#0d6efd";
 
 
+
+    /* =========================
+       البيانات
+    ========================= */
 
     const payload = {
 
@@ -936,6 +1003,10 @@ async function saveFinal() {
     );
 
 
+
+    /* =========================
+       الحفظ
+    ========================= */
 
     try {
 
@@ -978,6 +1049,10 @@ async function saveFinal() {
 
 
 
+        /* =========================
+           نجاح الحفظ
+        ========================= */
+
         console.log(
             "✅ FINAL SAVED:",
             result.data
@@ -992,6 +1067,10 @@ async function saveFinal() {
             "#198754";
 
 
+
+        /* =========================
+           تفريغ الفورم
+        ========================= */
 
         carNameElement.value =
             "";
@@ -1060,7 +1139,7 @@ async function saveFinal() {
 
 /* =========================================
    LOAD FINAL RECORDS
-   ========================================= */
+========================================= */
 
 async function loadFinalRecords() {
 
@@ -1304,7 +1383,7 @@ async function loadFinalRecords() {
 
 /* =========================================
    GO HOME
-   ========================================= */
+========================================= */
 
 function goHome() {
 
@@ -1317,11 +1396,13 @@ function goHome() {
 
 /* =========================================
    START
-   ========================================= */
+========================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
     function() {
+
+        updateFinalCarNumber();
 
         loadFinalRecords();
 

@@ -165,7 +165,7 @@
 
 
         /* =========================
-           CAR NUMBER - نفس HT/LT
+           CAR NUMBER
         ========================= */
 
         .car-number-preview {
@@ -425,14 +425,14 @@
 
     <!-- =========================
          MAIN
-    ========================== -->
+    ========================= -->
 
     <main class="form-page">
 
 
         <!-- =========================
              FORM
-        ========================== -->
+        ========================= -->
 
         <div class="form-card">
 
@@ -489,8 +489,9 @@
                 <input
                     type="number"
                     id="installationUnitNumber"
-                    placeholder="مثال: 17"
-                    min="17"
+                    placeholder="مثال: 1"
+                    min="1"
+                    step="1"
                     oninput="updateInstallationCarNumber()">
 
             </div>
@@ -621,7 +622,7 @@
 
             <!-- =========================
                  سبب عدم الانتهاء
-            ========================== -->
+            ========================= -->
 
             <div
                 class="input-group reason-box"
@@ -752,7 +753,6 @@ catch (error) {
 
 /* =========================================
    قوائم التركيبات
-   نفس قوائم HT بالضبط
 ========================================= */
 
 const INSTALLATION_DEVICES = {
@@ -770,12 +770,13 @@ const INSTALLATION_DEVICES = {
         "HTJP",
         "STINGER-L",
         "STINGER-R",
-        "HTGTB1",
-        "HTGTB2",
-        "EB1",
-        "EB2",
-        "EB3",
-        "EB4"
+        "CM",
+        "LDOS",
+        "RDOS",
+        "LOCOJ-L",
+        "LOCOJ-R",
+        "TOWJ-R",
+        "TOWJ-L"
 
     ],
 
@@ -793,21 +794,11 @@ const INSTALLATION_DEVICES = {
         "HTJP",
         "STINGER-L",
         "STINGER-R",
-        "HTGTB1",
-        "HTGTB2",
-        "EB1",
-        "EB2",
-        "EB3",
-        "EB4",
         "HSCB",
         "LB BOX",
         "SA",
         "BCG",
         "BCB",
-        "TMJP1 / BG",
-        "TMJP2 / BG",
-        "TMJP3 / BG",
-        "TMJP4 / BG",
         "TMJP1",
         "TMJP2",
         "TMJP3",
@@ -828,21 +819,11 @@ const INSTALLATION_DEVICES = {
         "MS BOX",
         "STINGER-L",
         "STINGER-R",
-        "HTGTB1",
-        "HTGTB2",
-        "EB1",
-        "EB2",
-        "EB3",
-        "EB4",
         "HSCB",
         "LB BOX",
         "SA",
         "BCG",
         "BCB",
-        "TMJP1 / BG",
-        "TMJP2 / BG",
-        "TMJP3 / BG",
-        "TMJP4 / BG",
         "TMJP1",
         "TMJP2",
         "TMJP3",
@@ -859,24 +840,14 @@ const INSTALLATION_DEVICES = {
     MCI: [
 
         "FL",
-        "VVVF1",
-        "VVVF2",
+        "VVVF",
         "MS BOX",
         "STINGER-L",
         "STINGER-R",
-        "HTGTB1",
-        "HTGTB2",
-        "EB1",
-        "EB2",
-        "EB3",
-        "EB4",
         "HSCB",
         "LB BOX",
         "SA",
-        "TMJP1 / BG",
-        "TMJP2 / BG",
-        "TMJP3 / BG",
-        "TMJP4 / BG",
+        "CM",
         "TMJP1",
         "TMJP2",
         "TMJP3",
@@ -1038,6 +1009,7 @@ function updateInstallationDevices() {
 
 /* =========================================
    توليد رقم العربية
+   النظام الجديد الموحد
 ========================================= */
 
 function updateInstallationCarNumber() {
@@ -1045,13 +1017,16 @@ function updateInstallationCarNumber() {
     const carName =
         document.getElementById(
             "installationCarName"
-        ).value;
+        ).value
+        .trim()
+        .toUpperCase();
 
 
     const unitNumber =
         document.getElementById(
             "installationUnitNumber"
-        ).value.trim();
+        ).value
+        .trim();
 
 
     const carNumberInput =
@@ -1078,22 +1053,24 @@ function updateInstallationCarNumber() {
         );
 
 
-    /* اسم العربية */
+    /* =========================
+       عرض البيانات
+    ========================= */
 
     nameDisplay.textContent =
         carName || "—";
-
-
-    /* رقم الوحدة */
 
     unitDisplay.textContent =
         unitNumber || "—";
 
 
+    /* =========================
+       التحقق من البيانات
+    ========================= */
+
     if (
         !carName ||
-        !unitNumber ||
-        Number(unitNumber) < 17
+        !unitNumber
     ) {
 
         carNumberInput.value = "";
@@ -1108,39 +1085,93 @@ function updateInstallationCarNumber() {
     }
 
 
-    const carPositions = {
+    const unit =
+        Number(unitNumber);
 
-        DTC: 0,
-        MC1: 1,
-        MC2: 2,
-        MCI: 3
 
-    };
+    if (
+        !Number.isInteger(unit) ||
+        unit < 1
+    ) {
+
+        carNumberInput.value = "";
+
+        carDisplay.textContent =
+            "—";
+
+        updateInstallationDevices();
+
+        return;
+
+    }
+
+
+    /* =========================
+       ترتيب العربيات
+    ========================= */
+
+    const oddOrder = [
+        "DTC",
+        "MC1",
+        "MC2",
+        "MCI"
+    ];
+
+
+    const evenOrder = [
+        "MCI",
+        "MC2",
+        "MC1",
+        "DTC"
+    ];
+
+
+    const order =
+        unit % 2 === 1
+            ? oddOrder
+            : evenOrder;
 
 
     const position =
-        carPositions[carName];
+        order.indexOf(carName);
 
+
+    if (position === -1) {
+
+        carNumberInput.value = "";
+
+        carDisplay.textContent =
+            "—";
+
+        updateInstallationDevices();
+
+        return;
+
+    }
+
+
+    /* =========================
+       رقم العربية
+    ========================= */
 
     const baseNumber =
-        65 +
-        (
-            (Number(unitNumber) - 17)
-            * 4
-        );
+        ((unit - 1) * 4) + 1;
 
 
     const finalNumber =
-        baseNumber +
-        position;
+        baseNumber + position;
 
+
+    /* =========================
+       القيمة التي تحفظ في DB
+    ========================= */
 
     const carNumber =
         finalNumber +
         "-" +
         carName +
         "-" +
-        unitNumber;
+        unit;
 
 
     carNumberInput.value =
@@ -1264,9 +1295,8 @@ async function saveInstallation() {
         );
 
 
-
     /* =========================
-       التحقق
+       التحقق الأساسي
     ========================= */
 
     if (
@@ -1288,12 +1318,21 @@ async function saveInstallation() {
     }
 
 
+    /* =========================
+       التحقق من رقم الوحدة
+    ========================= */
+
+    const unit =
+        Number(unitNumber);
+
+
     if (
-        Number(unitNumber) < 17
+        !Number.isInteger(unit) ||
+        unit < 1
     ) {
 
         message.innerText =
-            "❌ رقم الوحدة يجب أن يكون 17 أو أكبر";
+            "❌ رقم الوحدة يجب أن يكون رقمًا صحيحًا يبدأ من 1";
 
         message.style.color =
             "#dc3545";
@@ -1302,6 +1341,10 @@ async function saveInstallation() {
 
     }
 
+
+    /* =========================
+       سبب عدم الانتهاء
+    ========================= */
 
     if (
         done === "لا" &&
@@ -1319,6 +1362,10 @@ async function saveInstallation() {
     }
 
 
+    /* =========================
+       التحقق من Supabase
+    ========================= */
+
     if (!supabaseClient) {
 
         message.innerText =
@@ -1330,7 +1377,6 @@ async function saveInstallation() {
         return;
 
     }
-
 
 
     /* =========================
@@ -1348,7 +1394,6 @@ async function saveInstallation() {
 
     message.style.color =
         "#0d6efd";
-
 
 
     /* =========================
@@ -1386,13 +1431,15 @@ async function saveInstallation() {
     };
 
 
-
     console.log(
         "📤 INSTALLATION DATA:",
         payload
     );
 
 
+    /* =========================
+       الحفظ
+    ========================= */
 
     try {
 
@@ -1402,7 +1449,6 @@ async function saveInstallation() {
                 .insert(payload)
                 .select()
                 .single();
-
 
 
         if (result.error) {
@@ -1431,7 +1477,6 @@ async function saveInstallation() {
         }
 
 
-
         /* =========================
            نجاح الحفظ
         ========================= */
@@ -1448,7 +1493,6 @@ async function saveInstallation() {
 
         message.style.color =
             "#198754";
-
 
 
         /* =========================
@@ -1508,7 +1552,8 @@ async function saveInstallation() {
 
         document.getElementById(
             "installationReasonGroup"
-        ).style.display = "none";
+        ).style.display =
+            "none";
 
 
         document.getElementById(
@@ -1516,12 +1561,10 @@ async function saveInstallation() {
         ).value = "";
 
 
-
         button.disabled = false;
 
         button.innerText =
             "💾 حفظ البيانات";
-
 
 
         await loadInstallationRecords();
@@ -1584,7 +1627,6 @@ async function loadInstallationRecords() {
     }
 
 
-
     try {
 
         const result =
@@ -1595,7 +1637,6 @@ async function loadInstallationRecords() {
                     "department",
                     "installation"
                 );
-
 
 
         if (result.error) {
@@ -1618,10 +1659,8 @@ async function loadInstallationRecords() {
         }
 
 
-
         const records =
             result.data || [];
-
 
 
         if (!records.length) {
@@ -1636,6 +1675,9 @@ async function loadInstallationRecords() {
         }
 
 
+        /* =========================
+           ترتيب الأحدث أولاً
+        ========================= */
 
         records.sort(
             function(a, b) {
@@ -1651,9 +1693,7 @@ async function loadInstallationRecords() {
         );
 
 
-
         container.innerHTML = "";
-
 
 
         records.forEach(
@@ -1817,6 +1857,8 @@ function goHome() {
 document.addEventListener(
     "DOMContentLoaded",
     function() {
+
+        updateInstallationCarNumber();
 
         loadInstallationRecords();
 

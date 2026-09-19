@@ -545,8 +545,9 @@ MCI
 <input
 type="number"
 id="ltUnitNumber"
-placeholder="مثال: 17"
-min="17"
+placeholder="مثال: 1"
+min="1"
+step="1"
 oninput="updateLTCarNumber()">
 
 </div>
@@ -980,8 +981,7 @@ MCI: [
 "TMTSJP4",
 "LB BOX",
 "VVVF",
-"MS BOX",
-
+"MS BOX"
 
 ]
 
@@ -1189,10 +1189,15 @@ function formatArabicDate(value) {
 function updateLTCarNumber() {
 
     const carName =
-        document.getElementById("ltCarName").value;
+        document.getElementById("ltCarName")
+            .value
+            .trim()
+            .toUpperCase();
 
     const unitNumber =
-        document.getElementById("ltUnitNumber").value.trim();
+        document.getElementById("ltUnitNumber")
+            .value
+            .trim();
 
     const carNumberInput =
         document.getElementById("ltCarNumber");
@@ -1206,49 +1211,142 @@ function updateLTCarNumber() {
     const unitDisplay =
         document.getElementById("ltUnitDisplay");
 
+
+    /* =========================
+       تحديث العرض
+    ========================= */
+
     nameDisplay.textContent =
         carName || "--";
 
     unitDisplay.textContent =
         unitNumber || "--";
 
+
+    /* =========================
+       التحقق من البيانات
+    ========================= */
+
     if (
         !carName ||
         !unitNumber
     ) {
 
-        carDisplay.textContent = "--";
+        carDisplay.textContent =
+            "--";
 
-        carNumberInput.value = "";
+        carNumberInput.value =
+            "";
 
         return;
 
     }
 
-    const carPositions = {
 
-        DTC: 0,
-        MC1: 1,
-        MC2: 2,
-        MCI: 3
+    const unit =
+        Number(unitNumber);
 
-    };
+
+    if (
+        !Number.isInteger(unit) ||
+        unit < 1
+    ) {
+
+        carDisplay.textContent =
+            "--";
+
+        carNumberInput.value =
+            "";
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       ترتيب العربيات
+
+       الوحدة الفردية:
+       DTC = أول عربية
+       MC1 = ثاني عربية
+       MC2 = ثالث عربية
+       MCI = رابع عربية
+
+       الوحدة الزوجية:
+       MCI = أول عربية
+       MC2 = ثاني عربية
+       MC1 = ثالث عربية
+       DTC = رابع عربية
+    ===================================================== */
+
+    const oddOrder = [
+        "DTC",
+        "MC1",
+        "MC2",
+        "MCI"
+    ];
+
+    const evenOrder = [
+        "MCI",
+        "MC2",
+        "MC1",
+        "DTC"
+    ];
+
+
+    const order =
+        unit % 2 === 1
+            ? oddOrder
+            : evenOrder;
+
 
     const position =
-        carPositions[carName];
+        order.indexOf(carName);
+
+
+    if (position === -1) {
+
+        carDisplay.textContent =
+            "--";
+
+        carNumberInput.value =
+            "";
+
+        return;
+
+    }
+
+
+    /* =========================
+       الرقم الأساسي للوحدة
+    ========================= */
 
     const baseNumber =
-        65 +
-        (
-            (Number(unitNumber) - 17)
-            * 4
-        );
+        ((unit - 1) * 4) + 1;
+
+
+    /* =========================
+       الرقم النهائي
+    ========================= */
 
     const finalNumber =
         baseNumber + position;
 
+
+    /* =========================
+       عرض الرقم
+    ========================= */
+
     carDisplay.textContent =
         finalNumber;
+
+
+    /* =========================
+       رقم قاعدة البيانات
+
+       مثال:
+       5-MCI-2
+    ========================= */
 
     carNumberInput.value =
         finalNumber +
@@ -1256,6 +1354,17 @@ function updateLTCarNumber() {
         carName +
         "-" +
         unitNumber;
+
+
+    console.log(
+        "LT NUMBERING:",
+        {
+            unit: unit,
+            car: carName,
+            number: finalNumber,
+            database: carNumberInput.value
+        }
+    );
 
 }
 
@@ -1267,25 +1376,44 @@ function updateLTCarNumber() {
 async function saveLT() {
 
     const carName =
-        document.getElementById("ltCarName").value.trim();
+        document.getElementById("ltCarName")
+            .value
+            .trim();
+
+    const unitNumber =
+        document.getElementById("ltUnitNumber")
+            .value
+            .trim();
 
     const carNumber =
-        document.getElementById("ltCarNumber").value.trim();
+        document.getElementById("ltCarNumber")
+            .value
+            .trim();
 
     const device =
-        document.getElementById("ltDevice").value.trim();
+        document.getElementById("ltDevice")
+            .value
+            .trim();
 
     const socket =
-        document.getElementById("ltSocket").value.trim();
+        document.getElementById("ltSocket")
+            .value
+            .trim();
 
     const done =
-        document.getElementById("ltDone").value.trim();
+        document.getElementById("ltDone")
+            .value
+            .trim();
 
     const reason =
-        document.getElementById("ltReason").value.trim();
+        document.getElementById("ltReason")
+            .value
+            .trim();
 
     const notes =
-        document.getElementById("ltNotes").value.trim();
+        document.getElementById("ltNotes")
+            .value
+            .trim();
 
     const message =
         document.getElementById("ltMessage");
@@ -1300,6 +1428,7 @@ async function saveLT() {
 
     if (
         !carName ||
+        !unitNumber ||
         !carNumber
     ) {
 
@@ -1358,16 +1487,16 @@ async function saveLT() {
     }
 
 
+    /* =========================
+       رقم الوحدة يبدأ من 1
+    ========================= */
+
     if (
-        Number(
-            document.getElementById(
-                "ltUnitNumber"
-            ).value
-        ) < 17
+        Number(unitNumber) < 1
     ) {
 
         message.innerText =
-            "❌ رقم الوحدة يجب أن يبدأ من 17";
+            "❌ رقم الوحدة يجب أن يبدأ من 1";
 
         message.style.color =
             "#dc3545";
@@ -1853,8 +1982,6 @@ async function loadLTRecords() {
 
                             </p>
 
-
-
                         </div>
 
                     `;
@@ -1873,7 +2000,7 @@ async function loadLTRecords() {
 
                             <span class="status-badge status-not-completed">
 
-                                ❌  لم يتم الانتهاء
+                                ❌ لم يتم الانتهاء
 
                             </span>
 
@@ -2068,6 +2195,40 @@ document.addEventListener(
         updateLTStatus();
 
         loadLTRecords();
+
+        /*
+            اختبار الترقيم
+        */
+
+        console.log(
+            "UNIT 1 DTC =",
+            "1"
+        );
+
+        console.log(
+            "UNIT 1 MCI =",
+            "4"
+        );
+
+        console.log(
+            "UNIT 2 MCI =",
+            "5"
+        );
+
+        console.log(
+            "UNIT 2 MC2 =",
+            "6"
+        );
+
+        console.log(
+            "UNIT 2 MC1 =",
+            "7"
+        );
+
+        console.log(
+            "UNIT 2 DTC =",
+            "8"
+        );
 
     }
 );

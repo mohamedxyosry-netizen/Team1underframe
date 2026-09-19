@@ -426,8 +426,9 @@
                 <input
                     type="number"
                     id="wiringUnitNumber"
-                    placeholder="مثال: 17"
-                    min="17"
+                    placeholder="مثال: 1"
+                    min="1"
+                    step="1"
                     oninput="updateWiringCarNumber()">
 
             </div>
@@ -724,7 +725,7 @@
 
     /* =====================================================
        WIRING TASKS
-       
+
        نفس المهام لكل العربيات:
        Cleat
        Bracket
@@ -854,6 +855,30 @@
 
     /* =====================================================
        CAR NUMBER
+       
+       Unit 1:
+       DTC 1
+       MC1 2
+       MC2 3
+       MCI 4
+
+       Unit 2:
+       MCI 5
+       MC2 6
+       MC1 7
+       DTC 8
+
+       Unit 3:
+       DTC 9
+       MC1 10
+       MC2 11
+       MCI 12
+
+       Unit 4:
+       MCI 13
+       MC2 14
+       MC1 15
+       DTC 16
     ===================================================== */
 
     function updateWiringCarNumber() {
@@ -861,13 +886,18 @@
         const carName =
             document.getElementById(
                 "wiringCarName"
-            ).value;
+            )
+            .value
+            .trim()
+            .toUpperCase();
 
 
         const unitNumber =
             document.getElementById(
                 "wiringUnitNumber"
-            ).value.trim();
+            )
+            .value
+            .trim();
 
 
         const carNumberInput =
@@ -918,38 +948,92 @@
         }
 
 
-        const carPositions = {
+        const unit =
+            Number(unitNumber);
 
-            DTC: 0,
 
-            MC1: 1,
+        if (
+            !Number.isInteger(unit) ||
+            unit < 1
+        ) {
 
-            MC2: 2,
+            carDisplay.textContent =
+                "--";
 
-            MCI: 3
+            carNumberInput.value =
+                "";
 
-        };
+            return;
+
+        }
+
+
+        /* ================================================
+           ترتيب العربيات حسب الوحدة
+        ================================================= */
+
+        const oddOrder = [
+            "DTC",
+            "MC1",
+            "MC2",
+            "MCI"
+        ];
+
+
+        const evenOrder = [
+            "MCI",
+            "MC2",
+            "MC1",
+            "DTC"
+        ];
+
+
+        const order =
+            unit % 2 === 1
+                ? oddOrder
+                : evenOrder;
 
 
         const position =
-            carPositions[carName];
+            order.indexOf(carName);
 
+
+        if (position === -1) {
+
+            carDisplay.textContent =
+                "--";
+
+            carNumberInput.value =
+                "";
+
+            return;
+
+        }
+
+
+        /* ================================================
+           حساب الرقم الأساسي
+        ================================================= */
 
         const baseNumber =
-            65 +
-            (
-                (Number(unitNumber) - 17)
-                * 4
-            );
+            ((unit - 1) * 4) + 1;
 
 
         const finalNumber =
             baseNumber + position;
 
 
+        /* ================================================
+           الرقم الظاهر للمستخدم
+        ================================================= */
+
         carDisplay.textContent =
             finalNumber;
 
+
+        /* ================================================
+           الرقم المخزن في Supabase
+        ================================================= */
 
         carNumberInput.value =
             finalNumber +
@@ -960,8 +1044,14 @@
 
 
         console.log(
-            "🚆 Generated car number:",
-            carNumberInput.value
+            "🚆 WIRING NUMBERING:",
+            {
+                unit: unit,
+                car: carName,
+                number: finalNumber,
+                database:
+                    carNumberInput.value
+            }
         );
 
     }
@@ -1138,11 +1228,14 @@
 
         if (
             !unitNumber ||
-            Number(unitNumber) < 17
+            !Number.isInteger(
+                Number(unitNumber)
+            ) ||
+            Number(unitNumber) < 1
         ) {
 
             message.innerText =
-                "❌ من فضلك أدخل رقم وحدة صحيح يبدأ من 17";
+                "❌ من فضلك أدخل رقم وحدة صحيح يبدأ من 1";
 
             message.style.color =
                 "#dc3545";
@@ -1253,24 +1346,31 @@
 
             const payload = {
 
-                department: "wiring",
+                department:
+                    "wiring",
 
-                car_name: carName,
+                car_name:
+                    carName,
 
-                car_number: carNumber,
+                car_number:
+                    carNumber,
 
-                device: task,
+                device:
+                    task,
 
-                done: done,
+                done:
+                    done,
 
-                notes: notes,
+                notes:
+                    notes,
 
                 not_completed_reason:
                     done === "لا"
                         ? reason
                         : "",
 
-                created_by: username,
+                created_by:
+                    username,
 
                 created_at:
                     new Date().toISOString()
@@ -1359,15 +1459,18 @@
             carNumberElement.value =
                 "";
 
+
             document.getElementById(
                 "wiringCarDisplay"
             ).textContent =
                 "--";
 
+
             document.getElementById(
                 "wiringNameDisplay"
             ).textContent =
                 "--";
+
 
             document.getElementById(
                 "wiringUnitDisplay"
@@ -1381,6 +1484,7 @@
                 </option>
             `;
 
+
             taskElement.disabled =
                 true;
 
@@ -1391,6 +1495,7 @@
 
             reasonElement.value =
                 "";
+
 
             document.getElementById(
                 "wiringReasonGroup"
@@ -1420,6 +1525,7 @@
             await loadWiringRecords();
 
         }
+
 
         catch (error) {
 
@@ -1593,7 +1699,8 @@
                         <h3>
                             🔌
                             ${escapeHTML(
-                                record.device || "Wiring"
+                                record.device ||
+                                "Wiring"
                             )}
                         </h3>
 
@@ -1631,7 +1738,8 @@
                             </strong>
 
                             ${escapeHTML(
-                                record.device || ""
+                                record.device ||
+                                ""
                             )}
 
                         </p>
@@ -1660,7 +1768,8 @@
                             </strong>
 
                             ${escapeHTML(
-                                record.notes || ""
+                                record.notes ||
+                                ""
                             )}
 
                         </p>
@@ -1673,7 +1782,8 @@
                             </strong>
 
                             ${escapeHTML(
-                                record.created_by || ""
+                                record.created_by ||
+                                ""
                             )}
 
                         </p>
@@ -1692,11 +1802,20 @@
                                       ).toLocaleString(
                                         "ar-EG",
                                         {
-                                            day: "numeric",
-                                            month: "long",
-                                            year: "numeric",
-                                            hour: "2-digit",
-                                            minute: "2-digit"
+                                            day:
+                                                "numeric",
+
+                                            month:
+                                                "long",
+
+                                            year:
+                                                "numeric",
+
+                                            hour:
+                                                "2-digit",
+
+                                            minute:
+                                                "2-digit"
                                         }
                                       )
                                     : "غير متوفر"
@@ -1758,6 +1877,8 @@
             updateWiringTasks();
 
             updateWiringStatus();
+
+            updateWiringCarNumber();
 
             loadWiringRecords();
 
