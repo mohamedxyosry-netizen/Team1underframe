@@ -1,0 +1,4012 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>مسار العربية - NERIC</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Tahoma, sans-serif;
+}
+
+body {
+    background: #eef3f8;
+    color: #172033;
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.route-header {
+    background: linear-gradient(135deg,#082b4d,#4123c7);
+    color: white;
+    padding: 17px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 18px rgba(0,0,0,.14);
+}
+
+.header-title h1 {
+    font-size: 23px;
+    margin-bottom: 5px;
+}
+
+.header-title p {
+    font-size: 11px;
+    opacity: .85;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.header-btn {
+    border: none;
+    background: rgba(255,255,255,.13);
+    color: white;
+    padding: 9px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.header-btn:hover {
+    background: rgba(255,255,255,.22);
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.route-container {
+    padding: 18px 22px 30px;
+    overflow-x: auto;
+}
+
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.route-info {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto 17px;
+    background: white;
+    border: 1px solid #dfe6ed;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    box-shadow: 0 4px 14px rgba(16,24,40,.04);
+    font-size: 12px;
+}
+
+.route-info strong {
+    color: #01090f;
+}
+
+.route-status {
+    font-size: 11px;
+    color: #667085;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+.production-map {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    background: white;
+    border: 1px solid #dce4ec;
+    border-radius: 15px;
+    padding: 22px;
+    position: relative;
+    box-shadow: 0 6px 18px rgba(16,24,40,.06);
+}
+
+
+/* =========================================================
+   LINE
+========================================================= */
+
+.line-section {
+    margin-bottom: 35px;
+    position: relative;
+}
+
+.line-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.line-title span {
+    width: 5px;
+    height: 23px;
+    border-radius: 8px;
+    background: linear-gradient(180deg,#0b83f6,#346599);
+}
+
+.line-title h2 {
+    font-size: 16px;
+    color: #172033;
+}
+
+
+/* =========================================================
+   TRACK
+========================================================= */
+
+.track {
+    height: 105px;
+    border-top: 2px solid #090909;
+    border-bottom: 2px solid #111214;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #e9eef3 0px,
+            #e9eef3 30px,
+            #d3dbe4 31px,
+            #d3dbe4 37px
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 10px 22px;
+    position: relative;
+}
+
+.track::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 3px;
+    background: #020b12;
+    transform: translateY(-50%);
+    opacity: .55;
+    z-index: 0;
+}
+
+
+/* =========================================================
+   DIRECTION
+========================================================= */
+
+.direction-arrow {
+    position: absolute;
+    top: -27px;
+    font-size: 10px;
+    color: #667085;
+    font-weight: bold;
+    z-index: 4;
+}
+
+.direction-right {
+    right: 8px;
+}
+
+.direction-left {
+    left: 8px;
+}
+
+
+/* =========================================================
+   STATION
+========================================================= */
+
+.station {
+    width: 165px;
+    min-height: 125px;
+    background: #f8fafc;
+    border: 2px solid #d8e0e8;
+    border-radius: 12px;
+    padding: 9px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 3px 10px rgba(16,24,40,.05);
+}
+
+.station-title {
+    text-align: center;
+    font-weight: bold;
+    color: #172033;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.station-subtitle {
+    text-align: center;
+    color: #8993a1;
+    font-size: 9px;
+    margin-bottom: 7px;
+}
+
+
+/* =========================================================
+   SLOTS
+========================================================= */
+
+.slots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.slot {
+    min-height: 65px;
+    border: 1px dashed #bdc8d4;
+    border-radius: 7px;
+    background: white;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    z-index: 3;
+}
+
+.slot-number {
+    font-size: 8px;
+    color: #98a2b3;
+    margin-bottom: 3px;
+}
+
+
+/* =========================================================
+   TRAIN - NERIC MODERN TRAIN
+========================================================= */
+
+.car {
+    width: 118px;
+    height: 54px;
+
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    border-radius: 30px 9px 9px 30px;
+
+    background:
+        /* الشبابيك */
+        linear-gradient(#102630,#102630) 50px 8px / 22px 19px no-repeat,
+        linear-gradient(#102630,#102630) 76px 8px / 22px 19px no-repeat,
+        linear-gradient(#102630,#102630) 102px 8px / 12px 19px no-repeat,
+
+        /* جسم القطار */
+        linear-gradient(
+            180deg,
+            #19b0de 0%,
+            #55a7f9 45%,
+            #2790d2 46%,
+            #87b6f7 100%
+        );
+
+    border: 2px solid #080117;
+
+    box-shadow:
+        0 5px 10px rgba(0,0,0,.20);
+
+    overflow: hidden;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+
+    z-index: 10;
+}
+
+
+/* =========================================================
+   FRONT BLACK WINDSHIELD
+========================================================= */
+
+.car::before {
+    content: "";
+
+    position: absolute;
+
+    left: 3px;
+    top: 4px;
+
+    width: 39px;
+    height: 19px;
+
+    border-radius:
+        70px
+        10px
+        10px
+        20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #c7d0d3 0%,
+            #18313e 45%,
+            #061219 100%
+        );
+
+    border: 2px solid #0b202b;
+
+    box-shadow:
+        inset 4px 2px 5px rgba(255,255,255,.08);
+
+    z-index: 5;
+}
+
+
+/* =========================================================
+   GREEN SIDE LINE
+   DOES NOT CROSS THE BLACK FRONT
+========================================================= */
+
+.car::after {
+    content: "";
+
+    position: absolute;
+
+    left: 43px;
+    right: 0;
+
+    top: 34px;
+
+    height: 3px;
+
+    background: #e0fc7b;
+
+    border-radius:
+        0
+        3px
+        3px
+        0;
+
+    z-index: 6;
+}
+
+
+/* =========================================================
+   FRONT LIGHT
+========================================================= */
+
+.car-icon {
+    display: block;
+
+    position: absolute;
+
+    left: 10px;
+    bottom: 9px;
+
+    width: 7px;
+    height: 7px;
+
+    font-size: 0;
+
+    background: #fff2a8;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 6px rgba(255,242,168,.95);
+
+    z-index: 8;
+}
+/* الكشاف الثاني بجانب الأول */
+
+.car-icon::after {
+    content: "";
+
+    position: absolute;
+
+    left: 13px;
+    top: 0;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #fff0a0;
+
+    box-shadow:
+        0 0 7px rgba(255,220,100,.95);
+
+    z-index: 8;
+}
+
+/* =========================================================
+   CAR NUMBER
+========================================================= */
+
+.car-number {
+    position: absolute;
+
+    bottom: 5px;
+    right: 8px;
+
+    z-index: 9;
+
+    color: white;
+
+    background:
+        rgba(5,67,48,.80);
+
+    padding:
+        2px 6px;
+
+    border-radius: 4px;
+
+    font-size: 8px;
+    font-weight: bold;
+
+    max-width: 35px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.car:hover {
+    transform:
+        translateY(-3px)
+        scale(1.04);
+
+    box-shadow:
+        0 8px 15px rgba(0,0,0,.28);
+}
+
+/* =========================================================
+   WAITING
+========================================================= */
+
+.waiting-area {
+    width: 100%;
+    max-width: 850px;
+    margin: 5px auto 35px;
+
+    border: 2px dashed #e3a008;
+    background: #fffaf0;
+
+    border-radius: 14px;
+    padding: 15px;
+}
+
+.waiting-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    color: #9a6700;
+    font-weight: bold;
+    font-size: 15px;
+
+    margin-bottom: 12px;
+}
+
+.waiting-slots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.waiting-slot {
+    width: 190px;
+    min-height: 75px;
+
+    background: white;
+    border: 1px dashed #d6a72c;
+    border-radius: 9px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+}
+
+.empty-slot {
+    color: #a0aab5;
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,.55);
+
+    z-index: 1000;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 620px;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    background: rgb(162, 190, 250);
+
+    border-radius: 15px;
+    padding: 22px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.25);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 17px;
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid #020a14;
+}
+
+.modal-header h2 {
+    font-size: 18px;
+    color: #080c16;
+}
+
+.close-btn {
+    border: none;
+    background: #f1f4f7;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+    cursor: pointer;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.field {
+    margin-bottom: 12px;
+}
+
+.field label {
+    display: block;
+
+    font-size: 11px;
+    font-weight: bold;
+
+    margin-bottom: 5px;
+
+    color: #344054;
+}
+
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+
+    border: 1px solid #d2d9e2;
+    border-radius: 8px;
+
+    padding: 9px;
+
+    outline: none;
+
+    font-size: 12px;
+    background: white;
+}
+
+.field input[readonly] {
+    background: #f4f6f8;
+    color: #010611;
+}
+
+.field textarea {
+    min-height: 70px;
+    resize: vertical;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.action-btn {
+    flex: 1;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 10px;
+
+    font-weight: bold;
+    cursor: pointer;
+
+    font-size: 12px;
+}
+
+.primary-btn {
+    background: #0b83f6;
+    color: white;
+}
+
+.success-btn {
+    background: hsl(206, 77%, 51%);
+    color: white;
+}
+
+.warning-btn {
+    background: #e09a08;
+    color: white;
+}
+
+.danger-btn {
+    background: #d92d20;
+    color: white;
+}
+
+.secondary-btn {
+    background: #eef2f6;
+    color: #344054;
+}
+
+
+/* =========================================================
+   MANAGER PANEL
+========================================================= */
+
+.manager-panel {
+    width: 100%;
+    max-width: 1180px;
+
+    margin: 0 auto 15px;
+
+    background: white;
+
+    border: 1px solid #dfe6ed;
+    border-radius: 12px;
+
+    padding: 12px 15px;
+
+    display: none;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    box-shadow:
+        0 4px 14px rgba(16,24,40,.04);
+}
+
+.manager-panel.show {
+    display: flex;
+}
+
+.manager-panel-text strong {
+    display: block;
+    font-size: 12px;
+    color: #172033;
+    margin-bottom: 3px;
+}
+
+.manager-panel-text small {
+    font-size: 10px;
+    color: #8a94a3;
+}
+
+.add-car-btn {
+    border: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #16884d,
+            #106a3b
+        );
+
+    color: white;
+
+    padding: 10px 15px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #172033;
+
+    margin: 20px 0 10px;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+}
+
+.history-table th {
+    background: #f3f6f9;
+    color: #344054;
+
+    padding: 8px;
+
+    border: 1px solid #e2e7ed;
+}
+
+.history-table td {
+    padding: 8px;
+
+    border: 1px solid #e2e7ed;
+
+    color: #596678;
+    text-align: center;
+}
+
+.no-history {
+    text-align: center;
+    padding: 15px;
+    color: #98a2b3;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .route-header {
+        padding: 14px;
+    }
+
+    .header-title h1 {
+        font-size: 18px;
+    }
+
+    .header-actions {
+        flex-direction: column;
+    }
+
+    .route-container {
+        padding: 12px;
+    }
+
+    .production-map {
+        padding: 15px;
+    }
+
+    .route-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .manager-panel {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="route-header">
+
+    <div class="header-title">
+
+        <h1>
+            🚆 مسار العربية
+        </h1>
+
+        <p>
+            NERIC Production Route
+        </p>
+
+    </div>
+
+
+    <div class="header-actions">
+
+        <button
+            id="addCarHeaderBtn"
+            class="header-btn"
+            style="display:none;"
+            onclick="openAddCarModal()">
+
+            ＋ إضافة عربية
+
+        </button>
+
+
+        <button
+            class="header-btn"
+            onclick="goBack()">
+
+            ← لوحة التحكم
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="route-container">
+
+
+<!-- =========================================================
+     MANAGER PANEL
+========================================================= -->
+
+<div
+    id="managerPanel"
+    class="manager-panel">
+
+    <div class="manager-panel-text">
+
+        <strong>
+            👨‍💼 وضع المدير
+        </strong>
+
+        <small>
+            يمكنك نقل العربية لأي محطة أو Slot ومتابعة سجل الحركة وحذف العربية
+        </small>
+
+    </div>
+
+
+    <button
+        class="add-car-btn"
+        onclick="openAddCarModal()">
+
+        ＋ إضافة عربية للمسار
+
+    </button>
+
+</div>
+
+
+<!-- =========================================================
+     INFO
+========================================================= -->
+
+<div class="route-info">
+
+    <div>
+
+        <strong>
+            مسار الإنتاج:
+        </strong>
+
+        Wiring
+        →
+        Equipment
+        →
+        HT
+        →
+        LT
+        →
+        منطقة الانتظار
+        →
+        Final
+
+    </div>
+
+
+    <div
+        id="routeStatus"
+        class="route-status">
+
+        جاري تحميل المسار...
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MAP
+========================================================= -->
+
+<section class="production-map">
+
+
+<!-- LINE 5 -->
+
+<div class="line-section">
+
+    <div class="line-title">
+        <span></span>
+        <h2>Line 5</h2>
+    </div>
+
+
+    <div class="track">
+
+        <div class="direction-arrow direction-right">
+            دخول العربية ←
+        </div>
+
+
+        <!-- WIRING -->
+
+        <div
+            class="station"
+            data-station="wiring">
+
+            <div class="station-title">
+                Wiring
+            </div>
+
+            <div class="station-subtitle">
+                Station 1
+            </div>
+
+            <div class="slots">
+
+                <div
+                    class="slot"
+                    data-station="wiring"
+                    data-slot="1">
+
+                    <span class="slot-number">
+                        Slot 1
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="slot"
+                    data-station="wiring"
+                    data-slot="2">
+
+                    <span class="slot-number">
+                        Slot 2
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EQUIPMENT -->
+
+        <div
+            class="station"
+            data-station="equipment">
+
+            <div class="station-title">
+                Equipment
+            </div>
+
+            <div class="station-subtitle">
+                Station 2
+            </div>
+
+            <div class="slots">
+
+                <div
+                    class="slot"
+                    data-station="equipment"
+                    data-slot="1">
+
+                    <span class="slot-number">
+                        Slot 1
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="slot"
+                    data-station="equipment"
+                    data-slot="2">
+
+                    <span class="slot-number">
+                        Slot 2
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- LINE 1 -->
+
+<div class="line-section">
+
+    <div class="line-title">
+        <span></span>
+        <h2>Line 1</h2>
+    </div>
+
+
+    <div class="track">
+
+        <div class="direction-arrow direction-left">
+            دخول العربية →
+        </div>
+
+
+        <!-- HT -->
+
+        <div
+            class="station"
+            data-station="ht">
+
+            <div class="station-title">
+                HT
+            </div>
+
+            <div class="station-subtitle">
+                Station 3
+            </div>
+
+            <div class="slots">
+
+                <div
+                    class="slot"
+                    data-station="ht"
+                    data-slot="1">
+
+                    <span class="slot-number">
+                        Slot 1
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="slot"
+                    data-station="ht"
+                    data-slot="2">
+
+                    <span class="slot-number">
+                        Slot 2
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LT -->
+
+        <div
+            class="station"
+            data-station="lt">
+
+            <div class="station-title">
+                LT
+            </div>
+
+            <div class="station-subtitle">
+                Station 4
+            </div>
+
+            <div class="slots">
+
+                <div
+                    class="slot"
+                    data-station="lt"
+                    data-slot="1">
+
+                    <span class="slot-number">
+                        Slot 1
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="slot"
+                    data-station="lt"
+                    data-slot="2">
+
+                    <span class="slot-number">
+                        Slot 2
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- WAITING -->
+
+<div class="waiting-area">
+
+    <div class="waiting-title">
+
+        ⏳
+
+        <span>
+            منطقة الانتظار
+        </span>
+
+    </div>
+
+
+    <div class="waiting-slots">
+
+        <div
+            class="waiting-slot"
+            data-station="waiting"
+            data-slot="1">
+
+            <div class="empty-slot">
+                Slot 1 — فارغ
+            </div>
+
+        </div>
+
+
+        <div
+            class="waiting-slot"
+            data-station="waiting"
+            data-slot="2">
+
+            <div class="empty-slot">
+                Slot 2 — فارغ
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- LINE 2 -->
+
+<div class="line-section">
+
+    <div class="line-title">
+        <span></span>
+        <h2>Line 2</h2>
+    </div>
+
+
+    <div class="track">
+
+        <div class="direction-arrow direction-right">
+            اتجاه Final →
+        </div>
+
+
+        <!-- FINAL -->
+
+        <div
+            class="station"
+            data-station="final">
+
+            <div class="station-title">
+                Final
+            </div>
+
+            <div class="station-subtitle">
+                Final Station
+            </div>
+
+            <div class="slots">
+
+                <div
+                    class="slot"
+                    data-station="final"
+                    data-slot="1">
+
+                    <span class="slot-number">
+                        Slot 1
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="slot"
+                    data-station="final"
+                    data-slot="2">
+
+                    <span class="slot-number">
+                        Slot 2
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</section>
+
+</main>
+
+
+<!-- =========================================================
+     CAR MODAL
+========================================================= -->
+
+<div
+    id="carModal"
+    class="modal">
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h2>
+                🚆 بيانات العربية
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeCarModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div id="carDetails">
+            جاري التحميل...
+        </div>
+
+
+        <!-- DATA PAGE -->
+
+        <div
+            id="carDataActions"
+            style="display:none;">
+
+            <div class="modal-actions">
+
+                <button
+                    class="action-btn primary-btn"
+                    onclick="openCarDataPage()">
+
+                    📋 تسجيل بيانات العربية
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- WORKER -->
+
+        <div
+            id="workerActions"
+            style="display:none;">
+
+            <div class="modal-actions">
+
+                <button
+                    class="action-btn success-btn"
+                    onclick="completeCurrentCar()">
+
+                    ✓ تم الانتهاء
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- MANAGER -->
+
+        <div
+            id="managerActions"
+            style="display:none;">
+
+
+            <div class="history-title">
+                👨‍💼 تحكم المدير
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    المحطة المطلوبة
+                </label>
+
+                <select
+                    id="managerStation">
+
+                    <option value="wiring">
+                        Wiring
+                    </option>
+
+                    <option value="equipment">
+                        Equipment
+                    </option>
+
+                    <option value="ht">
+                        HT
+                    </option>
+
+                    <option value="lt">
+                        LT
+                    </option>
+
+                    <option value="waiting">
+                        منطقة الانتظار
+                    </option>
+
+                    <option value="final">
+                        Final
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    المكان
+                </label>
+
+                <select
+                    id="managerSlot">
+
+                    <option value="1">
+                        Slot 1
+                    </option>
+
+                    <option value="2">
+                        Slot 2
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    سبب / ملاحظة النقل
+                </label>
+
+                <textarea
+                    id="managerNote"
+                    placeholder="مثال: رجوع لإعادة العمل..."></textarea>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    class="action-btn primary-btn"
+                    onclick="managerMoveCar()">
+
+                    ↔ نقل العربية
+
+                </button>
+
+
+                <button
+                    class="action-btn warning-btn"
+                    onclick="moveCurrentCarToWaiting()">
+
+                    ⏳ إرسال للانتظار
+
+                </button>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    class="action-btn secondary-btn"
+                    onclick="loadCurrentCarHistory()">
+
+                    📋 سجل حركة العربية
+
+                </button>
+
+            </div>
+
+
+            <!-- DELETE -->
+
+            <div class="modal-actions">
+
+                <button
+                    id="deleteCarBtn"
+                    class="action-btn danger-btn"
+                    onclick="deleteCurrentCar()">
+
+                    🗑️ حذف العربية
+
+                </button>
+
+            </div>
+
+
+            <div id="historyContainer"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     ADD CAR MODAL
+========================================================= -->
+
+<div
+    id="addCarModal"
+    class="modal">
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h2>
+                ＋ إضافة عربية للمسار
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeAddCarModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <!-- رقم الوحدة -->
+
+        <div class="field">
+
+            <label>
+                رقم الوحدة
+            </label>
+
+            <input
+                id="newUnitNumber"
+                type="number"
+                min="1"
+                value="1"
+                placeholder="مثال: 1">
+
+        </div>
+
+
+        <!-- اسم العربية -->
+
+        <div class="field">
+
+            <label>
+                اسم العربية
+            </label>
+
+            <select
+                id="newCarName"
+                onchange="updateGeneratedCarNumber()">
+
+                <option value="DTC">
+                    DTC
+                </option>
+
+                <option value="MC1">
+                    MC1
+                </option>
+
+                <option value="MC2">
+                    MC2
+                </option>
+
+                <option value="MCI">
+                    MCI
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- رقم العربية تلقائي -->
+
+        <div class="field">
+
+            <label>
+                رقم العربية
+            </label>
+
+            <input
+                id="newCarNumber"
+                type="text"
+                readonly>
+
+        </div>
+
+
+        <!-- بداية المسار -->
+
+        <div class="field">
+
+            <label>
+                بداية المسار
+            </label>
+
+            <select id="newCarStation">
+
+                <option value="wiring">
+                    Wiring
+                </option>
+
+                <option value="equipment">
+                    Equipment
+                </option>
+
+                <option value="ht">
+                    HT
+                </option>
+
+                <option value="lt">
+                    LT
+                </option>
+
+                <option value="waiting">
+                    منطقة الانتظار
+                </option>
+
+                <option value="final">
+                    Final
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- Slot -->
+
+        <div class="field">
+
+            <label>
+                Slot
+            </label>
+
+            <select id="newCarSlot">
+
+                <option value="1">
+                    Slot 1
+                </option>
+
+                <option value="2">
+                    Slot 2
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                class="action-btn primary-btn"
+                onclick="addNewCar()">
+
+                ✓ إضافة العربية
+
+            </button>
+
+
+            <button
+                class="action-btn secondary-btn"
+                onclick="closeAddCarModal()">
+
+                إلغاء
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+    "https://gzyybadyaunizdlvmcle.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+
+const routeSupabase =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================================
+   ROUTE
+========================================================= */
+
+const ROUTE = [
+
+    "wiring",
+    "equipment",
+    "ht",
+    "lt",
+    "waiting",
+    "final"
+
+];
+
+
+/* =========================================================
+   CURRENT USER
+========================================================= */
+
+function getRouteUser() {
+
+    try {
+
+        const data =
+            sessionStorage.getItem(
+                "currentUser"
+            );
+
+        if (!data) {
+            return null;
+        }
+
+        return JSON.parse(data);
+
+    } catch {
+
+        return null;
+
+    }
+
+}
+
+
+/* =========================================================
+   MANAGER
+========================================================= */
+
+function isManager() {
+
+    const user =
+        getRouteUser();
+
+    return !!user &&
+        String(
+            user.role || ""
+        ).toLowerCase() === "admin";
+
+}
+
+
+/* =========================================================
+   WORKER STATION PERMISSION
+========================================================= */
+
+function canWorkerCompleteStation(station) {
+
+    const user =
+        getRouteUser();
+
+
+    if (!user) {
+        return false;
+    }
+
+
+    const roles = [
+
+        user.role,
+
+        user.secondRole,
+
+        ...(Array.isArray(user.extraRoles)
+            ? user.extraRoles
+            : [])
+
+    ]
+    .map(
+        role =>
+            String(
+                role || ""
+            ).toLowerCase()
+    );
+
+
+    if (
+        roles.includes("admin")
+    ) {
+
+        return true;
+
+    }
+
+
+    if (
+        station === "waiting"
+    ) {
+
+        return false;
+
+    }
+
+
+    const requiredRole =
+        station === "equipment"
+            ? "installation"
+            : station;
+
+
+    return roles.includes(
+        requiredRole
+    );
+
+}
+
+
+/* =========================================================
+   CURRENT CAR
+========================================================= */
+
+let currentCar = null;
+
+
+/* =========================================================
+   NUMBERING SYSTEM
+=========================================================
+
+   Unit 1:
+   DTC = 1
+   MC1 = 2
+   MC2 = 3
+   MCI = 4
+
+   Unit 2:
+   MCI = 5
+   MC2 = 6
+   MC1 = 7
+   DTC = 8
+
+   Unit 3:
+   DTC = 9
+   MC1 = 10
+   MC2 = 11
+   MCI = 12
+
+   Unit 4:
+   MCI = 13
+   MC2 = 14
+   MC1 = 15
+   DTC = 16
+
+========================================================= */
+
+function calculateRouteCarNumber(
+    carName,
+    unitNumber
+) {
+
+    const normalOrder = {
+
+        DTC: 0,
+        MC1: 1,
+        MC2: 2,
+        MCI: 3
+
+    };
+
+
+    const reverseOrder = {
+
+        MCI: 0,
+        MC2: 1,
+        MC1: 2,
+        DTC: 3
+
+    };
+
+
+    const name =
+        String(
+            carName || ""
+        )
+        .trim()
+        .toUpperCase();
+
+
+    const unit =
+        Number(
+            unitNumber
+        );
+
+
+    if (!Number.isInteger(unit) || unit < 1) {
+
+        return "";
+
+    }
+
+
+    const positions =
+        unit % 2 === 0
+            ? reverseOrder
+            : normalOrder;
+
+
+    if (
+        !Object.prototype.hasOwnProperty.call(
+            positions,
+            name
+        )
+    ) {
+
+        return "";
+
+    }
+
+
+    return (
+        ((unit - 1) * 4) +
+        positions[name] +
+        1
+    )
+    .toString();
+
+}
+
+
+/* =========================================================
+   UPDATE NUMBER AUTOMATICALLY
+========================================================= */
+
+function updateGeneratedCarNumber() {
+
+    const unitInput =
+        document.getElementById(
+            "newUnitNumber"
+        );
+
+
+    const carNameInput =
+        document.getElementById(
+            "newCarName"
+        );
+
+
+    const carNumberInput =
+        document.getElementById(
+            "newCarNumber"
+        );
+
+
+    if (
+        !unitInput ||
+        !carNameInput ||
+        !carNumberInput
+    ) {
+
+        return;
+
+    }
+
+
+    const number =
+        calculateRouteCarNumber(
+
+            carNameInput.value,
+
+            unitInput.value
+
+        );
+
+
+    carNumberInput.value =
+        number;
+
+}
+
+
+/* =========================================================
+   UNIT NUMBER CHANGE
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const unitInput =
+            document.getElementById(
+                "newUnitNumber"
+            );
+
+
+        if (unitInput) {
+
+            unitInput.addEventListener(
+                "input",
+                updateGeneratedCarNumber
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
+        const user =
+            getRouteUser();
+
+
+        if (!user) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        if (isManager()) {
+
+            document
+                .getElementById(
+                    "managerPanel"
+                )
+                .classList.add(
+                    "show"
+                );
+
+
+            document
+                .getElementById(
+                    "addCarHeaderBtn"
+                )
+                .style.display =
+                    "inline-block";
+
+        }
+
+
+        updateGeneratedCarNumber();
+
+        await loadRouteCars();
+
+        startRouteRealtime();
+
+    }
+);
+
+
+/* =========================================================
+   LOAD CARS
+========================================================= */
+
+async function loadRouteCars() {
+
+    setStatus(
+        "جاري تحميل العربيات..."
+    );
+
+
+    const {
+        data,
+        error
+    } =
+        await routeSupabase
+
+            .from(
+                "production_route_cars"
+            )
+
+            .select("*")
+
+            .neq(
+                "status",
+                "completed"
+            )
+
+            .order(
+                "updated_at",
+                {
+                    ascending: true
+                }
+            );
+
+
+    if (error) {
+
+        console.error(
+            "Load cars error:",
+            error
+        );
+
+        setStatus(
+            "❌ خطأ في تحميل المسار"
+        );
+
+        return;
+
+    }
+
+
+    clearRoute();
+
+
+    (data || []).forEach(
+        renderCar
+    );
+
+
+    setStatus(
+        `العربيات الموجودة على المسار: ${(data || []).length}`
+    );
+
+}
+
+
+/* =========================================================
+   CLEAR
+========================================================= */
+
+function clearRoute() {
+
+    document
+        .querySelectorAll(
+            ".slot, .waiting-slot"
+        )
+        .forEach(
+            slot => {
+
+                const number =
+                    slot.dataset.slot;
+
+
+                if (
+                    slot.classList.contains(
+                        "waiting-slot"
+                    )
+                ) {
+
+                    slot.innerHTML =
+                        `
+                        <div class="empty-slot">
+                            Slot ${number} — فارغ
+                        </div>
+                        `;
+
+                } else {
+
+                    slot.innerHTML =
+                        `
+                        <span class="slot-number">
+                            Slot ${number}
+                        </span>
+
+                        <div class="empty-slot">
+                            فارغ
+                        </div>
+                        `;
+
+                }
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   RENDER CAR
+========================================================= */
+
+function renderCar(car) {
+
+    const station =
+        car.current_station;
+
+
+    const slotNumber =
+        Number(
+            car.slot_number || 1
+        );
+
+
+    const slot =
+        document.querySelector(
+            `[data-station="${station}"][data-slot="${slotNumber}"]`
+        );
+
+
+    if (!slot) {
+
+        console.warn(
+            "Slot not found:",
+            station,
+            slotNumber
+        );
+
+        return;
+
+    }
+
+
+    const carElement =
+        document.createElement(
+            "div"
+        );
+
+
+    carElement.className =
+        "car";
+
+
+    carElement.innerHTML =
+        `
+
+        <div class="car-icon">
+            🚆
+        </div>
+
+        <div class="car-number">
+            ${escapeHtml(
+                car.car_number ||
+                car.unit_number ||
+                "Car"
+            )}
+        </div>
+
+        `;
+
+
+    carElement.onclick =
+        function () {
+
+            openCarModal(car);
+
+        };
+
+
+    slot.innerHTML = "";
+
+    slot.appendChild(
+        carElement
+    );
+
+}
+
+
+/* =========================================================
+   OPEN CAR
+========================================================= */
+
+async function openCarModal(car) {
+
+    currentCar =
+        car;
+
+
+    const modal =
+        document.getElementById(
+            "carModal"
+        );
+
+
+    const details =
+        document.getElementById(
+            "carDetails"
+        );
+
+
+    details.innerHTML =
+        `
+
+        <div class="field">
+
+            <label>
+                رقم الوحدة
+            </label>
+
+            <input
+                value="${escapeHtml(
+                    car.unit_number || ""
+                )}"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                اسم العربية
+            </label>
+
+            <input
+                value="${escapeHtml(
+                    car.car_name || ""
+                )}"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                رقم العربية
+            </label>
+
+            <input
+                value="${escapeHtml(
+                    car.car_number || ""
+                )}"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                المحطة الحالية
+            </label>
+
+            <input
+                value="${escapeHtml(
+                    stationName(
+                        car.current_station
+                    )
+                )}"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                Slot
+            </label>
+
+            <input
+                value="${car.slot_number || 1}"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                آخر تحديث
+            </label>
+
+            <input
+                value="${formatDate(
+                    car.updated_at
+                )}"
+                readonly>
+
+        </div>
+
+        `;
+
+
+    const workerActions =
+        document.getElementById(
+            "workerActions"
+        );
+
+
+    const managerActions =
+        document.getElementById(
+            "managerActions"
+        );
+
+
+    const carDataActions =
+        document.getElementById(
+            "carDataActions"
+        );
+
+
+    const historyContainer =
+        document.getElementById(
+            "historyContainer"
+        );
+
+
+    const deleteCarBtn =
+        document.getElementById(
+            "deleteCarBtn"
+        );
+
+
+    historyContainer.innerHTML =
+        "";
+
+
+    if (isManager()) {
+
+        workerActions.style.display =
+            "none";
+
+        managerActions.style.display =
+            "block";
+
+
+        if (carDataActions) {
+
+            carDataActions.style.display =
+                "block";
+
+        }
+
+
+        if (deleteCarBtn) {
+
+            deleteCarBtn.style.display =
+                "block";
+
+        }
+
+
+        document.getElementById(
+            "managerStation"
+        ).value =
+            car.current_station;
+
+
+        document.getElementById(
+            "managerSlot"
+        ).value =
+            car.slot_number || 1;
+
+    } else {
+
+        managerActions.style.display =
+            "none";
+
+
+        if (carDataActions) {
+
+            carDataActions.style.display =
+                "none";
+
+        }
+
+
+        if (deleteCarBtn) {
+
+            deleteCarBtn.style.display =
+                "none";
+
+        }
+
+
+        if (
+            canWorkerCompleteStation(
+                car.current_station
+            )
+        ) {
+
+            workerActions.style.display =
+                "block";
+
+        } else {
+
+            workerActions.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    modal.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   OPEN DATA PAGE
+========================================================= */
+
+function openCarDataPage() {
+
+    if (!currentCar) {
+
+        return;
+
+    }
+
+
+    window.location.href =
+        "search.html";
+
+}
+
+
+/* =========================================================
+   CLOSE
+========================================================= */
+
+function closeCarModal() {
+
+    document
+        .getElementById(
+            "carModal"
+        )
+        .classList.remove(
+            "show"
+        );
+
+    currentCar =
+        null;
+
+}
+
+
+/* =========================================================
+   WORKER COMPLETE
+========================================================= */
+
+async function completeCurrentCar() {
+
+    if (!currentCar) {
+        return;
+    }
+
+
+    const user =
+        getRouteUser();
+
+
+    if (!user) {
+        return;
+    }
+
+
+    if (
+        !canWorkerCompleteStation(
+            currentCar.current_station
+        )
+    ) {
+
+        alert(
+            "❌ ليس لديك صلاحية لإنهاء هذه المحطة"
+        );
+
+        return;
+
+    }
+
+
+    const currentIndex =
+        ROUTE.indexOf(
+            currentCar.current_station
+        );
+
+
+    if (
+        currentCar.current_station
+        === "final"
+    ) {
+
+        const confirmed =
+            confirm(
+                "هل تم الانتهاء من العربية وإخراجها من مسار الإنتاج؟"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        const {
+            error
+        } =
+            await routeSupabase
+
+                .from(
+                    "production_route_cars"
+                )
+
+                .update({
+
+                    status:
+                        "completed",
+
+                    completed_at:
+                        new Date()
+                            .toISOString(),
+
+                    updated_at:
+                        new Date()
+                            .toISOString()
+
+                })
+
+                .eq(
+                    "id",
+                    currentCar.id
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "❌ لم يتم إنهاء العربية"
+            );
+
+            return;
+
+        }
+
+
+        await addHistory({
+
+            car_id:
+                currentCar.id,
+
+            unit_number:
+                currentCar.unit_number,
+
+            car_name:
+                currentCar.car_name,
+
+            car_number:
+                currentCar.car_number,
+
+            from_station:
+                "final",
+
+            to_station:
+                null,
+
+            from_slot:
+                currentCar.slot_number,
+
+            to_slot:
+                null,
+
+            action:
+                "completed",
+
+            moved_by:
+                user.username,
+
+            moved_by_name:
+                user.full_name ||
+                user.username,
+
+            note:
+                "تم الانتهاء من Final وإخراج العربية"
+
+        });
+
+
+        closeCarModal();
+
+        await loadRouteCars();
+
+        return;
+
+    }
+
+
+    if (
+        currentIndex === -1 ||
+        currentIndex >= ROUTE.length - 1
+    ) {
+
+        return;
+
+    }
+
+
+    const nextStation =
+        ROUTE[
+            currentIndex + 1
+        ];
+
+
+    const freeSlot =
+        findFreeSlot(
+            nextStation
+        );
+
+
+    if (!freeSlot) {
+
+        alert(
+            "⚠️ المحطة التالية ممتلئة.\nيوجد مكانان فقط."
+        );
+
+        return;
+
+    }
+
+
+    await moveCar(
+
+        currentCar,
+
+        nextStation,
+
+        freeSlot,
+
+        "completed_station",
+
+        "تم الانتهاء من المحطة"
+
+    );
+
+}
+
+
+/* =========================================================
+   MANAGER MOVE
+========================================================= */
+
+async function managerMoveCar() {
+
+    if (
+        !currentCar ||
+        !isManager()
+    ) {
+        return;
+    }
+
+
+    const station =
+        document.getElementById(
+            "managerStation"
+        ).value;
+
+
+    const slot =
+        Number(
+            document.getElementById(
+                "managerSlot"
+            ).value
+        );
+
+
+    const note =
+        document.getElementById(
+            "managerNote"
+        ).value.trim();
+
+
+    if (
+        !isSlotAvailable(
+            station,
+            slot,
+            currentCar.id
+        )
+    ) {
+
+        alert(
+            "⚠️ المكان المحدد مشغول."
+        );
+
+        return;
+
+    }
+
+
+    await moveCar(
+
+        currentCar,
+
+        station,
+
+        slot,
+
+        "manager_move",
+
+        note ||
+        "نقل بواسطة المدير"
+
+    );
+
+}
+
+
+/* =========================================================
+   WAITING
+========================================================= */
+
+async function moveCurrentCarToWaiting() {
+
+    if (
+        !currentCar ||
+        !isManager()
+    ) {
+        return;
+    }
+
+
+    const freeSlot =
+        findFreeSlot(
+            "waiting"
+        );
+
+
+    if (!freeSlot) {
+
+        alert(
+            "⚠️ منطقة الانتظار ممتلئة."
+        );
+
+        return;
+
+    }
+
+
+    await moveCar(
+
+        currentCar,
+
+        "waiting",
+
+        freeSlot,
+
+        "manager_waiting",
+
+        "تم إرسال العربية إلى منطقة الانتظار"
+
+    );
+
+}
+
+
+/* =========================================================
+   DELETE CURRENT CAR
+========================================================= */
+
+async function deleteCurrentCar() {
+
+    if (
+        !currentCar ||
+        !isManager()
+    ) {
+
+        return;
+
+    }
+
+
+    const carNumber =
+        currentCar.car_number ||
+        currentCar.unit_number ||
+        "";
+
+
+    const confirmed =
+        confirm(
+            "⚠️ هل أنت متأكد من حذف العربية؟\n\n" +
+            "رقم العربية: " +
+            carNumber +
+            "\n\n" +
+            "سيتم حذفها من مسار الإنتاج نهائيًا."
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    const carId =
+        currentCar.id;
+
+
+    const {
+        error
+    } =
+        await routeSupabase
+
+            .from(
+                "production_route_cars"
+            )
+
+            .delete()
+
+            .eq(
+                "id",
+                carId
+            );
+
+
+    if (error) {
+
+        console.error(
+            "Delete car error:",
+            error
+        );
+
+
+        alert(
+            "❌ لم يتم حذف العربية.\n\n" +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    closeCarModal();
+
+    await loadRouteCars();
+
+
+    alert(
+        "تم حذف العربية بنجاح ✅"
+    );
+
+}
+
+
+/* =========================================================
+   MOVE
+========================================================= */
+
+async function moveCar(
+    car,
+    station,
+    slot,
+    action,
+    note = ""
+) {
+
+    if (!slot) {
+
+        alert(
+            "⚠️ لا يوجد مكان متاح."
+        );
+
+        return;
+
+    }
+
+
+    const user =
+        getRouteUser();
+
+
+    const now =
+        new Date()
+            .toISOString();
+
+
+    const {
+        error
+    } =
+        await routeSupabase
+
+            .from(
+                "production_route_cars"
+            )
+
+            .update({
+
+                current_station:
+                    station,
+
+                slot_number:
+                    slot,
+
+                status:
+                    station === "waiting"
+                        ? "waiting"
+                        : "active",
+
+                updated_at:
+                    now
+
+            })
+
+            .eq(
+                "id",
+                car.id
+            );
+
+
+    if (error) {
+
+        console.error(
+            "Move error:",
+            error
+        );
+
+        alert(
+            "❌ لم يتم نقل العربية"
+        );
+
+        return;
+
+    }
+
+
+    await addHistory({
+
+        car_id:
+            car.id,
+
+        unit_number:
+            car.unit_number,
+
+        car_name:
+            car.car_name,
+
+        car_number:
+            car.car_number,
+
+        from_station:
+            car.current_station,
+
+        to_station:
+            station,
+
+        from_slot:
+            car.slot_number,
+
+        to_slot:
+            slot,
+
+        action:
+            action,
+
+        moved_by:
+            user
+                ? user.username
+                : "",
+
+        moved_by_name:
+            user
+                ? (
+                    user.full_name ||
+                    user.username
+                )
+                : "",
+
+        note:
+            note
+
+    });
+
+
+    const noteElement =
+        document.getElementById(
+            "managerNote"
+        );
+
+
+    if (noteElement) {
+        noteElement.value = "";
+    }
+
+
+    closeCarModal();
+
+    await loadRouteCars();
+
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+async function addHistory(data) {
+
+    const {
+        error
+    } =
+        await routeSupabase
+
+            .from(
+                "production_route_history"
+            )
+
+            .insert([
+
+                {
+
+                    car_id:
+                        data.car_id,
+
+                    unit_number:
+                        data.unit_number ??
+                        null,
+
+                    car_name:
+                        data.car_name ??
+                        "",
+
+                    car_number:
+                        data.car_number ??
+                        null,
+
+                    from_station:
+                        data.from_station ??
+                        null,
+
+                    to_station:
+                        data.to_station ??
+                        null,
+
+                    from_slot:
+                        data.from_slot ??
+                        null,
+
+                    to_slot:
+                        data.to_slot ??
+                        null,
+
+                    action:
+                        data.action ??
+                        "",
+
+                    moved_by:
+                        data.moved_by ??
+                        "",
+
+                    moved_by_name:
+                        data.moved_by_name ??
+                        "",
+
+                    nots:
+                        data.note ??
+                        ""
+
+                }
+
+            ]);
+
+
+    if (error) {
+
+        console.error(
+            "History error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD HISTORY
+========================================================= */
+
+async function loadCurrentCarHistory() {
+
+    if (!currentCar) {
+        return;
+    }
+
+
+    const container =
+        document.getElementById(
+            "historyContainer"
+        );
+
+
+    container.innerHTML =
+        `
+        <div class="no-history">
+            جاري تحميل السجل...
+        </div>
+        `;
+
+
+    const {
+        data,
+        error
+    } =
+        await routeSupabase
+
+            .from(
+                "production_route_history"
+            )
+
+            .select("*")
+
+            .eq(
+                "car_id",
+                currentCar.id
+            )
+
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+    if (error) {
+
+        console.error(error);
+
+        container.innerHTML =
+            `
+            <div class="no-history">
+                ❌ لم يتم تحميل سجل الحركة
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    if (!data || !data.length) {
+
+        container.innerHTML =
+            `
+            <div class="no-history">
+                لا يوجد سجل حركة حتى الآن
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    let html =
+        `
+        <div class="history-title">
+            📋 سجل حركة العربية
+        </div>
+
+        <table class="history-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>من</th>
+                    <th>إلى</th>
+                    <th>Slot</th>
+                    <th>بواسطة</th>
+                    <th>الوقت</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+        `;
+
+
+    data.forEach(
+        item => {
+
+            html +=
+                `
+
+                <tr>
+
+                    <td>
+                        ${escapeHtml(
+                            stationName(
+                                item.from_station
+                            )
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            stationName(
+                                item.to_station
+                            )
+                        )}
+                    </td>
+
+                    <td>
+                        ${
+                            item.to_slot || "-"
+                        }
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            item.moved_by_name ||
+                            item.moved_by ||
+                            "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatDate(
+                            item.created_at
+                        )}
+                    </td>
+
+                </tr>
+
+                `;
+
+        }
+    );
+
+
+    html +=
+        `
+            </tbody>
+        </table>
+        `;
+
+
+    container.innerHTML =
+        html;
+
+}
+
+
+/* =========================================================
+   FREE SLOT
+========================================================= */
+
+function findFreeSlot(station) {
+
+    const slots =
+        document.querySelectorAll(
+            `.slot[data-station="${station}"][data-slot],
+             .waiting-slot[data-station="${station}"][data-slot]`
+        );
+
+
+    for (
+        const slot of slots
+    ) {
+
+        if (
+            !slot.querySelector(
+                ".car"
+            )
+        ) {
+
+            return Number(
+                slot.dataset.slot
+            );
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   SLOT AVAILABLE
+========================================================= */
+
+function isSlotAvailable(
+    station,
+    slot,
+    currentCarId
+) {
+
+    const element =
+        document.querySelector(
+            `[data-station="${station}"][data-slot="${slot}"]`
+        );
+
+
+    if (!element) {
+        return false;
+    }
+
+
+    const carElement =
+        element.querySelector(
+            ".car"
+        );
+
+
+    if (!carElement) {
+        return true;
+    }
+
+
+    if (
+        currentCar &&
+        currentCar.id === currentCarId &&
+        currentCar.current_station === station &&
+        Number(
+            currentCar.slot_number
+        ) === Number(slot)
+    ) {
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+/* =========================================================
+   ADD CAR MODAL
+========================================================= */
+
+function openAddCarModal() {
+
+    if (!isManager()) {
+        return;
+    }
+
+
+    document
+        .getElementById(
+            "addCarModal"
+        )
+        .classList.add(
+            "show"
+        );
+
+
+    updateGeneratedCarNumber();
+
+}
+
+
+function closeAddCarModal() {
+
+    document
+        .getElementById(
+            "addCarModal"
+        )
+        .classList.remove(
+            "show"
+        );
+
+}
+
+
+/* =========================================================
+   ADD NEW CAR
+========================================================= */
+
+async function addNewCar() {
+
+    if (!isManager()) {
+        return;
+    }
+
+
+    const unitNumber =
+        document
+            .getElementById(
+                "newUnitNumber"
+            )
+            .value.trim();
+
+
+    const carName =
+        document
+            .getElementById(
+                "newCarName"
+            )
+            .value;
+
+
+    const carNumber =
+        document
+            .getElementById(
+                "newCarNumber"
+            )
+            .value.trim();
+
+
+    const station =
+        document
+            .getElementById(
+                "newCarStation"
+            )
+            .value;
+
+
+    const slot =
+        Number(
+            document
+                .getElementById(
+                    "newCarSlot"
+                )
+                .value
+        );
+
+
+    if (!unitNumber) {
+
+        alert(
+            "⚠️ اكتب رقم الوحدة."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        Number(unitNumber) < 1
+    ) {
+
+        alert(
+            "⚠️ رقم الوحدة يجب أن يبدأ من 1."
+        );
+
+        return;
+
+    }
+
+
+    if (!carNumber) {
+
+        alert(
+            "⚠️ لم يتم إنشاء رقم العربية."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !isSlotAvailable(
+            station,
+            slot,
+            null
+        )
+    ) {
+
+        alert(
+            "⚠️ الـ Slot المحدد مشغول."
+        );
+
+        return;
+
+    }
+
+
+    const user =
+        getRouteUser();
+
+
+    const {
+        data,
+        error
+    } =
+        await routeSupabase
+
+            .from(
+                "production_route_cars"
+            )
+
+            .insert([
+
+                {
+
+                    unit_number:
+                        unitNumber,
+
+                    car_name:
+                        carName,
+
+                    car_number:
+                        carNumber,
+
+                    current_station:
+                        station,
+
+                    slot_number:
+                        slot,
+
+                    status:
+                        station === "waiting"
+                            ? "waiting"
+                            : "active"
+
+                }
+
+            ])
+
+            .select()
+            .single();
+
+
+    if (error) {
+
+        console.error(
+            "Add car error:",
+            error
+        );
+
+
+        alert(
+            "❌ لم تتم إضافة العربية\n\n" +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    await addHistory({
+
+        car_id:
+            data.id,
+
+        unit_number:
+            data.unit_number,
+
+        car_name:
+            data.car_name,
+
+        car_number:
+            data.car_number,
+
+        from_station:
+            null,
+
+        to_station:
+            station,
+
+        from_slot:
+            null,
+
+        to_slot:
+            slot,
+
+        action:
+            "created",
+
+        moved_by:
+            user.username,
+
+        moved_by_name:
+            user.full_name ||
+            user.username,
+
+        note:
+            "إضافة عربية جديدة إلى مسار الإنتاج"
+
+    });
+
+
+    document.getElementById(
+        "newUnitNumber"
+    ).value = "1";
+
+
+    document.getElementById(
+        "newCarName"
+    ).value = "DTC";
+
+
+    updateGeneratedCarNumber();
+
+
+    closeAddCarModal();
+
+    await loadRouteCars();
+
+
+    alert(
+        "تمت إضافة العربية إلى المسار بنجاح ✅"
+    );
+
+}
+
+
+/* =========================================================
+   REALTIME
+========================================================= */
+
+function startRouteRealtime() {
+
+    routeSupabase
+
+        .channel(
+            "production-route-realtime"
+        )
+
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table:
+                    "production_route_cars"
+            },
+            function () {
+
+                loadRouteCars();
+
+            }
+        )
+
+        .subscribe();
+
+}
+
+
+/* =========================================================
+   STATION NAME
+========================================================= */
+
+function stationName(station) {
+
+    const names = {
+
+        wiring:
+            "Wiring",
+
+        equipment:
+            "Equipment",
+
+        ht:
+            "HT",
+
+        lt:
+            "LT",
+
+        waiting:
+            "منطقة الانتظار",
+
+        final:
+            "Final"
+
+    };
+
+
+    if (!station) {
+        return "-";
+    }
+
+
+    return (
+        names[station] ||
+        station
+    );
+
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function formatDate(value) {
+
+    if (!value) {
+        return "-";
+    }
+
+
+    try {
+
+        return new Date(
+            value
+        ).toLocaleString(
+            "ar-EG"
+        );
+
+    } catch {
+
+        return value;
+
+    }
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function setStatus(message) {
+
+    const element =
+        document.getElementById(
+            "routeStatus"
+        );
+
+
+    if (element) {
+
+        element.textContent =
+            message;
+
+    }
+
+}
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+function escapeHtml(value) {
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+function goBack() {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* =========================================================
+   CLOSE BY OUTSIDE CLICK
+========================================================= */
+
+document
+    .getElementById(
+        "carModal"
+    )
+    .addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target === this
+            ) {
+
+                closeCarModal();
+
+            }
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "addCarModal"
+    )
+    .addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target === this
+            ) {
+
+                closeAddCarModal();
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
