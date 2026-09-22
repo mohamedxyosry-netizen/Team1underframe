@@ -10,7 +10,11 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        /* ترتيب كروت لوحة التحكم */
+
+        /* =========================================
+           ترتيب كروت لوحة التحكم
+        ========================================= */
+
         .stats {
             display: grid !important;
             grid-template-columns: repeat(4, minmax(180px, 1fr)) !important;
@@ -26,7 +30,9 @@
         }
 
         /* الترتيب من اليمين لليسار:
-           مكتملة | مشاكل العربيات | قيد التنفيذ | تسجيل الحضور */
+           مكتملة | مشاكل العربيات | Priority Item | تسجيل الحضور
+        */
+
         .stats .stat-card:nth-child(1) {
             order: 1;
         }
@@ -44,16 +50,23 @@
         }
 
         @media (max-width: 900px) {
+
             .stats {
-                grid-template-columns: repeat(2, minmax(160px, 1fr)) !important;
+                grid-template-columns:
+                    repeat(2, minmax(160px, 1fr)) !important;
             }
+
         }
 
         @media (max-width: 520px) {
+
             .stats {
-                grid-template-columns: 1fr !important;
+                grid-template-columns:
+                    1fr !important;
             }
+
         }
+
 
         /* =========================================
            عداد الرسائل غير المقروءة - الدردشة
@@ -65,47 +78,88 @@
 
         .chat-menu-icon {
             position: relative;
+
             display: inline-flex;
+
             align-items: center;
             justify-content: center;
+
             width: 28px;
             height: 28px;
+
             flex-shrink: 0;
         }
 
         #chatUnreadCount {
+
             display: none;
+
             position: absolute;
+
             top: -9px;
             right: -10px;
+
             min-width: 21px;
             height: 21px;
+
             padding: 0 5px;
+
             background: #d92d20;
             color: #fff;
+
             border: 2px solid #fff;
+
             border-radius: 50px;
+
             font-size: 11px;
             font-weight: 800;
+
             line-height: 17px;
+
             text-align: center;
+
             box-sizing: border-box;
+
             z-index: 20;
-            box-shadow: 0 2px 5px rgba(0,0,0,.18);
+
+            box-shadow:
+                0 2px 5px rgba(0,0,0,.18);
         }
+
+
+        /* =========================================
+           زر مسار العربية
+        ========================================= */
+
+        #productionRouteMenu span:first-child {
+
+            background:
+                rgba(11,131,246,0.12);
+
+        }
+
+        #productionRouteMenu strong {
+
+            font-weight: 700;
+
+        }
+
     </style>
 
 </head>
 
+
 <body>
 
     <div class="app">
+
 
         <!-- ==============================
              الشريط الجانبي
         =============================== -->
 
         <aside class="sidebar">
+
 
             <div class="logo-area">
 
@@ -123,15 +177,41 @@
 
             </div>
 
+
             <nav class="sidebar-menu">
 
-                <!-- سجل البيانات -->
+
+                <!-- ==================================
+                     مسار العربية
+                ================================== -->
+
+                <button
+                    id="productionRouteMenu"
+                    class="menu-item"
+                    onclick="openProductionRoute()">
+
+                    <span>
+                        🚆
+                    </span>
+
+                    <strong>
+                        مسار العربية
+                    </strong>
+
+                </button>
+
+
+                <!-- ==================================
+                     سجل البيانات
+                ================================== -->
 
                 <button
                     class="menu-item"
                     onclick="openSection('search')">
 
-                    <span>📋</span>
+                    <span>
+                        📋
+                    </span>
 
                     <strong>
                         سجل البيانات
@@ -140,14 +220,18 @@
                 </button>
 
 
-                <!-- الإشعارات - للمدير فقط -->
+                <!-- ==================================
+                     الإشعارات - للمدير فقط
+                ================================== -->
 
                 <button
                     id="notificationsMenu"
                     class="menu-item"
                     onclick="openNotificationsPage()">
 
-                    <span>🔔</span>
+                    <span>
+                        🔔
+                    </span>
 
                     <strong>
                         الإشعارات
@@ -167,13 +251,17 @@
                             font-weight:bold;
                             margin-right:auto;
                         ">
+
                         0
+
                     </span>
 
                 </button>
 
 
-                <!-- الدردشة -->
+                <!-- ==================================
+                     الدردشة
+                ================================== -->
 
                 <button
                     id="chatMenu"
@@ -197,14 +285,18 @@
                 </button>
 
 
-                <!-- طلبات الحذف -->
+                <!-- ==================================
+                     طلبات الحذف
+                ================================== -->
 
                 <button
                     id="deleteRequestsMenu"
                     class="menu-item"
                     onclick="openSection('deleteRequests')">
 
-                    <span>🗑️</span>
+                    <span>
+                        🗑️
+                    </span>
 
                     <strong>
                         طلبات الحذف
@@ -221,19 +313,25 @@
                             font-weight:bold;
                             margin-right:auto;
                         ">
+
                         0
+
                     </span>
 
                 </button>
 
 
-                <!-- تسجيل الخروج -->
+                <!-- ==================================
+                     تسجيل الخروج
+                ================================== -->
 
                 <button
                     class="menu-item logout-menu"
                     onclick="logout()">
 
-                    <span>🚪</span>
+                    <span>
+                        🚪
+                    </span>
 
                     <strong>
                         تسجيل الخروج
@@ -241,12 +339,16 @@
 
                 </button>
 
+
             </nav>
 
 
             <div class="sidebar-footer">
+
                 جميع الحقوق محفوظة © 2026
+
             </div>
+
 
         </aside>
 
@@ -257,7 +359,10 @@
 
         <div class="main-content">
 
-            <!-- الهيدر -->
+
+            <!-- =================================
+                 الهيدر
+            ================================== -->
 
             <header class="top-header">
 
@@ -272,6 +377,7 @@
                     </p>
 
                 </div>
+
 
                 <div class="user-info">
 
@@ -390,9 +496,7 @@
                 </div>
 
 
-                <!-- =================================
-                     تسجيل الحضور
-                ================================== -->
+                <!-- تسجيل الحضور -->
 
                 <div
                     class="stat-card"
@@ -421,6 +525,7 @@
 
                 </div>
 
+
             </section>
 
 
@@ -429,6 +534,7 @@
             =============================== -->
 
             <section class="section-area">
+
 
                 <div class="section-title">
 
@@ -444,7 +550,9 @@
                 <div class="sections">
 
 
-                    <!-- Wiring -->
+                    <!-- =============================
+                         Wiring
+                    ============================== -->
 
                     <button
                         id="section-wiring"
@@ -470,7 +578,9 @@
                     </button>
 
 
-                    <!-- LT -->
+                    <!-- =============================
+                         LT
+                    ============================== -->
 
                     <button
                         id="section-lt"
@@ -496,7 +606,9 @@
                     </button>
 
 
-                    <!-- HT -->
+                    <!-- =============================
+                         HT
+                    ============================== -->
 
                     <button
                         id="section-ht"
@@ -522,7 +634,9 @@
                     </button>
 
 
-                    <!-- Equipment -->
+                    <!-- =============================
+                         Equipment
+                    ============================== -->
 
                     <button
                         id="section-installation"
@@ -548,7 +662,9 @@
                     </button>
 
 
-                    <!-- Final -->
+                    <!-- =============================
+                         Final
+                    ============================== -->
 
                     <button
                         id="section-final"
@@ -564,7 +680,7 @@
                         </strong>
 
                         <small>
-                            تسجيل اعمالFinal
+                            تسجيل اعمال Final
                         </small>
 
                         <span class="enter-btn">
@@ -572,6 +688,7 @@
                         </span>
 
                     </button>
+
 
                 </div>
 
@@ -583,6 +700,7 @@
             =============================== -->
 
             <section class="quick-search">
+
 
                 <div class="search-content">
 
@@ -621,6 +739,7 @@
 
                 </div>
 
+
             </section>
 
 
@@ -644,6 +763,7 @@
 
             </footer>
 
+
         </div>
 
     </div>
@@ -664,6 +784,36 @@
 
 
     <script>
+
+
+        // ==================================
+        // فتح صفحة مسار العربية
+        // ==================================
+
+        function openProductionRoute() {
+
+            const user =
+                typeof getCurrentUser === "function"
+                    ? getCurrentUser()
+                    : null;
+
+
+            if (!user) {
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            window.location.href =
+                "route.html";
+
+        }
+
+
 
         // ==================================
         // تسجيل الحضور
@@ -805,6 +955,7 @@
                         .from("attendance")
                         .insert([
                             {
+
                                 username:
                                     username,
 
@@ -822,6 +973,7 @@
 
                                 status:
                                     "present"
+
                             }
                         ]);
 
@@ -864,6 +1016,7 @@
         }
 
 
+
         // ==================================
         // فتح صفحة الدردشة
         // ==================================
@@ -872,6 +1025,7 @@
 
             const user =
                 getCurrentUser();
+
 
             if (!user) {
 
@@ -882,10 +1036,12 @@
 
             }
 
+
             window.location.href =
                 "chat.html";
 
         }
+
 
 
         // ==================================
@@ -899,6 +1055,7 @@
                     ? getCurrentUser()
                     : null;
 
+
             if (!user) {
 
                 window.location.href =
@@ -908,18 +1065,24 @@
 
             }
 
+
             const allowedPriorityRoles = [
+
                 "admin",
                 "wiring",
                 "lt",
                 "ht",
                 "installation",
                 "final"
+
             ];
+
 
             if (
                 !allowedPriorityRoles.includes(
-                    String(user.role || "").toLowerCase()
+                    String(
+                        user.role || ""
+                    ).toLowerCase()
                 )
             ) {
 
@@ -931,10 +1094,12 @@
 
             }
 
+
             window.location.href =
                 "priority.html";
 
         }
+
 
 
         // ==================================
@@ -999,8 +1164,9 @@
 
             ]
             .filter(Boolean)
-            .map(role =>
-                String(role).toLowerCase()
+            .map(
+                role =>
+                    String(role).toLowerCase()
             );
 
 
@@ -1178,6 +1344,7 @@
         }
 
 
+
         // ==================================
         // الإشعارات - صفحة مستقلة للمدير
         // ==================================
@@ -1186,6 +1353,7 @@
 
             const user =
                 getCurrentUser();
+
 
             if (!user) {
 
@@ -1216,6 +1384,7 @@
         }
 
 
+
         // ==================================
         // مشاكل العربيات
         // ==================================
@@ -1224,6 +1393,7 @@
 
             const user =
                 getCurrentUser();
+
 
             if (!user) {
 
@@ -1239,6 +1409,7 @@
                 "problems.html";
 
         }
+
 
 
         // ==================================
@@ -1316,6 +1487,7 @@
         }
 
 
+
         // ==================================
         // التاريخ والوقت
         // ==================================
@@ -1371,6 +1543,7 @@
             updateDateTime,
             1000
         );
+
 
     </script>
 
@@ -1514,6 +1687,7 @@
             }
 
         }
+
 
 
         // =========================================
@@ -1713,6 +1887,7 @@
         );
 
     </script>
+
 
 </body>
 
