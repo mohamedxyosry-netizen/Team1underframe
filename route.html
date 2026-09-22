@@ -14,10 +14,6 @@
 
 <style>
 
-/* =========================================================
-   RESET
-========================================================= */
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -31,10 +27,7 @@ body {
     min-height: 100vh;
 }
 
-
-/* =========================================================
-   HEADER
-========================================================= */
+/* ================= HEADER ================= */
 
 .route-header {
     background: linear-gradient(135deg,#082b4d,#4123c7);
@@ -77,20 +70,12 @@ body {
     background: rgba(255,255,255,.22);
 }
 
-
-/* =========================================================
-   MAIN
-========================================================= */
+/* ================= MAIN ================= */
 
 .route-container {
     padding: 18px 22px 30px;
     overflow-x: auto;
 }
-
-
-/* =========================================================
-   INFO
-========================================================= */
 
 .route-info {
     width: 100%;
@@ -118,10 +103,7 @@ body {
     white-space: nowrap;
 }
 
-
-/* =========================================================
-   MAP
-========================================================= */
+/* ================= MAP ================= */
 
 .production-map {
     width: 100%;
@@ -134,11 +116,6 @@ body {
     position: relative;
     box-shadow: 0 6px 18px rgba(16,24,40,.06);
 }
-
-
-/* =========================================================
-   LINE
-========================================================= */
 
 .line-section {
     margin-bottom: 35px;
@@ -164,13 +141,10 @@ body {
     color: #172033;
 }
 
-
-/* =========================================================
-   TRACK
-========================================================= */
-
 .track {
-    height: 105px;
+    min-width: 850px;
+    min-height: 155px;
+
     border-top: 2px solid #090909;
     border-bottom: 2px solid #111214;
 
@@ -183,31 +157,48 @@ body {
             #d3dbe4 37px
         );
 
-    display: flex;
+    display: grid;
+
+    grid-template-columns:
+        minmax(250px, 1fr)
+        230px
+        minmax(250px, 1fr);
+
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 10px 22px;
+
+    gap: 14px;
+
+    padding: 14px 18px;
+
     position: relative;
+
+    direction: ltr;
 }
 
 .track::before {
     content: "";
+
     position: absolute;
+
     left: 0;
     right: 0;
+
     top: 50%;
+
     height: 3px;
+
     background: #020b12;
+
     transform: translateY(-50%);
+
     opacity: .55;
+
     z-index: 0;
 }
 
-
-/* =========================================================
-   DIRECTION
-========================================================= */
+.track > * {
+    direction: rtl;
+}
 
 .direction-arrow {
     position: absolute;
@@ -216,6 +207,7 @@ body {
     color: #667085;
     font-weight: bold;
     z-index: 4;
+    direction: rtl;
 }
 
 .direction-right {
@@ -226,13 +218,11 @@ body {
     left: 8px;
 }
 
-
-/* =========================================================
-   STATION
-========================================================= */
+/* ================= STATION ================= */
 
 .station {
-    width: 165px;
+    width: 100%;
+    min-width: 0;
     min-height: 125px;
     background: #f8fafc;
     border: 2px solid #d8e0e8;
@@ -241,6 +231,7 @@ body {
     position: relative;
     z-index: 2;
     box-shadow: 0 3px 10px rgba(16,24,40,.05);
+    overflow: hidden;
 }
 
 .station-title {
@@ -258,23 +249,21 @@ body {
     margin-bottom: 7px;
 }
 
-
-/* =========================================================
-   SLOTS
-========================================================= */
-
 .slots {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 6px;
+    min-width: 0;
 }
 
 .slot {
-    min-height: 65px;
+    min-width: 0;
+    width: 100%;
+    min-height: 76px;
     border: 1px dashed #bdc8d4;
     border-radius: 7px;
     background: white;
-    padding: 5px;
+    padding: 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -282,6 +271,7 @@ body {
     text-align: center;
     position: relative;
     z-index: 3;
+    overflow: hidden;
 }
 
 .slot-number {
@@ -290,28 +280,179 @@ body {
     margin-bottom: 3px;
 }
 
+.empty-slot {
+    color: #a0aab5;
+    font-size: 9px;
+}
 
-/* =========================================================
-   TRAIN - NERIC MODERN TRAIN
-========================================================= */
+/* ================= WAITING ================= */
+
+.inline-waiting {
+    width: 100%;
+    min-width: 0;
+    min-height: 116px;
+    background: #fffaf0;
+    border: 2px dashed #e3a008;
+    border-radius: 12px;
+    padding: 8px;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.inline-waiting-title {
+    text-align: center;
+    color: #9a6700;
+    font-weight: bold;
+    font-size: 11px;
+    margin-bottom: 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.inline-waiting-slots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    min-width: 0;
+}
+
+.waiting-slot {
+    min-width: 0;
+    width: 100%;
+    min-height: 75px;
+    background: white;
+    border: 1px dashed #d6a72c;
+    border-radius: 9px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.waiting-area {
+    width: 100%;
+    max-width: 850px;
+    margin: 5px auto 35px;
+    border: 2px dashed #e3a008;
+    background: #fffaf0;
+    border-radius: 14px;
+    padding: 15px;
+    overflow: hidden;
+}
+
+.waiting-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #9a6700;
+    font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.waiting-slots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    min-width: 0;
+}
+
+.waiting-area .waiting-slot {
+    min-height: 85px;
+}
+
+/* ================= CAR ================= */
+
+.car-wrap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    position: relative;
+    z-index: 20;
+    overflow: hidden;
+}
+
+.car-label {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 21px;
+    background: #07111d;
+    color: white;
+    border-radius: 7px;
+    padding: 3px 4px;
+    font-size: 8px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,.18);
+    direction: rtl;
+}
+
+.car-label-unit,
+.car-label-name,
+.car-label-number {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.car-label-unit {
+    color: #ffe36e;
+}
+
+.car-label-name {
+    color: white;
+}
+
+.car-label-number {
+    color: #9de7ff;
+    font-size: 7px;
+}
 
 .car {
     width: 118px;
+    max-width: 100%;
+    min-width: 0;
     height: 54px;
-
     position: relative;
     cursor: pointer;
-    flex-shrink: 0;
-
+    flex-shrink: 1;
     border-radius: 30px 9px 9px 30px;
 
     background:
-        /* الشبابيك */
-        linear-gradient(#102630,#102630) 50px 8px / 22px 19px no-repeat,
-        linear-gradient(#102630,#102630) 76px 8px / 22px 19px no-repeat,
-        linear-gradient(#102630,#102630) 102px 8px / 12px 19px no-repeat,
 
-        /* جسم القطار */
+        linear-gradient(
+            #102630,
+            #102630
+        ) 50px 8px / 22px 19px no-repeat,
+
+        linear-gradient(
+            #102630,
+            #102630
+        ) 76px 8px / 22px 19px no-repeat,
+
+        linear-gradient(
+            #102630,
+            #102630
+        ) 102px 8px / 12px 19px no-repeat,
+
         linear-gradient(
             180deg,
             #19b0de 0%,
@@ -334,27 +475,14 @@ body {
     z-index: 10;
 }
 
-
-/* =========================================================
-   FRONT BLACK WINDSHIELD
-========================================================= */
-
 .car::before {
     content: "";
-
     position: absolute;
-
     left: 3px;
     top: 4px;
-
     width: 39px;
     height: 19px;
-
-    border-radius:
-        70px
-        10px
-        10px
-        20px;
+    border-radius: 70px 10px 10px 20px;
 
     background:
         linear-gradient(
@@ -372,204 +500,77 @@ body {
     z-index: 5;
 }
 
-
-/* =========================================================
-   GREEN SIDE LINE
-   DOES NOT CROSS THE BLACK FRONT
-========================================================= */
-
 .car::after {
     content: "";
-
     position: absolute;
-
     left: 43px;
     right: 0;
-
     top: 34px;
-
     height: 3px;
-
     background: #e0fc7b;
-
-    border-radius:
-        0
-        3px
-        3px
-        0;
-
+    border-radius: 0 3px 3px 0;
     z-index: 6;
 }
 
-
-/* =========================================================
-   FRONT LIGHT
-========================================================= */
-
 .car-icon {
     display: block;
-
     position: absolute;
-
     left: 10px;
     bottom: 9px;
-
     width: 7px;
     height: 7px;
-
     font-size: 0;
-
     background: #fff2a8;
-
     border-radius: 50%;
-
-    box-shadow:
-        0 0 6px rgba(255,242,168,.95);
-
+    box-shadow: 0 0 6px rgba(255,242,168,.95);
     z-index: 8;
 }
-/* الكشاف الثاني بجانب الأول */
 
 .car-icon::after {
     content: "";
-
     position: absolute;
-
     left: 13px;
     top: 0;
-
     width: 7px;
     height: 7px;
-
     border-radius: 50%;
-
     background: #fff0a0;
-
-    box-shadow:
-        0 0 7px rgba(255,220,100,.95);
-
+    box-shadow: 0 0 7px rgba(255,220,100,.95);
     z-index: 8;
 }
 
-/* =========================================================
-   CAR NUMBER
-========================================================= */
-
 .car-number {
     position: absolute;
-
     bottom: 5px;
     right: 8px;
-
     z-index: 9;
-
     color: white;
-
-    background:
-        rgba(5,67,48,.80);
-
-    padding:
-        2px 6px;
-
+    background: rgba(5,67,48,.80);
+    padding: 2px 6px;
     border-radius: 4px;
-
     font-size: 8px;
     font-weight: bold;
-
     max-width: 35px;
-
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-
-/* =========================================================
-   HOVER
-========================================================= */
-
 .car:hover {
-    transform:
-        translateY(-3px)
-        scale(1.04);
-
-    box-shadow:
-        0 8px 15px rgba(0,0,0,.28);
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 8px 15px rgba(0,0,0,.28);
 }
 
-/* =========================================================
-   WAITING
-========================================================= */
-
-.waiting-area {
-    width: 100%;
-    max-width: 850px;
-    margin: 5px auto 35px;
-
-    border: 2px dashed #e3a008;
-    background: #fffaf0;
-
-    border-radius: 14px;
-    padding: 15px;
-}
-
-.waiting-title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    color: #9a6700;
-    font-weight: bold;
-    font-size: 15px;
-
-    margin-bottom: 12px;
-}
-
-.waiting-slots {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-}
-
-.waiting-slot {
-    width: 190px;
-    min-height: 75px;
-
-    background: white;
-    border: 1px dashed #d6a72c;
-    border-radius: 9px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    position: relative;
-}
-
-.empty-slot {
-    color: #a0aab5;
-    font-size: 9px;
-}
-
-
-/* =========================================================
-   MODAL
-========================================================= */
+/* ================= MODAL ================= */
 
 .modal {
     display: none;
-
     position: fixed;
     inset: 0;
-
     background: rgba(0,0,0,.55);
-
     z-index: 1000;
-
     align-items: center;
     justify-content: center;
-
     padding: 20px;
 }
 
@@ -582,24 +583,18 @@ body {
     max-width: 620px;
     max-height: 90vh;
     overflow-y: auto;
-
-    background: rgb(162, 190, 250);
-
+    background: rgb(162,190,250);
     border-radius: 15px;
     padding: 22px;
-
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.25);
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
 }
 
 .modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     margin-bottom: 17px;
     padding-bottom: 12px;
-
     border-bottom: 1px solid #020a14;
 }
 
@@ -611,20 +606,14 @@ body {
 .close-btn {
     border: none;
     background: #f1f4f7;
-
     width: 32px;
     height: 32px;
-
     border-radius: 50%;
     cursor: pointer;
-
     font-size: 17px;
 }
 
-
-/* =========================================================
-   FORM
-========================================================= */
+/* ================= FORM ================= */
 
 .field {
     margin-bottom: 12px;
@@ -632,12 +621,9 @@ body {
 
 .field label {
     display: block;
-
     font-size: 11px;
     font-weight: bold;
-
     margin-bottom: 5px;
-
     color: #344054;
 }
 
@@ -645,14 +631,10 @@ body {
 .field select,
 .field textarea {
     width: 100%;
-
     border: 1px solid #d2d9e2;
     border-radius: 8px;
-
     padding: 9px;
-
     outline: none;
-
     font-size: 12px;
     background: white;
 }
@@ -667,10 +649,7 @@ body {
     resize: vertical;
 }
 
-
-/* =========================================================
-   BUTTONS
-========================================================= */
+/* ================= BUTTONS ================= */
 
 .modal-actions {
     display: flex;
@@ -680,15 +659,11 @@ body {
 
 .action-btn {
     flex: 1;
-
     border: none;
     border-radius: 8px;
-
     padding: 10px;
-
     font-weight: bold;
     cursor: pointer;
-
     font-size: 12px;
 }
 
@@ -698,7 +673,7 @@ body {
 }
 
 .success-btn {
-    background: hsl(206, 77%, 51%);
+    background: hsl(206,77%,51%);
     color: white;
 }
 
@@ -717,33 +692,91 @@ body {
     color: #344054;
 }
 
+/* ================= WORKER OPTIONS ================= */
 
-/* =========================================================
-   MANAGER PANEL
-========================================================= */
+.worker-complete-box {
+    margin-top: 15px;
+    background: white;
+    border-radius: 12px;
+    padding: 14px;
+    border: 1px solid #dce4ec;
+}
+
+.worker-complete-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #172033;
+    margin-bottom: 12px;
+}
+
+.worker-option {
+    width: 100%;
+    border: none;
+    border-radius: 9px;
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.worker-option:last-child {
+    margin-bottom: 0;
+}
+
+.worker-waiting {
+    background: #fff4d6;
+    color: #8a5a00;
+    border: 1px solid #e3a008;
+}
+
+.worker-slot {
+    background: #e9f3ff;
+    color: #075da8;
+    border: 1px solid #80bfff;
+}
+
+.worker-next {
+    background: #e7f8ee;
+    color: #087443;
+    border: 1px solid #68c997;
+}
+
+.worker-simple {
+    background: #0b83f6;
+    color: white;
+}
+
+.worker-option:hover {
+    filter: brightness(.96);
+    transform: translateY(-1px);
+}
+
+.worker-hint {
+    text-align: center;
+    color: #667085;
+    font-size: 10px;
+    margin-top: 9px;
+    line-height: 1.7;
+}
+
+/* ================= MANAGER ================= */
 
 .manager-panel {
     width: 100%;
     max-width: 1180px;
-
     margin: 0 auto 15px;
-
     background: white;
-
     border: 1px solid #dfe6ed;
     border-radius: 12px;
-
     padding: 12px 15px;
-
     display: none;
-
     align-items: center;
     justify-content: space-between;
-
     gap: 10px;
-
-    box-shadow:
-        0 4px 14px rgba(16,24,40,.04);
+    box-shadow: 0 4px 14px rgba(16,24,40,.04);
 }
 
 .manager-panel.show {
@@ -764,36 +797,21 @@ body {
 
 .add-car-btn {
     border: none;
-
-    background:
-        linear-gradient(
-            135deg,
-            #16884d,
-            #106a3b
-        );
-
+    background: linear-gradient(135deg,#16884d,#106a3b);
     color: white;
-
     padding: 10px 15px;
-
     border-radius: 8px;
-
     font-size: 12px;
     font-weight: bold;
-
     cursor: pointer;
 }
 
-
-/* =========================================================
-   HISTORY
-========================================================= */
+/* ================= HISTORY ================= */
 
 .history-title {
     font-size: 14px;
     font-weight: bold;
     color: #172033;
-
     margin: 20px 0 10px;
 }
 
@@ -806,17 +824,13 @@ body {
 .history-table th {
     background: #f3f6f9;
     color: #344054;
-
     padding: 8px;
-
     border: 1px solid #e2e7ed;
 }
 
 .history-table td {
     padding: 8px;
-
     border: 1px solid #e2e7ed;
-
     color: #596678;
     text-align: center;
 }
@@ -828,12 +842,9 @@ body {
     font-size: 11px;
 }
 
+/* ================= MOBILE ================= */
 
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 700px) {
+@media (max-width:700px) {
 
     .route-header {
         padding: 14px;
@@ -853,6 +864,7 @@ body {
 
     .production-map {
         padding: 15px;
+        overflow-x: auto;
     }
 
     .route-info {
@@ -865,19 +877,46 @@ body {
         flex-direction: column;
     }
 
+    .track {
+        min-width: 850px;
+    }
+
+    .car {
+        height: 50px;
+    }
+
+    .car-label {
+        font-size: 7px;
+        gap: 2px;
+    }
+
+    .car-label-number {
+        font-size: 6px;
+    }
+
+}
+
+@media (max-width:430px) {
+
+    .modal {
+        padding: 10px;
+    }
+
+    .modal-box {
+        padding: 15px;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+
 }
 
 </style>
 
 </head>
 
-
 <body>
-
-
-<!-- =========================================================
-     HEADER
-========================================================= -->
 
 <header class="route-header">
 
@@ -893,19 +932,17 @@ body {
 
     </div>
 
-
     <div class="header-actions">
 
         <button
             id="addCarHeaderBtn"
             class="header-btn"
-            style="display:none;"
+            style="display:none"
             onclick="openAddCarModal()">
 
             ＋ إضافة عربية
 
         </button>
-
 
         <button
             class="header-btn"
@@ -919,13 +956,7 @@ body {
 
 </header>
 
-
 <main class="route-container">
-
-
-<!-- =========================================================
-     MANAGER PANEL
-========================================================= -->
 
 <div
     id="managerPanel"
@@ -943,7 +974,6 @@ body {
 
     </div>
 
-
     <button
         class="add-car-btn"
         onclick="openAddCarModal()">
@@ -953,11 +983,6 @@ body {
     </button>
 
 </div>
-
-
-<!-- =========================================================
-     INFO
-========================================================= -->
 
 <div class="route-info">
 
@@ -969,18 +994,23 @@ body {
 
         Wiring
         →
+        Waiting 1 / 2
+        →
         Equipment
         →
         HT
         →
+        Waiting 3 / 4
+        →
         LT
         →
-        منطقة الانتظار
+        Waiting 5 / 6
+        →
+        Waiting 7 / 8
         →
         Final
 
     </div>
-
 
     <div
         id="routeStatus"
@@ -992,84 +1022,27 @@ body {
 
 </div>
 
-
-<!-- =========================================================
-     MAP
-========================================================= -->
-
 <section class="production-map">
 
-
-<!-- LINE 5 -->
+<!-- ================= LINE 5 ================= -->
 
 <div class="line-section">
 
     <div class="line-title">
-        <span></span>
-        <h2>Line 5</h2>
-    </div>
 
+        <span></span>
+
+        <h2>
+            Line 5
+        </h2>
+
+    </div>
 
     <div class="track">
 
         <div class="direction-arrow direction-right">
             دخول العربية ←
         </div>
-
-
-        <!-- WIRING -->
-
-        <div
-            class="station"
-            data-station="wiring">
-
-            <div class="station-title">
-                Wiring
-            </div>
-
-            <div class="station-subtitle">
-                Station 1
-            </div>
-
-            <div class="slots">
-
-                <div
-                    class="slot"
-                    data-station="wiring"
-                    data-slot="1">
-
-                    <span class="slot-number">
-                        Slot 1
-                    </span>
-
-                    <div class="empty-slot">
-                        فارغ
-                    </div>
-
-                </div>
-
-
-                <div
-                    class="slot"
-                    data-station="wiring"
-                    data-slot="2">
-
-                    <span class="slot-number">
-                        Slot 2
-                    </span>
-
-                    <div class="empty-slot">
-                        فارغ
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- EQUIPMENT -->
 
         <div
             class="station"
@@ -1100,10 +1073,91 @@ body {
 
                 </div>
 
-
                 <div
                     class="slot"
                     data-station="equipment"
+                    data-slot="2">
+
+                    <span class="slot-number">
+                        Slot 2
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="inline-waiting">
+
+            <div class="inline-waiting-title">
+                ⏳ Waiting 1 / 2 — بين Wiring و Equipment
+            </div>
+
+            <div class="inline-waiting-slots">
+
+                <div
+                    class="waiting-slot"
+                    data-station="waiting"
+                    data-slot="1">
+
+                    <div class="empty-slot">
+                        Slot 1 — فارغ
+                    </div>
+
+                </div>
+
+                <div
+                    class="waiting-slot"
+                    data-station="waiting"
+                    data-slot="2">
+
+                    <div class="empty-slot">
+                        Slot 2 — فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            class="station"
+            data-station="wiring">
+
+            <div class="station-title">
+                Wiring
+            </div>
+
+            <div class="station-subtitle">
+                Station 1
+            </div>
+
+            <div class="slots">
+
+                <div
+                    class="slot"
+                    data-station="wiring"
+                    data-slot="1">
+
+                    <span class="slot-number">
+                        Slot 1
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+                <div
+                    class="slot"
+                    data-station="wiring"
                     data-slot="2">
 
                     <span class="slot-number">
@@ -1124,77 +1178,25 @@ body {
 
 </div>
 
-
-<!-- LINE 1 -->
+<!-- ================= LINE 1 ================= -->
 
 <div class="line-section">
 
     <div class="line-title">
-        <span></span>
-        <h2>Line 1</h2>
-    </div>
 
+        <span></span>
+
+        <h2>
+            Line 1
+        </h2>
+
+    </div>
 
     <div class="track">
 
         <div class="direction-arrow direction-left">
             دخول العربية →
         </div>
-
-
-        <!-- HT -->
-
-        <div
-            class="station"
-            data-station="ht">
-
-            <div class="station-title">
-                HT
-            </div>
-
-            <div class="station-subtitle">
-                Station 3
-            </div>
-
-            <div class="slots">
-
-                <div
-                    class="slot"
-                    data-station="ht"
-                    data-slot="1">
-
-                    <span class="slot-number">
-                        Slot 1
-                    </span>
-
-                    <div class="empty-slot">
-                        فارغ
-                    </div>
-
-                </div>
-
-
-                <div
-                    class="slot"
-                    data-station="ht"
-                    data-slot="2">
-
-                    <span class="slot-number">
-                        Slot 2
-                    </span>
-
-                    <div class="empty-slot">
-                        فارغ
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- LT -->
 
         <div
             class="station"
@@ -1225,10 +1227,91 @@ body {
 
                 </div>
 
-
                 <div
                     class="slot"
                     data-station="lt"
+                    data-slot="2">
+
+                    <span class="slot-number">
+                        Slot 2
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="inline-waiting">
+
+            <div class="inline-waiting-title">
+                ⏳ Waiting 3 / 4 — بين HT و LT
+            </div>
+
+            <div class="inline-waiting-slots">
+
+                <div
+                    class="waiting-slot"
+                    data-station="waiting"
+                    data-slot="3">
+
+                    <div class="empty-slot">
+                        Slot 3 — فارغ
+                    </div>
+
+                </div>
+
+                <div
+                    class="waiting-slot"
+                    data-station="waiting"
+                    data-slot="4">
+
+                    <div class="empty-slot">
+                        Slot 4 — فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            class="station"
+            data-station="ht">
+
+            <div class="station-title">
+                HT
+            </div>
+
+            <div class="station-subtitle">
+                Station 3
+            </div>
+
+            <div class="slots">
+
+                <div
+                    class="slot"
+                    data-station="ht"
+                    data-slot="1">
+
+                    <span class="slot-number">
+                        Slot 1
+                    </span>
+
+                    <div class="empty-slot">
+                        فارغ
+                    </div>
+
+                </div>
+
+                <div
+                    class="slot"
+                    data-station="ht"
                     data-slot="2">
 
                     <span class="slot-number">
@@ -1249,8 +1332,7 @@ body {
 
 </div>
 
-
-<!-- WAITING -->
+<!-- ================= WAITING 5 / 6 ================= -->
 
 <div class="waiting-area">
 
@@ -1259,33 +1341,31 @@ body {
         ⏳
 
         <span>
-            منطقة الانتظار
+            منطقة الانتظار الرئيسية — Waiting 5 و 6
         </span>
 
     </div>
-
 
     <div class="waiting-slots">
 
         <div
             class="waiting-slot"
             data-station="waiting"
-            data-slot="1">
+            data-slot="5">
 
             <div class="empty-slot">
-                Slot 1 — فارغ
+                Slot 5 — فارغ
             </div>
 
         </div>
 
-
         <div
             class="waiting-slot"
             data-station="waiting"
-            data-slot="2">
+            data-slot="6">
 
             <div class="empty-slot">
-                Slot 2 — فارغ
+                Slot 6 — فارغ
             </div>
 
         </div>
@@ -1294,16 +1374,19 @@ body {
 
 </div>
 
-
-<!-- LINE 2 -->
+<!-- ================= LINE 2 ================= -->
 
 <div class="line-section">
 
     <div class="line-title">
-        <span></span>
-        <h2>Line 2</h2>
-    </div>
 
+        <span></span>
+
+        <h2>
+            Line 2
+        </h2>
+
+    </div>
 
     <div class="track">
 
@@ -1311,8 +1394,41 @@ body {
             اتجاه Final →
         </div>
 
+        <div class="inline-waiting">
 
-        <!-- FINAL -->
+            <div class="inline-waiting-title">
+                ⏳ Waiting 7 / 8 — شمال Final
+            </div>
+
+            <div class="inline-waiting-slots">
+
+                <div
+                    class="waiting-slot"
+                    data-station="waiting"
+                    data-slot="7">
+
+                    <div class="empty-slot">
+                        Slot 7 — فارغ
+                    </div>
+
+                </div>
+
+                <div
+                    class="waiting-slot"
+                    data-station="waiting"
+                    data-slot="8">
+
+                    <div class="empty-slot">
+                        Slot 8 — فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div></div>
 
         <div
             class="station"
@@ -1343,7 +1459,6 @@ body {
 
                 </div>
 
-
                 <div
                     class="slot"
                     data-station="final"
@@ -1367,22 +1482,17 @@ body {
 
 </div>
 
-
 </section>
 
 </main>
 
-
-<!-- =========================================================
-     CAR MODAL
-========================================================= -->
+<!-- ================= CAR MODAL ================= -->
 
 <div
     id="carModal"
     class="modal">
 
     <div class="modal-box">
-
 
         <div class="modal-header">
 
@@ -1400,17 +1510,23 @@ body {
 
         </div>
 
-
         <div id="carDetails">
             جاري التحميل...
         </div>
 
+        <!--
+        =====================================================
+        سجل بيانات العربية
+        =====================================================
 
-        <!-- DATA PAGE -->
+        مهم:
+        هذا الجزء موجود في الصفحة،
+        لكن JavaScript سيظهره للمدير فقط.
+        -->
 
         <div
             id="carDataActions"
-            style="display:none;">
+            style="display:none">
 
             <div class="modal-actions">
 
@@ -1418,47 +1534,49 @@ body {
                     class="action-btn primary-btn"
                     onclick="openCarDataPage()">
 
-                    📋 تسجيل بيانات العربية
+                    📋 سجل بيانات العربية
 
                 </button>
 
             </div>
 
         </div>
-
-
-        <!-- WORKER -->
 
         <div
             id="workerActions"
-            style="display:none;">
+            style="display:none">
 
-            <div class="modal-actions">
+            <div
+                id="workerCompleteBox"
+                class="worker-complete-box">
 
-                <button
-                    class="action-btn success-btn"
-                    onclick="completeCurrentCar()">
+                <div
+                    id="workerCompleteTitle"
+                    class="worker-complete-title">
 
-                    ✓ تم الانتهاء
+                    تم الانتهاء من العربية
 
-                </button>
+                </div>
+
+                <div id="workerOptions"></div>
+
+                <div class="worker-hint">
+                    اختر المكان الذي تريد نقل العربية إليه
+                </div>
 
             </div>
 
         </div>
-
 
         <!-- MANAGER -->
 
         <div
             id="managerActions"
-            style="display:none;">
-
+            style="display:none">
 
             <div class="history-title">
                 👨‍💼 تحكم المدير
             </div>
-
 
             <div class="field">
 
@@ -1466,8 +1584,7 @@ body {
                     المحطة المطلوبة
                 </label>
 
-                <select
-                    id="managerStation">
+                <select id="managerStation">
 
                     <option value="wiring">
                         Wiring
@@ -1497,28 +1614,15 @@ body {
 
             </div>
 
-
             <div class="field">
 
                 <label>
                     المكان
                 </label>
 
-                <select
-                    id="managerSlot">
-
-                    <option value="1">
-                        Slot 1
-                    </option>
-
-                    <option value="2">
-                        Slot 2
-                    </option>
-
-                </select>
+                <select id="managerSlot"></select>
 
             </div>
-
 
             <div class="field">
 
@@ -1532,7 +1636,6 @@ body {
 
             </div>
 
-
             <div class="modal-actions">
 
                 <button
@@ -1543,7 +1646,6 @@ body {
 
                 </button>
 
-
                 <button
                     class="action-btn warning-btn"
                     onclick="moveCurrentCarToWaiting()">
@@ -1553,7 +1655,6 @@ body {
                 </button>
 
             </div>
-
 
             <div class="modal-actions">
 
@@ -1566,9 +1667,6 @@ body {
                 </button>
 
             </div>
-
-
-            <!-- DELETE -->
 
             <div class="modal-actions">
 
@@ -1583,7 +1681,6 @@ body {
 
             </div>
 
-
             <div id="historyContainer"></div>
 
         </div>
@@ -1592,17 +1689,13 @@ body {
 
 </div>
 
-
-<!-- =========================================================
-     ADD CAR MODAL
-========================================================= -->
+<!-- ================= ADD CAR MODAL ================= -->
 
 <div
     id="addCarModal"
     class="modal">
 
     <div class="modal-box">
-
 
         <div class="modal-header">
 
@@ -1620,9 +1713,6 @@ body {
 
         </div>
 
-
-        <!-- رقم الوحدة -->
-
         <div class="field">
 
             <label>
@@ -1637,9 +1727,6 @@ body {
                 placeholder="مثال: 1">
 
         </div>
-
-
-        <!-- اسم العربية -->
 
         <div class="field">
 
@@ -1671,9 +1758,6 @@ body {
 
         </div>
 
-
-        <!-- رقم العربية تلقائي -->
-
         <div class="field">
 
             <label>
@@ -1687,16 +1771,15 @@ body {
 
         </div>
 
-
-        <!-- بداية المسار -->
-
         <div class="field">
 
             <label>
                 بداية المسار
             </label>
 
-            <select id="newCarStation">
+            <select
+                id="newCarStation"
+                onchange="updateSlotOptions('newCarSlot',this.value)">
 
                 <option value="wiring">
                     Wiring
@@ -1726,29 +1809,15 @@ body {
 
         </div>
 
-
-        <!-- Slot -->
-
         <div class="field">
 
             <label>
                 Slot
             </label>
 
-            <select id="newCarSlot">
-
-                <option value="1">
-                    Slot 1
-                </option>
-
-                <option value="2">
-                    Slot 2
-                </option>
-
-            </select>
+            <select id="newCarSlot"></select>
 
         </div>
-
 
         <div class="modal-actions">
 
@@ -1760,7 +1829,6 @@ body {
 
             </button>
 
-
             <button
                 class="action-btn secondary-btn"
                 onclick="closeAddCarModal()">
@@ -1771,16 +1839,14 @@ body {
 
         </div>
 
-
     </div>
 
 </div>
 
-
 <script>
 
 /* =========================================================
-   SUPABASE
+SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
@@ -1795,25 +1861,23 @@ const routeSupabase =
         SUPABASE_KEY
     );
 
-
 /* =========================================================
-   ROUTE
+ROUTE
 ========================================================= */
 
 const ROUTE = [
-
     "wiring",
     "equipment",
     "ht",
     "lt",
     "waiting",
     "final"
-
 ];
 
+let currentCar = null;
 
 /* =========================================================
-   CURRENT USER
+CURRENT USER
 ========================================================= */
 
 function getRouteUser() {
@@ -1825,11 +1889,9 @@ function getRouteUser() {
                 "currentUser"
             );
 
-        if (!data) {
-            return null;
-        }
-
-        return JSON.parse(data);
+        return data
+            ? JSON.parse(data)
+            : null;
 
     } catch {
 
@@ -1839,9 +1901,8 @@ function getRouteUser() {
 
 }
 
-
 /* =========================================================
-   MANAGER
+MANAGER
 ========================================================= */
 
 function isManager() {
@@ -1856,40 +1917,38 @@ function isManager() {
 
 }
 
-
 /* =========================================================
-   WORKER STATION PERMISSION
+WORKER PERMISSION
 ========================================================= */
 
-function canWorkerCompleteStation(station) {
+function canWorkerCompleteStation(
+    station
+) {
 
     const user =
         getRouteUser();
-
 
     if (!user) {
         return false;
     }
 
-
     const roles = [
 
         user.role,
-
         user.secondRole,
 
-        ...(Array.isArray(user.extraRoles)
+        ...(Array.isArray(
+            user.extraRoles
+        )
             ? user.extraRoles
             : [])
 
-    ]
-    .map(
+    ].map(
         role =>
             String(
                 role || ""
             ).toLowerCase()
     );
-
 
     if (
         roles.includes("admin")
@@ -1899,7 +1958,6 @@ function canWorkerCompleteStation(station) {
 
     }
 
-
     if (
         station === "waiting"
     ) {
@@ -1908,12 +1966,10 @@ function canWorkerCompleteStation(station) {
 
     }
 
-
     const requiredRole =
         station === "equipment"
             ? "installation"
             : station;
-
 
     return roles.includes(
         requiredRole
@@ -1921,42 +1977,83 @@ function canWorkerCompleteStation(station) {
 
 }
 
-
 /* =========================================================
-   CURRENT CAR
+WAITING RECEIVE PERMISSION
 ========================================================= */
 
-let currentCar = null;
+function canWorkerReceiveWaiting(car) {
 
+    const user =
+        getRouteUser();
+
+    if (!user || !car) {
+        return false;
+    }
+
+    const roles = [
+
+        user.role,
+        user.secondRole,
+
+        ...(Array.isArray(
+            user.extraRoles
+        )
+            ? user.extraRoles
+            : [])
+
+    ].map(
+        role =>
+            String(
+                role || ""
+            ).toLowerCase()
+    );
+
+    if (
+        roles.includes("admin")
+    ) {
+
+        return true;
+
+    }
+
+    const station =
+        String(
+            car.current_station || ""
+        ).toLowerCase();
+
+    const slot =
+        Number(
+            car.slot_number
+        );
+
+    if (
+        station === "waiting" &&
+        (slot === 1 || slot === 2)
+    ) {
+
+        return roles.includes(
+            "installation"
+        );
+
+    }
+
+    if (
+        station === "waiting" &&
+        (slot === 3 || slot === 4)
+    ) {
+
+        return roles.includes(
+            "lt"
+        );
+
+    }
+
+    return false;
+
+}
 
 /* =========================================================
-   NUMBERING SYSTEM
-=========================================================
-
-   Unit 1:
-   DTC = 1
-   MC1 = 2
-   MC2 = 3
-   MCI = 4
-
-   Unit 2:
-   MCI = 5
-   MC2 = 6
-   MC1 = 7
-   DTC = 8
-
-   Unit 3:
-   DTC = 9
-   MC1 = 10
-   MC2 = 11
-   MCI = 12
-
-   Unit 4:
-   MCI = 13
-   MC2 = 14
-   MC1 = 15
-   DTC = 16
-
+NUMBERING
 ========================================================= */
 
 function calculateRouteCarNumber(
@@ -1973,7 +2070,6 @@ function calculateRouteCarNumber(
 
     };
 
-
     const reverseOrder = {
 
         MCI: 0,
@@ -1983,7 +2079,6 @@ function calculateRouteCarNumber(
 
     };
 
-
     const name =
         String(
             carName || ""
@@ -1991,25 +2086,22 @@ function calculateRouteCarNumber(
         .trim()
         .toUpperCase();
 
-
     const unit =
-        Number(
-            unitNumber
-        );
+        Number(unitNumber);
 
-
-    if (!Number.isInteger(unit) || unit < 1) {
+    if (
+        !Number.isInteger(unit) ||
+        unit < 1
+    ) {
 
         return "";
 
     }
 
-
     const positions =
         unit % 2 === 0
             ? reverseOrder
             : normalOrder;
-
 
     if (
         !Object.prototype.hasOwnProperty.call(
@@ -2022,19 +2114,74 @@ function calculateRouteCarNumber(
 
     }
 
-
     return (
         ((unit - 1) * 4) +
         positions[name] +
         1
-    )
-    .toString();
+    ).toString();
 
 }
 
+/* =========================================================
+FULL CAR NUMBER
+========================================================= */
+
+function getCarDisplayNumber(car) {
+
+    const number =
+        String(
+            car?.car_number ?? ""
+        ).trim();
+
+    const name =
+        String(
+            car?.car_name ?? ""
+        ).trim().toUpperCase();
+
+    const unit =
+        String(
+            car?.unit_number ?? ""
+        ).trim();
+
+    if (
+        number &&
+        name &&
+        unit
+    ) {
+
+        return (
+            number +
+            "-" +
+            name +
+            "-" +
+            unit
+        );
+
+    }
+
+    if (
+        number &&
+        name
+    ) {
+
+        return (
+            number +
+            "-" +
+            name
+        );
+
+    }
+
+    return (
+        number ||
+        unit ||
+        ""
+    );
+
+}
 
 /* =========================================================
-   UPDATE NUMBER AUTOMATICALLY
+UPDATE NUMBER
 ========================================================= */
 
 function updateGeneratedCarNumber() {
@@ -2044,18 +2191,15 @@ function updateGeneratedCarNumber() {
             "newUnitNumber"
         );
 
-
     const carNameInput =
         document.getElementById(
             "newCarName"
         );
 
-
     const carNumberInput =
         document.getElementById(
             "newCarNumber"
         );
-
 
     if (
         !unitInput ||
@@ -2067,52 +2211,96 @@ function updateGeneratedCarNumber() {
 
     }
 
-
-    const number =
-        calculateRouteCarNumber(
-
-            carNameInput.value,
-
-            unitInput.value
-
-        );
-
-
     carNumberInput.value =
-        number;
+        calculateRouteCarNumber(
+            carNameInput.value,
+            unitInput.value
+        );
 
 }
 
-
 /* =========================================================
-   UNIT NUMBER CHANGE
+SLOT COUNT
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+function getSlotCount(station) {
 
-        const unitInput =
-            document.getElementById(
-                "newUnitNumber"
-            );
+    if (
+        station === "waiting"
+    ) {
 
-
-        if (unitInput) {
-
-            unitInput.addEventListener(
-                "input",
-                updateGeneratedCarNumber
-            );
-
-        }
+        return 8;
 
     }
-);
 
+    return 2;
+
+}
 
 /* =========================================================
-   INITIALIZE
+SLOT OPTIONS
+========================================================= */
+
+function updateSlotOptions(
+    selectId,
+    station,
+    selectedValue = null
+) {
+
+    const select =
+        document.getElementById(
+            selectId
+        );
+
+    if (!select) {
+        return;
+    }
+
+    const count =
+        getSlotCount(station);
+
+    select.innerHTML = "";
+
+    for (
+        let i = 1;
+        i <= count;
+        i++
+    ) {
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            String(i);
+
+        option.textContent =
+            `Slot ${i}`;
+
+        select.appendChild(
+            option
+        );
+
+    }
+
+    if (
+        selectedValue &&
+        Number(selectedValue) >= 1 &&
+        Number(selectedValue) <= count
+    ) {
+
+        select.value =
+            String(
+                selectedValue
+            );
+
+    }
+
+}
+
+/* =========================================================
+INITIALIZE
 ========================================================= */
 
 document.addEventListener(
@@ -2122,7 +2310,6 @@ document.addEventListener(
         const user =
             getRouteUser();
 
-
         if (!user) {
 
             window.location.href =
@@ -2131,7 +2318,6 @@ document.addEventListener(
             return;
 
         }
-
 
         if (isManager()) {
 
@@ -2143,7 +2329,6 @@ document.addEventListener(
                     "show"
                 );
 
-
             document
                 .getElementById(
                     "addCarHeaderBtn"
@@ -2153,8 +2338,45 @@ document.addEventListener(
 
         }
 
-
         updateGeneratedCarNumber();
+
+        updateSlotOptions(
+            "newCarSlot",
+            "wiring",
+            1
+        );
+
+        updateSlotOptions(
+            "managerSlot",
+            "wiring",
+            1
+        );
+
+        document
+            .getElementById(
+                "newUnitNumber"
+            )
+            .addEventListener(
+                "input",
+                updateGeneratedCarNumber
+            );
+
+        document
+            .getElementById(
+                "managerStation"
+            )
+            .addEventListener(
+                "change",
+                function () {
+
+                    updateSlotOptions(
+                        "managerSlot",
+                        this.value,
+                        1
+                    );
+
+                }
+            );
 
         await loadRouteCars();
 
@@ -2163,9 +2385,8 @@ document.addEventListener(
     }
 );
 
-
 /* =========================================================
-   LOAD CARS
+LOAD CARS
 ========================================================= */
 
 async function loadRouteCars() {
@@ -2173,7 +2394,6 @@ async function loadRouteCars() {
     setStatus(
         "جاري تحميل العربيات..."
     );
-
 
     const {
         data,
@@ -2199,7 +2419,6 @@ async function loadRouteCars() {
                 }
             );
 
-
     if (error) {
 
         console.error(
@@ -2215,14 +2434,13 @@ async function loadRouteCars() {
 
     }
 
-
     clearRoute();
 
-
-    (data || []).forEach(
+    (
+        data || []
+    ).forEach(
         renderCar
     );
-
 
     setStatus(
         `العربيات الموجودة على المسار: ${(data || []).length}`
@@ -2230,9 +2448,8 @@ async function loadRouteCars() {
 
 }
 
-
 /* =========================================================
-   CLEAR
+CLEAR ROUTE
 ========================================================= */
 
 function clearRoute() {
@@ -2246,7 +2463,6 @@ function clearRoute() {
 
                 const number =
                     slot.dataset.slot;
-
 
                 if (
                     slot.classList.contains(
@@ -2281,9 +2497,8 @@ function clearRoute() {
 
 }
 
-
 /* =========================================================
-   RENDER CAR
+RENDER CAR
 ========================================================= */
 
 function renderCar(car) {
@@ -2291,18 +2506,15 @@ function renderCar(car) {
     const station =
         car.current_station;
 
-
     const slotNumber =
         Number(
             car.slot_number || 1
         );
 
-
     const slot =
         document.querySelector(
             `[data-station="${station}"][data-slot="${slotNumber}"]`
         );
-
 
     if (!slot) {
 
@@ -2316,20 +2528,74 @@ function renderCar(car) {
 
     }
 
+    const wrap =
+        document.createElement(
+            "div"
+        );
+
+    wrap.className =
+        "car-wrap";
+
+    const label =
+        document.createElement(
+            "div"
+        );
+
+    label.className =
+        "car-label";
+
+    const unit =
+        document.createElement(
+            "span"
+        );
+
+    unit.className =
+        "car-label-unit";
+
+    unit.textContent =
+        car.unit_number
+            ? `وحدة ${car.unit_number}`
+            : "";
+
+    const name =
+        document.createElement(
+            "span"
+        );
+
+    name.className =
+        "car-label-name";
+
+    name.textContent =
+        car.car_name ||
+        "Car";
+
+    const number =
+        document.createElement(
+            "span"
+        );
+
+    number.className =
+        "car-label-number";
+
+    number.textContent =
+        car.car_number
+            ? `العربية ${car.car_number}`
+            : "";
+
+    label.appendChild(unit);
+    label.appendChild(name);
+    label.appendChild(number);
 
     const carElement =
         document.createElement(
             "div"
         );
 
-
     carElement.className =
         "car";
 
-
     carElement.innerHTML =
         `
-
         <div class="car-icon">
             🚆
         </div>
@@ -2341,52 +2607,56 @@ function renderCar(car) {
                 "Car"
             )}
         </div>
-
         `;
 
+    wrap.appendChild(
+        label
+    );
 
-    carElement.onclick =
+    wrap.appendChild(
+        carElement
+    );
+
+    wrap.onclick =
         function () {
 
-            openCarModal(car);
+            openCarModal(
+                car
+            );
 
         };
-
 
     slot.innerHTML = "";
 
     slot.appendChild(
-        carElement
+        wrap
     );
 
 }
 
-
 /* =========================================================
-   OPEN CAR
+OPEN CAR MODAL
 ========================================================= */
 
-async function openCarModal(car) {
+async function openCarModal(
+    car
+) {
 
     currentCar =
         car;
-
 
     const modal =
         document.getElementById(
             "carModal"
         );
 
-
     const details =
         document.getElementById(
             "carDetails"
         );
 
-
     details.innerHTML =
         `
-
         <div class="field">
 
             <label>
@@ -2400,7 +2670,6 @@ async function openCarModal(car) {
                 readonly>
 
         </div>
-
 
         <div class="field">
 
@@ -2416,7 +2685,6 @@ async function openCarModal(car) {
 
         </div>
 
-
         <div class="field">
 
             <label>
@@ -2431,6 +2699,19 @@ async function openCarModal(car) {
 
         </div>
 
+        <div class="field">
+
+            <label>
+                رقم العربية الكامل
+            </label>
+
+            <input
+                value="${escapeHtml(
+                    getCarDisplayNumber(car)
+                )}"
+                readonly>
+
+        </div>
 
         <div class="field">
 
@@ -2448,7 +2729,6 @@ async function openCarModal(car) {
 
         </div>
 
-
         <div class="field">
 
             <label>
@@ -2460,7 +2740,6 @@ async function openCarModal(car) {
                 readonly>
 
         </div>
-
 
         <div class="field">
 
@@ -2475,43 +2754,49 @@ async function openCarModal(car) {
                 readonly>
 
         </div>
-
         `;
-
 
     const workerActions =
         document.getElementById(
             "workerActions"
         );
 
-
     const managerActions =
         document.getElementById(
             "managerActions"
         );
-
 
     const carDataActions =
         document.getElementById(
             "carDataActions"
         );
 
-
     const historyContainer =
         document.getElementById(
             "historyContainer"
         );
 
-
-    const deleteCarBtn =
-        document.getElementById(
-            "deleteCarBtn"
-        );
-
-
     historyContainer.innerHTML =
         "";
 
+    /*
+    ========================================================
+    التعديل المطلوب:
+    سجل بيانات العربية يظهر للمدير فقط
+    ========================================================
+    */
+
+    if (isManager()) {
+
+        carDataActions.style.display =
+            "block";
+
+    } else {
+
+        carDataActions.style.display =
+            "none";
+
+    }
 
     if (isManager()) {
 
@@ -2521,74 +2806,89 @@ async function openCarModal(car) {
         managerActions.style.display =
             "block";
 
-
-        if (carDataActions) {
-
-            carDataActions.style.display =
-                "block";
-
-        }
-
-
-        if (deleteCarBtn) {
-
-            deleteCarBtn.style.display =
-                "block";
-
-        }
-
-
         document.getElementById(
             "managerStation"
         ).value =
             car.current_station;
 
+        updateSlotOptions(
+            "managerSlot",
+            car.current_station,
+            car.slot_number || 1
+        );
 
         document.getElementById(
-            "managerSlot"
+            "managerNote"
         ).value =
-            car.slot_number || 1;
+            "";
 
     } else {
 
         managerActions.style.display =
             "none";
 
+        /*
+        ====================================================
+        الفني لن يرى سجل بيانات العربية
+        ====================================================
+        */
 
-        if (carDataActions) {
+        carDataActions.style.display =
+            "none";
 
-            carDataActions.style.display =
-                "none";
-
-        }
-
-
-        if (deleteCarBtn) {
-
-            deleteCarBtn.style.display =
-                "none";
-
-        }
-
+        /*
+        ====================================================
+        WAITING RECEIVE
+        ====================================================
+        */
 
         if (
-            canWorkerCompleteStation(
-                car.current_station
-            )
+            String(
+                car.current_station || ""
+            ).toLowerCase() === "waiting"
         ) {
 
+            const canReceive =
+                canWorkerReceiveWaiting(
+                    car
+                );
+
             workerActions.style.display =
-                "block";
+                canReceive
+                    ? "block"
+                    : "none";
+
+            if (canReceive) {
+
+                buildWaitingReceiveOption(
+                    car
+                );
+
+            }
 
         } else {
 
+            const canComplete =
+                canWorkerCompleteStation(
+                    car.current_station
+                );
+
             workerActions.style.display =
-                "none";
+                canComplete
+                    ? "block"
+                    : "none";
+
+            if (canComplete) {
+
+                buildWorkerCompleteOptions(
+                    car
+                );
+
+            }
 
         }
 
     }
-
 
     modal.classList.add(
         "show"
@@ -2596,65 +2896,434 @@ async function openCarModal(car) {
 
 }
 
-
 /* =========================================================
-   OPEN DATA PAGE
+WAITING RECEIVE OPTION
 ========================================================= */
 
-function openCarDataPage() {
+function buildWaitingReceiveOption(
+    car
+) {
 
-    if (!currentCar) {
-
-        return;
-
-    }
-
-
-    window.location.href =
-        "search.html";
-
-}
-
-
-/* =========================================================
-   CLOSE
-========================================================= */
-
-function closeCarModal() {
-
-    document
-        .getElementById(
-            "carModal"
-        )
-        .classList.remove(
-            "show"
+    const container =
+        document.getElementById(
+            "workerOptions"
         );
 
-    currentCar =
-        null;
+    const title =
+        document.getElementById(
+            "workerCompleteTitle"
+        );
+
+    if (
+        !container ||
+        !title
+    ) {
+
+        return;
+
+    }
+
+    container.innerHTML =
+        "";
+
+    const slot =
+        Number(
+            car.slot_number
+        );
+
+    if (
+        slot === 1 ||
+        slot === 2
+    ) {
+
+        title.textContent =
+            `⏳ العربية موجودة في Waiting ${slot} — قسم التركيبات يستطيع استلامها`;
+
+        addWorkerOption(
+
+            container,
+
+            "✅ تم استلام العربية — نقل إلى Equipment",
+
+            "worker-next",
+
+            function () {
+
+                receiveCarFromWaiting(
+                    car
+                );
+
+            }
+
+        );
+
+        return;
+
+    }
+
+    if (
+        slot === 3 ||
+        slot === 4
+    ) {
+
+        title.textContent =
+            `⏳ العربية موجودة في Waiting ${slot} — قسم LT يستطيع استلامها`;
+
+        addWorkerOption(
+
+            container,
+
+            "✅ تم استلام العربية — نقل إلى LT",
+
+            "worker-next",
+
+            function () {
+
+                receiveCarFromWaiting(
+                    car
+                );
+
+            }
+
+        );
+
+        return;
+
+    }
+
+    container.innerHTML =
+        `
+        <div class="no-history">
+            لا يوجد إجراء متاح لهذه المنطقة.
+        </div>
+        `;
 
 }
 
-
 /* =========================================================
-   WORKER COMPLETE
+WORKER COMPLETE OPTIONS
 ========================================================= */
 
-async function completeCurrentCar() {
+function buildWorkerCompleteOptions(
+    car
+) {
+
+    const container =
+        document.getElementById(
+            "workerOptions"
+        );
+
+    const title =
+        document.getElementById(
+            "workerCompleteTitle"
+        );
+
+    if (!container || !title) {
+        return;
+    }
+
+    container.innerHTML = "";
+
+    const station =
+        String(
+            car.current_station || ""
+        ).toLowerCase();
+
+    if (
+        station === "wiring"
+    ) {
+
+        title.textContent =
+            "✅ تم الانتهاء من العربية في Wiring — اختر مكان التسليم";
+
+        addWorkerOption(
+            container,
+            "⏳ نقل إلى Waiting 1",
+            "worker-waiting",
+            function () {
+
+                workerMoveTo(
+                    "waiting",
+                    1,
+                    "wiring_to_waiting"
+                );
+
+            }
+        );
+
+        addWorkerOption(
+            container,
+            "⏳ نقل إلى Waiting 2",
+            "worker-waiting",
+            function () {
+
+                workerMoveTo(
+                    "waiting",
+                    2,
+                    "wiring_to_waiting"
+                );
+
+            }
+        );
+
+        addWorkerOption(
+            container,
+            "📦 نقل إلى Wiring - Slot 2",
+            "worker-slot",
+            function () {
+
+                workerMoveTo(
+                    "wiring",
+                    2,
+                    "wiring_slot2"
+                );
+
+            }
+        );
+
+        addWorkerOption(
+            container,
+            "➡️ تسليم إلى التركيبات Equipment",
+            "worker-next",
+            function () {
+
+                workerMoveTo(
+                    "equipment",
+                    1,
+                    "wiring_to_equipment"
+                );
+
+            }
+        );
+
+        return;
+
+    }
+
+    if (
+        station === "equipment"
+    ) {
+
+        title.textContent =
+            "✅ تم الانتهاء من العربية في التركيبات";
+
+        addWorkerOption(
+            container,
+            "✓ تم الانتهاء — تسليم إلى HT",
+            "worker-simple",
+            function () {
+
+                workerMoveTo(
+                    "ht",
+                    1,
+                    "equipment_to_ht"
+                );
+
+            }
+        );
+
+        return;
+
+    }
+
+    if (
+        station === "ht"
+    ) {
+
+        title.textContent =
+            "✅ تم الانتهاء من العربية في HT — اختر مكان التسليم";
+
+        addWorkerOption(
+            container,
+            "⏳ نقل إلى Waiting 3",
+            "worker-waiting",
+            function () {
+
+                workerMoveTo(
+                    "waiting",
+                    3,
+                    "ht_to_waiting"
+                );
+
+            }
+        );
+
+        addWorkerOption(
+            container,
+            "⏳ نقل إلى Waiting 4",
+            "worker-waiting",
+            function () {
+
+                workerMoveTo(
+                    "waiting",
+                    4,
+                    "ht_to_waiting"
+                );
+
+            }
+        );
+
+        addWorkerOption(
+            container,
+            "📦 نقل إلى HT - Slot 2",
+            "worker-slot",
+            function () {
+
+                workerMoveTo(
+                    "ht",
+                    2,
+                    "ht_slot2"
+                );
+
+            }
+        );
+
+        addWorkerOption(
+            container,
+            "➡️ تسليم إلى LT",
+            "worker-next",
+            function () {
+
+                workerMoveTo(
+                    "lt",
+                    1,
+                    "ht_to_lt"
+                );
+
+            }
+        );
+
+        return;
+
+    }
+
+    if (
+        station === "lt"
+    ) {
+
+        title.textContent =
+            "✅ تم الانتهاء من العربية في LT — اختر مكان التسليم";
+
+        addWorkerOption(
+            container,
+            "⏳ نقل إلى Waiting 7",
+            "worker-waiting",
+            function () {
+
+                workerMoveTo(
+                    "waiting",
+                    7,
+                    "lt_to_waiting"
+                );
+
+            }
+        );
+
+        addWorkerOption(
+            container,
+            "⏳ نقل إلى Waiting 8",
+            "worker-waiting",
+            function () {
+
+                workerMoveTo(
+                    "waiting",
+                    8,
+                    "lt_to_waiting"
+                );
+
+            }
+        );
+
+        addWorkerOption(
+            container,
+            "📦 نقل إلى LT - Slot 2",
+            "worker-slot",
+            function () {
+
+                workerMoveTo(
+                    "lt",
+                    2,
+                    "lt_slot2"
+                );
+
+            }
+        );
+
+        addWorkerOption(
+            container,
+            "🏁 تسليم إلى Final",
+            "worker-next",
+            function () {
+
+                workerMoveTo(
+                    "final",
+                    1,
+                    "lt_to_final"
+                );
+
+            }
+        );
+
+        return;
+
+    }
+
+    container.innerHTML =
+        `
+        <div class="no-history">
+            لا يوجد إجراء متاح لهذه المحطة.
+        </div>
+        `;
+
+}
+
+/* =========================================================
+ADD WORKER OPTION
+========================================================= */
+
+function addWorkerOption(
+    container,
+    text,
+    className,
+    action
+) {
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+    button.type =
+        "button";
+
+    button.className =
+        `worker-option ${className}`;
+
+    button.textContent =
+        text;
+
+    button.onclick =
+        action;
+
+    container.appendChild(
+        button
+    );
+
+}
+
+/* =========================================================
+WORKER MOVE
+========================================================= */
+
+async function workerMoveTo(
+    station,
+    slot,
+    action
+) {
 
     if (!currentCar) {
         return;
     }
-
-
-    const user =
-        getRouteUser();
-
-
-    if (!user) {
-        return;
-    }
-
 
     if (
         !canWorkerCompleteStation(
@@ -2669,207 +3338,6 @@ async function completeCurrentCar() {
         return;
 
     }
-
-
-    const currentIndex =
-        ROUTE.indexOf(
-            currentCar.current_station
-        );
-
-
-    if (
-        currentCar.current_station
-        === "final"
-    ) {
-
-        const confirmed =
-            confirm(
-                "هل تم الانتهاء من العربية وإخراجها من مسار الإنتاج؟"
-            );
-
-
-        if (!confirmed) {
-            return;
-        }
-
-
-        const {
-            error
-        } =
-            await routeSupabase
-
-                .from(
-                    "production_route_cars"
-                )
-
-                .update({
-
-                    status:
-                        "completed",
-
-                    completed_at:
-                        new Date()
-                            .toISOString(),
-
-                    updated_at:
-                        new Date()
-                            .toISOString()
-
-                })
-
-                .eq(
-                    "id",
-                    currentCar.id
-                );
-
-
-        if (error) {
-
-            console.error(error);
-
-            alert(
-                "❌ لم يتم إنهاء العربية"
-            );
-
-            return;
-
-        }
-
-
-        await addHistory({
-
-            car_id:
-                currentCar.id,
-
-            unit_number:
-                currentCar.unit_number,
-
-            car_name:
-                currentCar.car_name,
-
-            car_number:
-                currentCar.car_number,
-
-            from_station:
-                "final",
-
-            to_station:
-                null,
-
-            from_slot:
-                currentCar.slot_number,
-
-            to_slot:
-                null,
-
-            action:
-                "completed",
-
-            moved_by:
-                user.username,
-
-            moved_by_name:
-                user.full_name ||
-                user.username,
-
-            note:
-                "تم الانتهاء من Final وإخراج العربية"
-
-        });
-
-
-        closeCarModal();
-
-        await loadRouteCars();
-
-        return;
-
-    }
-
-
-    if (
-        currentIndex === -1 ||
-        currentIndex >= ROUTE.length - 1
-    ) {
-
-        return;
-
-    }
-
-
-    const nextStation =
-        ROUTE[
-            currentIndex + 1
-        ];
-
-
-    const freeSlot =
-        findFreeSlot(
-            nextStation
-        );
-
-
-    if (!freeSlot) {
-
-        alert(
-            "⚠️ المحطة التالية ممتلئة.\nيوجد مكانان فقط."
-        );
-
-        return;
-
-    }
-
-
-    await moveCar(
-
-        currentCar,
-
-        nextStation,
-
-        freeSlot,
-
-        "completed_station",
-
-        "تم الانتهاء من المحطة"
-
-    );
-
-}
-
-
-/* =========================================================
-   MANAGER MOVE
-========================================================= */
-
-async function managerMoveCar() {
-
-    if (
-        !currentCar ||
-        !isManager()
-    ) {
-        return;
-    }
-
-
-    const station =
-        document.getElementById(
-            "managerStation"
-        ).value;
-
-
-    const slot =
-        Number(
-            document.getElementById(
-                "managerSlot"
-            ).value
-        );
-
-
-    const note =
-        document.getElementById(
-            "managerNote"
-        ).value.trim();
-
 
     if (
         !isSlotAvailable(
@@ -2887,6 +3355,503 @@ async function managerMoveCar() {
 
     }
 
+    let note =
+        "تم نقل العربية بواسطة الفني";
+
+    if (
+        action ===
+        "wiring_to_waiting"
+    ) {
+
+        note =
+            `تم الانتهاء من Wiring ونقل العربية إلى Waiting ${slot}`;
+
+    }
+
+    else if (
+        action ===
+        "wiring_slot2"
+    ) {
+
+        note =
+            "تم الانتهاء من Wiring ونقل العربية إلى Slot 2 في Wiring";
+
+    }
+
+    else if (
+        action ===
+        "wiring_to_equipment"
+    ) {
+
+        note =
+            "تم الانتهاء من Wiring وتسليم العربية إلى التركيبات";
+
+    }
+
+    else if (
+        action ===
+        "equipment_to_ht"
+    ) {
+
+        note =
+            "تم الانتهاء من التركيبات وتسليم العربية إلى HT";
+
+    }
+
+    else if (
+        action ===
+        "ht_to_waiting"
+    ) {
+
+        note =
+            `تم الانتهاء من HT ونقل العربية إلى Waiting ${slot}`;
+
+    }
+
+    else if (
+        action ===
+        "ht_slot2"
+    ) {
+
+        note =
+            "تم الانتهاء من HT ونقل العربية إلى Slot 2 في HT";
+
+    }
+
+    else if (
+        action ===
+        "ht_to_lt"
+    ) {
+
+        note =
+            "تم الانتهاء من HT وتسليم العربية إلى LT";
+
+    }
+
+    else if (
+        action ===
+        "lt_to_waiting"
+    ) {
+
+        note =
+            `تم الانتهاء من LT ونقل العربية إلى Waiting ${slot}`;
+
+    }
+
+    else if (
+        action ===
+        "lt_slot2"
+    ) {
+
+        note =
+            "تم الانتهاء من LT ونقل العربية إلى Slot 2 في LT";
+
+    }
+
+    else if (
+        action ===
+        "lt_to_final"
+    ) {
+
+        note =
+            "تم الانتهاء من LT وتسليم العربية إلى Final";
+
+    }
+
+    await moveCar(
+        currentCar,
+        station,
+        slot,
+        action,
+        note
+    );
+
+}
+
+/* =========================================================
+RECEIVE CAR FROM WAITING
+========================================================= */
+
+async function receiveCarFromWaiting(
+    car
+) {
+
+    if (!car) {
+        return;
+    }
+
+    if (
+        !canWorkerReceiveWaiting(
+            car
+        )
+    ) {
+
+        alert(
+            "❌ ليس لديك صلاحية استلام هذه العربية."
+        );
+
+        return;
+
+    }
+
+    const waitingSlot =
+        Number(
+            car.slot_number
+        );
+
+    let destinationStation = "";
+    let destinationSlot = 1;
+    let action = "";
+    let note = "";
+
+    if (
+        waitingSlot === 1 ||
+        waitingSlot === 2
+    ) {
+
+        destinationStation =
+            "equipment";
+
+        destinationSlot =
+            1;
+
+        action =
+            "waiting_to_equipment";
+
+        note =
+            `تم استلام العربية من Waiting ${waitingSlot} بواسطة قسم التركيبات وتسليمها إلى Equipment`;
+
+    }
+
+    else if (
+        waitingSlot === 3 ||
+        waitingSlot === 4
+    ) {
+
+        destinationStation =
+            "lt";
+
+        destinationSlot =
+            1;
+
+        action =
+            "waiting_to_lt";
+
+        note =
+            `تم استلام العربية من Waiting ${waitingSlot} بواسطة قسم LT وتسليمها إلى LT`;
+
+    }
+
+    else {
+
+        alert(
+            "⚠️ لا يوجد انتقال تلقائي لهذا الـ Waiting."
+        );
+
+        return;
+
+    }
+
+    if (
+        !isSlotAvailable(
+            destinationStation,
+            destinationSlot,
+            car.id
+        )
+    ) {
+
+        alert(
+            `⚠️ ${stationName(destinationStation)} - Slot 1 مشغول.\n\nلا يمكن استلام العربية حاليًا.`
+        );
+
+        return;
+
+    }
+
+    await moveCar(
+        car,
+        destinationStation,
+        destinationSlot,
+        action,
+        note
+    );
+
+}
+
+/* =========================================================
+OPEN CAR DATA
+========================================================= */
+
+async function openCarDataPage() {
+
+    if (!currentCar) {
+        return;
+    }
+
+    const simpleNumber =
+        String(
+            currentCar.car_number || ""
+        ).trim();
+
+    const carName =
+        String(
+            currentCar.car_name || ""
+        ).trim();
+
+    const unitNumber =
+        String(
+            currentCar.unit_number || ""
+        ).trim();
+
+    const candidates = [
+
+        simpleNumber,
+
+        (
+            simpleNumber &&
+            carName &&
+            unitNumber
+        )
+            ? `${simpleNumber}-${carName}-${unitNumber}`
+            : "",
+
+        (
+            simpleNumber &&
+            carName &&
+            unitNumber
+        )
+            ? `${carName}-${simpleNumber}-${unitNumber}`
+            : "",
+
+        (
+            simpleNumber &&
+            carName
+        )
+            ? `${simpleNumber}-${carName}`
+            : "",
+
+        (
+            simpleNumber &&
+            carName
+        )
+            ? `${carName}-${simpleNumber}`
+            : ""
+
+    ].filter(Boolean);
+
+    const uniqueCandidates =
+        [
+            ...new Set(
+                candidates
+            )
+        ];
+
+    if (!uniqueCandidates.length) {
+
+        alert(
+            "هذه العربية ليس لها بيانات"
+        );
+
+        return;
+
+    }
+
+    let foundRecords = [];
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await routeSupabase
+
+                .from(
+                    "records"
+                )
+
+                .select(
+                    "id,car_number,car_name,department,created_at"
+                )
+
+                .in(
+                    "car_number",
+                    uniqueCandidates
+                )
+
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+        if (error) {
+
+            console.error(
+                "Records lookup error:",
+                error
+            );
+
+            alert(
+                "تعذر البحث عن بيانات العربية"
+            );
+
+            return;
+
+        }
+
+        foundRecords =
+            Array.isArray(data)
+                ? data
+                : [];
+
+    } catch (error) {
+
+        console.error(
+            "Records lookup error:",
+            error
+        );
+
+        alert(
+            "تعذر البحث عن بيانات العربية"
+        );
+
+        return;
+
+    }
+
+    if (
+        !foundRecords.length
+    ) {
+
+        alert(
+            "هذه العربية ليس لها بيانات"
+        );
+
+        return;
+
+    }
+
+    const foundCarNumber =
+        String(
+            foundRecords[0].car_number ||
+            simpleNumber
+        ).trim();
+
+    localStorage.setItem(
+        "searchNumber",
+        foundCarNumber
+    );
+
+    sessionStorage.setItem(
+        "searchCarNumber",
+        foundCarNumber
+    );
+
+    sessionStorage.setItem(
+        "selectedCarNumber",
+        foundCarNumber
+    );
+
+    sessionStorage.setItem(
+        "routeCarNumber",
+        foundCarNumber
+    );
+
+    sessionStorage.setItem(
+        "routeSelectedCar",
+        JSON.stringify({
+
+            car_number:
+                simpleNumber,
+
+            found_car_number:
+                foundCarNumber,
+
+            car_name:
+                carName,
+
+            unit_number:
+                unitNumber
+
+        })
+    );
+
+    window.location.href =
+        "search.html?carNumber=" +
+        encodeURIComponent(
+            foundCarNumber
+        );
+
+}
+
+/* =========================================================
+CLOSE CAR MODAL
+========================================================= */
+
+function closeCarModal() {
+
+    document
+        .getElementById(
+            "carModal"
+        )
+        .classList.remove(
+            "show"
+        );
+
+    currentCar =
+        null;
+
+}
+
+/* =========================================================
+MANAGER MOVE
+========================================================= */
+
+async function managerMoveCar() {
+
+    if (
+        !currentCar ||
+        !isManager()
+    ) {
+
+        return;
+
+    }
+
+    const station =
+        document.getElementById(
+            "managerStation"
+        ).value;
+
+    const slot =
+        Number(
+            document.getElementById(
+                "managerSlot"
+            ).value
+        );
+
+    const note =
+        document.getElementById(
+            "managerNote"
+        ).value.trim();
+
+    if (
+        !isSlotAvailable(
+            station,
+            slot,
+            currentCar.id
+        )
+    ) {
+
+        alert(
+            "⚠️ المكان المحدد مشغول."
+        );
+
+        return;
+
+    }
 
     await moveCar(
 
@@ -2905,9 +3870,8 @@ async function managerMoveCar() {
 
 }
 
-
 /* =========================================================
-   WAITING
+WAITING
 ========================================================= */
 
 async function moveCurrentCarToWaiting() {
@@ -2916,26 +3880,25 @@ async function moveCurrentCarToWaiting() {
         !currentCar ||
         !isManager()
     ) {
-        return;
-    }
 
+        return;
+
+    }
 
     const freeSlot =
         findFreeSlot(
             "waiting"
         );
 
-
     if (!freeSlot) {
 
         alert(
-            "⚠️ منطقة الانتظار ممتلئة."
+            "⚠️ كل أماكن الانتظار الثمانية ممتلئة."
         );
 
         return;
 
     }
-
 
     await moveCar(
 
@@ -2953,9 +3916,8 @@ async function moveCurrentCarToWaiting() {
 
 }
 
-
 /* =========================================================
-   DELETE CURRENT CAR
+DELETE
 ========================================================= */
 
 async function deleteCurrentCar() {
@@ -2969,33 +3931,28 @@ async function deleteCurrentCar() {
 
     }
 
-
     const carNumber =
         currentCar.car_number ||
         currentCar.unit_number ||
         "";
 
-
     const confirmed =
         confirm(
+
             "⚠️ هل أنت متأكد من حذف العربية؟\n\n" +
+
             "رقم العربية: " +
             carNumber +
+
             "\n\n" +
+
             "سيتم حذفها من مسار الإنتاج نهائيًا."
+
         );
 
-
     if (!confirmed) {
-
         return;
-
     }
-
-
-    const carId =
-        currentCar.id;
-
 
     const {
         error
@@ -3010,9 +3967,8 @@ async function deleteCurrentCar() {
 
             .eq(
                 "id",
-                carId
+                currentCar.id
             );
-
 
     if (error) {
 
@@ -3020,7 +3976,6 @@ async function deleteCurrentCar() {
             "Delete car error:",
             error
         );
-
 
         alert(
             "❌ لم يتم حذف العربية.\n\n" +
@@ -3031,11 +3986,9 @@ async function deleteCurrentCar() {
 
     }
 
-
     closeCarModal();
 
     await loadRouteCars();
-
 
     alert(
         "تم حذف العربية بنجاح ✅"
@@ -3043,9 +3996,8 @@ async function deleteCurrentCar() {
 
 }
 
-
 /* =========================================================
-   MOVE
+MOVE CAR
 ========================================================= */
 
 async function moveCar(
@@ -3066,15 +4018,28 @@ async function moveCar(
 
     }
 
-
     const user =
         getRouteUser();
-
 
     const now =
         new Date()
             .toISOString();
 
+    if (
+        !isSlotAvailable(
+            station,
+            slot,
+            car.id
+        )
+    ) {
+
+        alert(
+            "⚠️ المكان المحدد مشغول."
+        );
+
+        return;
+
+    }
 
     const {
         error
@@ -3108,7 +4073,6 @@ async function moveCar(
                 car.id
             );
 
-
     if (error) {
 
         console.error(
@@ -3123,7 +4087,6 @@ async function moveCar(
         return;
 
     }
-
 
     await addHistory({
 
@@ -3172,17 +4135,17 @@ async function moveCar(
 
     });
 
-
     const noteElement =
         document.getElementById(
             "managerNote"
         );
 
-
     if (noteElement) {
-        noteElement.value = "";
-    }
 
+        noteElement.value =
+            "";
+
+    }
 
     closeCarModal();
 
@@ -3190,12 +4153,13 @@ async function moveCar(
 
 }
 
-
 /* =========================================================
-   HISTORY
+HISTORY INSERT
 ========================================================= */
 
-async function addHistory(data) {
+async function addHistory(
+    data
+) {
 
     const {
         error
@@ -3206,61 +4170,56 @@ async function addHistory(data) {
                 "production_route_history"
             )
 
-            .insert([
+            .insert([{
 
-                {
+                car_id:
+                    data.car_id,
 
-                    car_id:
-                        data.car_id,
+                unit_number:
+                    data.unit_number ??
+                    null,
 
-                    unit_number:
-                        data.unit_number ??
-                        null,
+                car_name:
+                    data.car_name ??
+                    "",
 
-                    car_name:
-                        data.car_name ??
-                        "",
+                car_number:
+                    data.car_number ??
+                    null,
 
-                    car_number:
-                        data.car_number ??
-                        null,
+                from_station:
+                    data.from_station ??
+                    null,
 
-                    from_station:
-                        data.from_station ??
-                        null,
+                to_station:
+                    data.to_station ??
+                    null,
 
-                    to_station:
-                        data.to_station ??
-                        null,
+                from_slot:
+                    data.from_slot ??
+                    null,
 
-                    from_slot:
-                        data.from_slot ??
-                        null,
+                to_slot:
+                    data.to_slot ??
+                    null,
 
-                    to_slot:
-                        data.to_slot ??
-                        null,
+                action:
+                    data.action ??
+                    "",
 
-                    action:
-                        data.action ??
-                        "",
+                moved_by:
+                    data.moved_by ??
+                    "",
 
-                    moved_by:
-                        data.moved_by ??
-                        "",
+                moved_by_name:
+                    data.moved_by_name ??
+                    "",
 
-                    moved_by_name:
-                        data.moved_by_name ??
-                        "",
+                nots:
+                    data.note ??
+                    ""
 
-                    nots:
-                        data.note ??
-                        ""
-
-                }
-
-            ]);
-
+            }]);
 
     if (error) {
 
@@ -3273,9 +4232,8 @@ async function addHistory(data) {
 
 }
 
-
 /* =========================================================
-   LOAD HISTORY
+LOAD HISTORY
 ========================================================= */
 
 async function loadCurrentCarHistory() {
@@ -3284,12 +4242,10 @@ async function loadCurrentCarHistory() {
         return;
     }
 
-
     const container =
         document.getElementById(
             "historyContainer"
         );
-
 
     container.innerHTML =
         `
@@ -3297,7 +4253,6 @@ async function loadCurrentCarHistory() {
             جاري تحميل السجل...
         </div>
         `;
-
 
     const {
         data,
@@ -3323,10 +4278,11 @@ async function loadCurrentCarHistory() {
                 }
             );
 
-
     if (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         container.innerHTML =
             `
@@ -3339,8 +4295,10 @@ async function loadCurrentCarHistory() {
 
     }
 
-
-    if (!data || !data.length) {
+    if (
+        !data ||
+        !data.length
+    ) {
 
         container.innerHTML =
             `
@@ -3352,7 +4310,6 @@ async function loadCurrentCarHistory() {
         return;
 
     }
-
 
     let html =
         `
@@ -3366,11 +4323,25 @@ async function loadCurrentCarHistory() {
 
                 <tr>
 
-                    <th>من</th>
-                    <th>إلى</th>
-                    <th>Slot</th>
-                    <th>بواسطة</th>
-                    <th>الوقت</th>
+                    <th>
+                        من
+                    </th>
+
+                    <th>
+                        إلى
+                    </th>
+
+                    <th>
+                        Slot
+                    </th>
+
+                    <th>
+                        بواسطة
+                    </th>
+
+                    <th>
+                        الوقت
+                    </th>
 
                 </tr>
 
@@ -3379,13 +4350,11 @@ async function loadCurrentCarHistory() {
             <tbody>
         `;
 
-
     data.forEach(
         item => {
 
             html +=
                 `
-
                 <tr>
 
                     <td>
@@ -3406,7 +4375,8 @@ async function loadCurrentCarHistory() {
 
                     <td>
                         ${
-                            item.to_slot || "-"
+                            item.to_slot ||
+                            "-"
                         }
                     </td>
 
@@ -3425,38 +4395,36 @@ async function loadCurrentCarHistory() {
                     </td>
 
                 </tr>
-
                 `;
 
         }
     );
 
-
     html +=
         `
             </tbody>
+
         </table>
         `;
-
 
     container.innerHTML =
         html;
 
 }
 
-
 /* =========================================================
-   FREE SLOT
+FIND FREE SLOT
 ========================================================= */
 
-function findFreeSlot(station) {
+function findFreeSlot(
+    station
+) {
 
     const slots =
         document.querySelectorAll(
             `.slot[data-station="${station}"][data-slot],
              .waiting-slot[data-station="${station}"][data-slot]`
         );
-
 
     for (
         const slot of slots
@@ -3476,14 +4444,12 @@ function findFreeSlot(station) {
 
     }
 
-
     return null;
 
 }
 
-
 /* =========================================================
-   SLOT AVAILABLE
+CHECK SLOT
 ========================================================= */
 
 function isSlotAvailable(
@@ -3497,22 +4463,18 @@ function isSlotAvailable(
             `[data-station="${station}"][data-slot="${slot}"]`
         );
 
-
     if (!element) {
         return false;
     }
-
 
     const carElement =
         element.querySelector(
             ".car"
         );
 
-
     if (!carElement) {
         return true;
     }
-
 
     if (
         currentCar &&
@@ -3527,14 +4489,12 @@ function isSlotAvailable(
 
     }
 
-
     return false;
 
 }
 
-
 /* =========================================================
-   ADD CAR MODAL
+ADD CAR MODAL
 ========================================================= */
 
 function openAddCarModal() {
@@ -3542,7 +4502,6 @@ function openAddCarModal() {
     if (!isManager()) {
         return;
     }
-
 
     document
         .getElementById(
@@ -3552,11 +4511,20 @@ function openAddCarModal() {
             "show"
         );
 
+    document.getElementById(
+        "newCarStation"
+    ).value =
+        "wiring";
+
+    updateSlotOptions(
+        "newCarSlot",
+        "wiring",
+        1
+    );
 
     updateGeneratedCarNumber();
 
 }
-
 
 function closeAddCarModal() {
 
@@ -3570,9 +4538,8 @@ function closeAddCarModal() {
 
 }
 
-
 /* =========================================================
-   ADD NEW CAR
+ADD NEW CAR
 ========================================================= */
 
 async function addNewCar() {
@@ -3581,14 +4548,13 @@ async function addNewCar() {
         return;
     }
 
-
     const unitNumber =
         document
             .getElementById(
                 "newUnitNumber"
             )
-            .value.trim();
-
+            .value
+            .trim();
 
     const carName =
         document
@@ -3597,14 +4563,13 @@ async function addNewCar() {
             )
             .value;
 
-
     const carNumber =
         document
             .getElementById(
                 "newCarNumber"
             )
-            .value.trim();
-
+            .value
+            .trim();
 
     const station =
         document
@@ -3612,7 +4577,6 @@ async function addNewCar() {
                 "newCarStation"
             )
             .value;
-
 
     const slot =
         Number(
@@ -3623,7 +4587,6 @@ async function addNewCar() {
                 .value
         );
 
-
     if (!unitNumber) {
 
         alert(
@@ -3633,7 +4596,6 @@ async function addNewCar() {
         return;
 
     }
-
 
     if (
         Number(unitNumber) < 1
@@ -3647,7 +4609,6 @@ async function addNewCar() {
 
     }
 
-
     if (!carNumber) {
 
         alert(
@@ -3657,7 +4618,6 @@ async function addNewCar() {
         return;
 
     }
-
 
     if (
         !isSlotAvailable(
@@ -3675,10 +4635,8 @@ async function addNewCar() {
 
     }
 
-
     const user =
         getRouteUser();
-
 
     const {
         data,
@@ -3690,37 +4648,33 @@ async function addNewCar() {
                 "production_route_cars"
             )
 
-            .insert([
+            .insert([{
 
-                {
+                unit_number:
+                    unitNumber,
 
-                    unit_number:
-                        unitNumber,
+                car_name:
+                    carName,
 
-                    car_name:
-                        carName,
+                car_number:
+                    carNumber,
 
-                    car_number:
-                        carNumber,
+                current_station:
+                    station,
 
-                    current_station:
-                        station,
+                slot_number:
+                    slot,
 
-                    slot_number:
-                        slot,
+                status:
+                    station === "waiting"
+                        ? "waiting"
+                        : "active"
 
-                    status:
-                        station === "waiting"
-                            ? "waiting"
-                            : "active"
-
-                }
-
-            ])
+            }])
 
             .select()
-            .single();
 
+            .single();
 
     if (error) {
 
@@ -3728,7 +4682,6 @@ async function addNewCar() {
             "Add car error:",
             error
         );
-
 
         alert(
             "❌ لم تتم إضافة العربية\n\n" +
@@ -3738,7 +4691,6 @@ async function addNewCar() {
         return;
 
     }
-
 
     await addHistory({
 
@@ -3781,24 +4733,21 @@ async function addNewCar() {
 
     });
 
-
     document.getElementById(
         "newUnitNumber"
-    ).value = "1";
-
+    ).value =
+        "1";
 
     document.getElementById(
         "newCarName"
-    ).value = "DTC";
-
+    ).value =
+        "DTC";
 
     updateGeneratedCarNumber();
-
 
     closeAddCarModal();
 
     await loadRouteCars();
-
 
     alert(
         "تمت إضافة العربية إلى المسار بنجاح ✅"
@@ -3806,9 +4755,8 @@ async function addNewCar() {
 
 }
 
-
 /* =========================================================
-   REALTIME
+REALTIME
 ========================================================= */
 
 function startRouteRealtime() {
@@ -3820,30 +4768,37 @@ function startRouteRealtime() {
         )
 
         .on(
+
             "postgres_changes",
+
             {
                 event: "*",
+
                 schema: "public",
+
                 table:
                     "production_route_cars"
             },
+
             function () {
 
                 loadRouteCars();
 
             }
+
         )
 
         .subscribe();
 
 }
 
-
 /* =========================================================
-   STATION NAME
+STATION NAME
 ========================================================= */
 
-function stationName(station) {
+function stationName(
+    station
+) {
 
     const names = {
 
@@ -3851,7 +4806,7 @@ function stationName(station) {
             "Wiring",
 
         equipment:
-            "Equipment",
+            "Equipment / التركيبات",
 
         ht:
             "HT",
@@ -3867,11 +4822,9 @@ function stationName(station) {
 
     };
 
-
     if (!station) {
         return "-";
     }
-
 
     return (
         names[station] ||
@@ -3880,17 +4833,17 @@ function stationName(station) {
 
 }
 
-
 /* =========================================================
-   DATE
+DATE
 ========================================================= */
 
-function formatDate(value) {
+function formatDate(
+    value
+) {
 
     if (!value) {
         return "-";
     }
-
 
     try {
 
@@ -3908,18 +4861,18 @@ function formatDate(value) {
 
 }
 
-
 /* =========================================================
-   STATUS
+STATUS
 ========================================================= */
 
-function setStatus(message) {
+function setStatus(
+    message
+) {
 
     const element =
         document.getElementById(
             "routeStatus"
         );
-
 
     if (element) {
 
@@ -3930,28 +4883,42 @@ function setStatus(message) {
 
 }
 
-
 /* =========================================================
-   ESCAPE
+ESCAPE HTML
 ========================================================= */
 
-function escapeHtml(value) {
+function escapeHtml(
+    value
+) {
 
     return String(
         value ?? ""
     )
-
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
-
 /* =========================================================
-   BACK
+BACK
 ========================================================= */
 
 function goBack() {
@@ -3961,9 +4928,8 @@ function goBack() {
 
 }
 
-
 /* =========================================================
-   CLOSE BY OUTSIDE CLICK
+CLOSE MODALS OUTSIDE
 ========================================================= */
 
 document
@@ -3975,7 +4941,8 @@ document
         function(event) {
 
             if (
-                event.target === this
+                event.target ===
+                this
             ) {
 
                 closeCarModal();
@@ -3984,7 +4951,6 @@ document
 
         }
     );
-
 
 document
     .getElementById(
@@ -3995,7 +4961,8 @@ document
         function(event) {
 
             if (
-                event.target === this
+                event.target ===
+                this
             ) {
 
                 closeAddCarModal();
@@ -4009,4 +4976,4 @@ document
 
 </body>
 
-</html>
+</html> 

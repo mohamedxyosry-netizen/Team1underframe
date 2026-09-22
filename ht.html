@@ -258,6 +258,41 @@ body {
 }
 
 /* =====================================================
+   اختيار العربية المسجلة
+===================================================== */
+
+.registered-car-box {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+.registered-car-box label {
+    display: block;
+    margin-bottom: 9px;
+    font-weight: bold;
+    color: #374151;
+}
+
+#registeredCarSelect {
+    width: 100%;
+    border: 2px solid #0d6efd;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 15px;
+    background: white;
+    cursor: pointer;
+    outline: none;
+    font-family: inherit;
+}
+
+#registeredCarSelect:focus {
+    box-shadow: 0 0 0 3px rgba(13,110,253,.12);
+}
+
+/* =====================================================
    RECORDS
 ===================================================== */
 
@@ -665,10 +700,34 @@ onclick="saveHT()">
 📋 البيانات المسجلة
 </h2>
 
+
+<!-- =====================================================
+     اختيار العربية المسجلة
+===================================================== -->
+
+<div class="registered-car-box">
+
+<label>
+🚆 اختر العربية المسجلة
+</label>
+
+<select
+id="registeredCarSelect"
+onchange="filterHTRecords()">
+
+<option value="">
+اختر العربية المسجلة
+</option>
+
+</select>
+
+</div>
+
+
 <div id="htRecords">
 
 <div class="empty">
-⏳ جاري تحميل البيانات...
+اختر العربية المسجلة لعرض البيانات
 </div>
 
 </div>
@@ -1538,6 +1597,85 @@ async function saveHT() {
 
 
 /* =====================================================
+   متغير البيانات المسجلة
+===================================================== */
+
+let allHTRecords = [];
+
+
+/* =====================================================
+   تحويل رقم العربية إلى الشكل المطلوب
+===================================================== */
+
+function getHTCarDisplayName(record) {
+
+    const carName =
+        String(record.car_name || "").trim();
+
+    const carNumber =
+        String(record.car_number || "").trim();
+
+
+    if (!carName || !carNumber) {
+        return carName || carNumber || "عربية";
+    }
+
+
+    /*
+       الرقم محفوظ في قاعدة البيانات هكذا:
+
+       3-MC2-1
+
+       ومعناه:
+
+       رقم العربية = 3
+       اسم العربية = MC2
+       الوحدة = 1
+
+       العرض المطلوب:
+
+       MC2 001-3
+    */
+
+    const parts =
+        carNumber.split("-");
+
+
+    if (parts.length >= 3) {
+
+        const finalNumber =
+            parts[0];
+
+        const unitNumber =
+            parts[parts.length - 1];
+
+
+        const formattedUnit =
+            String(unitNumber)
+                .padStart(3, "0");
+
+
+        return (
+            carName +
+            " " +
+            formattedUnit +
+            "-" +
+            finalNumber
+        );
+
+    }
+
+
+    return (
+        carName +
+        " " +
+        carNumber
+    );
+
+}
+
+
+/* =====================================================
    تحميل السجلات
 ===================================================== */
 
@@ -1547,6 +1685,12 @@ async function loadHTRecords() {
         document.getElementById(
             "htRecords"
         );
+
+    const carSelect =
+        document.getElementById(
+            "registeredCarSelect"
+        );
+
 
     if (!container) {
         return;
@@ -1609,210 +1753,28 @@ async function loadHTRecords() {
         }
 
 
-        const records =
+        allHTRecords =
             result.data || [];
 
 
-        if (
-            records.length === 0
-        ) {
+        /*
+         * بناء قائمة العربيات المسجلة
+         */
 
-            container.innerHTML = `
-                <div class="empty">
-                    لا توجد بيانات مسجلة حتى الآن
-                </div>
-            `;
+        buildRegisteredCars();
 
-            return;
 
-        }
+        /*
+         * في البداية لا نعرض أي سجل.
+         * المستخدم لازم يختار العربية.
+         */
 
+        container.innerHTML = `
+            <div class="empty">
+                🚆 اختر العربية المسجلة من القائمة لعرض بياناتها
+            </div>
+        `;
 
-        container.innerHTML =
-            "";
-
-
-        records.forEach(
-            function(record) {
-
-                const div =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                div.className =
-                    "record";
-
-
-                /* مهم لنظام الحذف */
-
-                if (
-                    record.id !== undefined
-                ) {
-
-                    div.dataset.recordId =
-                        record.id;
-
-                }
-
-
-                const isCompleted =
-                    String(
-                        record.done || ""
-                    ).trim() === "نعم";
-
-
-                const statusHTML =
-                    isCompleted
-
-                    ?
-
-                    `
-                    <span class="status-badge status-completed">
-                        ✅ تم التقفيل
-                    </span>
-                    `
-
-                    :
-
-                    `
-                    <span class="status-badge status-pending">
-                        ❌ لم يتم التقفيل
-                    </span>
-                    `;
-
-
-                const reasonHTML =
-                    !isCompleted &&
-                    record.not_completed_reason
-
-                    ?
-
-                    `
-                    <p>
-
-                        <strong>
-                            ❌ سبب عدم الانتهاء:
-                        </strong>
-
-                        ${escapeHTML(
-                            record.not_completed_reason
-                        )}
-
-                    </p>
-                    `
-
-                    :
-
-                    "";
-
-
-                div.innerHTML = `
-
-                    <h3>
-
-                        🔧
-
-                        ${escapeHTML(
-                            record.device ||
-                            "جهاز HT"
-                        )}
-
-                    </h3>
-
-
-                    <p>
-
-                        <strong>
-                            🚆 اسم العربية:
-                        </strong>
-
-                        ${escapeHTML(
-                            record.car_name ||
-                            ""
-                        )}
-
-                    </p>
-
-
-                    <p>
-
-                        <strong>
-                            🔢 رقم العربية:
-                        </strong>
-
-                        ${escapeHTML(
-                            record.car_number ||
-                            ""
-                        )}
-
-                    </p>
-
-
-                    <p>
-
-                        <strong>
-                            📌 الحالة:
-                        </strong>
-
-                        ${statusHTML}
-
-                    </p>
-
-
-                    ${reasonHTML}
-
-
-                    <p>
-
-                        <strong>
-                            📝 الملاحظات:
-                        </strong>
-
-                        ${escapeHTML(
-                            record.notes ||
-                            "لا يوجد"
-                        )}
-
-                    </p>
-
-
-                    <p>
-
-                        <strong>
-                            👤 المستخدم:
-                        </strong>
-
-                        ${escapeHTML(
-                            record.created_by ||
-                            ""
-                        )}
-
-                    </p>
-
-
-                    <p>
-
-                        <strong>
-                            🕘 وقت التسجيل:
-                        </strong>
-
-                        ${formatArabicDate(
-                            record.created_at
-                        )}
-
-                    </p>
-
-                `;
-
-
-                container.appendChild(
-                    div
-                );
-
-            }
-        );
 
     }
 
@@ -1830,6 +1792,503 @@ async function loadHTRecords() {
         `;
 
     }
+
+}
+
+
+/* =====================================================
+   بناء قائمة العربيات المسجلة
+===================================================== */
+
+function buildRegisteredCars() {
+
+    const select =
+        document.getElementById(
+            "registeredCarSelect"
+        );
+
+
+    if (!select) {
+        return;
+    }
+
+
+    /*
+     * حفظ الاختيار الحالي
+     */
+
+    const oldValue =
+        select.value;
+
+
+    /*
+     * تنظيف القائمة
+     */
+
+    select.innerHTML = `
+        <option value="">
+            🚆 اختر العربية المسجلة
+        </option>
+    `;
+
+
+    /*
+     * منع تكرار نفس العربية
+     *
+     * المفتاح هو car_number
+     *
+     * مثال:
+     * 1-MC1-1
+     * 3-MC2-1
+     */
+
+    const carsMap =
+        new Map();
+
+
+    allHTRecords.forEach(
+        function(record) {
+
+            const carNumber =
+                String(
+                    record.car_number || ""
+                ).trim();
+
+
+            const carName =
+                String(
+                    record.car_name || ""
+                ).trim();
+
+
+            if (!carNumber) {
+                return;
+            }
+
+
+            if (!carName) {
+                return;
+            }
+
+
+            if (!carsMap.has(carNumber)) {
+
+                carsMap.set(
+                    carNumber,
+                    record
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+     * ترتيب العربيات حسب رقم الوحدة
+     * ثم رقم العربية
+     */
+
+    const cars =
+        Array.from(
+            carsMap.entries()
+        );
+
+
+    cars.sort(
+        function(a, b) {
+
+            const recordA =
+                a[1];
+
+            const recordB =
+                b[1];
+
+
+            const partsA =
+                String(
+                    recordA.car_number || ""
+                ).split("-");
+
+
+            const partsB =
+                String(
+                    recordB.car_number || ""
+                ).split("-");
+
+
+            const numberA =
+                parseInt(
+                    partsA[0]
+                ) || 0;
+
+
+            const numberB =
+                parseInt(
+                    partsB[0]
+                ) || 0;
+
+
+            return numberA - numberB;
+
+        }
+    );
+
+
+    /*
+     * إنشاء القائمة
+     */
+
+    cars.forEach(
+        function(item) {
+
+            const carNumber =
+                item[0];
+
+            const record =
+                item[1];
+
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                carNumber;
+
+
+            option.textContent =
+                "🚆 " +
+                getHTCarDisplayName(
+                    record
+                );
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    /*
+     * لو كان فيه اختيار سابق
+     * نحافظ عليه
+     */
+
+    if (
+        oldValue &&
+        Array.from(
+            select.options
+        ).some(
+            function(option) {
+                return option.value === oldValue;
+            }
+        )
+    ) {
+
+        select.value =
+            oldValue;
+
+    }
+
+}
+
+
+/* =====================================================
+   فلترة السجلات حسب العربية
+===================================================== */
+
+function filterHTRecords() {
+
+    const select =
+        document.getElementById(
+            "registeredCarSelect"
+        );
+
+
+    const container =
+        document.getElementById(
+            "htRecords"
+        );
+
+
+    if (!select || !container) {
+        return;
+    }
+
+
+    const selectedCarNumber =
+        select.value;
+
+
+    /*
+     * لم يتم اختيار عربية
+     */
+
+    if (!selectedCarNumber) {
+
+        container.innerHTML = `
+            <div class="empty">
+                🚆 اختر العربية المسجلة من القائمة لعرض بياناتها
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    /*
+     * إظهار تسجيلات العربية المختارة فقط
+     */
+
+    const filteredRecords =
+        allHTRecords.filter(
+            function(record) {
+
+                return String(
+                    record.car_number || ""
+                ).trim() ===
+                String(
+                    selectedCarNumber
+                ).trim();
+
+            }
+        );
+
+
+    renderHTRecords(
+        filteredRecords
+    );
+
+}
+
+
+/* =====================================================
+   عرض السجلات
+===================================================== */
+
+function renderHTRecords(records) {
+
+    const container =
+        document.getElementById(
+            "htRecords"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (
+        !records ||
+        records.length === 0
+    ) {
+
+        container.innerHTML = `
+            <div class="empty">
+                لا توجد بيانات مسجلة لهذه العربية
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    records.forEach(
+        function(record) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "record";
+
+
+            /*
+             * مهم لنظام الحذف
+             */
+
+            if (
+                record.id !== undefined
+            ) {
+
+                div.dataset.recordId =
+                    record.id;
+
+            }
+
+
+            const isCompleted =
+                String(
+                    record.done || ""
+                ).trim() === "نعم";
+
+
+            const statusHTML =
+                isCompleted
+
+                ?
+
+                `
+                <span class="status-badge status-completed">
+                    ✅ تم التقفيل
+                </span>
+                `
+
+                :
+
+                `
+                <span class="status-badge status-pending">
+                    ❌ لم يتم التقفيل
+                </span>
+                `;
+
+
+            const reasonHTML =
+                !isCompleted &&
+                record.not_completed_reason
+
+                ?
+
+                `
+                <p>
+
+                    <strong>
+                        ❌ سبب عدم الانتهاء:
+                    </strong>
+
+                    ${escapeHTML(
+                        record.not_completed_reason
+                    )}
+
+                </p>
+                `
+
+                :
+
+                "";
+
+
+            div.innerHTML = `
+
+                <h3>
+
+                    🔧
+
+                    ${escapeHTML(
+                        record.device ||
+                        "جهاز HT"
+                    )}
+
+                </h3>
+
+
+                <p>
+
+                    <strong>
+                        🚆 اسم العربية:
+                    </strong>
+
+                    ${escapeHTML(
+                        record.car_name ||
+                        ""
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        🔢 رقم العربية:
+                    </strong>
+
+                    ${escapeHTML(
+                        getHTCarDisplayName(
+                            record
+                        )
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        📌 الحالة:
+                    </strong>
+
+                    ${statusHTML}
+
+                </p>
+
+
+                ${reasonHTML}
+
+
+                <p>
+
+                    <strong>
+                        📝 الملاحظات:
+                    </strong>
+
+                    ${escapeHTML(
+                        record.notes ||
+                        "لا يوجد"
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        👤 المستخدم:
+                    </strong>
+
+                    ${escapeHTML(
+                        record.created_by ||
+                        ""
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        🕘 وقت التسجيل:
+                    </strong>
+
+                    ${formatArabicDate(
+                        record.created_at
+                    )}
+
+                </p>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
 
 }
 

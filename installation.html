@@ -294,6 +294,43 @@
 
 
         /* =========================
+           REGISTERED CARS SELECT
+        ========================= */
+
+        .registered-car-box {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border: 1px solid #dbe3ec;
+            border-radius: 12px;
+        }
+
+        .registered-car-box label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        #installationRegisteredCars {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 15px;
+            background: white;
+            outline: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        #installationRegisteredCars:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
+        }
+
+
+        /* =========================
            RECORDS
         ========================= */
 
@@ -509,8 +546,6 @@
                 <div class="car-number-preview">
 
 
-                    <!-- رقم العربية -->
-
                     <div class="number-part">
 
                         <span>
@@ -524,8 +559,6 @@
                     </div>
 
 
-                    <!-- اسم العربية -->
-
                     <div class="number-part car-name-part">
 
                         <span>
@@ -538,8 +571,6 @@
 
                     </div>
 
-
-                    <!-- رقم الوحدة -->
 
                     <div class="number-part">
 
@@ -557,8 +588,6 @@
                 </div>
 
 
-                <!-- القيمة الفعلية التي يتم حفظها -->
-
                 <input
                     type="hidden"
                     id="installationCarNumber">
@@ -566,9 +595,7 @@
             </div>
 
 
-            <!-- =========================
-                 التركيبة / الجهاز
-            ========================== -->
+            <!-- التركيبة -->
 
             <div class="input-group">
 
@@ -589,9 +616,7 @@
             </div>
 
 
-            <!-- =========================
-                 الحالة
-            ========================== -->
+            <!-- الحالة -->
 
             <div class="input-group">
 
@@ -620,9 +645,7 @@
             </div>
 
 
-            <!-- =========================
-                 سبب عدم الانتهاء
-            ========================= -->
+            <!-- سبب عدم الانتهاء -->
 
             <div
                 class="input-group reason-box"
@@ -639,9 +662,7 @@
             </div>
 
 
-            <!-- =========================
-                 الملاحظات
-            ========================== -->
+            <!-- الملاحظات -->
 
             <div class="input-group">
 
@@ -656,9 +677,7 @@
             </div>
 
 
-            <!-- =========================
-                 SAVE
-            ========================== -->
+            <!-- SAVE -->
 
             <button
                 type="button"
@@ -688,10 +707,33 @@
             </h2>
 
 
+            <!-- =========================
+                 اختيار العربية المسجلة
+            ========================== -->
+
+            <div class="registered-car-box">
+
+                <label>
+                    🚆 اختر العربية المسجلة
+                </label>
+
+                <select
+                    id="installationRegisteredCars"
+                    onchange="showInstallationCarRecords()">
+
+                    <option value="">
+                        اختر العربية المسجلة
+                    </option>
+
+                </select>
+
+            </div>
+
+
             <div id="installationRecords">
 
                 <div class="empty">
-                    ⏳ جاري تحميل البيانات...
+                    🚆 اختر العربية المسجلة لعرض بياناتها
                 </div>
 
             </div>
@@ -757,11 +799,6 @@ catch (error) {
 
 const INSTALLATION_DEVICES = {
 
-
-    /* =========================
-       DTC
-    ========================= */
-
     DTC: [
 
         "APU1",
@@ -773,18 +810,11 @@ const INSTALLATION_DEVICES = {
         "CM",
         "LDOS",
         "RDOS",
-        "LOCOJ-L",
-        "LOCOJ-R",
-        "TOWJ-R",
-        "TOWJ-L"
+        "LOCOJ",
+        "TOWJ"
 
     ],
 
-
-
-    /* =========================
-       MC1
-    ========================= */
 
     MC1: [
 
@@ -807,11 +837,6 @@ const INSTALLATION_DEVICES = {
     ],
 
 
-
-    /* =========================
-       MC2
-    ========================= */
-
     MC2: [
 
         "FL",
@@ -832,11 +857,6 @@ const INSTALLATION_DEVICES = {
     ],
 
 
-
-    /* =========================
-       MCI
-    ========================= */
-
     MCI: [
 
         "FL",
@@ -856,6 +876,14 @@ const INSTALLATION_DEVICES = {
     ]
 
 };
+
+
+
+/* =========================================
+   السجلات المحملة
+========================================= */
+
+let installationAllRecords = [];
 
 
 
@@ -1009,7 +1037,6 @@ function updateInstallationDevices() {
 
 /* =========================================
    توليد رقم العربية
-   النظام الجديد الموحد
 ========================================= */
 
 function updateInstallationCarNumber() {
@@ -1053,20 +1080,12 @@ function updateInstallationCarNumber() {
         );
 
 
-    /* =========================
-       عرض البيانات
-    ========================= */
-
     nameDisplay.textContent =
         carName || "—";
 
     unitDisplay.textContent =
         unitNumber || "—";
 
-
-    /* =========================
-       التحقق من البيانات
-    ========================= */
 
     if (
         !carName ||
@@ -1105,10 +1124,6 @@ function updateInstallationCarNumber() {
 
     }
 
-
-    /* =========================
-       ترتيب العربيات
-    ========================= */
 
     const oddOrder = [
         "DTC",
@@ -1150,10 +1165,6 @@ function updateInstallationCarNumber() {
     }
 
 
-    /* =========================
-       رقم العربية
-    ========================= */
-
     const baseNumber =
         ((unit - 1) * 4) + 1;
 
@@ -1161,10 +1172,6 @@ function updateInstallationCarNumber() {
     const finalNumber =
         baseNumber + position;
 
-
-    /* =========================
-       القيمة التي تحفظ في DB
-    ========================= */
 
     const carNumber =
         finalNumber +
@@ -1295,10 +1302,6 @@ async function saveInstallation() {
         );
 
 
-    /* =========================
-       التحقق الأساسي
-    ========================= */
-
     if (
         !carName ||
         !unitNumber ||
@@ -1317,10 +1320,6 @@ async function saveInstallation() {
 
     }
 
-
-    /* =========================
-       التحقق من رقم الوحدة
-    ========================= */
 
     const unit =
         Number(unitNumber);
@@ -1342,10 +1341,6 @@ async function saveInstallation() {
     }
 
 
-    /* =========================
-       سبب عدم الانتهاء
-    ========================= */
-
     if (
         done === "لا" &&
         !reason
@@ -1362,10 +1357,6 @@ async function saveInstallation() {
     }
 
 
-    /* =========================
-       التحقق من Supabase
-    ========================= */
-
     if (!supabaseClient) {
 
         message.innerText =
@@ -1379,10 +1370,6 @@ async function saveInstallation() {
     }
 
 
-    /* =========================
-       منع الضغط المتكرر
-    ========================= */
-
     button.disabled = true;
 
     button.innerText =
@@ -1395,10 +1382,6 @@ async function saveInstallation() {
     message.style.color =
         "#0d6efd";
 
-
-    /* =========================
-       البيانات
-    ========================= */
 
     const payload = {
 
@@ -1430,16 +1413,6 @@ async function saveInstallation() {
 
     };
 
-
-    console.log(
-        "📤 INSTALLATION DATA:",
-        payload
-    );
-
-
-    /* =========================
-       الحفظ
-    ========================= */
 
     try {
 
@@ -1475,16 +1448,6 @@ async function saveInstallation() {
             return;
 
         }
-
-
-        /* =========================
-           نجاح الحفظ
-        ========================= */
-
-        console.log(
-            "✅ INSTALLATION SAVED:",
-            result.data
-        );
 
 
         message.innerText =
@@ -1601,7 +1564,7 @@ async function saveInstallation() {
 
 
 /* =========================================
-   تحميل السجلات
+   تحميل السجلات + بناء قائمة العربيات
 ========================================= */
 
 async function loadInstallationRecords() {
@@ -1612,7 +1575,13 @@ async function loadInstallationRecords() {
         );
 
 
-    if (!container) {
+    const carSelect =
+        document.getElementById(
+            "installationRegisteredCars"
+        );
+
+
+    if (!container || !carSelect) {
         return;
     }
 
@@ -1627,6 +1596,10 @@ async function loadInstallationRecords() {
     }
 
 
+    container.innerHTML =
+        '<div class="empty">⏳ جاري تحميل البيانات...</div>';
+
+
     try {
 
         const result =
@@ -1636,6 +1609,12 @@ async function loadInstallationRecords() {
                 .eq(
                     "department",
                     "installation"
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
                 );
 
 
@@ -1659,11 +1638,88 @@ async function loadInstallationRecords() {
         }
 
 
-        const records =
+        installationAllRecords =
             result.data || [];
 
 
-        if (!records.length) {
+        /* =====================================
+           بناء قائمة العربيات بدون تكرار
+        ===================================== */
+
+        const carsMap =
+            new Map();
+
+
+        installationAllRecords.forEach(
+            function(record) {
+
+                if (!record.car_number) {
+                    return;
+                }
+
+
+                if (!carsMap.has(record.car_number)) {
+
+                    carsMap.set(
+                        record.car_number,
+                        record
+                    );
+
+                }
+
+            }
+        );
+
+
+        carSelect.innerHTML = `
+            <option value="">
+                🚆 اختر العربية المسجلة
+            </option>
+        `;
+
+
+        carsMap.forEach(
+            function(record, carNumber) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    carNumber;
+
+
+                option.textContent =
+                    "🚆 " +
+                    (record.car_name || "عربية") +
+                    " — رقم العربية " +
+                    carNumber.split("-")[0] +
+                    " — الوحدة " +
+                    (carNumber.split("-")[2] || "—");
+
+
+                carSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        /* =====================================
+           لو مفيش عربيات
+        ===================================== */
+
+        if (installationAllRecords.length === 0) {
+
+            carSelect.innerHTML = `
+                <option value="">
+                    لا توجد عربيات مسجلة
+                </option>
+            `;
+
 
             container.innerHTML =
                 '<div class="empty">' +
@@ -1675,145 +1731,17 @@ async function loadInstallationRecords() {
         }
 
 
-        /* =========================
-           ترتيب الأحدث أولاً
-        ========================= */
+        /* =====================================
+           لا تعرض أي تسجيل قبل اختيار العربية
+        ===================================== */
 
-        records.sort(
-            function(a, b) {
-
-                return new Date(
-                    b.created_at || 0
-                ) -
-                new Date(
-                    a.created_at || 0
-                );
-
-            }
-        );
+        carSelect.value = "";
 
 
-        container.innerHTML = "";
-
-
-        records.forEach(
-            function(record) {
-
-                const div =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                div.className =
-                    "record";
-
-
-                /* مهم جدًا لنظام الحذف */
-
-                div.dataset.recordId =
-                    record.id;
-
-
-                const statusClass =
-                    record.done === "نعم"
-                        ? "completed"
-                        : "not-completed";
-
-
-                const statusText =
-                    record.done === "نعم"
-                        ? "✅ تم الانتهاء"
-                        : "⚠️ لم يتم الانتهاء";
-
-
-                div.innerHTML = `
-
-                    <h3>
-                        🔧
-                        ${escapeHTML(
-                            record.device || "تركيبة"
-                        )}
-                    </h3>
-
-
-                    <p>
-                        <strong>
-                            🚆 العربية:
-                        </strong>
-                        ${escapeHTML(
-                            record.car_name
-                        )}
-                    </p>
-
-
-                    <p>
-                        <strong>
-                            🔢 رقم العربية:
-                        </strong>
-                        ${escapeHTML(
-                            record.car_number
-                        )}
-                    </p>
-
-
-                    <p>
-                        <strong>
-                            ✅ الحالة:
-                        </strong>
-
-                        <span class="status-badge ${statusClass}">
-                            ${statusText}
-                        </span>
-                    </p>
-
-
-                    ${
-                        record.done !== "نعم"
-                        ?
-                        `
-                        <p>
-                            <strong>
-                                ⚠️ سبب عدم الانتهاء:
-                            </strong>
-                            ${escapeHTML(
-                                record.not_completed_reason || "غير محدد"
-                            )}
-                        </p>
-                        `
-                        :
-                        ""
-                    }
-
-
-                    <p>
-                        <strong>
-                            📝 الملاحظات:
-                        </strong>
-                        ${escapeHTML(
-                            record.notes || "لا توجد"
-                        )}
-                    </p>
-
-
-                    <p>
-                        <strong>
-                            👤 المستخدم:
-                        </strong>
-                        ${escapeHTML(
-                            record.created_by || ""
-                        )}
-                    </p>
-
-                `;
-
-
-                container.appendChild(
-                    div
-                );
-
-            }
-        );
+        container.innerHTML =
+            '<div class="empty">' +
+            '🚆 اختر العربية المسجلة لعرض بياناتها' +
+            '</div>';
 
     }
 
@@ -1832,6 +1760,265 @@ async function loadInstallationRecords() {
             '</div>';
 
     }
+
+}
+
+
+
+/* =========================================
+   عرض تسجيلات العربية المختارة
+========================================= */
+
+function showInstallationCarRecords() {
+
+    const carSelect =
+        document.getElementById(
+            "installationRegisteredCars"
+        );
+
+
+    const container =
+        document.getElementById(
+            "installationRecords"
+        );
+
+
+    if (!carSelect || !container) {
+        return;
+    }
+
+
+    const selectedCar =
+        carSelect.value;
+
+
+    if (!selectedCar) {
+
+        container.innerHTML =
+            '<div class="empty">' +
+            '🚆 اختر العربية المسجلة لعرض بياناتها' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    const records =
+        installationAllRecords.filter(
+            function(record) {
+
+                return record.car_number === selectedCar;
+
+            }
+        );
+
+
+    if (!records.length) {
+
+        container.innerHTML =
+            '<div class="empty">' +
+            'لا توجد بيانات مسجلة لهذه العربية' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    records.forEach(
+        function(record) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "record";
+
+
+            /* مهم جدًا لنظام الحذف */
+
+            div.dataset.recordId =
+                record.id;
+
+
+            const statusClass =
+                record.done === "نعم"
+                    ? "completed"
+                    : "not-completed";
+
+
+            const statusText =
+                record.done === "نعم"
+                    ? "✅ تم الانتهاء"
+                    : "⚠️ لم يتم الانتهاء";
+
+
+            div.innerHTML = `
+
+                <h3>
+                    🔧
+                    ${escapeHTML(
+                        record.device || "تركيبة"
+                    )}
+                </h3>
+
+
+                <p>
+                    <strong>
+                        🚆 العربية:
+                    </strong>
+
+                    ${escapeHTML(
+                        record.car_name || ""
+                    )}
+                </p>
+
+
+                <p>
+                    <strong>
+                        🔢 رقم العربية:
+                    </strong>
+
+                    ${escapeHTML(
+                        record.car_number || ""
+                    )}
+                </p>
+
+
+                <p>
+                    <strong>
+                        🔧 التركيبة:
+                    </strong>
+
+                    ${escapeHTML(
+                        record.device || ""
+                    )}
+                </p>
+
+
+                <p>
+                    <strong>
+                        ✅ الحالة:
+                    </strong>
+
+                    <span class="status-badge ${statusClass}">
+                        ${statusText}
+                    </span>
+                </p>
+
+
+                ${
+                    record.done !== "نعم"
+                    ?
+                    `
+                    <p>
+                        <strong>
+                            ⚠️ سبب عدم الانتهاء:
+                        </strong>
+
+                        ${escapeHTML(
+                            record.not_completed_reason ||
+                            "غير محدد"
+                        )}
+                    </p>
+                    `
+                    :
+                    ""
+                }
+
+
+                <p>
+                    <strong>
+                        📝 الملاحظات:
+                    </strong>
+
+                    ${escapeHTML(
+                        record.notes ||
+                        "لا توجد"
+                    )}
+                </p>
+
+
+                <p>
+                    <strong>
+                        👤 المستخدم:
+                    </strong>
+
+                    ${escapeHTML(
+                        record.created_by ||
+                        ""
+                    )}
+                </p>
+
+
+                <p>
+                    <strong>
+                        🕘 وقت التسجيل:
+                    </strong>
+
+                    ${formatArabicDate(
+                        record.created_at
+                    )}
+                </p>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================
+   التاريخ
+========================================= */
+
+function formatArabicDate(value) {
+
+    if (!value) {
+        return "غير محدد";
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if (
+        isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return value;
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+        "ar-EG",
+        {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true
+        }
+    ).format(date);
 
 }
 

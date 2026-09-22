@@ -2092,62 +2092,6 @@ document.addEventListener(
     }
 );
 
-
-/* =========================================
-   تحديث تلقائي كل 10 ثواني
-========================================= */
-
-setInterval(
-    function() {
-
-        if (
-            document.visibilityState ===
-            "visible"
-        ) {
-
-            let user = null;
-
-
-            try {
-
-                user =
-                    typeof getCurrentUser === "function"
-
-                        ? getCurrentUser()
-
-                        : JSON.parse(
-                            sessionStorage.getItem(
-                                "currentUser"
-                            )
-                        );
-
-            }
-
-            catch (error) {
-
-                user = null;
-
-            }
-
-
-            if (
-                user &&
-                String(
-                    user.role || ""
-                ).toLowerCase()
-                === "admin"
-            ) {
-
-                loadAttendance();
-
-            }
-
-        }
-
-    },
-    10000
-);
-
 </script>
 
 </body>
