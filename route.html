@@ -324,8 +324,8 @@ body {
 }
 
 .inline-waiting-slots {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex !important;
+    flex-direction: row !important;
     gap: 7px;
     min-width: 0;
 
@@ -340,6 +340,26 @@ body {
 .inline-waiting-slots .waiting-slot {
     direction: rtl;
     unicode-bidi: isolate;
+    flex: 1 1 0;
+    order: 0;
+}
+
+/* إجبار ترتيب Waiting 7 / 8 */
+.line2-track .inline-waiting-slots .waiting-slot[data-slot="7"] {
+    order: 1;
+}
+
+.line2-track .inline-waiting-slots .waiting-slot[data-slot="8"] {
+    order: 2;
+}
+
+/* إجبار ترتيب Waiting 9 / 10 */
+.line2-track .inline-waiting-slots .waiting-slot[data-slot="9"] {
+    order: 1;
+}
+
+.line2-track .inline-waiting-slots .waiting-slot[data-slot="10"] {
+    order: 2;
 }
 
 .waiting-slot {
@@ -1026,11 +1046,11 @@ body {
         →
         Equipment
         →
-        HT
+        LT
         →
         Waiting 3 / 4
         →
-        LT
+        HT
         →
         Waiting 5 / 6
         →
@@ -1230,21 +1250,21 @@ body {
 
         <div
             class="station"
-            data-station="lt">
+            data-station="ht">
 
             <div class="station-title">
-                LT
+                HT
             </div>
 
             <div class="station-subtitle">
-                Station 4
+                Station 3
             </div>
 
             <div class="slots">
 
                 <div
                     class="slot"
-                    data-station="lt"
+                    data-station="ht"
                     data-slot="1">
 
                     <span class="slot-number">
@@ -1259,7 +1279,7 @@ body {
 
                 <div
                     class="slot"
-                    data-station="lt"
+                    data-station="ht"
                     data-slot="2">
 
                     <span class="slot-number">
@@ -1312,21 +1332,21 @@ body {
 
         <div
             class="station"
-            data-station="ht">
+            data-station="lt">
 
             <div class="station-title">
-                HT
+                LT
             </div>
 
             <div class="station-subtitle">
-                Station 3
+                Station 4
             </div>
 
             <div class="slots">
 
                 <div
                     class="slot"
-                    data-station="ht"
+                    data-station="lt"
                     data-slot="1">
 
                     <span class="slot-number">
@@ -1341,7 +1361,7 @@ body {
 
                 <div
                     class="slot"
-                    data-station="ht"
+                    data-station="lt"
                     data-slot="2">
 
                     <span class="slot-number">
@@ -1358,6 +1378,8 @@ body {
 
         </div>
 
+
+
     </div>
 
 </div>
@@ -1371,7 +1393,7 @@ body {
         ⏳
 
         <span>
-            منطقة الانتظار الرئيسية — Waiting 5 و 6
+ Waiting 6 /5
         </span>
 
     </div>
