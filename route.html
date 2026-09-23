@@ -175,6 +175,18 @@ body {
     direction: ltr;
 }
 
+/* ================= LINE 2 ================= */
+
+.line2-track {
+    min-width: 1120px;
+
+    grid-template-columns:
+        minmax(250px, 1fr)
+        minmax(230px, 230px)
+        minmax(230px, 230px)
+        minmax(250px, 1fr);
+}
+
 .track::before {
     content: "";
 
@@ -316,6 +328,18 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 7px;
     min-width: 0;
+
+    /* =====================================================
+       ترتيب Waiting المطلوب:
+       من اليسار إلى اليمين = 7 ثم 8 ثم 9 ثم 10
+       ===================================================== */
+    direction: ltr !important;
+    unicode-bidi: isolate;
+}
+
+.inline-waiting-slots .waiting-slot {
+    direction: rtl;
+    unicode-bidi: isolate;
 }
 
 .waiting-slot {
@@ -881,6 +905,10 @@ body {
         min-width: 850px;
     }
 
+    .line2-track {
+        min-width: 1120px;
+    }
+
     .car {
         height: 50px;
     }
@@ -1007,6 +1035,8 @@ body {
         Waiting 5 / 6
         →
         Waiting 7 / 8
+        →
+        Waiting 9 / 10
         →
         Final
 
@@ -1388,11 +1418,13 @@ body {
 
     </div>
 
-    <div class="track">
+    <div class="track line2-track">
 
         <div class="direction-arrow direction-right">
             اتجاه Final →
         </div>
+
+        <!-- ================= WAITING 7 / 8 ================= -->
 
         <div class="inline-waiting">
 
@@ -1420,6 +1452,42 @@ body {
 
                     <div class="empty-slot">
                         Slot 8 — فارغ
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= WAITING 9 / 10 ================= -->
+
+        <div class="inline-waiting">
+
+            <div class="inline-waiting-title">
+                ⏳ Waiting 9 / 10 — شمال Final
+            </div>
+
+            <div class="inline-waiting-slots">
+
+                <div
+                    class="waiting-slot"
+                    data-station="waiting"
+                    data-slot="9">
+
+                    <div class="empty-slot">
+                        Slot 9 — فارغ
+                    </div>
+
+                </div>
+
+                <div
+                    class="waiting-slot"
+                    data-station="waiting"
+                    data-slot="10">
+
+                    <div class="empty-slot">
+                        Slot 10 — فارغ
                     </div>
 
                 </div>
@@ -1513,16 +1581,6 @@ body {
         <div id="carDetails">
             جاري التحميل...
         </div>
-
-        <!--
-        =====================================================
-        سجل بيانات العربية
-        =====================================================
-
-        مهم:
-        هذا الجزء موجود في الصفحة،
-        لكن JavaScript سيظهره للمدير فقط.
-        -->
 
         <div
             id="carDataActions"
@@ -2229,7 +2287,12 @@ function getSlotCount(station) {
         station === "waiting"
     ) {
 
-        return 8;
+        /*
+        تم رفع عدد أماكن الانتظار
+        من 8 إلى 10
+        */
+
+        return 10;
 
     }
 
@@ -2779,13 +2842,6 @@ async function openCarModal(
     historyContainer.innerHTML =
         "";
 
-    /*
-    ========================================================
-    التعديل المطلوب:
-    سجل بيانات العربية يظهر للمدير فقط
-    ========================================================
-    */
-
     if (isManager()) {
 
         carDataActions.style.display =
@@ -2827,20 +2883,8 @@ async function openCarModal(
         managerActions.style.display =
             "none";
 
-        /*
-        ====================================================
-        الفني لن يرى سجل بيانات العربية
-        ====================================================
-        */
-
         carDataActions.style.display =
             "none";
-
-        /*
-        ====================================================
-        WAITING RECEIVE
-        ====================================================
-        */
 
         if (
             String(
@@ -2991,10 +3035,15 @@ function buildWaitingReceiveOption(
 
     }
 
+    /*
+    Waiting 7 / 8 / 9 / 10
+    لا يتم استلامهم تلقائيًا من قسم آخر.
+    */
+
     container.innerHTML =
         `
         <div class="no-history">
-            لا يوجد إجراء متاح لهذه المنطقة.
+            العربية في منطقة انتظار التسليم إلى Final.
         </div>
         `;
 
@@ -3228,6 +3277,40 @@ function buildWorkerCompleteOptions(
                 workerMoveTo(
                     "waiting",
                     8,
+                    "lt_to_waiting"
+                );
+
+            }
+        );
+
+        /* ================= WAITING 9 ================= */
+
+        addWorkerOption(
+            container,
+            "⏳ نقل إلى Waiting 9",
+            "worker-waiting",
+            function () {
+
+                workerMoveTo(
+                    "waiting",
+                    9,
+                    "lt_to_waiting"
+                );
+
+            }
+        );
+
+        /* ================= WAITING 10 ================= */
+
+        addWorkerOption(
+            container,
+            "⏳ نقل إلى Waiting 10",
+            "worker-waiting",
+            function () {
+
+                workerMoveTo(
+                    "waiting",
+                    10,
                     "lt_to_waiting"
                 );
 
@@ -3893,7 +3976,7 @@ async function moveCurrentCarToWaiting() {
     if (!freeSlot) {
 
         alert(
-            "⚠️ كل أماكن الانتظار الثمانية ممتلئة."
+            "⚠️ كل أماكن الانتظار العشرة ممتلئة."
         );
 
         return;
@@ -4976,4 +5059,4 @@ document
 
 </body>
 
-</html> 
+</html>
