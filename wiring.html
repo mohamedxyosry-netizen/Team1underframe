@@ -157,6 +157,71 @@
         }
 
         /* =========================
+           WIRING TASK CHECKBOXES
+        ========================= */
+
+        .wiring-tasks-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .wiring-task-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 13px 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+        }
+
+        .wiring-task-option:hover {
+            background: #f0fdf4;
+            border-color: #198754;
+        }
+
+        .wiring-task-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            margin: 0;
+            cursor: pointer;
+            accent-color: #198754;
+        }
+
+        .wiring-task-option span {
+            font-size: 15px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .wiring-task-option.selected {
+            background: #f0fdf4;
+            border-color: #198754;
+        }
+
+        .wiring-task-option.selected span {
+            color: #198754;
+        }
+
+        .wiring-tasks-disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .wiring-task-hint {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* =========================
            رقم العربية
         ========================= */
 
@@ -620,7 +685,9 @@
             </div>
 
 
-            <!-- مهمة Wiring -->
+            <!-- =========================
+                 مهمة Wiring
+            ========================= -->
 
             <div class="input-group">
 
@@ -628,15 +695,19 @@
                     🔌 مهمة Wiring
                 </label>
 
-                <select
+
+                <div
                     id="wiringTask"
-                    disabled>
+                    class="wiring-tasks-box wiring-tasks-disabled">
 
-                    <option value="">
-                        اختر العربية أولاً
-                    </option>
+                </div>
 
-                </select>
+
+                <div class="wiring-task-hint">
+
+                    ☑️ يمكنك اختيار أكثر من مهمة
+
+                </div>
 
             </div>
 
@@ -972,6 +1043,7 @@
 
     /* =====================================================
        UPDATE WIRING TASKS
+       إنشاء Checkboxes حسب اسم العربية
     ===================================================== */
 
     function updateWiringTasks() {
@@ -982,7 +1054,7 @@
             );
 
 
-        const taskElement =
+        const taskContainer =
             document.getElementById(
                 "wiringTask"
             );
@@ -990,7 +1062,7 @@
 
         if (
             !carNameElement ||
-            !taskElement
+            !taskContainer
         ) {
 
             return;
@@ -1002,25 +1074,15 @@
             carNameElement.value;
 
 
-        taskElement.innerHTML =
+        taskContainer.innerHTML =
             "";
 
 
         if (!carName) {
 
-            taskElement.disabled =
-                true;
-
-
-            taskElement.innerHTML = `
-
-                <option value="">
-
-                    اختر العربية أولاً
-
-                </option>
-
-            `;
+            taskContainer.classList.add(
+                "wiring-tasks-disabled"
+            );
 
 
             return;
@@ -1032,41 +1094,142 @@
             WIRING_TASKS[carName] || [];
 
 
-        taskElement.disabled =
-            false;
-
-
-        taskElement.innerHTML = `
-
-            <option value="">
-
-                اختر مهمة Wiring
-
-            </option>
-
-        `;
+        taskContainer.classList.remove(
+            "wiring-tasks-disabled"
+        );
 
 
         tasks.forEach(
-            function(task) {
+            function(task, index) {
 
-                const option =
+                const label =
                     document.createElement(
-                        "option"
+                        "label"
                     );
 
 
-                option.value =
+                label.className =
+                    "wiring-task-option";
+
+
+                const checkbox =
+                    document.createElement(
+                        "input"
+                    );
+
+
+                checkbox.type =
+                    "checkbox";
+
+
+                checkbox.name =
+                    "wiringTask";
+
+
+                checkbox.value =
                     task;
 
 
-                option.textContent =
+                checkbox.id =
+                    "wiringTask_" +
+                    index;
+
+
+                const span =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                span.textContent =
                     task;
 
 
-                taskElement.appendChild(
-                    option
+                checkbox.addEventListener(
+                    "change",
+                    function() {
+
+                        if (
+                            checkbox.checked
+                        ) {
+
+                            label.classList.add(
+                                "selected"
+                            );
+
+                        }
+
+                        else {
+
+                            label.classList.remove(
+                                "selected"
+                            );
+
+                        }
+
+                    }
                 );
+
+
+                label.appendChild(
+                    checkbox
+                );
+
+
+                label.appendChild(
+                    span
+                );
+
+
+                taskContainer.appendChild(
+                    label
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       GET SELECTED WIRING TASKS
+    ===================================================== */
+
+    function getSelectedWiringTasks() {
+
+        const taskContainer =
+            document.getElementById(
+                "wiringTask"
+            );
+
+
+        if (!taskContainer) {
+
+            return [];
+
+        }
+
+
+        const checkedTasks =
+            taskContainer.querySelectorAll(
+                'input[type="checkbox"]:checked'
+            );
+
+
+        return Array.from(
+            checkedTasks
+        )
+        .map(
+            function(checkbox) {
+
+                return checkbox.value.trim();
+
+            }
+        )
+        .filter(
+            function(value) {
+
+                return value !== "";
 
             }
         );
@@ -1339,12 +1502,6 @@
             );
 
 
-        const taskElement =
-            document.getElementById(
-                "wiringTask"
-            );
-
-
         const doneElement =
             document.getElementById(
                 "wiringDone"
@@ -1393,10 +1550,12 @@
                 : "";
 
 
-        const task =
-            taskElement
-                ? taskElement.value.trim()
-                : "";
+        /* =================================================
+           المهام المختارة من الـ Checkboxes
+        ================================================= */
+
+        const tasks =
+            getSelectedWiringTasks();
 
 
         const done =
@@ -1472,10 +1631,10 @@
         }
 
 
-        if (!task) {
+        if (tasks.length === 0) {
 
             message.innerText =
-                "❌ من فضلك اختر مهمة Wiring";
+                "❌ من فضلك اختر مهمة Wiring واحدة على الأقل";
 
 
             message.style.color =
@@ -1548,7 +1707,7 @@
 
 
         message.innerText =
-            "⏳ جاري الاتصال بـ Supabase...";
+            "⏳ جاري حفظ المهام...";
 
 
         message.style.color =
@@ -1557,56 +1716,69 @@
 
         try {
 
-            const payload = {
+            /* =================================================
+               إنشاء Record مستقل لكل مهمة
+            ================================================= */
 
-                department:
-                    "wiring",
+            const payloads =
+                tasks.map(
+                    function(task) {
 
-                car_name:
-                    carName,
+                        return {
 
-                car_number:
-                    carNumber,
+                            department:
+                                "wiring",
 
-                device:
-                    task,
+                            car_name:
+                                carName,
 
-                done:
-                    done,
+                            car_number:
+                                carNumber,
 
-                notes:
-                    notes,
+                            device:
+                                task,
 
-                not_completed_reason:
-                    done === "لا"
-                        ? reason
-                        : "",
+                            done:
+                                done,
 
-                created_by:
-                    username,
+                            notes:
+                                notes,
 
-                created_at:
-                    new Date().toISOString()
+                            not_completed_reason:
+                                done === "لا"
+                                    ? reason
+                                    : "",
 
-            };
+                            created_by:
+                                username,
+
+                            created_at:
+                                new Date().toISOString()
+
+                        };
+
+                    }
+                );
 
 
             console.log(
                 "📤 DATA SENT TO SUPABASE:",
-                payload
+                payloads
             );
 
+
+            /* =================================================
+               كل مهمة = Row مستقل
+            ================================================= */
 
             const result =
                 await supabaseClient
 
                     .from("records")
 
-                    .insert(payload)
+                    .insert(payloads)
 
-                    .select()
-
-                    .single();
+                    .select();
 
 
             if (result.error) {
@@ -1646,7 +1818,9 @@
 
 
             message.innerText =
-                "✅ تم حفظ البيانات بنجاح في Supabase";
+                "✅ تم حفظ " +
+                tasks.length +
+                " مهمة بنجاح في Supabase";
 
 
             message.style.color =
@@ -1687,19 +1861,50 @@
                 "--";
 
 
-            taskElement.innerHTML = `
+            /* =================================================
+               مسح Checkboxes
+            ================================================= */
 
-                <option value="">
-
-                    اختر العربية أولاً
-
-                </option>
-
-            `;
+            const taskCheckboxes =
+                document.querySelectorAll(
+                    '#wiringTask input[type="checkbox"]'
+                );
 
 
-            taskElement.disabled =
-                true;
+            taskCheckboxes.forEach(
+                function(checkbox) {
+
+                    checkbox.checked =
+                        false;
+
+                }
+            );
+
+
+            document.querySelectorAll(
+                "#wiringTask .wiring-task-option"
+            ).forEach(
+                function(label) {
+
+                    label.classList.remove(
+                        "selected"
+                    );
+
+                }
+            );
+
+
+            document.getElementById(
+                "wiringTask"
+            ).innerHTML =
+                "";
+
+
+            document.getElementById(
+                "wiringTask"
+            ).classList.add(
+                "wiring-tasks-disabled"
+            );
 
 
             doneElement.value =
@@ -1768,10 +1973,6 @@
 
     /* =====================================================
        LOAD WIRING RECORDS
-       
-       هنا التعديل الأساسي:
-       تحميل كل بيانات Wiring
-       ثم إنشاء قائمة بالعربيات المسجلة
     ===================================================== */
 
     async function loadWiringRecords() {
@@ -2041,12 +2242,6 @@
                     }
                 );
 
-
-                /*
-                   لو كانت العربية المختارة
-                   موجودة بالفعل بعد إعادة التحميل
-                   نرجعها كما كانت.
-                */
 
                 if (
                     oldValue &&

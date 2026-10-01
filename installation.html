@@ -3,422 +3,812 @@
 
 <head>
 
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>NERIC - Installation</title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, Tahoma, sans-serif;
-            background: #f1f5f9;
-            color: #1f2937;
-        }
-
-        .dashboard {
-            min-height: 100vh;
-        }
-
-        /* =========================
-           HEADER
-        ========================= */
-
-        .header {
-            background: rgb(52, 67, 84);
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-            border-bottom: 3px solid #5928e0;
-        }
-
-        .header h1 {
-            margin: 0 0 7px;
-            font-size: 28px;
-            color: #ffffff;
-        }
-
-        .header p {
-            margin: 0;
-            color: #d1d5db;
-            font-size: 14px;
-        }
-
-        .logout-btn {
-            border: none;
-            background: #198754;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-        }
-
-        .logout-btn:hover {
-            opacity: 0.9;
-        }
-
-
-        /* =========================
-           PAGE
-        ========================= */
-
-        .form-page {
-            width: min(1100px, 94%);
-            margin: 30px auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            align-items: start;
-        }
-
-
-        /* =========================
-           CARDS
-        ========================= */
-
-        .form-card,
-        .records-card {
-            background: white;
-            border-radius: 18px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            border: 1px solid #e5e7eb;
-        }
-
-        .form-card {
-            border-top: 5px solid #198754;
-        }
-
-        .records-card {
-            border-top: 5px solid #0d6efd;
-        }
-
-        .form-card h2,
-        .records-card h2 {
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 21px;
-        }
-
-        .form-card h2 {
-            color: #198754;
-        }
-
-        .records-card h2 {
-            color: #0d6efd;
-        }
-
-
-        /* =========================
-           INPUTS
-        ========================= */
-
-        .input-group {
-            margin-bottom: 18px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #374151;
-        }
-
-        .input-group input,
-        .input-group select,
-        .input-group textarea {
-            width: 100%;
-            border: 1px solid #d1d5db;
-            border-radius: 10px;
-            padding: 13px;
-            font-size: 15px;
-            background: #f9fafb;
-            outline: none;
-            transition: 0.2s;
-            font-family: inherit;
-        }
-
-        .input-group input:focus,
-        .input-group select:focus,
-        .input-group textarea:focus {
-            border-color: #198754;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(25,135,84,0.12);
-        }
-
-        .input-group textarea {
-            min-height: 110px;
-            resize: vertical;
-        }
-
-
-        /* =========================
-           CAR NUMBER
-        ========================= */
-
-        .car-number-preview {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            margin-top: 10px;
-            direction: ltr;
-        }
-
-        .number-part {
-            background: #f8fafc;
-            border: 1px solid #d1d5db;
-            border-radius: 12px;
-            padding: 10px 5px;
-            text-align: center;
-            min-height: 78px;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .number-part span {
-            font-size: 12px;
-            color: #64748b;
-            margin-bottom: 5px;
-            direction: rtl;
-        }
-
-        .number-part strong {
-            font-size: 22px;
-            color: #344354;
-            direction: ltr;
-        }
-
-        .car-name-part {
-            background: #f0fdf4;
-            border: 2px solid #198754;
-        }
-
-        .car-name-part strong {
-            color: #198754;
-            font-size: 23px;
-        }
-
-
-        /* =========================
-           STATUS
-        ========================= */
-
-        .status-box {
-            margin-top: 10px;
-            padding: 12px;
-            border-radius: 10px;
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 7px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .completed {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .not-completed {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-
-        /* =========================
-           REASON
-        ========================= */
-
-        .reason-box {
-            display: none;
-        }
-
-
-        /* =========================
-           SAVE BUTTON
-        ========================= */
-
-        .save-btn {
-            width: 100%;
-            border: none;
-            background: #198754;
-            color: white;
-            padding: 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
-        .save-btn:hover {
-            background: #157347;
-        }
-
-        .save-btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
-
-
-        /* =========================
-           MESSAGE
-        ========================= */
-
-        #installationMessage {
-            text-align: center;
-            font-weight: bold;
-            margin-top: 18px;
-            line-height: 1.7;
-            white-space: pre-line;
-        }
-
-
-        /* =========================
-           REGISTERED CARS SELECT
-        ========================= */
-
-        .registered-car-box {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8fafc;
-            border: 1px solid #dbe3ec;
-            border-radius: 12px;
-        }
-
-        .registered-car-box label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #374151;
-        }
-
-        #installationRegisteredCars {
-            width: 100%;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 13px;
-            font-size: 15px;
-            background: white;
-            outline: none;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        #installationRegisteredCars:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
-        }
-
-
-        /* =========================
-           RECORDS
-        ========================= */
-
-        #installationRecords {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .record {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-right: 5px solid #0d6efd;
-            border-radius: 12px;
-            padding: 18px;
-        }
-
-        .record h3 {
-            margin-top: 0;
-            font-size: 16px;
-            color: #0d6efd;
-        }
-
-        .record p {
-            margin: 9px 0;
-            line-height: 1.7;
-        }
-
-        .record strong {
-            color: #374151;
-        }
-
-        .empty {
-            text-align: center;
-            color: #64748b;
-            padding: 20px;
-        }
-
-        .error-box {
-            background: #fff1f2;
-            border: 1px solid #fecdd3;
-            color: #b42318;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            line-height: 1.7;
-        }
-
-
-        /* =========================
-           MOBILE
-        ========================= */
-
-        @media (max-width: 750px) {
-
-            .header {
-                padding: 18px;
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-            }
-
-            .logout-btn {
-                width: 100%;
-            }
-
-            .form-page {
-                grid-template-columns: 1fr;
-                width: 94%;
-                margin: 20px auto;
-            }
-
-            .form-card,
-            .records-card {
-                padding: 20px;
-            }
-
-            .number-part strong {
-                font-size: 18px;
-            }
-
-            .car-name-part strong {
-                font-size: 19px;
-            }
-
-        }
-
-    </style>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>NERIC - Installation</title>
+
+<style>
+
+/* =====================================================
+   GENERAL
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Tahoma, sans-serif;
+    background: #f1f5f9;
+    color: #1f2937;
+}
+
+.dashboard {
+    min-height: 100vh;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+
+    background: rgb(52, 67, 84);
+
+    padding: 20px 30px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    box-shadow:
+        0 3px 15px rgba(0,0,0,0.08);
+
+    border-bottom:
+        3px solid #5928e0;
+}
+
+.header h1 {
+
+    margin: 0 0 7px;
+
+    font-size: 28px;
+
+    color: white;
+}
+
+.header p {
+
+    margin: 0;
+
+    color: #d1d5db;
+
+    font-size: 14px;
+}
+
+.logout-btn {
+
+    border: none;
+
+    background: #198754;
+
+    color: white;
+
+    padding: 12px 20px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: bold;
+}
+
+.logout-btn:hover {
+
+    opacity: .9;
+}
+
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.form-page {
+
+    width: min(1100px, 94%);
+
+    margin: 30px auto;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 25px;
+
+    align-items: start;
+}
+
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+.form-card,
+.records-card {
+
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,.08);
+
+    border:
+        1px solid #e5e7eb;
+}
+
+.form-card {
+
+    border-top:
+        5px solid #198754;
+}
+
+.records-card {
+
+    border-top:
+        5px solid #0d6efd;
+}
+
+.form-card h2,
+.records-card h2 {
+
+    margin-top: 0;
+
+    margin-bottom: 25px;
+
+    font-size: 21px;
+}
+
+.form-card h2 {
+
+    color: #198754;
+}
+
+.records-card h2 {
+
+    color: #0d6efd;
+}
+
+
+/* =====================================================
+   INPUTS
+===================================================== */
+
+.input-group {
+
+    margin-bottom: 18px;
+}
+
+.input-group label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-weight: bold;
+
+    color: #374151;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+
+    width: 100%;
+
+    border:
+        1px solid #d1d5db;
+
+    border-radius: 10px;
+
+    padding: 13px;
+
+    font-size: 15px;
+
+    background: #f9fafb;
+
+    outline: none;
+
+    transition: .2s;
+
+    font-family: inherit;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+
+    border-color:
+        #198754;
+
+    background: white;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(25,135,84,.12);
+}
+
+.input-group textarea {
+
+    min-height: 110px;
+
+    resize: vertical;
+}
+
+
+/* =====================================================
+   CAR NUMBER
+===================================================== */
+
+.car-number-preview {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
+    gap: 8px;
+
+    margin-top: 10px;
+
+    direction: ltr;
+}
+
+.number-part {
+
+    background: #f8fafc;
+
+    border:
+        1px solid #d1d5db;
+
+    border-radius: 12px;
+
+    padding: 10px 5px;
+
+    text-align: center;
+
+    min-height: 78px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+.number-part span {
+
+    display: block;
+
+    font-size: 12px;
+
+    color: #64748b;
+
+    margin-bottom: 5px;
+
+    direction: rtl;
+}
+
+.number-part strong {
+
+    display: block;
+
+    font-size: 22px;
+
+    color: #344354;
+
+    direction: ltr;
+}
+
+.car-name-part {
+
+    background: #f0fdf4;
+
+    border:
+        2px solid #198754;
+}
+
+.car-name-part strong {
+
+    color: #198754;
+
+    font-size: 23px;
+}
+
+
+/* =====================================================
+   INSTALLATION DEVICES
+===================================================== */
+
+.devices-box {
+
+    background: #f8fafc;
+
+    border:
+        1px solid #dbe3ec;
+
+    border-radius: 12px;
+
+    padding: 12px;
+
+    max-height: 380px;
+
+    overflow-y: auto;
+}
+
+
+/* =====================================================
+   SELECT ALL
+===================================================== */
+
+.device-select-all {
+
+    background: #e0f2fe;
+
+    border:
+        1px solid #7dd3fc;
+
+    border-radius: 10px;
+
+    padding: 13px;
+
+    margin-bottom: 10px;
+}
+
+.device-select-all label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    color: #0369a1;
+
+    margin: 0;
+}
+
+.device-select-all input {
+
+    width: 21px;
+
+    height: 21px;
+
+    accent-color: #0d6efd;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+
+/* =====================================================
+   DEVICE ITEM
+===================================================== */
+
+.device-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    background: white;
+
+    border:
+        1px solid #e5e7eb;
+
+    border-radius: 9px;
+
+    padding: 12px;
+
+    margin-bottom: 7px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.device-item:hover {
+
+    background: #f0fdf4;
+
+    border-color:
+        #198754;
+}
+
+.device-item.selected {
+
+    background: #f0fdf4;
+
+    border-color:
+        #198754;
+}
+
+.device-item input {
+
+    width: 20px;
+
+    height: 20px;
+
+    accent-color: #198754;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+.device-item span {
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    color: #374151;
+}
+
+
+/* =====================================================
+   EMPTY DEVICES
+===================================================== */
+
+.devices-empty {
+
+    text-align: center;
+
+    padding: 20px;
+
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   SELECTED COUNT
+===================================================== */
+
+.selected-count {
+
+    margin-top: 10px;
+
+    padding: 9px;
+
+    text-align: center;
+
+    background: #f0fdf4;
+
+    color: #15803d;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status-badge {
+
+    display: inline-block;
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    font-weight: bold;
+
+    font-size: 13px;
+}
+
+.completed {
+
+    background: #dcfce7;
+
+    color: #166534;
+}
+
+.not-completed {
+
+    background: #fee2e2;
+
+    color: #991b1b;
+}
+
+
+/* =====================================================
+   REASON
+===================================================== */
+
+.reason-box {
+
+    display: none;
+}
+
+
+/* =====================================================
+   SAVE BUTTON
+===================================================== */
+
+.save-btn {
+
+    width: 100%;
+
+    border: none;
+
+    background: #198754;
+
+    color: white;
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    margin-top: 5px;
+}
+
+.save-btn:hover {
+
+    background: #157347;
+}
+
+.save-btn:disabled {
+
+    background: #6c757d;
+
+    cursor: not-allowed;
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+#installationMessage {
+
+    text-align: center;
+
+    font-weight: bold;
+
+    margin-top: 18px;
+
+    line-height: 1.7;
+
+    white-space: pre-line;
+}
+
+
+/* =====================================================
+   REGISTERED CARS
+===================================================== */
+
+.registered-car-box {
+
+    margin-bottom: 20px;
+
+    padding: 15px;
+
+    background: #f8fafc;
+
+    border:
+        1px solid #dbe3ec;
+
+    border-radius: 12px;
+}
+
+.registered-car-box label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-weight: bold;
+
+    color: #374151;
+}
+
+#installationRegisteredCars {
+
+    width: 100%;
+
+    border:
+        1px solid #cbd5e1;
+
+    border-radius: 10px;
+
+    padding: 13px;
+
+    font-size: 15px;
+
+    background: white;
+
+    outline: none;
+
+    cursor: pointer;
+
+    font-family: inherit;
+}
+
+#installationRegisteredCars:focus {
+
+    border-color:
+        #0d6efd;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(13,110,253,.12);
+}
+
+
+/* =====================================================
+   RECORDS
+===================================================== */
+
+#installationRecords {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+.record {
+
+    background: #f8fafc;
+
+    border:
+        1px solid #e2e8f0;
+
+    border-right:
+        5px solid #0d6efd;
+
+    border-radius: 12px;
+
+    padding: 18px;
+}
+
+.record h3 {
+
+    margin-top: 0;
+
+    font-size: 16px;
+
+    color: #0d6efd;
+}
+
+.record p {
+
+    margin: 9px 0;
+
+    line-height: 1.7;
+}
+
+.record strong {
+
+    color: #374151;
+}
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty {
+
+    text-align: center;
+
+    color: #64748b;
+
+    padding: 20px;
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.error-box {
+
+    background: #fff1f2;
+
+    border:
+        1px solid #fecdd3;
+
+    color: #b42318;
+
+    border-radius: 10px;
+
+    padding: 15px;
+
+    text-align: center;
+
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 750px) {
+
+    .header {
+
+        padding: 18px;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        text-align: center;
+    }
+
+    .logout-btn {
+
+        width: 100%;
+    }
+
+    .form-page {
+
+        grid-template-columns: 1fr;
+
+        width: 94%;
+
+        margin: 20px auto;
+    }
+
+    .form-card,
+    .records-card {
+
+        padding: 20px;
+    }
+
+    .car-number-preview {
+
+        gap: 6px;
+    }
+
+    .number-part {
+
+        padding: 10px 5px;
+    }
+
+    .number-part span {
+
+        font-size: 11px;
+    }
+
+    .number-part strong {
+
+        font-size: 18px;
+    }
+
+    .car-name-part strong {
+
+        font-size: 19px;
+    }
+
+}
+
+</style>
 
 </head>
 
@@ -428,333 +818,366 @@
 <div class="dashboard">
 
 
-    <!-- =========================
-         HEADER
-    ========================== -->
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
-    <header class="header">
+<header class="header">
 
-        <div>
+    <div>
 
-            <h1>
-                🔧 قسم التركيبات
-            </h1>
+        <h1>
+            🔧 قسم التركيبات
+        </h1>
 
-            <p>
-                تسجيل ومتابعة أعمال التركيبات
-            </p>
+        <p>
+            تسجيل ومتابعة أعمال التركيبات
+        </p>
+
+    </div>
+
+
+    <button
+        class="logout-btn"
+        type="button"
+        onclick="goHome()">
+
+        🏠 الأقسام الرئيسية
+
+    </button>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="form-page">
+
+
+<!-- =====================================================
+     FORM
+===================================================== -->
+
+<div class="form-card">
+
+    <h2>
+        📝 تسجيل بيانات جديدة
+    </h2>
+
+
+    <!-- =================================================
+         اسم العربية
+    ================================================= -->
+
+    <div class="input-group">
+
+        <label>
+            🚆 اسم العربية
+        </label>
+
+        <select
+            id="installationCarName"
+            onchange="updateInstallationCarNumber()">
+
+            <option value="">
+                اختر اسم العربية
+            </option>
+
+            <option value="DTC">
+                DTC
+            </option>
+
+            <option value="MC1">
+                MC1
+            </option>
+
+            <option value="MC2">
+                MC2
+            </option>
+
+            <option value="MCI">
+                MCI
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- =================================================
+         رقم الوحدة
+    ================================================= -->
+
+    <div class="input-group">
+
+        <label>
+            🔢 رقم الوحدة
+        </label>
+
+        <input
+            type="number"
+            id="installationUnitNumber"
+            placeholder="مثال: 1"
+            min="1"
+            step="1"
+            oninput="updateInstallationCarNumber()">
+
+    </div>
+
+
+    <!-- =================================================
+         بيانات العربية
+    ================================================= -->
+
+    <div class="input-group">
+
+        <label>
+            🚆 بيانات العربية
+        </label>
+
+        <div class="car-number-preview">
+
+
+            <div class="number-part">
+
+                <span>
+                    رقم العربية
+                </span>
+
+                <strong
+                    id="installationCarDisplay">
+
+                    —
+
+                </strong>
+
+            </div>
+
+
+            <div class="number-part car-name-part">
+
+                <span>
+                    اسم العربية
+                </span>
+
+                <strong
+                    id="installationNameDisplay">
+
+                    —
+
+                </strong>
+
+            </div>
+
+
+            <div class="number-part">
+
+                <span>
+                    رقم الوحدة
+                </span>
+
+                <strong
+                    id="installationUnitDisplay">
+
+                    —
+
+                </strong>
+
+            </div>
+
 
         </div>
 
 
-        <button
-            class="logout-btn"
-            type="button"
-            onclick="goHome()">
+        <input
+            type="hidden"
+            id="installationCarNumber">
 
-            🏠 الأقسام الرئيسية
+    </div>
 
-        </button>
 
-    </header>
+    <!-- =================================================
+         اختيار التركيبات
+    ================================================= -->
 
+    <div class="input-group">
 
+        <label>
+            🔧 اختر التركيبات
+        </label>
 
-    <!-- =========================
-         MAIN
-    ========================= -->
 
-    <main class="form-page">
+        <div
+            id="installationDevicesBox"
+            class="devices-box">
 
+            <div class="devices-empty">
 
-        <!-- =========================
-             FORM
-        ========================= -->
-
-        <div class="form-card">
-
-            <h2>
-                📝 تسجيل بيانات جديدة
-            </h2>
-
-
-            <!-- اسم العربية -->
-
-            <div class="input-group">
-
-                <label>
-                    🚆 اسم العربية
-                </label>
-
-                <select
-                    id="installationCarName"
-                    onchange="updateInstallationCarNumber()">
-
-                    <option value="">
-                        اختر اسم العربية
-                    </option>
-
-                    <option value="DTC">
-                        DTC
-                    </option>
-
-                    <option value="MC1">
-                        MC1
-                    </option>
-
-                    <option value="MC2">
-                        MC2
-                    </option>
-
-                    <option value="MCI">
-                        MCI
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- رقم الوحدة -->
-
-            <div class="input-group">
-
-                <label>
-                    🔢 رقم الوحدة
-                </label>
-
-                <input
-                    type="number"
-                    id="installationUnitNumber"
-                    placeholder="مثال: 1"
-                    min="1"
-                    step="1"
-                    oninput="updateInstallationCarNumber()">
-
-            </div>
-
-
-            <!-- رقم العربية -->
-
-            <div class="input-group">
-
-                <label>
-                    🚆 بيانات العربية
-                </label>
-
-
-                <div class="car-number-preview">
-
-
-                    <div class="number-part">
-
-                        <span>
-                            رقم العربية
-                        </span>
-
-                        <strong id="installationCarDisplay">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div class="number-part car-name-part">
-
-                        <span>
-                            اسم العربية
-                        </span>
-
-                        <strong id="installationNameDisplay">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div class="number-part">
-
-                        <span>
-                            رقم الوحدة
-                        </span>
-
-                        <strong id="installationUnitDisplay">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-
-                <input
-                    type="hidden"
-                    id="installationCarNumber">
-
-            </div>
-
-
-            <!-- التركيبة -->
-
-            <div class="input-group">
-
-                <label>
-                    🔧 التركيبة
-                </label>
-
-                <select
-                    id="installationDevice"
-                    disabled>
-
-                    <option value="">
-                        اختر اسم العربية أولاً
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- الحالة -->
-
-            <div class="input-group">
-
-                <label>
-                    ✅ حالة الانتهاء
-                </label>
-
-                <select
-                    id="installationDone"
-                    onchange="updateInstallationStatus()">
-
-                    <option value="">
-                        اختار الحالة
-                    </option>
-
-                    <option value="نعم">
-                        نعم - تم الانتهاء
-                    </option>
-
-                    <option value="لا">
-                        لا - لم يتم الانتهاء
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- سبب عدم الانتهاء -->
-
-            <div
-                class="input-group reason-box"
-                id="installationReasonGroup">
-
-                <label>
-                    ⚠️ سبب عدم الانتهاء
-                </label>
-
-                <textarea
-                    id="installationReason"
-                    placeholder="اكتب سبب عدم الانتهاء"></textarea>
-
-            </div>
-
-
-            <!-- الملاحظات -->
-
-            <div class="input-group">
-
-                <label>
-                    📝 ملاحظات
-                </label>
-
-                <textarea
-                    id="installationNotes"
-                    placeholder="اكتب الملاحظات"></textarea>
-
-            </div>
-
-
-            <!-- SAVE -->
-
-            <button
-                type="button"
-                class="save-btn"
-                id="saveInstallationButton"
-                onclick="saveInstallation()">
-
-                💾 حفظ البيانات
-
-            </button>
-
-
-            <p id="installationMessage"></p>
-
-        </div>
-
-
-
-        <!-- =========================
-             RECORDS
-        ========================== -->
-
-        <div class="records-card">
-
-            <h2>
-                📋 البيانات المسجلة
-            </h2>
-
-
-            <!-- =========================
-                 اختيار العربية المسجلة
-            ========================== -->
-
-            <div class="registered-car-box">
-
-                <label>
-                    🚆 اختر العربية المسجلة
-                </label>
-
-                <select
-                    id="installationRegisteredCars"
-                    onchange="showInstallationCarRecords()">
-
-                    <option value="">
-                        اختر العربية المسجلة
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div id="installationRecords">
-
-                <div class="empty">
-                    🚆 اختر العربية المسجلة لعرض بياناتها
-                </div>
+                🚆 اختر اسم العربية أولاً
 
             </div>
 
         </div>
 
+    </div>
 
-    </main>
+
+    <!-- =================================================
+         الحالة
+    ================================================= -->
+
+    <div class="input-group">
+
+        <label>
+            ✅ حالة الانتهاء
+        </label>
+
+        <select
+            id="installationDone"
+            onchange="updateInstallationStatus()">
+
+            <option value="">
+                اختار الحالة
+            </option>
+
+            <option value="نعم">
+                نعم - تم الانتهاء
+            </option>
+
+            <option value="لا">
+                لا - لم يتم الانتهاء
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- =================================================
+         سبب عدم الانتهاء
+    ================================================= -->
+
+    <div
+        class="input-group reason-box"
+        id="installationReasonGroup">
+
+        <label>
+            ⚠️ سبب عدم الانتهاء
+        </label>
+
+        <textarea
+            id="installationReason"
+            placeholder="اكتب سبب عدم الانتهاء"></textarea>
+
+    </div>
+
+
+    <!-- =================================================
+         الملاحظات
+    ================================================= -->
+
+    <div class="input-group">
+
+        <label>
+            📝 ملاحظات
+        </label>
+
+        <textarea
+            id="installationNotes"
+            placeholder="اكتب الملاحظات"></textarea>
+
+    </div>
+
+
+    <!-- =================================================
+         SAVE
+    ================================================= -->
+
+    <button
+        type="button"
+        class="save-btn"
+        id="saveInstallationButton"
+        onclick="saveInstallation()">
+
+        💾 حفظ البيانات
+
+    </button>
+
+
+    <p id="installationMessage"></p>
 
 </div>
 
 
+
+<!-- =====================================================
+     RECORDS
+===================================================== -->
+
+<div class="records-card">
+
+    <h2>
+        📋 البيانات المسجلة
+    </h2>
+
+
+    <!-- =================================================
+         اختيار العربية
+    ================================================= -->
+
+    <div class="registered-car-box">
+
+        <label>
+            🚆 اختر العربية المسجلة
+        </label>
+
+        <select
+            id="installationRegisteredCars"
+            onchange="showInstallationCarRecords()">
+
+            <option value="">
+                اختر العربية المسجلة
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div id="installationRecords">
+
+        <div class="empty">
+
+            🚆 اختر العربية المسجلة لعرض بياناتها
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</main>
+
+</div>
+
+
+
+<!-- =====================================================
+     SUPABASE
+===================================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
 <script>
 
-/* =========================================
+/* =====================================================
    SUPABASE
-========================================= */
+===================================================== */
 
 const SUPABASE_URL =
     "https://gzyybadyaunizdlvmcle.supabase.co";
@@ -770,7 +1193,8 @@ try {
 
     if (
         window.supabase &&
-        typeof window.supabase.createClient === "function"
+        typeof window.supabase.createClient ===
+        "function"
     ) {
 
         supabaseClient =
@@ -792,12 +1216,12 @@ catch (error) {
 }
 
 
-
-/* =========================================
-   قوائم التركيبات
-========================================= */
+/* =====================================================
+   قوائم التركيبات حسب العربية
+===================================================== */
 
 const INSTALLATION_DEVICES = {
+
 
     DTC: [
 
@@ -842,6 +1266,7 @@ const INSTALLATION_DEVICES = {
         "FL",
         "VVVF",
         "MS BOX",
+        "HTJP",
         "STINGER-L",
         "STINGER-R",
         "HSCB",
@@ -862,6 +1287,7 @@ const INSTALLATION_DEVICES = {
         "FL",
         "VVVF",
         "MS BOX",
+        "HTJP",
         "STINGER-L",
         "STINGER-R",
         "HSCB",
@@ -878,18 +1304,16 @@ const INSTALLATION_DEVICES = {
 };
 
 
-
-/* =========================================
-   السجلات المحملة
-========================================= */
+/* =====================================================
+   السجلات
+===================================================== */
 
 let installationAllRecords = [];
 
 
-
-/* =========================================
+/* =====================================================
    المستخدم الحالي
-========================================= */
+===================================================== */
 
 function getCurrentUsername() {
 
@@ -937,27 +1361,45 @@ function getCurrentUsername() {
 }
 
 
-
-/* =========================================
+/* =====================================================
    حماية HTML
-========================================= */
+===================================================== */
 
 function escapeHTML(value) {
 
     return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
-
-/* =========================================
+/* =====================================================
    تحديث قائمة التركيبات
-========================================= */
+===================================================== */
 
 function updateInstallationDevices() {
 
@@ -967,84 +1409,425 @@ function updateInstallationDevices() {
         ).value;
 
 
-    const deviceSelect =
+    const box =
         document.getElementById(
-            "installationDevice"
+            "installationDevicesBox"
         );
 
 
-    deviceSelect.innerHTML = "";
+    if (!box) {
+        return;
+    }
 
+
+    box.innerHTML = "";
+
+
+    /* =================================================
+       لا توجد عربية
+    ================================================= */
 
     if (!carName) {
 
-        const option =
-            document.createElement("option");
+        box.innerHTML = `
 
-        option.value = "";
+            <div class="devices-empty">
 
-        option.textContent =
-            "اختر اسم العربية أولاً";
+                🚆 اختر اسم العربية أولاً
 
-        deviceSelect.appendChild(option);
+            </div>
 
-        deviceSelect.disabled = true;
+        `;
 
         return;
 
     }
 
 
-    const defaultOption =
-        document.createElement("option");
+    const devices =
+        INSTALLATION_DEVICES[
+            carName
+        ] || [];
 
-    defaultOption.value = "";
 
-    defaultOption.textContent =
-        "اختر التركيبة";
+    /* =================================================
+       لا توجد تركيبات
+    ================================================= */
 
-    deviceSelect.appendChild(
-        defaultOption
+    if (!devices.length) {
+
+        box.innerHTML = `
+
+            <div class="devices-empty">
+
+                ❌ لا توجد تركيبات مسجلة لهذه العربية
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* =================================================
+       اختيار الكل
+    ================================================= */
+
+    const selectAllDiv =
+        document.createElement(
+            "div"
+        );
+
+
+    selectAllDiv.className =
+        "device-select-all";
+
+
+    selectAllDiv.innerHTML = `
+
+        <label>
+
+            <input
+                type="checkbox"
+                id="installationSelectAll"
+                onchange="
+                    toggleAllInstallationDevices()
+                ">
+
+            <span>
+                ☑️ اختيار كل التركيبات
+            </span>
+
+        </label>
+
+    `;
+
+
+    box.appendChild(
+        selectAllDiv
     );
 
 
-    const devices =
-        INSTALLATION_DEVICES[carName] || [];
-
+    /* =================================================
+       إنشاء التركيبات
+    ================================================= */
 
     devices.forEach(
-        function(device) {
+        function(device, index) {
 
-            const option =
-                document.createElement("option");
+            const div =
+                document.createElement(
+                    "div"
+                );
 
-            option.value = device;
 
-            option.textContent = device;
+            div.className =
+                "device-item";
 
-            deviceSelect.appendChild(option);
+
+            const checkbox =
+                document.createElement(
+                    "input"
+                );
+
+
+            checkbox.type =
+                "checkbox";
+
+
+            checkbox.className =
+                "installation-device-checkbox";
+
+
+            checkbox.id =
+                "installationDevice_" +
+                index;
+
+
+            checkbox.value =
+                device;
+
+
+            checkbox.addEventListener(
+                "change",
+                function() {
+
+                    updateInstallationSelectedCount();
+
+                }
+            );
+
+
+            const span =
+                document.createElement(
+                    "span"
+                );
+
+
+            span.textContent =
+                device;
+
+
+            div.appendChild(
+                checkbox
+            );
+
+
+            div.appendChild(
+                span
+            );
+
+
+            /* =========================================
+               الضغط على السطر
+            ========================================= */
+
+            div.addEventListener(
+                "click",
+                function(event) {
+
+                    if (
+                        event.target ===
+                        checkbox
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    checkbox.checked =
+                        !checkbox.checked;
+
+
+                    updateInstallationSelectedCount();
+
+                }
+            );
+
+
+            box.appendChild(
+                div
+            );
 
         }
     );
 
 
-    deviceSelect.disabled =
-        devices.length === 0;
+    /* =================================================
+       عداد الاختيارات
+    ================================================= */
+
+    const count =
+        document.createElement(
+            "div"
+        );
+
+
+    count.id =
+        "installationSelectedCount";
+
+
+    count.className =
+        "selected-count";
+
+
+    count.textContent =
+        "لم يتم اختيار أي تركيبة";
+
+
+    box.appendChild(
+        count
+    );
 
 }
 
 
+/* =====================================================
+   اختيار كل التركيبات
+===================================================== */
 
-/* =========================================
+function toggleAllInstallationDevices() {
+
+    const selectAll =
+        document.getElementById(
+            "installationSelectAll"
+        );
+
+
+    const checkboxes =
+        document.querySelectorAll(
+            ".installation-device-checkbox"
+        );
+
+
+    if (!selectAll) {
+        return;
+    }
+
+
+    checkboxes.forEach(
+        function(checkbox) {
+
+            checkbox.checked =
+                selectAll.checked;
+
+        }
+    );
+
+
+    updateInstallationSelectedCount();
+
+}
+
+
+/* =====================================================
+   تحديث عدد التركيبات
+===================================================== */
+
+function updateInstallationSelectedCount() {
+
+    const selected =
+        document.querySelectorAll(
+            ".installation-device-checkbox:checked"
+        );
+
+
+    const all =
+        document.querySelectorAll(
+            ".installation-device-checkbox"
+        );
+
+
+    const count =
+        document.getElementById(
+            "installationSelectedCount"
+        );
+
+
+    const selectAll =
+        document.getElementById(
+            "installationSelectAll"
+        );
+
+
+    /* =================================================
+       تحديث العداد
+    ================================================= */
+
+    if (count) {
+
+        if (selected.length === 0) {
+
+            count.textContent =
+                "لم يتم اختيار أي تركيبة";
+
+        }
+        else {
+
+            count.textContent =
+                "✅ تم اختيار " +
+                selected.length +
+                " تركيبة";
+
+        }
+
+    }
+
+
+    /* =================================================
+       تحديث اختيار الكل
+    ================================================= */
+
+    if (
+        selectAll &&
+        all.length > 0
+    ) {
+
+        selectAll.checked =
+            selected.length ===
+            all.length;
+
+    }
+
+
+    /* =================================================
+       شكل العناصر المختارة
+    ================================================= */
+
+    all.forEach(
+        function(checkbox) {
+
+            const item =
+                checkbox.closest(
+                    ".device-item"
+                );
+
+
+            if (!item) {
+                return;
+            }
+
+
+            if (checkbox.checked) {
+
+                item.classList.add(
+                    "selected"
+                );
+
+            }
+            else {
+
+                item.classList.remove(
+                    "selected"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   الحصول على التركيبات المختارة
+===================================================== */
+
+function getSelectedInstallationDevices() {
+
+    const checkboxes =
+        document.querySelectorAll(
+            ".installation-device-checkbox:checked"
+        );
+
+
+    return Array.from(
+        checkboxes
+    ).map(
+        function(checkbox) {
+
+            return checkbox.value;
+
+        }
+    );
+
+}
+
+
+/* =====================================================
    توليد رقم العربية
-========================================= */
+===================================================== */
 
 function updateInstallationCarNumber() {
 
     const carName =
         document.getElementById(
             "installationCarName"
-        ).value
+        )
+        .value
         .trim()
         .toUpperCase();
 
@@ -1052,7 +1835,8 @@ function updateInstallationCarNumber() {
     const unitNumber =
         document.getElementById(
             "installationUnitNumber"
-        ).value
+        )
+        .value
         .trim();
 
 
@@ -1083,16 +1867,22 @@ function updateInstallationCarNumber() {
     nameDisplay.textContent =
         carName || "—";
 
+
     unitDisplay.textContent =
         unitNumber || "—";
 
+
+    /* =================================================
+       البيانات ناقصة
+    ================================================= */
 
     if (
         !carName ||
         !unitNumber
     ) {
 
-        carNumberInput.value = "";
+        carNumberInput.value =
+            "";
 
         carDisplay.textContent =
             "—";
@@ -1113,7 +1903,8 @@ function updateInstallationCarNumber() {
         unit < 1
     ) {
 
-        carNumberInput.value = "";
+        carNumberInput.value =
+            "";
 
         carDisplay.textContent =
             "—";
@@ -1125,19 +1916,27 @@ function updateInstallationCarNumber() {
     }
 
 
+    /* =================================================
+       ترتيب العربيات
+    ================================================= */
+
     const oddOrder = [
+
         "DTC",
         "MC1",
         "MC2",
         "MCI"
+
     ];
 
 
     const evenOrder = [
+
         "MCI",
         "MC2",
         "MC1",
         "DTC"
+
     ];
 
 
@@ -1148,12 +1947,15 @@ function updateInstallationCarNumber() {
 
 
     const position =
-        order.indexOf(carName);
+        order.indexOf(
+            carName
+        );
 
 
     if (position === -1) {
 
-        carNumberInput.value = "";
+        carNumberInput.value =
+            "";
 
         carDisplay.textContent =
             "—";
@@ -1165,6 +1967,10 @@ function updateInstallationCarNumber() {
     }
 
 
+    /* =================================================
+       حساب رقم العربية
+    ================================================= */
+
     const baseNumber =
         ((unit - 1) * 4) + 1;
 
@@ -1174,6 +1980,7 @@ function updateInstallationCarNumber() {
 
 
     const carNumber =
+
         finalNumber +
         "-" +
         carName +
@@ -1189,15 +1996,18 @@ function updateInstallationCarNumber() {
         finalNumber;
 
 
+    /* =================================================
+       تحديث التركيبات
+    ================================================= */
+
     updateInstallationDevices();
 
 }
 
 
-
-/* =========================================
-   تحديث الحالة
-========================================= */
+/* =====================================================
+   تحديث حالة الانتهاء
+===================================================== */
 
 function updateInstallationStatus() {
 
@@ -1224,7 +2034,8 @@ function updateInstallationStatus() {
         reasonGroup.style.display =
             "block";
 
-        reason.required = true;
+        reason.required =
+            true;
 
     }
     else {
@@ -1232,44 +2043,53 @@ function updateInstallationStatus() {
         reasonGroup.style.display =
             "none";
 
-        reason.required = false;
+        reason.required =
+            false;
 
-        reason.value = "";
+        reason.value =
+            "";
 
     }
 
 }
 
 
-
-/* =========================================
+/* =====================================================
    حفظ البيانات
-========================================= */
+===================================================== */
 
 async function saveInstallation() {
 
     const carName =
         document.getElementById(
             "installationCarName"
-        ).value.trim();
+        )
+        .value
+        .trim();
 
 
     const unitNumber =
         document.getElementById(
             "installationUnitNumber"
-        ).value.trim();
+        )
+        .value
+        .trim();
 
 
     const carNumber =
         document.getElementById(
             "installationCarNumber"
-        ).value.trim();
+        )
+        .value
+        .trim();
 
 
-    const device =
-        document.getElementById(
-            "installationDevice"
-        ).value.trim();
+    /* =================================================
+       التركيبات المختارة
+    ================================================= */
+
+    const selectedDevices =
+        getSelectedInstallationDevices();
 
 
     const done =
@@ -1281,13 +2101,17 @@ async function saveInstallation() {
     const reason =
         document.getElementById(
             "installationReason"
-        ).value.trim();
+        )
+        .value
+        .trim();
 
 
     const notes =
         document.getElementById(
             "installationNotes"
-        ).value.trim();
+        )
+        .value
+        .trim();
 
 
     const message =
@@ -1302,16 +2126,14 @@ async function saveInstallation() {
         );
 
 
-    if (
-        !carName ||
-        !unitNumber ||
-        !carNumber ||
-        !device ||
-        !done
-    ) {
+    /* =================================================
+       التحقق
+    ================================================= */
+
+    if (!carName) {
 
         message.innerText =
-            "❌ من فضلك أكمل اسم العربية ورقم الوحدة والتركيبة والحالة";
+            "❌ من فضلك اختر اسم العربية";
 
         message.style.color =
             "#dc3545";
@@ -1321,17 +2143,57 @@ async function saveInstallation() {
     }
 
 
-    const unit =
-        Number(unitNumber);
-
-
     if (
-        !Number.isInteger(unit) ||
-        unit < 1
+        !unitNumber ||
+        !Number.isInteger(
+            Number(unitNumber)
+        ) ||
+        Number(unitNumber) < 1
     ) {
 
         message.innerText =
-            "❌ رقم الوحدة يجب أن يكون رقمًا صحيحًا يبدأ من 1";
+            "❌ من فضلك أدخل رقم وحدة صحيح يبدأ من 1";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+    if (!carNumber) {
+
+        message.innerText =
+            "❌ رقم العربية غير مكتمل";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+    if (
+        selectedDevices.length === 0
+    ) {
+
+        message.innerText =
+            "❌ من فضلك اختر تركيبة واحدة على الأقل";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+    if (!done) {
+
+        message.innerText =
+            "❌ من فضلك اختر حالة الانتهاء";
 
         message.style.color =
             "#dc3545";
@@ -1370,58 +2232,89 @@ async function saveInstallation() {
     }
 
 
-    button.disabled = true;
+    /* =================================================
+       منع الضغط أثناء الحفظ
+    ================================================= */
+
+    button.disabled =
+        true;
+
 
     button.innerText =
         "⏳ جاري الحفظ...";
 
 
     message.innerText =
-        "⏳ جاري حفظ البيانات...";
+        "⏳ جاري حفظ " +
+        selectedDevices.length +
+        " تركيبة...";
+
 
     message.style.color =
         "#0d6efd";
 
 
-    const payload = {
+    /* =================================================
+       تجهيز السجلات
+       
+       كل تركيبة = سجل مستقل
+    ================================================= */
 
-        department:
-            "installation",
+    const payload =
+        selectedDevices.map(
+            function(device) {
 
-        car_name:
-            carName,
+                return {
 
-        car_number:
-            carNumber,
+                    department:
+                        "installation",
 
-        device:
-            device,
+                    car_name:
+                        carName,
 
-        done:
-            done,
+                    car_number:
+                        carNumber,
 
-        notes:
-            notes,
+                    device:
+                        device,
 
-        created_by:
-            getCurrentUsername(),
+                    done:
+                        done,
 
-        not_completed_reason:
-            done === "لا"
-                ? reason
-                : null
+                    notes:
+                        notes,
 
-    };
+                    created_by:
+                        getCurrentUsername(),
+
+                    not_completed_reason:
+                        done === "لا"
+                            ? reason
+                            : null
+
+                };
+
+            }
+        );
+
+
+    console.log(
+        "📤 INSTALLATION DATA:",
+        payload
+    );
 
 
     try {
+
+        /* =================================================
+           الحفظ في Supabase
+        ================================================= */
 
         const result =
             await supabaseClient
                 .from("records")
                 .insert(payload)
-                .select()
-                .single();
+                .select();
 
 
         if (result.error) {
@@ -1436,81 +2329,111 @@ async function saveInstallation() {
                 "❌ فشل الحفظ:\n" +
                 result.error.message;
 
+
             message.style.color =
                 "#dc3545";
 
 
-            button.disabled = false;
+            button.disabled =
+                false;
+
 
             button.innerText =
                 "💾 حفظ البيانات";
+
 
             return;
 
         }
 
 
+        /* =================================================
+           نجاح الحفظ
+        ================================================= */
+
         message.innerText =
-            "✅ تم حفظ بيانات التركيبة بنجاح";
+            "✅ تم حفظ " +
+            selectedDevices.length +
+            " تركيبة بنجاح";
 
 
         message.style.color =
             "#198754";
 
 
-        /* =========================
-           تفريغ الفورم
-        ========================= */
+        /* =================================================
+           تفريغ اسم العربية
+        ================================================= */
 
         document.getElementById(
             "installationCarName"
-        ).value = "";
+        ).value =
+            "";
 
+
+        /* =================================================
+           تفريغ رقم الوحدة
+        ================================================= */
 
         document.getElementById(
             "installationUnitNumber"
-        ).value = "";
+        ).value =
+            "";
 
+
+        /* =================================================
+           تفريغ رقم العربية
+        ================================================= */
 
         document.getElementById(
             "installationCarNumber"
-        ).value = "";
+        ).value =
+            "";
 
 
         document.getElementById(
             "installationCarDisplay"
-        ).textContent = "—";
+        ).textContent =
+            "—";
 
 
         document.getElementById(
             "installationNameDisplay"
-        ).textContent = "—";
+        ).textContent =
+            "—";
 
 
         document.getElementById(
             "installationUnitDisplay"
-        ).textContent = "—";
+        ).textContent =
+            "—";
 
 
-        document.getElementById(
-            "installationDevice"
-        ).innerHTML =
-            '<option value="">اختر اسم العربية أولاً</option>';
+        /* =================================================
+           إعادة قائمة التركيبات للوضع الأول
+        ================================================= */
+
+        updateInstallationDevices();
 
 
-        document.getElementById(
-            "installationDevice"
-        ).disabled = true;
-
+        /* =================================================
+           الحالة
+        ================================================= */
 
         document.getElementById(
             "installationDone"
-        ).value = "";
+        ).value =
+            "";
 
+
+        /* =================================================
+           السبب
+        ================================================= */
 
         document.getElementById(
             "installationReason"
-        ).value = "";
+        ).value =
+            "";
 
 
         document.getElementById(
@@ -1519,22 +2442,35 @@ async function saveInstallation() {
             "none";
 
 
+        /* =================================================
+           الملاحظات
+        ================================================= */
+
         document.getElementById(
             "installationNotes"
-        ).value = "";
+        ).value =
+            "";
 
 
-        button.disabled = false;
+        /* =================================================
+           إعادة الزر
+        ================================================= */
+
+        button.disabled =
+            false;
+
 
         button.innerText =
             "💾 حفظ البيانات";
 
 
+        /* =================================================
+           إعادة تحميل السجلات
+        ================================================= */
+
         await loadInstallationRecords();
 
     }
-
-
     catch (error) {
 
         console.error(
@@ -1552,7 +2488,9 @@ async function saveInstallation() {
             "#dc3545";
 
 
-        button.disabled = false;
+        button.disabled =
+            false;
+
 
         button.innerText =
             "💾 حفظ البيانات";
@@ -1562,10 +2500,9 @@ async function saveInstallation() {
 }
 
 
-
-/* =========================================
-   تحميل السجلات + بناء قائمة العربيات
-========================================= */
+/* =====================================================
+   تحميل السجلات
+===================================================== */
 
 async function loadInstallationRecords() {
 
@@ -1581,23 +2518,42 @@ async function loadInstallationRecords() {
         );
 
 
-    if (!container || !carSelect) {
+    if (
+        !container ||
+        !carSelect
+    ) {
+
         return;
+
     }
 
 
     if (!supabaseClient) {
 
-        container.innerHTML =
-            '<div class="error-box">❌ Supabase غير متصل</div>';
+        container.innerHTML = `
+
+            <div class="error-box">
+
+                ❌ Supabase غير متصل
+
+            </div>
+
+        `;
 
         return;
 
     }
 
 
-    container.innerHTML =
-        '<div class="empty">⏳ جاري تحميل البيانات...</div>';
+    container.innerHTML = `
+
+        <div class="empty">
+
+            ⏳ جاري تحميل البيانات...
+
+        </div>
+
+    `;
 
 
     try {
@@ -1626,12 +2582,18 @@ async function loadInstallationRecords() {
             );
 
 
-            container.innerHTML =
-                '<div class="error-box">❌ ' +
-                escapeHTML(
-                    result.error.message
-                ) +
-                '</div>';
+            container.innerHTML = `
+
+                <div class="error-box">
+
+                    ❌
+                    ${escapeHTML(
+                        result.error.message
+                    )}
+
+                </div>
+
+            `;
 
             return;
 
@@ -1642,110 +2604,28 @@ async function loadInstallationRecords() {
             result.data || [];
 
 
-        /* =====================================
-           بناء قائمة العربيات بدون تكرار
-        ===================================== */
+        /* =================================================
+           بناء قائمة العربيات
+        ================================================= */
 
-        const carsMap =
-            new Map();
-
-
-        installationAllRecords.forEach(
-            function(record) {
-
-                if (!record.car_number) {
-                    return;
-                }
+        buildInstallationCars();
 
 
-                if (!carsMap.has(record.car_number)) {
+        /* =================================================
+           البداية بدون اختيار
+        ================================================= */
 
-                    carsMap.set(
-                        record.car_number,
-                        record
-                    );
+        container.innerHTML = `
 
-                }
+            <div class="empty">
 
-            }
-        );
+                🚆 اختر العربية المسجلة لعرض بياناتها
 
+            </div>
 
-        carSelect.innerHTML = `
-            <option value="">
-                🚆 اختر العربية المسجلة
-            </option>
         `;
 
-
-        carsMap.forEach(
-            function(record, carNumber) {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value =
-                    carNumber;
-
-
-                option.textContent =
-                    "🚆 " +
-                    (record.car_name || "عربية") +
-                    " — رقم العربية " +
-                    carNumber.split("-")[0] +
-                    " — الوحدة " +
-                    (carNumber.split("-")[2] || "—");
-
-
-                carSelect.appendChild(
-                    option
-                );
-
-            }
-        );
-
-
-        /* =====================================
-           لو مفيش عربيات
-        ===================================== */
-
-        if (installationAllRecords.length === 0) {
-
-            carSelect.innerHTML = `
-                <option value="">
-                    لا توجد عربيات مسجلة
-                </option>
-            `;
-
-
-            container.innerHTML =
-                '<div class="empty">' +
-                'لا توجد بيانات مسجلة حتى الآن' +
-                '</div>';
-
-            return;
-
-        }
-
-
-        /* =====================================
-           لا تعرض أي تسجيل قبل اختيار العربية
-        ===================================== */
-
-        carSelect.value = "";
-
-
-        container.innerHTML =
-            '<div class="empty">' +
-            '🚆 اختر العربية المسجلة لعرض بياناتها' +
-            '</div>';
-
     }
-
-
     catch (error) {
 
         console.error(
@@ -1754,24 +2634,229 @@ async function loadInstallationRecords() {
         );
 
 
-        container.innerHTML =
-            '<div class="error-box">' +
-            '❌ حصل خطأ أثناء تحميل البيانات' +
-            '</div>';
+        container.innerHTML = `
+
+            <div class="error-box">
+
+                ❌ حصل خطأ أثناء تحميل البيانات
+
+            </div>
+
+        `;
 
     }
 
 }
 
 
+/* =====================================================
+   بناء قائمة العربيات المسجلة
+===================================================== */
 
-/* =========================================
-   عرض تسجيلات العربية المختارة
-========================================= */
+function buildInstallationCars() {
+
+    const select =
+        document.getElementById(
+            "installationRegisteredCars"
+        );
+
+
+    if (!select) {
+        return;
+    }
+
+
+    select.innerHTML = `
+
+        <option value="">
+
+            🚆 اختر العربية المسجلة
+
+        </option>
+
+    `;
+
+
+    const carsMap =
+        new Map();
+
+
+    /* =================================================
+       منع تكرار العربية
+    ================================================= */
+
+    installationAllRecords.forEach(
+        function(record) {
+
+            const carNumber =
+                String(
+                    record.car_number || ""
+                ).trim();
+
+
+            if (!carNumber) {
+                return;
+            }
+
+
+            if (
+                !carsMap.has(
+                    carNumber
+                )
+            ) {
+
+                carsMap.set(
+                    carNumber,
+                    record
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =================================================
+       ترتيب العربيات
+    ================================================= */
+
+    const cars =
+        Array.from(
+            carsMap.entries()
+        );
+
+
+    cars.sort(
+        function(a, b) {
+
+            const recordA =
+                a[1];
+
+            const recordB =
+                b[1];
+
+
+            const numberA =
+                parseInt(
+                    String(
+                        recordA.car_number ||
+                        ""
+                    ).split("-")[0]
+                ) || 0;
+
+
+            const numberB =
+                parseInt(
+                    String(
+                        recordB.car_number ||
+                        ""
+                    ).split("-")[0]
+                ) || 0;
+
+
+            return numberA - numberB;
+
+        }
+    );
+
+
+    /* =================================================
+       إضافة العربيات
+    ================================================= */
+
+    cars.forEach(
+        function(item) {
+
+            const carNumber =
+                item[0];
+
+            const record =
+                item[1];
+
+
+            const parts =
+                String(
+                    carNumber
+                ).split("-");
+
+
+            const number =
+                parts[0] ||
+                "—";
+
+
+            const unit =
+                parts[2] ||
+                "—";
+
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                carNumber;
+
+
+            option.textContent =
+
+                "🚆 " +
+
+                (
+                    record.car_name ||
+                    "عربية"
+                ) +
+
+                " — رقم العربية " +
+
+                number +
+
+                " — الوحدة " +
+
+                unit;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    /* =================================================
+       لا توجد سجلات
+    ================================================= */
+
+    if (
+        installationAllRecords.length ===
+        0
+    ) {
+
+        select.innerHTML = `
+
+            <option value="">
+
+                لا توجد عربيات مسجلة
+
+            </option>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   عرض سجلات العربية
+===================================================== */
 
 function showInstallationCarRecords() {
 
-    const carSelect =
+    const select =
         document.getElementById(
             "installationRegisteredCars"
         );
@@ -1783,51 +2868,88 @@ function showInstallationCarRecords() {
         );
 
 
-    if (!carSelect || !container) {
+    if (
+        !select ||
+        !container
+    ) {
+
         return;
+
     }
 
 
     const selectedCar =
-        carSelect.value;
+        select.value;
 
+
+    /* =================================================
+       لا يوجد اختيار
+    ================================================= */
 
     if (!selectedCar) {
 
-        container.innerHTML =
-            '<div class="empty">' +
-            '🚆 اختر العربية المسجلة لعرض بياناتها' +
-            '</div>';
+        container.innerHTML = `
+
+            <div class="empty">
+
+                🚆 اختر العربية المسجلة لعرض بياناتها
+
+            </div>
+
+        `;
 
         return;
 
     }
 
+
+    /* =================================================
+       فلترة السجلات
+    ================================================= */
 
     const records =
         installationAllRecords.filter(
             function(record) {
 
-                return record.car_number === selectedCar;
+                return String(
+                    record.car_number ||
+                    ""
+                ).trim() ===
+
+                String(
+                    selectedCar
+                ).trim();
 
             }
         );
 
 
-    if (!records.length) {
+    if (
+        !records.length
+    ) {
 
-        container.innerHTML =
-            '<div class="empty">' +
-            'لا توجد بيانات مسجلة لهذه العربية' +
-            '</div>';
+        container.innerHTML = `
+
+            <div class="empty">
+
+                لا توجد بيانات مسجلة لهذه العربية
+
+            </div>
+
+        `;
 
         return;
 
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
+
+    /* =================================================
+       عرض السجلات
+    ================================================= */
 
     records.forEach(
         function(record) {
@@ -1842,99 +2964,164 @@ function showInstallationCarRecords() {
                 "record";
 
 
-            /* مهم جدًا لنظام الحذف */
+            /* =================================================
+               مهم لنظام الحذف
+            ================================================= */
 
-            div.dataset.recordId =
-                record.id;
+            if (
+                record.id !==
+                undefined
+            ) {
+
+                div.dataset.recordId =
+                    record.id;
+
+            }
+
+
+            /* =================================================
+               الحالة
+            ================================================= */
+
+            const isCompleted =
+                String(
+                    record.done ||
+                    ""
+                ).trim() ===
+                "نعم";
 
 
             const statusClass =
-                record.done === "نعم"
+                isCompleted
                     ? "completed"
                     : "not-completed";
 
 
             const statusText =
-                record.done === "نعم"
-                    ? "✅ تم الانتهاء"
-                    : "⚠️ لم يتم الانتهاء";
+                isCompleted
 
+                    ?
+
+                    "✅ تم الانتهاء"
+
+                    :
+
+                    "⚠️ لم يتم الانتهاء";
+
+
+            /* =================================================
+               سبب عدم الانتهاء
+            ================================================= */
+
+            const reasonHTML =
+
+                !isCompleted
+
+                ?
+
+                `
+
+                <p>
+
+                    <strong>
+                        ⚠️ سبب عدم الانتهاء:
+                    </strong>
+
+                    ${escapeHTML(
+                        record.not_completed_reason ||
+                        "غير محدد"
+                    )}
+
+                </p>
+
+                `
+
+                :
+
+                "";
+
+
+            /* =================================================
+               محتوى السجل
+            ================================================= */
 
             div.innerHTML = `
 
                 <h3>
+
                     🔧
+
                     ${escapeHTML(
-                        record.device || "تركيبة"
+                        record.device ||
+                        "تركيبة"
                     )}
+
                 </h3>
 
 
                 <p>
+
                     <strong>
-                        🚆 العربية:
+                        🚆 اسم العربية:
                     </strong>
 
                     ${escapeHTML(
-                        record.car_name || ""
+                        record.car_name ||
+                        ""
                     )}
+
                 </p>
 
 
                 <p>
+
                     <strong>
                         🔢 رقم العربية:
                     </strong>
 
                     ${escapeHTML(
-                        record.car_number || ""
+                        record.car_number ||
+                        ""
                     )}
+
                 </p>
 
 
                 <p>
+
                     <strong>
                         🔧 التركيبة:
                     </strong>
 
                     ${escapeHTML(
-                        record.device || ""
+                        record.device ||
+                        ""
                     )}
+
                 </p>
 
 
                 <p>
+
                     <strong>
                         ✅ الحالة:
                     </strong>
 
-                    <span class="status-badge ${statusClass}">
+                    <span
+                        class="status-badge ${statusClass}">
+
                         ${statusText}
+
                     </span>
+
                 </p>
 
 
-                ${
-                    record.done !== "نعم"
-                    ?
-                    `
-                    <p>
-                        <strong>
-                            ⚠️ سبب عدم الانتهاء:
-                        </strong>
-
-                        ${escapeHTML(
-                            record.not_completed_reason ||
-                            "غير محدد"
-                        )}
-                    </p>
-                    `
-                    :
-                    ""
-                }
+                ${reasonHTML}
 
 
                 <p>
+
                     <strong>
                         📝 الملاحظات:
                     </strong>
@@ -1943,10 +3130,12 @@ function showInstallationCarRecords() {
                         record.notes ||
                         "لا توجد"
                     )}
+
                 </p>
 
 
                 <p>
+
                     <strong>
                         👤 المستخدم:
                     </strong>
@@ -1955,10 +3144,12 @@ function showInstallationCarRecords() {
                         record.created_by ||
                         ""
                     )}
+
                 </p>
 
 
                 <p>
+
                     <strong>
                         🕘 وقت التسجيل:
                     </strong>
@@ -1966,6 +3157,7 @@ function showInstallationCarRecords() {
                     ${formatArabicDate(
                         record.created_at
                     )}
+
                 </p>
 
             `;
@@ -1981,15 +3173,16 @@ function showInstallationCarRecords() {
 }
 
 
-
-/* =========================================
+/* =====================================================
    التاريخ
-========================================= */
+===================================================== */
 
 function formatArabicDate(value) {
 
     if (!value) {
+
         return "غير محدد";
+
     }
 
 
@@ -2011,22 +3204,34 @@ function formatArabicDate(value) {
     return new Intl.DateTimeFormat(
         "ar-EG",
         {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true
+
+            day:
+                "numeric",
+
+            month:
+                "long",
+
+            year:
+                "numeric",
+
+            hour:
+                "numeric",
+
+            minute:
+                "2-digit",
+
+            hour12:
+                true
+
         }
     ).format(date);
 
 }
 
 
-
-/* =========================================
+/* =====================================================
    العودة للرئيسية
-========================================= */
+===================================================== */
 
 function goHome() {
 
@@ -2036,10 +3241,9 @@ function goHome() {
 }
 
 
-
-/* =========================================
+/* =====================================================
    تشغيل الصفحة
-========================================= */
+===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -2055,7 +3259,9 @@ document.addEventListener(
 </script>
 
 
-<!-- نظام الحذف -->
+<!-- =====================================================
+     نظام الحذف
+===================================================== -->
 
 <script src="delete-system.js?v=2"></script>
 

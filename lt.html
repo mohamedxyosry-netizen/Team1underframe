@@ -161,6 +161,141 @@ body {
 }
 
 /* =========================
+   LT DEVICES MULTI SELECT
+========================= */
+
+.lt-device-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.lt-device-select {
+    width: 100%;
+    min-height: 50px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 15px;
+    background: #f9fafb;
+    color: #374151;
+    outline: none;
+    font-family: inherit;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    text-align: right;
+}
+
+.lt-device-select:hover {
+    background: white;
+    border-color: #198754;
+}
+
+.lt-device-select:focus {
+    border-color: #198754;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(25,135,84,.12);
+}
+
+.lt-device-arrow {
+    color: #198754;
+    font-size: 13px;
+    margin-right: 10px;
+}
+
+.lt-device-menu {
+    position: absolute;
+
+    top: calc(100% + 6px);
+    right: 0;
+    left: 0;
+
+    background: white;
+
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,.15);
+
+    z-index: 1000;
+
+    overflow: hidden;
+}
+
+.lt-device-list {
+    max-height: 330px;
+    overflow-y: auto;
+}
+
+.lt-device-item {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 13px 15px;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    cursor: pointer;
+
+    transition: .15s;
+
+    direction: rtl;
+
+    width: 100%;
+}
+
+.lt-device-item:hover {
+    background: #f0fdf4;
+}
+
+.lt-device-item.selected {
+    background: #ecfdf3;
+}
+
+.lt-device-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+
+    accent-color: #198754;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+.lt-device-item span {
+    font-size: 15px;
+    font-weight: 600;
+
+    color: #374151;
+
+    flex: 1;
+
+    text-align: right;
+}
+
+.lt-device-help {
+    padding: 12px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: #198754;
+
+    background: #f0fdf4;
+
+    border-top: 1px solid #bbf7d0;
+}
+
+/* =========================
    STATUS
 ========================= */
 
@@ -502,6 +637,14 @@ body {
         font-size: 19px;
     }
 
+    .lt-device-list {
+        max-height: 280px;
+    }
+
+    .lt-device-item {
+        padding: 12px;
+    }
+
 }
 
 </style>
@@ -655,19 +798,53 @@ id="ltCarNumber">
 </div>
 
 
+<!-- =========================
+     اسم الجهاز
+========================= -->
+
 <div class="input-group">
 
 <label>
 🔌 اسم الجهاز
 </label>
 
-<select id="ltDevice">
+<div class="lt-device-dropdown">
 
-<option value="">
+<button
+type="button"
+class="lt-device-select"
+id="ltDeviceButton"
+onclick="toggleLTDevices()">
+
+<span id="ltDeviceButtonText">
 ⬇️ اختر اسم الجهاز
-</option>
+</span>
 
-</select>
+<span class="lt-device-arrow">
+▼
+</span>
+
+</button>
+
+
+<div
+class="lt-device-menu hidden"
+id="ltDeviceMenu">
+
+<div
+id="ltDeviceList"
+class="lt-device-list">
+</div>
+
+<div class="lt-device-help">
+
+☑ يمكنك اختيار أكثر من جهاز
+
+</div>
+
+</div>
+
+</div>
 
 </div>
 
@@ -776,6 +953,7 @@ onclick="saveLT()">
 📋 البيانات المسجلة
 </h2>
 
+
 <!-- =========================
      اختيار العربية المسجلة
 ========================= -->
@@ -802,7 +980,9 @@ onchange="showSelectedLTCar()">
 
 </div>
 
+
 <div id="ltSelectedCarTitle"></div>
+
 
 <div id="ltRecords">
 
@@ -1087,14 +1267,38 @@ function updateLTDevices() {
     const carName =
         document.getElementById("ltCarName").value;
 
-    const deviceSelect =
-        document.getElementById("ltDevice");
+    const deviceList =
+        document.getElementById("ltDeviceList");
 
-    deviceSelect.innerHTML = `
-        <option value="">
-            ⬇️ اختر اسم الجهاز
-        </option>
-    `;
+    const buttonText =
+        document.getElementById("ltDeviceButtonText");
+
+    const menu =
+        document.getElementById("ltDeviceMenu");
+
+
+    if (!deviceList) {
+        return;
+    }
+
+
+    deviceList.innerHTML = "";
+
+
+    if (buttonText) {
+
+        buttonText.textContent =
+            "⬇️ اختر اسم الجهاز";
+
+    }
+
+
+    if (menu) {
+
+        menu.classList.add("hidden");
+
+    }
+
 
     if (
         !carName ||
@@ -1105,20 +1309,224 @@ function updateLTDevices() {
 
     }
 
-    LT_DEVICES[carName].forEach(function(device) {
 
-        const option =
-            document.createElement("option");
+    LT_DEVICES[carName].forEach(
+        function(device, index) {
 
-        option.value = device;
+            const label =
+                document.createElement("label");
 
-        option.textContent = device;
+            label.className =
+                "lt-device-item";
 
-        deviceSelect.appendChild(option);
 
-    });
+            const checkbox =
+                document.createElement("input");
+
+            checkbox.type =
+                "checkbox";
+
+            checkbox.className =
+                "lt-device-checkbox";
+
+            checkbox.value =
+                device;
+
+            checkbox.id =
+                "ltDevice_" + index;
+
+
+            const span =
+                document.createElement("span");
+
+            span.textContent =
+                device;
+
+
+            checkbox.addEventListener(
+                "change",
+                function() {
+
+                    if (checkbox.checked) {
+
+                        label.classList.add(
+                            "selected"
+                        );
+
+                    }
+
+                    else {
+
+                        label.classList.remove(
+                            "selected"
+                        );
+
+                    }
+
+                    updateLTSelectedDevices();
+
+                }
+            );
+
+
+            label.appendChild(
+                checkbox
+            );
+
+            label.appendChild(
+                span
+            );
+
+            deviceList.appendChild(
+                label
+            );
+
+        }
+    );
 
 }
+
+
+/* =====================================================
+   فتح وإغلاق قائمة أجهزة LT
+===================================================== */
+
+function toggleLTDevices() {
+
+    const menu =
+        document.getElementById(
+            "ltDeviceMenu"
+        );
+
+    if (!menu) {
+        return;
+    }
+
+    menu.classList.toggle(
+        "hidden"
+    );
+
+}
+
+
+/* =====================================================
+   الأجهزة المختارة
+===================================================== */
+
+function getSelectedLTDevices() {
+
+    const checkboxes =
+        document.querySelectorAll(
+            "#ltDeviceList input[type='checkbox']:checked"
+        );
+
+
+    return Array.from(
+        checkboxes
+    )
+
+    .map(
+        function(checkbox) {
+
+            return checkbox.value.trim();
+
+        }
+    )
+
+    .filter(
+        function(value) {
+
+            return value !== "";
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   تحديث شكل مربع الأجهزة
+===================================================== */
+
+function updateLTSelectedDevices() {
+
+    const devices =
+        getSelectedLTDevices();
+
+
+    const buttonText =
+        document.getElementById(
+            "ltDeviceButtonText"
+        );
+
+
+    if (!buttonText) {
+        return;
+    }
+
+
+    if (!devices.length) {
+
+        buttonText.textContent =
+            "⬇️ اختر اسم الجهاز";
+
+        return;
+
+    }
+
+
+    if (devices.length === 1) {
+
+        buttonText.textContent =
+            "🔌 " +
+            devices[0];
+
+        return;
+
+    }
+
+
+    buttonText.textContent =
+        "🔌 تم اختيار " +
+        devices.length +
+        " أجهزة";
+
+}
+
+
+/* =====================================================
+   إغلاق قائمة الأجهزة عند الضغط خارجها
+===================================================== */
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const dropdown =
+            document.querySelector(
+                ".lt-device-dropdown"
+            );
+
+        const menu =
+            document.getElementById(
+                "ltDeviceMenu"
+            );
+
+
+        if (
+            dropdown &&
+            menu &&
+            !dropdown.contains(event.target)
+        ) {
+
+            menu.classList.add(
+                "hidden"
+            );
+
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -1136,9 +1544,12 @@ function updateLTStatus() {
     const reason =
         document.getElementById("ltReason");
 
+
     if (status === "لا") {
 
-        reasonGroup.classList.remove("hidden");
+        reasonGroup.classList.remove(
+            "hidden"
+        );
 
         reason.required = true;
 
@@ -1146,9 +1557,12 @@ function updateLTStatus() {
 
     else {
 
-        reasonGroup.classList.add("hidden");
+        reasonGroup.classList.add(
+            "hidden"
+        );
 
         reason.required = false;
+
 
         if (status === "نعم") {
 
@@ -1171,8 +1585,11 @@ function getCurrentUsername() {
 
         const currentUser =
             JSON.parse(
-                sessionStorage.getItem("currentUser")
+                sessionStorage.getItem(
+                    "currentUser"
+                )
             );
+
 
         if (
             currentUser &&
@@ -1183,6 +1600,7 @@ function getCurrentUsername() {
 
         }
 
+
         if (
             currentUser &&
             currentUser.username
@@ -1192,13 +1610,16 @@ function getCurrentUsername() {
 
         }
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.log(
             "Could not read current user"
         );
 
     }
+
 
     return "Unknown";
 
@@ -1211,17 +1632,34 @@ function getCurrentUsername() {
 
 function escapeHTML(value) {
 
-    return String(value ?? "")
+    return String(
+        value ?? ""
+    )
 
-        .replace(/&/g, "&amp;")
+    .replace(
+        /&/g,
+        "&amp;"
+    )
 
-        .replace(/</g, "&lt;")
+    .replace(
+        /</g,
+        "&lt;"
+    )
 
-        .replace(/>/g, "&gt;")
+    .replace(
+        />/g,
+        "&gt;"
+    )
 
-        .replace(/"/g, "&quot;")
+    .replace(
+        /"/g,
+        "&quot;"
+    )
 
-        .replace(/'/g, "&#039;");
+    .replace(
+        /'/g,
+        "&#039;"
+    );
 
 }
 
@@ -1238,14 +1676,23 @@ function formatArabicDate(value) {
 
     }
 
+
     const date =
         new Date(value);
 
-    if (isNaN(date.getTime())) {
 
-        return escapeHTML(value);
+    if (
+        isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return escapeHTML(
+            value
+        );
 
     }
+
 
     return new Intl.DateTimeFormat(
 
@@ -1279,31 +1726,49 @@ function formatArabicDate(value) {
 function updateLTCarNumber() {
 
     const carName =
-        document.getElementById("ltCarName")
-            .value
-            .trim()
-            .toUpperCase();
+        document.getElementById(
+            "ltCarName"
+        )
+        .value
+        .trim()
+        .toUpperCase();
+
 
     const unitNumber =
-        document.getElementById("ltUnitNumber")
-            .value
-            .trim();
+        document.getElementById(
+            "ltUnitNumber"
+        )
+        .value
+        .trim();
+
 
     const carNumberInput =
-        document.getElementById("ltCarNumber");
+        document.getElementById(
+            "ltCarNumber"
+        );
+
 
     const carDisplay =
-        document.getElementById("ltCarDisplay");
+        document.getElementById(
+            "ltCarDisplay"
+        );
+
 
     const nameDisplay =
-        document.getElementById("ltNameDisplay");
+        document.getElementById(
+            "ltNameDisplay"
+        );
+
 
     const unitDisplay =
-        document.getElementById("ltUnitDisplay");
+        document.getElementById(
+            "ltUnitDisplay"
+        );
 
 
     nameDisplay.textContent =
         carName || "--";
+
 
     unitDisplay.textContent =
         unitNumber || "--";
@@ -1326,7 +1791,9 @@ function updateLTCarNumber() {
 
 
     const unit =
-        Number(unitNumber);
+        Number(
+            unitNumber
+        );
 
 
     if (
@@ -1346,17 +1813,28 @@ function updateLTCarNumber() {
 
 
     const oddOrder = [
+
         "DTC",
+
         "MC1",
+
         "MC2",
+
         "MCI"
+
     ];
 
+
     const evenOrder = [
+
         "MCI",
+
         "MC2",
+
         "MC1",
+
         "DTC"
+
     ];
 
 
@@ -1367,7 +1845,9 @@ function updateLTCarNumber() {
 
 
     const position =
-        order.indexOf(carName);
+        order.indexOf(
+            carName
+        );
 
 
     if (position === -1) {
@@ -1423,51 +1903,80 @@ function updateLTCarNumber() {
 async function saveLT() {
 
     const carName =
-        document.getElementById("ltCarName")
-            .value
-            .trim();
+        document.getElementById(
+            "ltCarName"
+        )
+        .value
+        .trim();
+
 
     const unitNumber =
-        document.getElementById("ltUnitNumber")
-            .value
-            .trim();
+        document.getElementById(
+            "ltUnitNumber"
+        )
+        .value
+        .trim();
+
 
     const carNumber =
-        document.getElementById("ltCarNumber")
-            .value
-            .trim();
+        document.getElementById(
+            "ltCarNumber"
+        )
+        .value
+        .trim();
 
-    const device =
-        document.getElementById("ltDevice")
-            .value
-            .trim();
+
+    const devices =
+        getSelectedLTDevices();
+
 
     const socket =
-        document.getElementById("ltSocket")
-            .value
-            .trim();
+        document.getElementById(
+            "ltSocket"
+        )
+        .value
+        .trim();
+
 
     const done =
-        document.getElementById("ltDone")
-            .value
-            .trim();
+        document.getElementById(
+            "ltDone"
+        )
+        .value
+        .trim();
+
 
     const reason =
-        document.getElementById("ltReason")
-            .value
-            .trim();
+        document.getElementById(
+            "ltReason"
+        )
+        .value
+        .trim();
+
 
     const notes =
-        document.getElementById("ltNotes")
-            .value
-            .trim();
+        document.getElementById(
+            "ltNotes"
+        )
+        .value
+        .trim();
+
 
     const message =
-        document.getElementById("ltMessage");
+        document.getElementById(
+            "ltMessage"
+        );
+
 
     const button =
-        document.getElementById("saveLTButton");
+        document.getElementById(
+            "saveLTButton"
+        );
 
+
+    /* =========================
+       VALIDATION
+    ========================= */
 
     if (
         !carName ||
@@ -1486,10 +1995,10 @@ async function saveLT() {
     }
 
 
-    if (!device) {
+    if (!devices.length) {
 
         message.innerText =
-            "❌ من فضلك اختر اسم الجهاز";
+            "❌ من فضلك اختر جهازًا واحدًا على الأقل";
 
         message.style.color =
             "#dc3545";
@@ -1564,75 +2073,9 @@ async function saveLT() {
         "⏳ جاري التحقق...";
 
 
-    const checkResult =
-        await supabaseClient
-
-            .from("records")
-
-            .select("id")
-
-            .eq(
-                "department",
-                "lt"
-            )
-
-            .eq(
-                "car_number",
-                carNumber
-            )
-
-            .eq(
-                "device",
-                device
-            )
-
-            .limit(1);
-
-
-    if (checkResult.error) {
-
-        console.error(
-            "CHECK DEVICE ERROR:",
-            checkResult.error
-        );
-
-        message.innerText =
-            "❌ حصل خطأ أثناء التحقق:\n" +
-            checkResult.error.message;
-
-        message.style.color =
-            "#dc3545";
-
-        button.disabled = false;
-
-        button.innerText =
-            "💾 حفظ البيانات";
-
-        return;
-
-    }
-
-
-    if (
-        checkResult.data &&
-        checkResult.data.length > 0
-    ) {
-
-        message.innerText =
-            "⚠️ هذا الجهاز مسجل بالفعل لهذه العربية";
-
-        message.style.color =
-            "#d97706";
-
-        button.disabled = false;
-
-        button.innerText =
-            "💾 حفظ البيانات";
-
-        return;
-
-    }
-
+    /* =================================================
+       CURRENT USER
+    ================================================= */
 
     const username =
         getCurrentUsername();
@@ -1656,58 +2099,191 @@ async function saveLT() {
     }
 
 
-    const payload = {
+    /* =================================================
+       التحقق من كل جهاز
+    ================================================= */
 
-        department: "lt",
-
-        car_name: carName,
-
-        car_number: carNumber,
-
-        device: device,
-
-        socket: socket,
-
-        notes: notes,
-
-        done: done,
-
-        completed_by: completedBy,
-
-        completed_at: completedAt,
-
-        not_completed_reason:
-            done === "لا"
-                ? reason
-                : null,
-
-        created_by: username
-
-    };
-
-
-    button.innerText =
-        "⏳ جاري الحفظ...";
-
-    message.innerText =
-        "⏳ جاري حفظ البيانات...";
-
-    message.style.color =
-        "#0d6efd";
+    const duplicateDevices = [];
 
 
     try {
+
+        for (
+            const selectedDevice of devices
+        ) {
+
+            const checkResult =
+                await supabaseClient
+
+                    .from("records")
+
+                    .select("id")
+
+                    .eq(
+                        "department",
+                        "lt"
+                    )
+
+                    .eq(
+                        "car_number",
+                        carNumber
+                    )
+
+                    .eq(
+                        "device",
+                        selectedDevice
+                    )
+
+                    .limit(1);
+
+
+            if (checkResult.error) {
+
+                console.error(
+                    "CHECK DEVICE ERROR:",
+                    checkResult.error
+                );
+
+
+                message.innerText =
+                    "❌ حصل خطأ أثناء التحقق:\n" +
+                    checkResult.error.message;
+
+
+                message.style.color =
+                    "#dc3545";
+
+
+                button.disabled = false;
+
+                button.innerText =
+                    "💾 حفظ البيانات";
+
+
+                return;
+
+            }
+
+
+            if (
+                checkResult.data &&
+                checkResult.data.length > 0
+            ) {
+
+                duplicateDevices.push(
+                    selectedDevice
+                );
+
+            }
+
+        }
+
+
+        /* =================================================
+           لو يوجد جهاز مسجل بالفعل
+        ================================================= */
+
+        if (
+            duplicateDevices.length > 0
+        ) {
+
+            message.innerText =
+                "⚠️ الأجهزة التالية مسجلة بالفعل لهذه العربية:\n\n" +
+                duplicateDevices.join("\n");
+
+
+            message.style.color =
+                "#d97706";
+
+
+            button.disabled = false;
+
+            button.innerText =
+                "💾 حفظ البيانات";
+
+
+            return;
+
+        }
+
+
+        /* =================================================
+           إنشاء Row مستقل لكل جهاز
+        ================================================= */
+
+        const payloads =
+            devices.map(
+                function(selectedDevice) {
+
+                    return {
+
+                        department:
+                            "lt",
+
+                        car_name:
+                            carName,
+
+                        car_number:
+                            carNumber,
+
+                        device:
+                            selectedDevice,
+
+                        socket:
+                            socket,
+
+                        notes:
+                            notes,
+
+                        done:
+                            done,
+
+                        completed_by:
+                            completedBy,
+
+                        completed_at:
+                            completedAt,
+
+                        not_completed_reason:
+                            done === "لا"
+                                ? reason
+                                : null,
+
+                        created_by:
+                            username
+
+                    };
+
+                }
+            );
+
+
+        /* =================================================
+           SAVE
+        ================================================= */
+
+        button.innerText =
+            "⏳ جاري الحفظ...";
+
+
+        message.innerText =
+            "⏳ جاري حفظ " +
+            devices.length +
+            " جهاز...";
+
+
+        message.style.color =
+            "#0d6efd";
+
 
         const result =
             await supabaseClient
 
                 .from("records")
 
-                .insert(payload)
+                .insert(payloads)
 
-                .select()
-
-                .single();
+                .select();
 
 
         if (result.error) {
@@ -1717,29 +2293,40 @@ async function saveLT() {
                 result.error
             );
 
+
             message.innerText =
                 "❌ فشل الحفظ:\n" +
                 result.error.message;
 
+
             message.style.color =
                 "#dc3545";
+
 
             button.disabled = false;
 
             button.innerText =
                 "💾 حفظ البيانات";
 
+
             return;
 
         }
 
+
+        /* =================================================
+           SUCCESS MESSAGE
+        ================================================= */
 
         if (
             done === "نعم"
         ) {
 
             message.innerText =
-                "✅ تم الانتهاء من الجهاز وتسجيل البيانات بنجاح";
+                "✅ تم حفظ " +
+                devices.length +
+                " جهاز بنجاح";
+
 
             message.style.color =
                 "#198754";
@@ -1749,7 +2336,11 @@ async function saveLT() {
         else {
 
             message.innerText =
-                "⚠️ تم حفظ الجهاز كـ لم يتم الانتهاء\nتم حفظ السبب بنجاح";
+                "⚠️ تم حفظ " +
+                devices.length +
+                " جهاز كـ لم يتم الانتهاء\n" +
+                "تم حفظ أسباب عدم الانتهاء بنجاح";
+
 
             message.style.color =
                 "#d97706";
@@ -1757,55 +2348,76 @@ async function saveLT() {
         }
 
 
+        /* =================================================
+           تنظيف الفورم
+        ================================================= */
+
         document.getElementById(
             "ltCarName"
         ).value = "";
+
 
         document.getElementById(
             "ltUnitNumber"
         ).value = "";
 
+
         document.getElementById(
             "ltCarNumber"
         ).value = "";
 
+
         document.getElementById(
             "ltCarDisplay"
-        ).textContent = "--";
+        ).textContent =
+            "--";
+
 
         document.getElementById(
             "ltNameDisplay"
-        ).textContent = "--";
+        ).textContent =
+            "--";
+
 
         document.getElementById(
             "ltUnitDisplay"
-        ).textContent = "--";
+        ).textContent =
+            "--";
 
 
         document.getElementById(
-            "ltDevice"
-        ).innerHTML = `
+            "ltDeviceList"
+        ).innerHTML =
+            "";
 
-            <option value="">
 
-                ⬇️ اختر اسم الجهاز
+        document.getElementById(
+            "ltDeviceButtonText"
+        ).textContent =
+            "⬇️ اختر اسم الجهاز";
 
-            </option>
 
-        `;
+        document.getElementById(
+            "ltDeviceMenu"
+        ).classList.add(
+            "hidden"
+        );
 
 
         document.getElementById(
             "ltSocket"
         ).value = "";
 
+
         document.getElementById(
             "ltDone"
         ).value = "";
 
+
         document.getElementById(
             "ltReason"
         ).value = "";
+
 
         document.getElementById(
             "ltNotes"
@@ -1821,6 +2433,10 @@ async function saveLT() {
             "💾 حفظ البيانات";
 
 
+        /* =================================================
+           تحديث البيانات
+        ================================================= */
+
         await loadLTRecords();
 
     }
@@ -1832,12 +2448,15 @@ async function saveLT() {
             error
         );
 
+
         message.innerText =
             "❌ حصل خطأ أثناء الحفظ:\n" +
             error.message;
 
+
         message.style.color =
             "#dc3545";
+
 
         button.disabled = false;
 
@@ -1857,12 +2476,15 @@ function getLTCarDisplayName(record) {
 
     const carName =
         String(
-            record.car_name || "غير معروف"
+            record.car_name ||
+            "غير معروف"
         ).trim();
+
 
     const carNumberRaw =
         String(
-            record.car_number || ""
+            record.car_number ||
+            ""
         ).trim();
 
 
@@ -1873,6 +2495,7 @@ function getLTCarDisplayName(record) {
        الرقم الأول = رقم العربية
        الرقم الأخير = رقم الوحدة
     */
+
 
     const parts =
         carNumberRaw.split("-");
@@ -1885,8 +2508,12 @@ function getLTCarDisplayName(record) {
         const finalNumber =
             parts[0];
 
+
         const unitNumber =
-            parts[parts.length - 1];
+            parts[
+                parts.length - 1
+            ];
+
 
         return (
             carName +
@@ -1902,7 +2529,10 @@ function getLTCarDisplayName(record) {
     return (
         carName +
         " — " +
-        (carNumberRaw || "بدون رقم")
+        (
+            carNumberRaw ||
+            "بدون رقم"
+        )
     );
 
 }
@@ -1947,7 +2577,8 @@ function buildLTCarSelector(records) {
 
             const key =
                 String(
-                    record.car_number || ""
+                    record.car_number ||
+                    ""
                 ).trim();
 
 
@@ -1958,7 +2589,9 @@ function buildLTCarSelector(records) {
             }
 
 
-            if (!uniqueCars.has(key)) {
+            if (
+                !uniqueCars.has(key)
+            ) {
 
                 uniqueCars.set(
                     key,
@@ -1985,20 +2618,33 @@ function buildLTCarSelector(records) {
         function(a, b) {
 
             const aParts =
-                String(a[0]).split("-");
+                String(
+                    a[0]
+                ).split("-");
+
 
             const bParts =
-                String(b[0]).split("-");
+                String(
+                    b[0]
+                ).split("-");
 
 
             const aNumber =
-                Number(aParts[0]) || 0;
+                Number(
+                    aParts[0]
+                ) || 0;
+
 
             const bNumber =
-                Number(bParts[0]) || 0;
+                Number(
+                    bParts[0]
+                ) || 0;
 
 
-            return aNumber - bNumber;
+            return (
+                aNumber -
+                bNumber
+            );
 
         }
     );
@@ -2009,6 +2655,7 @@ function buildLTCarSelector(records) {
 
             const carNumber =
                 entry[0];
+
 
             const record =
                 entry[1];
@@ -2045,7 +2692,9 @@ function buildLTCarSelector(records) {
 
     if (
         selectedLTCar &&
-        uniqueCars.has(selectedLTCar)
+        uniqueCars.has(
+            selectedLTCar
+        )
     ) {
 
         selector.value =
@@ -2067,10 +2716,12 @@ function showSelectedLTCar() {
             "ltRecordedCar"
         );
 
+
     const container =
         document.getElementById(
             "ltRecords"
         );
+
 
     const title =
         document.getElementById(
@@ -2078,7 +2729,10 @@ function showSelectedLTCar() {
         );
 
 
-    if (!selector || !container) {
+    if (
+        !selector ||
+        !container
+    ) {
 
         return;
 
@@ -2102,6 +2756,7 @@ function showSelectedLTCar() {
 
         }
 
+
         container.innerHTML = `
 
             <div class="empty">
@@ -2111,6 +2766,7 @@ function showSelectedLTCar() {
             </div>
 
         `;
+
 
         return;
 
@@ -2122,15 +2778,19 @@ function showSelectedLTCar() {
             function(record) {
 
                 return String(
-                    record.car_number || ""
+                    record.car_number ||
+                    ""
                 ).trim()
-                === selectedLTCar;
+                ===
+                selectedLTCar;
 
             }
         );
 
 
-    if (!selectedRecords.length) {
+    if (
+        !selectedRecords.length
+    ) {
 
         if (title) {
 
@@ -2138,6 +2798,7 @@ function showSelectedLTCar() {
                 "";
 
         }
+
 
         container.innerHTML = `
 
@@ -2148,6 +2809,7 @@ function showSelectedLTCar() {
             </div>
 
         `;
+
 
         return;
 
@@ -2185,7 +2847,8 @@ function showSelectedLTCar() {
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
     /*
@@ -2197,7 +2860,8 @@ function showSelectedLTCar() {
 
             return new Date(
                 b.created_at || 0
-            ) -
+            )
+            -
             new Date(
                 a.created_at || 0
             );
@@ -2219,10 +2883,22 @@ function showSelectedLTCar() {
                 );
 
 
+            /*
+               مهم جدًا لنظام الحذف
+               كل Card يحتفظ بـ record.id
+            */
+
+            div.dataset.recordId =
+                record.id;
+
+
             const isCompleted =
                 String(
-                    record.done || ""
-                ).trim() === "نعم";
+                    record.done ||
+                    ""
+                ).trim()
+                ===
+                "نعم";
 
 
             div.className =
@@ -2231,7 +2907,8 @@ function showSelectedLTCar() {
                     : "record not-completed";
 
 
-            let statusHTML = "";
+            let statusHTML =
+                "";
 
 
             if (isCompleted) {
@@ -2473,12 +3150,14 @@ async function loadLTRecords() {
                 result.error
             );
 
+
             container.innerHTML =
                 '<div class="error-box">❌ ' +
                 escapeHTML(
                     result.error.message
                 ) +
                 '</div>';
+
 
             return;
 
@@ -2489,12 +3168,15 @@ async function loadLTRecords() {
             result.data || [];
 
 
-        if (!allLTRecords.length) {
+        if (
+            !allLTRecords.length
+        ) {
 
             const selector =
                 document.getElementById(
                     "ltRecordedCar"
                 );
+
 
             if (selector) {
 
@@ -2515,6 +3197,7 @@ async function loadLTRecords() {
                 '<div class="empty">' +
                 "لا توجد بيانات مسجلة حتى الآن" +
                 "</div>";
+
 
             return;
 
@@ -2542,9 +3225,11 @@ async function loadLTRecords() {
                     function(record) {
 
                         return String(
-                            record.car_number || ""
+                            record.car_number ||
+                            ""
                         ).trim()
-                        === selectedLTCar;
+                        ===
+                        selectedLTCar;
 
                     }
                 );
@@ -2564,7 +3249,6 @@ async function loadLTRecords() {
         /*
            أول دخول للصفحة:
            لا نعرض كل التسجيلات
-           ونطلب من المستخدم اختيار العربية
         */
 
         const title =
@@ -2604,6 +3288,7 @@ async function loadLTRecords() {
             error
         );
 
+
         container.innerHTML =
             '<div class="error-box">' +
             "❌ حصل خطأ أثناء تحميل البيانات" +
@@ -2640,30 +3325,36 @@ document.addEventListener(
 
         loadLTRecords();
 
+
         console.log(
             "UNIT 1 DTC =",
             "1"
         );
+
 
         console.log(
             "UNIT 1 MCI =",
             "4"
         );
 
+
         console.log(
             "UNIT 2 MCI =",
             "5"
         );
+
 
         console.log(
             "UNIT 2 MC2 =",
             "6"
         );
 
+
         console.log(
             "UNIT 2 MC1 =",
             "7"
         );
+
 
         console.log(
             "UNIT 2 DTC =",

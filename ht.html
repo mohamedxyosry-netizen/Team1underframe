@@ -161,12 +161,122 @@ body {
 }
 
 /* =====================================================
-   DEVICE
+   HT DEVICE MULTI SELECT
 ===================================================== */
 
-#htDevice {
-    cursor: pointer;
+.ht-device-select {
+    position: relative;
+    width: 100%;
+}
+
+.ht-device-button {
+    width: 100%;
+    min-height: 48px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 15px;
     background: #f9fafb;
+    outline: none;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: right;
+    color: #374151;
+    transition: .2s;
+}
+
+.ht-device-button:hover {
+    background: white;
+}
+
+.ht-device-button:focus,
+.ht-device-select.open .ht-device-button {
+    border-color: #198754;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(25,135,84,.12);
+}
+
+.ht-device-arrow {
+    float: left;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.ht-device-menu {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    top: calc(100% + 6px);
+    right: 0;
+    left: 0;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.15);
+    padding: 8px;
+    max-height: 330px;
+    overflow-y: auto;
+}
+
+.ht-device-select.open .ht-device-menu {
+    display: block;
+}
+
+/* =====================================================
+   DEVICE CHECKBOX
+===================================================== */
+
+.ht-device-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 11px 10px;
+    margin: 2px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .15s;
+    font-weight: normal;
+    color: #374151;
+}
+
+.ht-device-option:hover {
+    background: #f1f5f9;
+}
+
+.ht-device-option.selected {
+    background: #dcfce7;
+    color: #166534;
+    font-weight: bold;
+}
+
+.ht-device-option input[type="checkbox"] {
+    width: 19px;
+    height: 19px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    accent-color: #198754;
+    flex-shrink: 0;
+}
+
+.ht-device-name {
+    flex: 1;
+    text-align: right;
+}
+
+.ht-select-all {
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 6px;
+    padding-bottom: 10px;
+    font-weight: bold;
+}
+
+.ht-selected-count {
+    margin-top: 7px;
+    font-size: 13px;
+    color: #198754;
+    font-weight: bold;
 }
 
 /* =====================================================
@@ -418,6 +528,14 @@ body {
         font-size: 19px;
     }
 
+    .ht-device-menu {
+        max-height: 280px;
+    }
+
+    .ht-device-option {
+        padding: 12px 9px;
+    }
+
 }
 
 </style>
@@ -596,15 +714,41 @@ id="htCarNumber">
 🔧 اسم الجهاز
 </label>
 
-<select
-id="htDevice"
-disabled>
+<div
+class="ht-device-select"
+id="htDeviceSelect">
 
-<option value="">
+<button
+type="button"
+class="ht-device-button"
+id="htDeviceButton"
+onclick="toggleHTDeviceMenu()">
+
+<span id="htDeviceButtonText">
 اختر اسم العربية أولاً
-</option>
+</span>
 
-</select>
+<span class="ht-device-arrow">
+▼
+</span>
+
+</button>
+
+
+<div
+class="ht-device-menu"
+id="htDeviceMenu">
+
+<!-- يتم إنشاء الأجهزة هنا -->
+
+</div>
+
+</div>
+
+<div
+class="ht-selected-count"
+id="htSelectedCount">
+</div>
 
 </div>
 
@@ -769,6 +913,9 @@ try {
                 SUPABASE_KEY
             );
 
+        window.supabaseClient =
+            supabaseClient;
+
     }
 
 }
@@ -872,6 +1019,7 @@ MCI: [
 "VVVF1",
 "VVVF2",
 "MS BOX",
+"HTJP",
 "STINGER-L",
 "STINGER-R",
 "HTGTB1",
@@ -990,7 +1138,7 @@ function formatArabicDate(value) {
 
 
 /* =====================================================
-   تحديث الأجهزة
+   تحديث أجهزة HT
 ===================================================== */
 
 function updateHTDevices() {
@@ -999,51 +1147,540 @@ function updateHTDevices() {
         document.getElementById("htCarName").value;
 
     const deviceSelect =
-        document.getElementById("htDevice");
+        document.getElementById("htDeviceSelect");
 
-    if (!deviceSelect) {
+    const menu =
+        document.getElementById("htDeviceMenu");
+
+    const buttonText =
+        document.getElementById("htDeviceButtonText");
+
+    const selectedCount =
+        document.getElementById("htSelectedCount");
+
+
+    if (!deviceSelect || !menu) {
         return;
     }
 
-    deviceSelect.innerHTML = "";
+
+    /*
+     * إغلاق القائمة عند تغيير العربية
+     */
+
+    deviceSelect.classList.remove("open");
+
+
+    /*
+     * تنظيف الأجهزة القديمة
+     */
+
+    menu.innerHTML = "";
+
 
     if (!carName) {
 
-        deviceSelect.disabled = true;
+        buttonText.textContent =
+            "اختر اسم العربية أولاً";
 
-        deviceSelect.innerHTML = `
-            <option value="">
-                اختر اسم العربية أولاً
-            </option>
-        `;
+        selectedCount.textContent =
+            "";
 
         return;
+
     }
+
 
     const devices =
         HT_DEVICES[carName] || [];
 
-    deviceSelect.disabled = false;
 
-    deviceSelect.innerHTML = `
-        <option value="">
-            ⬇️ اختر اسم الجهاز
-        </option>
-    `;
+    if (devices.length === 0) {
 
-    devices.forEach(function(device) {
+        buttonText.textContent =
+            "لا توجد أجهزة";
 
-        const option =
-            document.createElement("option");
+        selectedCount.textContent =
+            "";
 
-        option.value = device;
-        option.textContent = device;
+        return;
 
-        deviceSelect.appendChild(option);
+    }
 
-    });
+
+    /* =================================================
+       اختيار كل الأجهزة
+    ================================================= */
+
+    const selectAllLabel =
+        document.createElement("label");
+
+    selectAllLabel.className =
+        "ht-device-option ht-select-all";
+
+
+    const selectAllCheckbox =
+        document.createElement("input");
+
+    selectAllCheckbox.type =
+        "checkbox";
+
+    selectAllCheckbox.id =
+        "htSelectAll";
+
+
+    const selectAllText =
+        document.createElement("span");
+
+    selectAllText.className =
+        "ht-device-name";
+
+    selectAllText.textContent =
+        "☑ اختيار كل الأجهزة";
+
+
+    selectAllLabel.appendChild(
+        selectAllCheckbox
+    );
+
+    selectAllLabel.appendChild(
+        selectAllText
+    );
+
+    menu.appendChild(
+        selectAllLabel
+    );
+
+
+    /* =================================================
+       الأجهزة
+    ================================================= */
+
+    devices.forEach(
+        function(device) {
+
+            const label =
+                document.createElement("label");
+
+            label.className =
+                "ht-device-option";
+
+
+            const checkbox =
+                document.createElement("input");
+
+            checkbox.type =
+                "checkbox";
+
+            checkbox.className =
+                "ht-device-checkbox";
+
+            checkbox.value =
+                device;
+
+
+            const deviceName =
+                document.createElement("span");
+
+            deviceName.className =
+                "ht-device-name";
+
+            deviceName.textContent =
+                device;
+
+
+            label.appendChild(
+                checkbox
+            );
+
+            label.appendChild(
+                deviceName
+            );
+
+            menu.appendChild(
+                label
+            );
+
+
+            /*
+             * تغيير الشكل عند الاختيار
+             */
+
+            checkbox.addEventListener(
+                "change",
+                function() {
+
+                    label.classList.toggle(
+                        "selected",
+                        checkbox.checked
+                    );
+
+                    updateHTSelectedCount();
+
+                    updateHTSelectAllState();
+
+                }
+            );
+
+        }
+    );
+
+
+    /*
+     * اختيار كل الأجهزة
+     */
+
+    selectAllCheckbox.addEventListener(
+        "change",
+        function() {
+
+            const checkboxes =
+                menu.querySelectorAll(
+                    ".ht-device-checkbox"
+                );
+
+
+            checkboxes.forEach(
+                function(checkbox) {
+
+                    checkbox.checked =
+                        selectAllCheckbox.checked;
+
+
+                    const label =
+                        checkbox.closest(
+                            ".ht-device-option"
+                        );
+
+
+                    if (label) {
+
+                        label.classList.toggle(
+                            "selected",
+                            checkbox.checked
+                        );
+
+                    }
+
+                }
+            );
+
+
+            updateHTSelectedCount();
+
+        }
+    );
+
+
+    updateHTSelectedCount();
 
 }
+
+
+/* =====================================================
+   فتح / غلق قائمة الأجهزة
+===================================================== */
+
+function toggleHTDeviceMenu() {
+
+    const carName =
+        document.getElementById("htCarName").value;
+
+    if (!carName) {
+
+        const message =
+            document.getElementById("htMessage");
+
+        message.innerText =
+            "❌ من فضلك اختر اسم العربية أولاً";
+
+        message.style.color =
+            "#dc3545";
+
+        return;
+
+    }
+
+
+    const select =
+        document.getElementById(
+            "htDeviceSelect"
+        );
+
+
+    if (!select) {
+        return;
+    }
+
+
+    select.classList.toggle("open");
+
+}
+
+
+/* =====================================================
+   تحديث عدد الأجهزة المختارة
+===================================================== */
+
+function updateHTSelectedCount() {
+
+    const menu =
+        document.getElementById(
+            "htDeviceMenu"
+        );
+
+    const buttonText =
+        document.getElementById(
+            "htDeviceButtonText"
+        );
+
+    const selectedCount =
+        document.getElementById(
+            "htSelectedCount"
+        );
+
+
+    if (!menu) {
+        return;
+    }
+
+
+    const checked =
+        menu.querySelectorAll(
+            ".ht-device-checkbox:checked"
+        );
+
+
+    const count =
+        checked.length;
+
+
+    if (count === 0) {
+
+        buttonText.textContent =
+            "⬇️ اختر اسم الجهاز";
+
+        selectedCount.textContent =
+            "";
+
+        return;
+
+    }
+
+
+    if (count === 1) {
+
+        buttonText.textContent =
+            checked[0].value;
+
+    }
+
+    else {
+
+        buttonText.textContent =
+            "تم اختيار " +
+            count +
+            " أجهزة";
+
+    }
+
+
+    selectedCount.textContent =
+        "✅ تم اختيار " +
+        count +
+        " جهاز";
+
+}
+
+
+/* =====================================================
+   تحديث حالة اختيار كل الأجهزة
+===================================================== */
+
+function updateHTSelectAllState() {
+
+    const menu =
+        document.getElementById(
+            "htDeviceMenu"
+        );
+
+    if (!menu) {
+        return;
+    }
+
+
+    const selectAll =
+        document.getElementById(
+            "htSelectAll"
+        );
+
+
+    const checkboxes =
+        menu.querySelectorAll(
+            ".ht-device-checkbox"
+        );
+
+
+    if (
+        !selectAll ||
+        checkboxes.length === 0
+    ) {
+        return;
+    }
+
+
+    const checked =
+        menu.querySelectorAll(
+            ".ht-device-checkbox:checked"
+        );
+
+
+    selectAll.checked =
+        checked.length ===
+        checkboxes.length;
+
+
+    selectAll.indeterminate =
+        checked.length > 0 &&
+        checked.length < checkboxes.length;
+
+}
+
+
+/* =====================================================
+   الحصول على الأجهزة المختارة
+===================================================== */
+
+function getSelectedHTDevices() {
+
+    const menu =
+        document.getElementById(
+            "htDeviceMenu"
+        );
+
+
+    if (!menu) {
+        return [];
+    }
+
+
+    const checked =
+        menu.querySelectorAll(
+            ".ht-device-checkbox:checked"
+        );
+
+
+    return Array.from(checked)
+        .map(
+            function(checkbox) {
+
+                return checkbox.value
+                    .trim();
+
+            }
+        )
+        .filter(
+            function(value) {
+
+                return value !== "";
+
+            }
+        );
+
+}
+
+
+/* =====================================================
+   مسح الأجهزة المختارة
+===================================================== */
+
+function clearHTDevices() {
+
+    const menu =
+        document.getElementById(
+            "htDeviceMenu"
+        );
+
+    const buttonText =
+        document.getElementById(
+            "htDeviceButtonText"
+        );
+
+    const selectedCount =
+        document.getElementById(
+            "htSelectedCount"
+        );
+
+    const deviceSelect =
+        document.getElementById(
+            "htDeviceSelect"
+        );
+
+
+    if (menu) {
+
+        menu.innerHTML =
+            "";
+
+    }
+
+
+    if (buttonText) {
+
+        buttonText.textContent =
+            "اختر اسم العربية أولاً";
+
+    }
+
+
+    if (selectedCount) {
+
+        selectedCount.textContent =
+            "";
+
+    }
+
+
+    if (deviceSelect) {
+
+        deviceSelect.classList.remove(
+            "open"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   إغلاق القائمة عند الضغط خارجها
+===================================================== */
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const deviceSelect =
+            document.getElementById(
+                "htDeviceSelect"
+            );
+
+
+        if (
+            deviceSelect &&
+            !deviceSelect.contains(
+                event.target
+            )
+        ) {
+
+            deviceSelect.classList.remove(
+                "open"
+            );
+
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -1119,14 +1756,6 @@ function updateHTCarNumber() {
     }
 
 
-    /*
-       الوحدة الفردية:
-       DTC → MC1 → MC2 → MCI
-
-       الوحدة الزوجية:
-       MCI → MC2 → MC1 → DTC
-    */
-
     const oddOrder = [
         "DTC",
         "MC1",
@@ -1165,13 +1794,6 @@ function updateHTCarNumber() {
 
     }
 
-
-    /*
-       Unit 1 → 1
-       Unit 2 → 5
-       Unit 3 → 9
-       Unit 4 → 13
-    */
 
     const baseNumber =
         ((unit - 1) * 4) + 1;
@@ -1268,9 +1890,6 @@ async function saveHT() {
     const carNumberElement =
         document.getElementById("htCarNumber");
 
-    const deviceElement =
-        document.getElementById("htDevice");
-
     const doneElement =
         document.getElementById("htDone");
 
@@ -1296,8 +1915,8 @@ async function saveHT() {
     const carNumber =
         carNumberElement.value.trim();
 
-    const device =
-        deviceElement.value.trim();
+    const devices =
+        getSelectedHTDevices();
 
     const done =
         doneElement.value;
@@ -1356,10 +1975,10 @@ async function saveHT() {
     }
 
 
-    if (!device) {
+    if (devices.length === 0) {
 
         message.innerText =
-            "❌ من فضلك اختر اسم الجهاز";
+            "❌ من فضلك اختر جهاز HT واحد على الأقل";
 
         message.style.color =
             "#dc3545";
@@ -1418,46 +2037,62 @@ async function saveHT() {
         "⏳ جاري الحفظ...";
 
     message.innerText =
-        "⏳ جاري حفظ البيانات...";
+        "⏳ جاري حفظ " +
+        devices.length +
+        " جهاز...";
 
     message.style.color =
         "#0d6efd";
 
 
-    const payload = {
+    /* =================================================
+       إنشاء Row مستقل لكل جهاز
+    ================================================= */
 
-        department:
-            "ht",
+    const payloads =
+        devices.map(
+            function(device) {
 
-        car_name:
-            carName,
+                return {
 
-        car_number:
-            carNumber,
+                    department:
+                        "ht",
 
-        device:
-            device,
+                    car_name:
+                        carName,
 
-        done:
-            done,
+                    car_number:
+                        carNumber,
 
-        notes:
-            notes,
+                    device:
+                        device,
 
-        created_by:
-            getCurrentUsername(),
+                    done:
+                        done,
 
-        not_completed_reason:
-            done === "لا"
-                ? reason
-                : null
+                    notes:
+                        notes,
 
-    };
+                    not_completed_reason:
+                        done === "لا"
+                            ? reason
+                            : "",
+
+                    created_by:
+                        getCurrentUsername(),
+
+                    created_at:
+                        new Date().toISOString()
+
+                };
+
+            }
+        );
 
 
     console.log(
         "📤 HT DATA:",
-        payload
+        payloads
     );
 
 
@@ -1466,9 +2101,8 @@ async function saveHT() {
         const result =
             await supabaseClient
                 .from("records")
-                .insert(payload)
-                .select()
-                .single();
+                .insert(payloads)
+                .select();
 
 
         if (result.error) {
@@ -1497,7 +2131,9 @@ async function saveHT() {
 
 
         message.innerText =
-            "✅ تم حفظ البيانات بنجاح";
+            "✅ تم حفظ " +
+            devices.length +
+            " جهاز بنجاح";
 
         message.style.color =
             "#198754";
@@ -1516,15 +2152,18 @@ async function saveHT() {
         carNumberElement.value =
             "";
 
+
         document.getElementById(
             "htCarDisplay"
         ).textContent =
             "--";
 
+
         document.getElementById(
             "htNameDisplay"
         ).textContent =
             "--";
+
 
         document.getElementById(
             "htUnitDisplay"
@@ -1532,14 +2171,7 @@ async function saveHT() {
             "--";
 
 
-        deviceElement.innerHTML = `
-            <option value="">
-                اختر اسم العربية أولاً
-            </option>
-        `;
-
-        deviceElement.disabled =
-            true;
+        clearHTDevices();
 
 
         doneElement.value =
@@ -1620,22 +2252,6 @@ function getHTCarDisplayName(record) {
         return carName || carNumber || "عربية";
     }
 
-
-    /*
-       الرقم محفوظ في قاعدة البيانات هكذا:
-
-       3-MC2-1
-
-       ومعناه:
-
-       رقم العربية = 3
-       اسم العربية = MC2
-       الوحدة = 1
-
-       العرض المطلوب:
-
-       MC2 001-3
-    */
 
     const parts =
         carNumber.split("-");
@@ -1757,17 +2373,8 @@ async function loadHTRecords() {
             result.data || [];
 
 
-        /*
-         * بناء قائمة العربيات المسجلة
-         */
-
         buildRegisteredCars();
 
-
-        /*
-         * في البداية لا نعرض أي سجل.
-         * المستخدم لازم يختار العربية.
-         */
 
         container.innerHTML = `
             <div class="empty">
@@ -1813,17 +2420,9 @@ function buildRegisteredCars() {
     }
 
 
-    /*
-     * حفظ الاختيار الحالي
-     */
-
     const oldValue =
         select.value;
 
-
-    /*
-     * تنظيف القائمة
-     */
 
     select.innerHTML = `
         <option value="">
@@ -1831,16 +2430,6 @@ function buildRegisteredCars() {
         </option>
     `;
 
-
-    /*
-     * منع تكرار نفس العربية
-     *
-     * المفتاح هو car_number
-     *
-     * مثال:
-     * 1-MC1-1
-     * 3-MC2-1
-     */
 
     const carsMap =
         new Map();
@@ -1883,11 +2472,6 @@ function buildRegisteredCars() {
         }
     );
 
-
-    /*
-     * ترتيب العربيات حسب رقم الوحدة
-     * ثم رقم العربية
-     */
 
     const cars =
         Array.from(
@@ -1935,10 +2519,6 @@ function buildRegisteredCars() {
     );
 
 
-    /*
-     * إنشاء القائمة
-     */
-
     cars.forEach(
         function(item) {
 
@@ -1973,11 +2553,6 @@ function buildRegisteredCars() {
         }
     );
 
-
-    /*
-     * لو كان فيه اختيار سابق
-     * نحافظ عليه
-     */
 
     if (
         oldValue &&
@@ -2025,10 +2600,6 @@ function filterHTRecords() {
         select.value;
 
 
-    /*
-     * لم يتم اختيار عربية
-     */
-
     if (!selectedCarNumber) {
 
         container.innerHTML = `
@@ -2041,10 +2612,6 @@ function filterHTRecords() {
 
     }
 
-
-    /*
-     * إظهار تسجيلات العربية المختارة فقط
-     */
 
     const filteredRecords =
         allHTRecords.filter(
@@ -2119,7 +2686,7 @@ function renderHTRecords(records) {
 
 
             /*
-             * مهم لنظام الحذف
+             * مهم جداً لنظام الحذف
              */
 
             if (
@@ -2145,7 +2712,7 @@ function renderHTRecords(records) {
 
                 `
                 <span class="status-badge status-completed">
-                    ✅ تم التقفيل
+                    ✅  تم التوصيل بنجاح
                 </span>
                 `
 
@@ -2153,7 +2720,7 @@ function renderHTRecords(records) {
 
                 `
                 <span class="status-badge status-pending">
-                    ❌ لم يتم التقفيل
+                    ❌ لم يتم الانتهاء
                 </span>
                 `;
 
