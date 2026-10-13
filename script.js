@@ -72,42 +72,48 @@ const permissions = {
     "problems.html",
     "deleterequests.html",
     "deleteRequests.html",
-    "chat.html"
+    "chat.html",
+    "consumables.html"
   ],
 
   wiring: [
     "index.html",
     "wiring.html",
     "problems.html",
-    "chat.html"
+    "chat.html",
+    "consumables.html"
   ],
 
   lt: [
     "index.html",
     "lt.html",
     "problems.html",
-    "chat.html"
+    "chat.html",
+    "consumables.html"
   ],
 
   ht: [
     "index.html",
     "ht.html",
     "problems.html",
-    "chat.html"
+    "chat.html",
+    "consumables.html"
   ],
 
   installation: [
     "index.html",
     "installation.html",
     "problems.html",
-    "chat.html"
+    "chat.html",
+    "consumables.html"
   ],
 
   final: [
     "index.html",
     "final.html",
     "problems.html",
-    "chat.html"
+    "chat.html",
+    "consumables.html"
   ]
 };
 

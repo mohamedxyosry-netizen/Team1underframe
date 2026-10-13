@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>المستهلكات - NERIC</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf3 100%);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        .consumables-container {
+            padding: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .consumables-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .consumables-header h1 {
+            color: #0b3d91;
+            margin: 0;
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .back-btn {
+            background: #0b3d91;
+            color: white;
+            border: none;
+            padding: 11px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: inherit;
+            transition: all 0.2s;
+            box-shadow: 0 3px 8px rgba(11, 61, 145, 0.3);
+        }
+
+        .back-btn:hover {
+            background: #092e6e;
+            transform: translateY(-1px);
+        }
+
+        .add-form {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+            border-right: 4px solid #198754;
+        }
+
+        .add-form h2 {
+            margin: 0 0 18px 0;
+            color: #198754;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 110px 1.3fr 1fr 0.7fr 0.7fr 0.9fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .form-grid input,
+        .form-grid select {
+            padding: 13px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: #fafbfc;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .form-grid input:focus,
+        .form-grid select:focus {
+            outline: none;
+            border-color: #198754;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.1);
+        }
+
+        .form-grid select {
+            cursor: pointer;
+        }
+
+        #itemShape {
+            text-align: center;
+            font-size: 22px;
+            padding: 8px 10px;
+        }
+
+        #itemUsedInTrain {
+            border-color: #7c3aed;
+            background: #f8f5ff;
+        }
+
+        #itemUsedInTrain:focus {
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #198754, #157347);
+            color: white;
+            border: none;
+            padding: 13px 35px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            font-family: inherit;
+            transition: all 0.2s;
+            box-shadow: 0 3px 8px rgba(25, 135, 84, 0.3);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 12px rgba(25, 135, 84, 0.4);
+        }
+
+        .items-table {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .items-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table th {
+            background: linear-gradient(135deg, #0b3d91, #092e6e);
+            color: white;
+            padding: 14px 12px;
+            text-align: right;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .items-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .items-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .items-table tbody tr:hover {
+            background: #f5f9ff;
+        }
+
+        .items-table tr.low-stock {
+            background: #fff3f3;
+        }
+
+        .items-table tr.low-stock:hover {
+            background: #ffe8e8;
+        }
+
+        .qty-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            background: #e8f5e9;
+            color: #198754;
+            min-width: 45px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .qty-badge.low {
+            background: #ffe0e0;
+            color: #d92d20;
+        }
+
+        .used-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            background: #f3e8ff;
+            color: #7c3aed;
+            min-width: 45px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .part-number {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            background: #f0f4ff;
+            color: #0b3d91;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .item-name-cell {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            border: none;
+            padding: 6px 11px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #d92d20;
+        }
+
+        .delete-btn:hover {
+            background: #d92d20;
+            color: white;
+        }
+
+        .issue-btn {
+            background: #dbeafe;
+            color: #0b3d91;
+        }
+
+        .issue-btn:hover {
+            background: #0b3d91;
+            color: white;
+        }
+
+        .issue-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .restock-btn {
+            background: #d1fae5;
+            color: #198754;
+        }
+
+        .restock-btn:hover {
+            background: #198754;
+            color: white;
+        }
+
+        .log-btn {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .log-btn:hover {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 50px;
+            color: #888;
+            font-size: 16px;
+        }
+
+        .page-message {
+            padding: 14px 20px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            display: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .page-message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+            border-right: 4px solid #198754;
+        }
+
+        .page-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+            border-right: 4px solid #d92d20;
+        }
+
+        .page-message.warning {
+            background: #fff3cd;
+            color: #856404;
+            display: block;
+            border-right: 4px solid #ffc107;
+        }
+
+        /* Modal للوج */
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #7c3aed, #5b21b6);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1;
+            transition: all 0.15s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .modal-body {
+            padding: 20px 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .log-summary {
+            background: #f8fafc;
+            border-right: 4px solid #7c3aed;
+            padding: 15px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .log-summary p {
+            margin: 5px 0;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .log-summary strong {
+            color: #0b3d91;
+        }
+
+        .log-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .log-item {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 15px 18px;
+            border-right: 4px solid #94a3b8;
+            transition: all 0.15s;
+        }
+
+        .log-item.issue {
+            border-right-color: #0b3d91;
+            background: #eff6ff;
+        }
+
+        .log-item.restock {
+            border-right-color: #198754;
+            background: #f0fdf4;
+        }
+
+        .log-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .log-item-type {
+            font-weight: 700;
+            font-size: 14px;
+            padding: 4px 12px;
+            border-radius: 15px;
+        }
+
+        .log-item.issue .log-item-type {
+            background: #dbeafe;
+            color: #0b3d91;
+        }
+
+        .log-item.restock .log-item-type {
+            background: #d1fae5;
+            color: #198754;
+        }
+
+        .log-item-date {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .log-item-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .log-detail-item {
+            font-size: 13px;
+        }
+
+        .log-detail-item span:first-child {
+            color: #64748b;
+            display: block;
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+
+        .log-detail-item span:last-child {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .log-empty {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        @media (max-width: 1100px) {
+            .form-grid {
+                grid-template-columns: 100px 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .items-table {
+                overflow-x: auto;
+            }
+
+            .items-table table {
+                min-width: 900px;
+            }
+
+            .consumables-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="consumables-container">
+
+        <div class="consumables-header">
+            <h1>📦 إدارة المستهلكات</h1>
+
+            <button
+                class="back-btn"
+                onclick="window.location.href='index.html'">
+                ← رجوع للرئيسية
+            </button>
+        </div>
+
+        <div id="pageMessage" class="page-message"></div>
+
+        <div class="add-form" id="addFormSection">
+            <h2>➕ إضافة صنف جديد</h2>
+
+            <div class="form-grid">
+                <select id="itemShape" title="اختر الشكل">
+                    <option value="">⬜</option>
+                    <option value="🔩">🔩</option>
+                    <option value="⚙️">⚙️</option>
+                    <option value="⭕">⭕</option>
+                    <option value="🔘">🔘</option>
+                    <option value="🔧">🔧</option>
+                    <option value="📎">📎</option>
+                    <option value="🪛">🪛</option>
+                    <option value="🧵">🧵</option>
+                    <option value="🔌">🔌</option>
+                    <option value="🪈">🪈</option>
+                    <option value="🔗">🔗</option>
+                    <option value="📦">📦</option>
+                </select>
+
+                <input type="text" id="itemName" placeholder="اسم الصنف">
+
+                <input type="text" id="itemPartNumber" placeholder="Part Number">
+
+                <input type="number" id="itemQuantity" placeholder="الكمية" min="0">
+
+                <input type="number" id="itemMinQuantity" placeholder="الحد الأدنى" min="0">
+
+                <input type="number" id="itemUsedInTrain" placeholder="المستخدم في القطار" min="0" title="الكمية المستخدمة في القطار">
+            </div>
+
+            <button class="add-btn" onclick="addConsumable()">
+                💾 حفظ الصنف
+            </button>
+        </div>
+
+        <div class="items-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>اسم الصنف</th>
+                        <th>Part Number</th>
+                        <th>الكمية</th>
+                        <th>الحد الأدنى</th>
+                        <th>المستخدم في القطار</th>
+                        <th>الحالة</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="itemsBody">
+                    <tr>
+                        <td colspan="8" class="empty-msg">جاري التحميل...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Modal سجل الحركات -->
+
+    <div id="logModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>📋 سجل الحركات</h2>
+                <button class="modal-close" onclick="closeLogModal()">×</button>
+            </div>
+
+            <div class="modal-body" id="logModalBody">
+                جاري التحميل...
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+
+    <script>
+        function showMessage(text, type) {
+            const el = document.getElementById("pageMessage");
+            el.innerText = text;
+            el.className = "page-message " + type;
+            setTimeout(() => {
+                el.className = "page-message";
+            }, 5000);
+        }
+
+        function escapeHtml(str) {
+            return String(str ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function isAdminUser() {
+            const user = typeof getCurrentUser === "function"
+                ? getCurrentUser()
+                : null;
+
+            return !!(user && user.role === "admin");
+        }
+
+        function getCurrentUsername() {
+            const user = typeof getCurrentUser === "function"
+                ? getCurrentUser()
+                : null;
+
+            if (!user) return "Unknown";
+
+            return user.username || user.name || "Unknown";
+        }
+
+        function formatDate(value) {
+            if (!value) return "-";
+
+            const date = new Date(value);
+
+            if (Number.isNaN(date.getTime())) return value;
+
+            return date.toLocaleString("ar-EG", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+            });
+        }
+
+        async function loadConsumables() {
+            const tbody = document.getElementById("itemsBody");
+
+            if (!window.supabaseClient) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">❌ لا يوجد اتصال بقاعدة البيانات</td></tr>';
+                return;
+            }
+
+            const result = await window.supabaseClient
+                .from("consumables")
+                .select("*")
+                .order("id", { ascending: false });
+
+            if (result.error) {
+                console.error("Load consumables error:", result.error);
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">❌ فشل تحميل البيانات</td></tr>';
+                return;
+            }
+
+            const items = result.data || [];
+            const isAdmin = isAdminUser();
+
+            if (!items.length) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">لا توجد أصناف مسجلة حتى الآن</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = items.map((item, index) => {
+                const qty = Number(item.quantity) || 0;
+                const minQty = Number(item.minimum_quantity) || 0;
+                const usedQty = Number(item.used_in_train) || 0;
+                const isLow = qty < minQty;
+
+                let actionsHtml = '<div class="action-buttons">';
+
+                if (isAdmin) {
+                    actionsHtml += `<button class="action-btn restock-btn" onclick="restockConsumable(${item.id})">📥 توريد</button>`;
+                    actionsHtml += `<button class="action-btn delete-btn" onclick="deleteConsumable(${item.id})">🗑️ حذف</button>`;
+                }
+
+                if (qty > 0) {
+                    actionsHtml += `<button class="action-btn issue-btn" onclick="issueConsumable(${item.id})">📤 صرف</button>`;
+                } else {
+                    actionsHtml += `<button class="action-btn issue-btn" disabled>📤 صرف</button>`;
+                }
+
+                actionsHtml += `<button class="action-btn log-btn" onclick="openItemLog(${item.id})">📋 سجل</button>`;
+
+                actionsHtml += '</div>';
+
+                return `
+                    <tr class="${isLow ? 'low-stock' : ''}">
+                        <td>${items.length - index}</td>
+                        <td class="item-name-cell">${escapeHtml(item.item_name || "-")}</td>
+                        <td><span class="part-number">${escapeHtml(item.part_number || "-")}</span></td>
+                        <td><span class="qty-badge ${isLow ? 'low' : ''}">${qty}</span></td>
+                        <td>${minQty}</td>
+                        <td><span class="used-badge">🚆 ${usedQty}</span></td>
+                        <td>${isLow ? "⚠️ أقل من الحد الأدنى" : "✅ متوفر"}</td>
+                        <td>${actionsHtml}</td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        async function addConsumable() {
+            const shape = document.getElementById("itemShape").value;
+            const itemNameInput = document.getElementById("itemName").value.trim();
+            const partNumber = document.getElementById("itemPartNumber").value.trim();
+            const quantity = document.getElementById("itemQuantity").value.trim();
+            const minQty = document.getElementById("itemMinQuantity").value.trim();
+            const usedInTrain = document.getElementById("itemUsedInTrain").value.trim();
+
+            if (!isAdminUser()) {
+                showMessage("❌ هذه العملية متاحة للمدير فقط", "error");
+                return;
+            }
+
+            if (!shape) {
+                showMessage("❌ من فضلك اختر الشكل", "error");
+                return;
+            }
+
+            if (!itemNameInput) {
+                showMessage("❌ من فضلك اكتب اسم الصنف", "error");
+                return;
+            }
+
+            if (!partNumber) {
+                showMessage("❌ من فضلك اكتب Part Number", "error");
+                return;
+            }
+
+            if (quantity === "" || Number(quantity) < 0) {
+                showMessage("❌ من فضلك اكتب كمية صحيحة", "error");
+                return;
+            }
+
+            if (minQty === "" || Number(minQty) < 0) {
+                showMessage("❌ من فضلك اكتب حد أدنى صحيح", "error");
+                return;
+            }
+
+            if (usedInTrain !== "" && Number(usedInTrain) < 0) {
+                showMessage("❌ من فضلك اكتب كمية مستخدمة صحيحة", "error");
+                return;
+            }
+
+            if (!window.supabaseClient) {
+                showMessage("❌ لا يوجد اتصال بقاعدة البيانات", "error");
+                return;
+            }
+
+            // ✅ التحقق من إن الـ Part Number مش موجود بالفعل
+            const checkResult = await window.supabaseClient
+                .from("consumables")
+                .select("id, item_name, part_number")
+                .eq("part_number", partNumber)
+                .limit(1);
+
+            if (checkResult.error) {
+                console.error("Check part number error:", checkResult.error);
+                showMessage("❌ فشل التحقق من Part Number: " + checkResult.error.message, "error");
+                return;
+            }
+
+            if (checkResult.data && checkResult.data.length > 0) {
+                const existing = checkResult.data[0];
+                showMessage(
+                    "⚠️ Part Number \"" + partNumber + "\" موجود بالفعل للصنف: " + existing.item_name,
+                    "warning"
+                );
+                return;
+            }
+
+            // ندمج الشكل مع الاسم
+            const finalName = shape + " " + itemNameInput;
+
+            const result = await window.supabaseClient
+                .from("consumables")
+                .insert([{
+                    item_name: finalName,
+                    part_number: partNumber,
+                    quantity: Number(quantity),
+                    minimum_quantity: Number(minQty),
+                    used_in_train: Number(usedInTrain) || 0
+                }]);
+
+            if (result.error) {
+                console.error("Add consumable error:", result.error);
+                showMessage("❌ فشل إضافة الصنف: " + result.error.message, "error");
+                return;
+            }
+
+            showMessage("✅ تم إضافة الصنف بنجاح", "success");
+
+            document.getElementById("itemShape").value = "";
+            document.getElementById("itemName").value = "";
+            document.getElementById("itemPartNumber").value = "";
+            document.getElementById("itemQuantity").value = "";
+            document.getElementById("itemMinQuantity").value = "";
+            document.getElementById("itemUsedInTrain").value = "";
+
+            await loadConsumables();
+        }
+
+        async function deleteConsumable(id) {
+            if (!isAdminUser()) {
+                showMessage("❌ الحذف متاح للمدير فقط", "error");
+                return;
+            }
+
+            if (!confirm("هل أنت متأكد من حذف هذا الصنف؟")) return;
+
+            if (!window.supabaseClient) return;
+
+            const result = await window.supabaseClient
+                .from("consumables")
+                .delete()
+                .eq("id", id);
+
+            if (result.error) {
+                console.error("Delete error:", result.error);
+                showMessage("❌ فشل الحذف: " + result.error.message, "error");
+                return;
+            }
+
+            showMessage("✅ تم حذف الصنف", "success");
+            await loadConsumables();
+        }
+
+        async function issueConsumable(id) {
+            if (!window.supabaseClient) {
+                showMessage("❌ لا يوجد اتصال بقاعدة البيانات", "error");
+                return;
+            }
+
+            const itemResult = await window.supabaseClient
+                .from("consumables")
+                .select("*")
+                .eq("id", id)
+                .single();
+
+            if (itemResult.error || !itemResult.data) {
+                showMessage("❌ لم يتم العثور على الصنف", "error");
+                return;
+            }
+
+            const item = itemResult.data;
+            const currentQty = Number(item.quantity) || 0;
+
+            if (currentQty <= 0) {
+                showMessage("❌ لا توجد كمية متاحة من هذا الصنف", "error");
+                return;
+            }
+
+            const input = prompt(
+                `📤 صرف: ${item.item_name}\n` +
+                `Part Number: ${item.part_number || "-"}\n` +
+                `الكمية المتاحة: ${currentQty}\n\n` +
+                `اكتب الكمية اللي عايز تصرفها:`
+            );
+
+            if (input === null) return;
+
+            const issuedQty = Number(input);
+
+            if (!issuedQty || issuedQty <= 0) {
+                showMessage("❌ من فضلك اكتب كمية صحيحة", "error");
+                return;
+            }
+
+            if (issuedQty > currentQty) {
+                showMessage("❌ الكمية المطلوبة أكبر من المتاح (" + currentQty + ")", "error");
+                return;
+            }
+
+            const notes = prompt("ملاحظات (اختياري - تقدر تسيبه فاضي):", "");
+
+            if (notes === null) return;
+
+            const newQty = currentQty - issuedQty;
+
+            const updateResult = await window.supabaseClient
+                .from("consumables")
+                .update({
+                    quantity: newQty,
+                    updated_at: new Date().toISOString()
+                })
+                .eq("id", id);
+
+            if (updateResult.error) {
+                console.error("Update qty error:", updateResult.error);
+                showMessage("❌ فشل خصم الكمية: " + updateResult.error.message, "error");
+                return;
+            }
+
+            const transResult = await window.supabaseClient
+                .from("consumables_transactions")
+                .insert([{
+                    consumable_id: id,
+                    username: getCurrentUsername(),
+                    transaction_type: "صرف",
+                    quantity: issuedQty,
+                    notes: notes.trim()
+                }]);
+
+            if (transResult.error) {
+                console.error("Insert transaction error:", transResult.error);
+                showMessage(
+                    "⚠️ تم خصم الكمية، لكن فشل تسجيل الحركة: " + transResult.error.message,
+                    "error"
+                );
+                await loadConsumables();
+                return;
+            }
+
+            showMessage("✅ تم صرف " + issuedQty + " بنجاح", "success");
+            await loadConsumables();
+        }
+
+        async function restockConsumable(id) {
+            if (!isAdminUser()) {
+                showMessage("❌ التوريد متاح للمدير فقط", "error");
+                return;
+            }
+
+            if (!window.supabaseClient) {
+                showMessage("❌ لا يوجد اتصال بقاعدة البيانات", "error");
+                return;
+            }
+
+            const itemResult = await window.supabaseClient
+                .from("consumables")
+                .select("*")
+                .eq("id", id)
+                .single();
+
+            if (itemResult.error || !itemResult.data) {
+                showMessage("❌ لم يتم العثور على الصنف", "error");
+                return;
+            }
+
+            const item = itemResult.data;
+            const currentQty = Number(item.quantity) || 0;
+
+            const input = prompt(
+                `📥 توريد: ${item.item_name}\n` +
+                `Part Number: ${item.part_number || "-"}\n` +
+                `الكمية الحالية: ${currentQty}\n\n` +
+                `اكتب الكمية اللي عايز تضيفها:`
+            );
+
+            if (input === null) return;
+
+            const addQty = Number(input);
+
+            if (!addQty || addQty <= 0) {
+                showMessage("❌ من فضلك اكتب كمية صحيحة", "error");
+                return;
+            }
+
+            const notes = prompt("ملاحظات (اختياري - تقدر تسيبه فاضي):", "");
+
+            if (notes === null) return;
+
+            const newQty = currentQty + addQty;
+
+            const updateResult = await window.supabaseClient
+                .from("consumables")
+                .update({
+                    quantity: newQty,
+                    updated_at: new Date().toISOString()
+                })
+                .eq("id", id);
+
+            if (updateResult.error) {
+                console.error("Update qty error:", updateResult.error);
+                showMessage("❌ فشل تحديث الكمية: " + updateResult.error.message, "error");
+                return;
+            }
+
+            const transResult = await window.supabaseClient
+                .from("consumables_transactions")
+                .insert([{
+                    consumable_id: id,
+                    username: getCurrentUsername(),
+                    transaction_type: "توريد",
+                    quantity: addQty,
+                    notes: notes.trim()
+                }]);
+
+            if (transResult.error) {
+                console.error("Insert transaction error:", transResult.error);
+                showMessage(
+                    "⚠️ تم تحديث الكمية، لكن فشل تسجيل الحركة: " + transResult.error.message,
+                    "error"
+                );
+                await loadConsumables();
+                return;
+            }
+
+            showMessage("✅ تم إضافة " + addQty + " بنجاح", "success");
+            await loadConsumables();
+        }
+
+        async function openItemLog(id) {
+            const modal = document.getElementById("logModal");
+            const body = document.getElementById("logModalBody");
+
+            body.innerHTML = '<div class="log-empty">⏳ جاري تحميل السجل...</div>';
+            modal.classList.add("show");
+
+            if (!window.supabaseClient) {
+                body.innerHTML = '<div class="log-empty">❌ لا يوجد اتصال بقاعدة البيانات</div>';
+                return;
+            }
+
+            const itemResult = await window.supabaseClient
+                .from("consumables")
+                .select("*")
+                .eq("id", id)
+                .single();
+
+            if (itemResult.error || !itemResult.data) {
+                body.innerHTML = '<div class="log-empty">❌ لم يتم العثور على الصنف</div>';
+                return;
+            }
+
+            const item = itemResult.data;
+
+            const transResult = await window.supabaseClient
+                .from("consumables_transactions")
+                .select("*")
+                .eq("consumable_id", id)
+                .order("created_at", { ascending: false });
+
+            if (transResult.error) {
+                console.error("Log fetch error:", transResult.error);
+                body.innerHTML = '<div class="log-empty">❌ فشل تحميل السجل</div>';
+                return;
+            }
+
+            const transactions = transResult.data || [];
+
+            const totalIssued = transactions
+                .filter(t => t.transaction_type === "صرف")
+                .reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+
+            const totalRestocked = transactions
+                .filter(t => t.transaction_type === "توريد")
+                .reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+
+            let html = `
+                <div class="log-summary">
+                    <p><strong>📦 الصنف:</strong> ${escapeHtml(item.item_name || "-")}</p>
+                    <p><strong>🔢 Part Number:</strong> ${escapeHtml(item.part_number || "-")}</p>
+                    <p><strong>📊 الكمية الحالية:</strong> ${Number(item.quantity) || 0}</p>
+                    <p><strong>🚆 المستخدم في القطار:</strong> ${Number(item.used_in_train) || 0}</p>
+                    <p><strong>📤 إجمالي المصروف:</strong> ${totalIssued}</p>
+                    <p><strong>📥 إجمالي المورّد:</strong> ${totalRestocked}</p>
+                    <p><strong>📋 عدد الحركات:</strong> ${transactions.length}</p>
+                </div>
+            `;
+
+            if (!transactions.length) {
+                html += '<div class="log-empty">لا توجد حركات مسجلة على هذا الصنف</div>';
+            } else {
+                html += '<div class="log-list">';
+
+                transactions.forEach(t => {
+                    const typeClass = t.transaction_type === "صرف" ? "issue" : "restock";
+                    const typeIcon = t.transaction_type === "صرف" ? "📤" : "📥";
+
+                    html += `
+                        <div class="log-item ${typeClass}">
+                            <div class="log-item-header">
+                                <span class="log-item-type">${typeIcon} ${escapeHtml(t.transaction_type)}</span>
+                                <span class="log-item-date">🕒 ${formatDate(t.created_at)}</span>
+                            </div>
+
+                            <div class="log-item-details">
+                                <div class="log-detail-item">
+                                    <span>👤 بواسطة</span>
+                                    <span>${escapeHtml(t.username || "-")}</span>
+                                </div>
+
+                                <div class="log-detail-item">
+                                    <span>🔢 الكمية</span>
+                                    <span>${Number(t.quantity) || 0}</span>
+                                </div>
+
+                                ${t.notes ? `
+                                    <div class="log-detail-item" style="grid-column: 1 / -1;">
+                                        <span>📝 ملاحظات</span>
+                                        <span>${escapeHtml(t.notes)}</span>
+                                    </div>
+                                ` : ""}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+            }
+
+            body.innerHTML = html;
+        }
+
+        function closeLogModal() {
+            document.getElementById("logModal").classList.remove("show");
+        }
+
+        // إغلاق المودال بالضغط على الخلفية
+        document.getElementById("logModal").addEventListener("click", function(e) {
+            if (e.target === this) {
+                closeLogModal();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            if (!isAdminUser()) {
+                const addForm = document.getElementById("addFormSection");
+                if (addForm) {
+                    addForm.style.display = "none";
+                }
+            }
+
+            loadConsumables();
+        });
+    </script>
+
+</body>
+
+</html>
