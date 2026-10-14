@@ -10,6 +10,28 @@ window.supabaseClient = window.supabase
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
   : null;
 
+// ============================================================
+// NOTIFICATION HELPER LOADER
+// ============================================================
+
+async function ensureNotifyHelper() {
+  if (window.NERIC_Notify) return true;
+
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "notifications-helper.js";
+    script.onload = () => {
+      console.log("[NERIC] Notify helper loaded dynamically");
+      resolve(true);
+    };
+    script.onerror = () => {
+      console.warn("[NERIC] Failed to load notify helper");
+      resolve(false);
+    };
+    document.head.appendChild(script);
+  });
+}
+
 const users = {
   Yosry: { password: "0111252", role: "admin", name: "Yosry" },
   Zezo: { password: "58321476", role: "wiring", name: "Zezo" },
@@ -139,13 +161,6 @@ function getCurrentUser() {
 
     const user = JSON.parse(data);
 
-    /*
-      حل مشكلة المستخدم متعدد الأقسام:
-
-      لو بيانات sessionStorage القديمة لا تحتوي على
-      secondRole أو extraRoles، نرجعها من users.
-    */
-
     const userData = users[user.username];
 
     if (userData) {
@@ -237,11 +252,6 @@ function login() {
     return;
   }
 
-  /*
-    مهم:
-    حفظ الدور الثاني مع بيانات المستخدم.
-  */
-
   sessionStorage.setItem(
     "currentUser",
     JSON.stringify({
@@ -280,9 +290,6 @@ function protectPage() {
 
   if (currentPage === "index.html") return;
 
-  // ============================================================
-  // السماح لكل المستخدمين المسجلين بالدخول إلى Priority Item
-  // ============================================================
   if (currentPage === "priority.html") return;
 
   if (currentPage === "final.html") {
@@ -1164,9 +1171,45 @@ async function saveRecordToSupabase(
       return null;
     }
 
-    return normalizeRecord(
-      result.data
-    );
+    const savedRecord = normalizeRecord(result.data);
+
+    // 🔔 إرسال إشعار (الأحداث #4 و #5)
+    try {
+      await ensureNotifyHelper();
+
+      if (window.NERIC_Notify) {
+        const deptNames = {
+          wiring: "Wiring",
+          lt: "LT",
+          ht: "HT",
+          installation: "Equipment",
+          final: "Final"
+        };
+
+        const deptName = deptNames[department] || department;
+        const userName = user ? (user.name || user.username) : "مستخدم";
+
+        if (done === "لا") {
+          // حدث #5: مشكلة جديدة → للمدير بس
+          window.NERIC_Notify.sendAdminOnly(
+            "⚠️ مشكلة جديدة",
+            `${userName} سجل مشكلة في ${deptName} - عربية: ${data.carNumber || "-"} - الجهاز: ${data.device || "-"}`,
+            { type: "problem_new", department: String(department) }
+          ).catch(e => console.error("Push error:", e));
+        } else {
+          // حدث #4: تسجيل عمل → للمدير بس
+          window.NERIC_Notify.sendAdminOnly(
+            "📝 تسجيل عمل جديد",
+            `${userName} سجل عمل في ${deptName} - عربية: ${data.carNumber || "-"}`,
+            { type: "work_record", department: String(department) }
+          ).catch(e => console.error("Push error:", e));
+        }
+      }
+    } catch (e) {
+      console.error("Notification error:", e);
+    }
+
+    return savedRecord;
 
   } catch (error) {
 
@@ -1245,17 +1288,6 @@ function getVisibleProblemRecords(
   if (!user || user.role === "admin") {
     return list;
   }
-
-  /*
-    السماح للمستخدم برؤية كل الأقسام
-    التي لديه صلاحية عليها.
-
-    Mohamed Khairy:
-    role = lt
-    secondRole = ht
-
-    وبالتالي يرى LT + HT.
-  */
 
   const allowedDepartments = [];
 
@@ -1427,14 +1459,6 @@ async function resolveProblem(
     return false;
   }
 
-  /*
-    السماح للمستخدم بحل المشكلة
-    إذا كانت المشكلة في أي قسم من أقسامه.
-
-    Mohamed:
-    LT + HT
-  */
-
   if (user.role !== "admin") {
 
     const allowedDepartments = [];
@@ -1507,10 +1531,7 @@ async function resolveProblem(
     return false;
   }
 
-  // ============================================================
-  // CREATE PROBLEM NOTIFICATION
-  // ============================================================
-
+  // CREATE PROBLEM NOTIFICATION (Database)
   const notificationResult =
     await window.supabaseClient
       .from("problem_notifications")
@@ -1543,6 +1564,21 @@ async function resolveProblem(
     );
 
     return false;
+  }
+
+  // 🔔 إرسال Push Notification (حدث #6: حل مشكلة → للمدير بس)
+  try {
+    await ensureNotifyHelper();
+
+    if (window.NERIC_Notify) {
+      window.NERIC_Notify.sendAdminOnly(
+        "🛠️ حل مشكلة (في انتظار مراجعتك)",
+        `${user.name} حل مشكلة - عربية: ${record.carNumber || "-"} - الجهاز: ${record.device || "-"}`,
+        { type: "problem_resolved", problem_id: String(record.recordId) }
+      ).catch(e => console.error("Push error:", e));
+    }
+  } catch (e) {
+    console.error("Notification error:", e);
   }
 
   await refreshProblemsUI();
@@ -1659,6 +1695,21 @@ async function approveResolvedProblem(
   await markProblemNotificationRead(
     recordId
   );
+
+  // 🔔 إرسال Push Notification (حدث #7: اعتماد حل → للمدير + الفنيين)
+  try {
+    await ensureNotifyHelper();
+
+    if (window.NERIC_Notify) {
+      window.NERIC_Notify.sendEveryone(
+        "✅ تم اعتماد حل مشكلة",
+        `المدير اعتمد حل مشكلة - عربية: ${record.carNumber || "-"} - الجهاز: ${record.device || "-"}`,
+        { type: "problem_approved", problem_id: String(recordId) }
+      ).catch(e => console.error("Push error:", e));
+    }
+  } catch (e) {
+    console.error("Notification error:", e);
+  }
 
   await refreshProblemsUI();
 
