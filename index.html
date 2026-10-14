@@ -940,9 +940,19 @@
     setInterval(syncNotificationsMenuCount, 3000);
 </script>
 
-<!-- ملفات المشروع الإضافية -->
+<!-- Firebase SDK: Web Push -->
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js"></script>
+
+<!-- ملف دعم إشعارات الويب -->
+
+<script src="push-web.js"></script>
+
+<!-- ملف Push الحالي: نحافظ عليه كما هو -->
 
 <script src="push.js"></script>
+
 <!-- 🔔 زرار تفعيل الإشعارات -->
 
 <div id="notifBanner" style="
