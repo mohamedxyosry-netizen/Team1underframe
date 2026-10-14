@@ -110,6 +110,68 @@
         #productionRouteMenu strong {
             font-weight: 700;
         }
+
+        /* 🔔 مربع الإشعارات جنب لوحة التحكم */
+
+        .header-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .notif-status-btn {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 9px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+            transition: all 0.2s;
+            border: 2px solid #d1d5db;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .notif-status-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 14px rgba(0,0,0,0.2);
+        }
+
+        .notif-status-btn.granted {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-color: #059669;
+        }
+
+        .notif-status-btn.denied {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border-color: #dc2626;
+        }
+
+        .notif-status-btn.loading {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            border-color: #f59e0b;
+        }
+
+        @media (max-width: 700px) {
+            .notif-status-btn {
+                padding: 7px 12px;
+                font-size: 12px;
+            }
+
+            .header-title-wrap {
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 
@@ -242,9 +304,26 @@
 
         <header class="top-header">
 
-            <div>
-                <h1>لوحة التحكم</h1>
-                <p>الرئيسية / لوحة التحكم</p>
+            <div class="header-title-wrap">
+
+                <div>
+                    <h1>لوحة التحكم</h1>
+                    <p>الرئيسية / لوحة التحكم</p>
+                </div>
+
+                <!-- 🔔 مربع الإشعارات جنب العنوان -->
+
+                <div
+                    id="notifStatusBtn"
+                    class="notif-status-btn"
+                    onclick="handleNotifClick()"
+                    title="اضغط لتفعيل الإشعارات">
+
+                    <span id="notifStatusIcon">🔔</span>
+                    <span id="notifStatusText">تفعيل الإشعارات</span>
+
+                </div>
+
             </div>
 
             <div class="user-info">
@@ -953,114 +1032,99 @@
 
 <script src="push.js"></script>
 
-<!-- 🔔 زرار تفعيل الإشعارات -->
-
-<div id="notifBanner" style="
-    display: none;
-    position: fixed;
-    top: 80px;
-    left: 20px;
-    background: linear-gradient(135deg, #7c3aed, #5b21b6);
-    color: white;
-    padding: 14px 22px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
-    z-index: 9998;
-    cursor: pointer;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    font-weight: bold;
-    font-size: 14px;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    transition: all 0.2s;
-">
-    <span style="font-size: 20px;">🔔</span>
-    <span>فعّل الإشعارات</span>
-    <button
-        onclick="event.stopPropagation(); document.getElementById('notifBanner').style.display='none';"
-        style="
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
-            line-height: 1;
-            margin-right: 8px;
-        ">×</button>
-</div>
+<!-- 🔔 منطق مربع الإشعارات -->
 
 <script>
     (function () {
-        function checkNotifications() {
-            const banner = document.getElementById("notifBanner");
 
-            if (!banner) return;
+        function updateNotifBtn() {
+            const btn = document.getElementById("notifStatusBtn");
+            const icon = document.getElementById("notifStatusIcon");
+            const text = document.getElementById("notifStatusText");
 
-            // لو المتصفح مش بيدعم الإشعارات
+            if (!btn || !icon || !text) return;
+
+            btn.classList.remove("granted", "denied", "loading");
+
             if (!("Notification" in window)) {
+                icon.textContent = "❌";
+                text.textContent = "غير مدعوم";
+                btn.classList.add("denied");
                 return;
             }
 
-            // لو الإشعارات محظورة تمامًا — مش هنقدر نعمل حاجة
+            const perm = Notification.permission;
+
+            if (perm === "granted") {
+                icon.textContent = "✅";
+                text.textContent = "الإشعارات مفعّلة";
+                btn.classList.add("granted");
+            } else if (perm === "denied") {
+                icon.textContent = "🚫";
+                text.textContent = "الإشعارات محظورة";
+                btn.classList.add("denied");
+            } else {
+                icon.textContent = "🔔";
+                text.textContent = "تفعيل الإشعارات";
+            }
+        }
+
+        window.handleNotifClick = async function () {
+            const btn = document.getElementById("notifStatusBtn");
+            const icon = document.getElementById("notifStatusIcon");
+            const text = document.getElementById("notifStatusText");
+
+            if (!("Notification" in window)) {
+                alert("المتصفح لا يدعم الإشعارات");
+                return;
+            }
+
             if (Notification.permission === "denied") {
+                alert(
+                    "❌ الإشعارات محظورة من المتصفح.\n\n" +
+                    "اضغط على أيقونة 🔒 جنب شريط العنوان\n" +
+                    "→ Site settings → Notifications → Allow"
+                );
                 return;
             }
 
-            // لو الإشعارات متسمح بيها — نتحقق إن التوكن متسجل
-            if (Notification.permission === "granted") {
-                // نخلي push-web.js تحفظ التوكن (لو المستخدم جديد أو اتغير)
-                if (window.NERIC_webPush &&
-                    typeof window.NERIC_webPush.enableAndSave === "function") {
-                    setTimeout(() => {
-                        window.NERIC_webPush.enableAndSave();
-                    }, 2000);
-                }
+            if (!window.NERIC_webPush) {
+                alert("❌ نظام الإشعارات مش جاهز");
                 return;
             }
 
-            // لو لسه "default" (المستخدم ما قررش) — نظهر الزرار
-            banner.style.display = "flex";
+            btn.classList.add("loading");
+            icon.textContent = "⏳";
+            text.textContent = "جاري التفعيل...";
 
-            banner.onclick = async function () {
-                if (!window.NERIC_webPush) {
-                    alert("❌ نظام الإشعارات مش جاهز");
-                    return;
-                }
+            const result = await window.NERIC_webPush.enableAndSave();
 
-                banner.innerHTML = '<span style="font-size: 18px;">⏳</span><span>جاري التفعيل...</span>';
+            btn.classList.remove("loading");
 
-                const result = await window.NERIC_webPush.enableAndSave();
+            if (result && result.success) {
+                icon.textContent = "✅";
+                text.textContent = "الإشعارات مفعّلة";
+                btn.classList.add("granted");
+            } else {
+                icon.textContent = "❌";
+                text.textContent = "فشل التفعيل";
+                btn.classList.add("denied");
 
-                if (result.success) {
-                    banner.style.background = "linear-gradient(135deg, #10b981, #059669)";
-                    banner.innerHTML = '<span style="font-size: 18px;">✅</span><span>تم تفعيل الإشعارات</span>';
+                setTimeout(updateNotifBtn, 3000);
+            }
+        };
 
-                    setTimeout(() => {
-                        banner.style.display = "none";
-                    }, 2500);
-                } else {
-                    banner.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
-                    banner.innerHTML = '<span style="font-size: 18px;">❌</span><span>' + (result.reason || "فشل التفعيل") + '</span>';
-
-                    setTimeout(() => {
-                        banner.style.display = "none";
-                    }, 4000);
-                }
-            };
-        }
-
-        // نتأكد إن المستخدم مسجل دخول الأول
         if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", checkNotifications);
+            document.addEventListener("DOMContentLoaded", updateNotifBtn);
         } else {
-            checkNotifications();
+            updateNotifBtn();
         }
+
+        setInterval(updateNotifBtn, 5000);
+
     })();
 </script>
 
 </body>
+
 </html>
