@@ -1827,6 +1827,90 @@
                 "#198754";
 
 
+            /* =================================================
+               🔔 إرسال إشعار
+            ================================================= */
+
+            try {
+
+                if (window.NERIC_Notify) {
+
+                    if (done === "لا") {
+
+                        // مشكلة جديدة → للمدير بس
+                        window.NERIC_Notify.sendAdminOnly(
+
+                            "⚠️ مشكلة جديدة - Wiring",
+
+                            `${username} سجل مشكلة - عربية: ${carNumber} - المهام: ${tasks.join(", ")} - السبب: ${reason}`,
+
+                            {
+                                type: "problem_new",
+                                department: "wiring"
+                            }
+
+                        ).catch(
+                            function(e) {
+
+                                console.error(
+                                    "Push error:",
+                                    e
+                                );
+
+                            }
+                        );
+
+                    }
+
+                    else {
+
+                        // تسجيل عمل جديد → للمدير بس
+                        window.NERIC_Notify.sendAdminOnly(
+
+                            "📝 تسجيل عمل جديد - Wiring",
+
+                            `${username} سجل ${tasks.length} مهمة - عربية: ${carNumber}`,
+
+                            {
+                                type: "work_record",
+                                department: "wiring"
+                            }
+
+                        ).catch(
+                            function(e) {
+
+                                console.error(
+                                    "Push error:",
+                                    e
+                                );
+
+                            }
+                        );
+
+                    }
+
+                }
+
+                else {
+
+                    console.warn(
+                        "[NERIC] Notify helper not loaded yet"
+                    );
+
+                }
+
+            }
+
+            catch (e) {
+
+                console.error(
+                    "Notify error:",
+                    e
+                );
+
+            }
+
+
             /* =========================
                CLEAR FORM
             ========================= */
@@ -2851,6 +2935,13 @@
 ====================================================== -->
 
 <script src="delete-system.js?v=3"></script>
+
+
+<!-- =====================================================
+     🔔 NOTIFICATIONS HELPER
+====================================================== -->
+
+<script src="notifications-helper.js"></script>
 
 
 </body>
