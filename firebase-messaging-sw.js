@@ -14,13 +14,18 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  const notificationTitle =
-    payload.notification?.title || 'NERIC';
+  console.log('[SW] Background message:', payload);
+
+  const data = payload.data || {};
+
+  const notificationTitle = data.title || 'NERIC';
+  const notificationBody = data.body || 'لديك إشعار جديد';
 
   const notificationOptions = {
-    body: payload.notification?.body || 'لديك إشعار جديد',
+    body: notificationBody,
     icon: './favicon.ico',
-    data: payload.data || {}
+    badge: './favicon.ico',
+    data: data
   };
 
   self.registration.showNotification(
@@ -33,7 +38,7 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   const targetUrl = new URL(
-    event.notification.data.url || './login.html',
+    (event.notification.data && event.notification.data.url) || './index.html',
     self.location.origin
   ).href;
 
