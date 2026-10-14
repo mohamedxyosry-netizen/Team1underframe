@@ -943,6 +943,114 @@
 <!-- ملفات المشروع الإضافية -->
 
 <script src="push.js"></script>
+<!-- 🔔 زرار تفعيل الإشعارات -->
+
+<div id="notifBanner" style="
+    display: none;
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+    color: white;
+    padding: 14px 22px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+    z-index: 9998;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+">
+    <span style="font-size: 20px;">🔔</span>
+    <span>فعّل الإشعارات</span>
+    <button
+        onclick="event.stopPropagation(); document.getElementById('notifBanner').style.display='none';"
+        style="
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            line-height: 1;
+            margin-right: 8px;
+        ">×</button>
+</div>
+
+<script>
+    (function () {
+        function checkNotifications() {
+            const banner = document.getElementById("notifBanner");
+
+            if (!banner) return;
+
+            // لو المتصفح مش بيدعم الإشعارات
+            if (!("Notification" in window)) {
+                return;
+            }
+
+            // لو الإشعارات محظورة تمامًا — مش هنقدر نعمل حاجة
+            if (Notification.permission === "denied") {
+                return;
+            }
+
+            // لو الإشعارات متسمح بيها — نتحقق إن التوكن متسجل
+            if (Notification.permission === "granted") {
+                // نخلي push-web.js تحفظ التوكن (لو المستخدم جديد أو اتغير)
+                if (window.NERIC_webPush &&
+                    typeof window.NERIC_webPush.enableAndSave === "function") {
+                    setTimeout(() => {
+                        window.NERIC_webPush.enableAndSave();
+                    }, 2000);
+                }
+                return;
+            }
+
+            // لو لسه "default" (المستخدم ما قررش) — نظهر الزرار
+            banner.style.display = "flex";
+
+            banner.onclick = async function () {
+                if (!window.NERIC_webPush) {
+                    alert("❌ نظام الإشعارات مش جاهز");
+                    return;
+                }
+
+                banner.innerHTML = '<span style="font-size: 18px;">⏳</span><span>جاري التفعيل...</span>';
+
+                const result = await window.NERIC_webPush.enableAndSave();
+
+                if (result.success) {
+                    banner.style.background = "linear-gradient(135deg, #10b981, #059669)";
+                    banner.innerHTML = '<span style="font-size: 18px;">✅</span><span>تم تفعيل الإشعارات</span>';
+
+                    setTimeout(() => {
+                        banner.style.display = "none";
+                    }, 2500);
+                } else {
+                    banner.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
+                    banner.innerHTML = '<span style="font-size: 18px;">❌</span><span>' + (result.reason || "فشل التفعيل") + '</span>';
+
+                    setTimeout(() => {
+                        banner.style.display = "none";
+                    }, 4000);
+                }
+            };
+        }
+
+        // نتأكد إن المستخدم مسجل دخول الأول
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", checkNotifications);
+        } else {
+            checkNotifications();
+        }
+    })();
+</script>
 
 </body>
 </html>

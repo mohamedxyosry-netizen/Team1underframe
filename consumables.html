@@ -23,7 +23,7 @@
 
         .consumables-container {
             padding: 25px;
-            max-width: 1400px;
+            max-width: 1500px;
             margin: 0 auto;
         }
 
@@ -149,6 +149,94 @@
             box-shadow: 0 5px 12px rgba(25, 135, 84, 0.4);
         }
 
+        /* 🔍 خانة البحث */
+
+        .search-section {
+            background: white;
+            padding: 18px 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-right: 4px solid #0b3d91;
+            flex-wrap: wrap;
+        }
+
+        .search-section label {
+            font-weight: 700;
+            color: #0b3d91;
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+            min-width: 200px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 13px 45px 13px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: #fafbfc;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #0b3d91;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(11, 61, 145, 0.1);
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .search-clear-btn {
+            background: #fee2e2;
+            color: #d92d20;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.15s;
+            display: none;
+        }
+
+        .search-clear-btn.show {
+            display: block;
+        }
+
+        .search-clear-btn:hover {
+            background: #d92d20;
+            color: white;
+        }
+
+        .search-results-info {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* 📋 الجدول */
+
         .items-table {
             background: white;
             border-radius: 14px;
@@ -159,22 +247,36 @@
         .items-table table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
         }
 
         .items-table th {
             background: linear-gradient(135deg, #0b3d91, #092e6e);
             color: white;
-            padding: 14px 12px;
-            text-align: right;
+            padding: 16px 14px;
+            text-align: center;
             font-size: 13px;
             font-weight: 600;
             white-space: nowrap;
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .items-table th:last-child {
+            border-left: none;
         }
 
         .items-table td {
-            padding: 12px;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 16px 14px;
+            border-bottom: 1px solid #eef2f7;
+            border-left: 1px solid #f5f7fa;
             font-size: 13px;
+            text-align: center;
+            vertical-align: middle;
+            word-wrap: break-word;
+        }
+
+        .items-table td:last-child {
+            border-left: none;
         }
 
         .items-table tr:last-child td {
@@ -196,6 +298,25 @@
         .items-table tr.low-stock:hover {
             background: #ffe8e8;
         }
+
+        .items-table mark {
+            background: #fef08a;
+            color: #78350f;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-weight: 700;
+        }
+
+        /* عرض الأعمدة */
+
+        .items-table th:nth-child(1) { width: 45px; }
+        .items-table th:nth-child(2) { width: 190px; }
+        .items-table th:nth-child(3) { width: 160px; }
+        .items-table th:nth-child(4) { width: 80px; }
+        .items-table th:nth-child(5) { width: 90px; }
+        .items-table th:nth-child(6) { width: 110px; }
+        .items-table th:nth-child(7) { width: 130px; }
+        .items-table th:nth-child(8) { width: 320px; }
 
         .qty-badge {
             display: inline-block;
@@ -235,79 +356,106 @@
             border-radius: 6px;
             font-size: 12px;
             display: inline-block;
+            word-break: break-all;
         }
 
         .item-name-cell {
             font-weight: 600;
             color: #1e293b;
             font-size: 14px;
+            text-align: right;
+            padding-right: 18px !important;
         }
+
+        .status-cell {
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* 🎨 الأزرار الجديدة */
 
         .action-buttons {
             display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
+            gap: 8px;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
         }
 
         .action-btn {
             border: none;
-            padding: 6px 11px;
+            padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 12px;
             font-family: inherit;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.15s;
             white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            min-width: 72px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
         .action-btn:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
         }
 
         .delete-btn {
-            background: #fee2e2;
-            color: #d92d20;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
         }
 
         .delete-btn:hover {
-            background: #d92d20;
-            color: white;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
         }
 
         .issue-btn {
-            background: #dbeafe;
-            color: #0b3d91;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
         }
 
         .issue-btn:hover {
-            background: #0b3d91;
-            color: white;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
         }
 
         .issue-btn:disabled {
-            opacity: 0.4;
+            background: #e5e7eb;
+            color: #9ca3af;
             cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .issue-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
         }
 
         .restock-btn {
-            background: #d1fae5;
-            color: #198754;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
         }
 
         .restock-btn:hover {
-            background: #198754;
-            color: white;
+            background: linear-gradient(135deg, #059669, #047857);
         }
 
         .log-btn {
-            background: #f3e8ff;
-            color: #7c3aed;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
         }
 
         .log-btn:hover {
-            background: #7c3aed;
-            color: white;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
         }
 
         .empty-msg {
@@ -315,6 +463,17 @@
             padding: 50px;
             color: #888;
             font-size: 16px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .no-results strong {
+            color: #0b3d91;
         }
 
         .page-message {
@@ -522,6 +681,16 @@
             font-size: 15px;
         }
 
+        @media (max-width: 1300px) {
+            .items-table {
+                overflow-x: auto;
+            }
+
+            .items-table table {
+                min-width: 1200px;
+            }
+        }
+
         @media (max-width: 1100px) {
             .form-grid {
                 grid-template-columns: 100px 1fr 1fr;
@@ -533,15 +702,11 @@
                 grid-template-columns: 1fr 1fr;
             }
 
-            .items-table {
-                overflow-x: auto;
-            }
-
-            .items-table table {
-                min-width: 900px;
-            }
-
             .consumables-container {
+                padding: 15px;
+            }
+
+            .search-section {
                 padding: 15px;
             }
         }
@@ -588,7 +753,7 @@
 
                 <input type="text" id="itemPartNumber" placeholder="Part Number">
 
-                <input type="number" id="itemQuantity" placeholder="الكمية" min="0">
+                <input type="number" id="itemQuantity" placeholder="الكمية المتوفره" min="0">
 
                 <input type="number" id="itemMinQuantity" placeholder="الحد الأدنى" min="0">
 
@@ -600,6 +765,26 @@
             </button>
         </div>
 
+        <!-- 🔍 خانة البحث -->
+
+        <div class="search-section">
+            <label>🔍 ابحث:</label>
+
+            <div class="search-box">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="اكتب اسم الصنف أو Part Number..."
+                    autocomplete="off">
+            </div>
+
+            <button class="search-clear-btn" id="clearSearchBtn" onclick="clearSearch()">
+                ✖ مسح البحث
+            </button>
+
+            <span class="search-results-info" id="searchResultsInfo"></span>
+        </div>
+
         <div class="items-table">
             <table>
                 <thead>
@@ -607,7 +792,7 @@
                         <th>#</th>
                         <th>اسم الصنف</th>
                         <th>Part Number</th>
-                        <th>الكمية</th>
+                        <th>الكمية المتوفره</th>
                         <th>الحد الأدنى</th>
                         <th>المستخدم في القطار</th>
                         <th>الحالة</th>
@@ -643,6 +828,9 @@
     <script src="script.js"></script>
 
     <script>
+        let allItems = [];
+        let currentSearchTerm = "";
+
         function showMessage(text, type) {
             const el = document.getElementById("pageMessage");
             el.innerText = text;
@@ -659,6 +847,25 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+        }
+
+        function highlightMatch(text, term) {
+            const safeText = escapeHtml(text || "-");
+
+            if (!term) return safeText;
+
+            const safeTerm = escapeHtml(term);
+
+            try {
+                const regex = new RegExp(
+                    "(" + safeTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")",
+                    "gi"
+                );
+
+                return safeText.replace(regex, "<mark>$1</mark>");
+            } catch (e) {
+                return safeText;
+            }
         }
 
         function isAdminUser() {
@@ -696,6 +903,95 @@
             });
         }
 
+        function filterItems() {
+            const term = currentSearchTerm.trim().toLowerCase();
+
+            if (!term) {
+                return allItems;
+            }
+
+            return allItems.filter(item => {
+                const name = String(item.item_name || "").toLowerCase();
+                const part = String(item.part_number || "").toLowerCase();
+
+                return name.includes(term) || part.includes(term);
+            });
+        }
+
+        function renderItems() {
+            const tbody = document.getElementById("itemsBody");
+            const infoEl = document.getElementById("searchResultsInfo");
+            const clearBtn = document.getElementById("clearSearchBtn");
+
+            const filtered = filterItems();
+            const isAdmin = isAdminUser();
+
+            if (currentSearchTerm.trim()) {
+                clearBtn.classList.add("show");
+            } else {
+                clearBtn.classList.remove("show");
+            }
+
+            if (currentSearchTerm.trim()) {
+                infoEl.innerText = `عدد النتائج: ${filtered.length} من ${allItems.length}`;
+            } else {
+                infoEl.innerText = `إجمالي الأصناف: ${allItems.length}`;
+            }
+
+            if (!allItems.length) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">لا توجد أصناف مسجلة حتى الآن</td></tr>';
+                return;
+            }
+
+            if (!filtered.length) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="no-results">
+                            🔍 لا توجد نتائج للبحث عن: <strong>${escapeHtml(currentSearchTerm)}</strong>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((item, index) => {
+                const qty = Number(item.quantity) || 0;
+                const minQty = Number(item.minimum_quantity) || 0;
+                const usedQty = Number(item.used_in_train) || 0;
+                const isLow = qty < minQty;
+
+                let actionsHtml = '<div class="action-buttons">';
+
+                if (isAdmin) {
+                    actionsHtml += `<button class="action-btn restock-btn" onclick="restockConsumable(${item.id})" title="إضافة كمية">📥 توريد</button>`;
+                    actionsHtml += `<button class="action-btn delete-btn" onclick="deleteConsumable(${item.id})" title="حذف الصنف">🗑️ حذف</button>`;
+                }
+
+                if (qty > 0) {
+                    actionsHtml += `<button class="action-btn issue-btn" onclick="issueConsumable(${item.id})" title="صرف كمية">📤 صرف</button>`;
+                } else {
+                    actionsHtml += `<button class="action-btn issue-btn" disabled title="لا توجد كمية">📤 صرف</button>`;
+                }
+
+                actionsHtml += `<button class="action-btn log-btn" onclick="openItemLog(${item.id})" title="عرض السجل">📋 سجل</button>`;
+
+                actionsHtml += '</div>';
+
+                return `
+                    <tr class="${isLow ? 'low-stock' : ''}">
+                        <td>${filtered.length - index}</td>
+                        <td class="item-name-cell">${highlightMatch(item.item_name, currentSearchTerm)}</td>
+                        <td><span class="part-number">${highlightMatch(item.part_number, currentSearchTerm)}</span></td>
+                        <td><span class="qty-badge ${isLow ? 'low' : ''}">${qty}</span></td>
+                        <td>${minQty}</td>
+                        <td><span class="used-badge">🚆 ${usedQty}</span></td>
+                        <td class="status-cell">${isLow ? "⚠️ أقل من الحد" : "✅ متوفر"}</td>
+                        <td>${actionsHtml}</td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
         async function loadConsumables() {
             const tbody = document.getElementById("itemsBody");
 
@@ -715,51 +1011,23 @@
                 return;
             }
 
-            const items = result.data || [];
-            const isAdmin = isAdminUser();
-
-            if (!items.length) {
-                tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">لا توجد أصناف مسجلة حتى الآن</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = items.map((item, index) => {
-                const qty = Number(item.quantity) || 0;
-                const minQty = Number(item.minimum_quantity) || 0;
-                const usedQty = Number(item.used_in_train) || 0;
-                const isLow = qty < minQty;
-
-                let actionsHtml = '<div class="action-buttons">';
-
-                if (isAdmin) {
-                    actionsHtml += `<button class="action-btn restock-btn" onclick="restockConsumable(${item.id})">📥 توريد</button>`;
-                    actionsHtml += `<button class="action-btn delete-btn" onclick="deleteConsumable(${item.id})">🗑️ حذف</button>`;
-                }
-
-                if (qty > 0) {
-                    actionsHtml += `<button class="action-btn issue-btn" onclick="issueConsumable(${item.id})">📤 صرف</button>`;
-                } else {
-                    actionsHtml += `<button class="action-btn issue-btn" disabled>📤 صرف</button>`;
-                }
-
-                actionsHtml += `<button class="action-btn log-btn" onclick="openItemLog(${item.id})">📋 سجل</button>`;
-
-                actionsHtml += '</div>';
-
-                return `
-                    <tr class="${isLow ? 'low-stock' : ''}">
-                        <td>${items.length - index}</td>
-                        <td class="item-name-cell">${escapeHtml(item.item_name || "-")}</td>
-                        <td><span class="part-number">${escapeHtml(item.part_number || "-")}</span></td>
-                        <td><span class="qty-badge ${isLow ? 'low' : ''}">${qty}</span></td>
-                        <td>${minQty}</td>
-                        <td><span class="used-badge">🚆 ${usedQty}</span></td>
-                        <td>${isLow ? "⚠️ أقل من الحد الأدنى" : "✅ متوفر"}</td>
-                        <td>${actionsHtml}</td>
-                    </tr>
-                `;
-            }).join("");
+            allItems = result.data || [];
+            renderItems();
         }
+
+        function clearSearch() {
+            document.getElementById("searchInput").value = "";
+            currentSearchTerm = "";
+            renderItems();
+            document.getElementById("searchInput").focus();
+        }
+
+        document.addEventListener("input", function(e) {
+            if (e.target && e.target.id === "searchInput") {
+                currentSearchTerm = e.target.value;
+                renderItems();
+            }
+        });
 
         async function addConsumable() {
             const shape = document.getElementById("itemShape").value;
@@ -809,7 +1077,6 @@
                 return;
             }
 
-            // ✅ التحقق من إن الـ Part Number مش موجود بالفعل
             const checkResult = await window.supabaseClient
                 .from("consumables")
                 .select("id, item_name, part_number")
@@ -831,7 +1098,6 @@
                 return;
             }
 
-            // ندمج الشكل مع الاسم
             const finalName = shape + " " + itemNameInput;
 
             const result = await window.supabaseClient
@@ -1169,7 +1435,6 @@
             document.getElementById("logModal").classList.remove("show");
         }
 
-        // إغلاق المودال بالضغط على الخلفية
         document.getElementById("logModal").addEventListener("click", function(e) {
             if (e.target === this) {
                 closeLogModal();
