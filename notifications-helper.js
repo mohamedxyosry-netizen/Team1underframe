@@ -5,14 +5,11 @@
 (function () {
     "use strict";
 
-    const SUPABASE_FUNCTION_URL = "https://gzyybadyaunizdlvmcle.supabase.co/functions/v1/send-push";
+    const SUPABASE_FUNCTION_URL = "https://gzyybadyaunizdlvmcle.supabase.co/functions/v1/send-push-v2";
     const SUPABASE_ANON_KEY = "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
 
     const ADMIN_USERNAME = "Yosry";
 
-    // ============================================================
-    // الدالة الأساسية
-    // ============================================================
     async function sendPush(title, body, data, targetUsernames) {
         try {
             const payload = {
@@ -43,25 +40,14 @@
         }
     }
 
-    // ============================================================
-    // 🔔 الدوال الجاهزة
-    // ============================================================
-
-    // 1) إشعار للمدير بس
-    //    (يستخدم للأحداث: 4, 5, 6, 9, 11, 12)
     function sendAdminOnly(title, body, data) {
         return sendPush(title, body, data, [ADMIN_USERNAME]);
     }
 
-    // 2) إشعار للمدير + كل الفنيين
-    //    (يستخدم للأحداث: 1, 2, 3, 7, 8, 10)
     function sendEveryone(title, body, data) {
         return sendPush(title, body, data, null);
     }
 
-    // ============================================================
-    // كشف الدوال
-    // ============================================================
     window.NERIC_Notify = {
         sendAdminOnly: sendAdminOnly,
         sendEveryone: sendEveryone,
