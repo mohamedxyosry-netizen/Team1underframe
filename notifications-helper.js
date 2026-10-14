@@ -5,7 +5,7 @@
 (function () {
     "use strict";
 
-    const SUPABASE_FUNCTION_URL = "https://gzyybadyaunizdlvmcle.supabase.co/functions/v1/send-push-v2";
+    const SUPABASE_FUNCTION_URL = "https://gzyybadyaunizdlvmcle.supabase.co/functions/v1/notify";
     const SUPABASE_ANON_KEY = "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
 
     const ADMIN_USERNAME = "Yosry";
