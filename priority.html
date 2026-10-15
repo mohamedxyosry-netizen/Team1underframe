@@ -282,17 +282,17 @@ body{
 
 <script>
 
-const PRIORITY_MESSAGES = {
+const PRIORITY_TYPES = {
 
-    trucking: `🚨 تنبيه هام للفريق
-سيتم الآن البدء في (Trucking).
-يرجى من جميع أفراد الفريق التوجه إلى موقع العربية والاستعداد للعمل.
-شكرًا لتعاونكم.`,
+    trucking: {
+        title: "🚨 تنبيه عاجل - Trucking",
+        body: "سيتم الآن البدء في أعمال Trucking. يرجى التوجه لموقع العربية والاستعداد للعمل."
+    },
 
-    duct: `🚨 تنبيه هام للفريق
-سيتم الآن البدء في (Duct Installation).
-يرجى من جميع أفراد الفريق التوجه إلى موقع العربية والاستعداد للعمل.
-شكرًا لتعاونكم.`
+    duct: {
+        title: "🚨 تنبيه عاجل - Duct Installation",
+        body: "سيتم الآن البدء في أعمال Duct Installation. يرجى التوجه لموقع العربية والاستعداد للعمل."
+    }
 
 };
 
@@ -337,23 +337,11 @@ async function sendPriorityMessage(type){
     }
 
 
-    if(!window.supabaseClient){
-
-        showPriorityStatus(
-            '❌ لم يتم الاتصال بقاعدة البيانات.',
-            false
-        );
-
-        return;
-
-    }
+    const priorityConfig =
+        PRIORITY_TYPES[type];
 
 
-    const message =
-        PRIORITY_MESSAGES[type];
-
-
-    if(!message){
+    if(!priorityConfig){
         return;
     }
 
@@ -429,98 +417,72 @@ async function sendPriorityMessage(type){
         }
 
 
-        const rows =
-            recipients.map(username => ({
+        /* =================================================
+           🔔 إرسال إشعار Push لكل الفريق مباشرة
+        ================================================= */
 
-                sender_username:
-                    senderUsername,
+        if(!window.NERIC_Notify){
 
-                sender_name:
-                    senderName,
+            throw new Error(
+                'نظام الإشعارات غير محمّل. حدّث الصفحة وحاول مرة أخرى.'
+            );
 
-                receiver_username:
-                    username,
-
-                message:
-                    message,
-
-                is_read:
-                    false
-
-            }));
-
-
-        const { error } =
-            await window.supabaseClient
-                .from('private_messages')
-                .insert(rows);
-
-
-        if(error){
-            throw error;
         }
 
 
-        showPriorityStatus(
-            '✅ تم إرسال التنبيه إلى الفريق بالكامل.',
-            true
+        const result =
+            await window.NERIC_Notify.sendPush(
+
+                priorityConfig.title,
+
+                `${senderName}: ${priorityConfig.body}`,
+
+                {
+                    type: "priority_item",
+                    priority_type: type,
+                    sender: String(senderUsername)
+                },
+
+                recipients
+
+            );
+
+
+        console.log(
+            "[Priority] Result:",
+            result
         );
 
 
-        /* =================================================
-           🔔 إرسال إشعار Push لكل الفريق
-        ================================================= */
+        if(
+            result &&
+            typeof result.sent === "number" &&
+            result.sent > 0
+        ){
 
-        try{
-
-            if(window.NERIC_Notify){
-
-                const typeName =
-
-                    type === 'trucking'
-
-                        ? 'Trucking'
-
-                        : 'Duct Installation';
-
-
-                window.NERIC_Notify.sendPush(
-
-                    `🚨 تنبيه عاجل - ${typeName}`,
-
-                    `${senderName} أرسل تنبيه ببدء أعمال ${typeName}. يرجى التوجه للموقع.`,
-
-                    {
-                        type: "priority_item",
-                        priority_type: type
-                    },
-
-                    recipients
-
-                ).catch(
-                    function(e){
-                        console.error(
-                            "Push error:",
-                            e
-                        );
-                    }
-                );
-
-            }
-
-            else{
-                console.warn(
-                    "[NERIC] Notify helper not loaded"
-                );
-            }
+            showPriorityStatus(
+                `✅ تم إرسال التنبيه إلى ${result.sent} من الفريق.`,
+                true
+            );
 
         }
 
-        catch(e){
-            console.error(
-                "Notify error:",
-                e
+        else if(result && result.sent === 0){
+
+            showPriorityStatus(
+                '⚠️ لم يتم الوصول لأي جهاز. تأكد من تسجيل الفريق للإشعارات.',
+                false
             );
+
+        }
+
+        else{
+
+            showPriorityStatus(
+                '⚠️ تم إرسال الطلب لكن لم يتم التأكد من التسليم.',
+                false
+            );
+
         }
 
 
@@ -533,7 +495,8 @@ async function sendPriorityMessage(type){
 
 
         showPriorityStatus(
-            '❌ حدث خطأ أثناء إرسال التنبيه. حاول مرة أخرى.',
+            '❌ حدث خطأ أثناء إرسال التنبيه: ' +
+            (error.message || ''),
             false
         );
 
