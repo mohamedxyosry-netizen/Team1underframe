@@ -1164,16 +1164,8 @@ function updateHTDevices() {
     }
 
 
-    /*
-     * إغلاق القائمة عند تغيير العربية
-     */
-
     deviceSelect.classList.remove("open");
 
-
-    /*
-     * تنظيف الأجهزة القديمة
-     */
 
     menu.innerHTML = "";
 
@@ -1207,10 +1199,6 @@ function updateHTDevices() {
 
     }
 
-
-    /* =================================================
-       اختيار كل الأجهزة
-    ================================================= */
 
     const selectAllLabel =
         document.createElement("label");
@@ -1251,10 +1239,6 @@ function updateHTDevices() {
         selectAllLabel
     );
 
-
-    /* =================================================
-       الأجهزة
-    ================================================= */
 
     devices.forEach(
         function(device) {
@@ -1302,10 +1286,6 @@ function updateHTDevices() {
             );
 
 
-            /*
-             * تغيير الشكل عند الاختيار
-             */
-
             checkbox.addEventListener(
                 "change",
                 function() {
@@ -1325,10 +1305,6 @@ function updateHTDevices() {
         }
     );
 
-
-    /*
-     * اختيار كل الأجهزة
-     */
 
     selectAllCheckbox.addEventListener(
         "change",
@@ -2140,6 +2116,93 @@ async function saveHT() {
 
 
         /* =================================================
+           🔔 إرسال إشعار
+        ================================================= */
+
+        try {
+
+            if (window.NERIC_Notify) {
+
+                const username =
+                    getCurrentUsername();
+
+                if (done === "لا") {
+
+                    // مشكلة جديدة → للمدير بس
+                    window.NERIC_Notify.sendAdminOnly(
+
+                        "⚠️ مشكلة جديدة - HT",
+
+                        `${username} سجل مشكلة - عربية: ${carNumber} - الأجهزة: ${devices.join(", ")} - السبب: ${reason}`,
+
+                        {
+                            type: "problem_new",
+                            department: "ht"
+                        }
+
+                    ).catch(
+                        function(e) {
+
+                            console.error(
+                                "Push error:",
+                                e
+                            );
+
+                        }
+                    );
+
+                }
+
+                else {
+
+                    // تسجيل عمل جديد → للمدير بس
+                    window.NERIC_Notify.sendAdminOnly(
+
+                        "📝 تسجيل عمل جديد - HT",
+
+                        `${username} سجل ${devices.length} جهاز - عربية: ${carNumber}`,
+
+                        {
+                            type: "work_record",
+                            department: "ht"
+                        }
+
+                    ).catch(
+                        function(e) {
+
+                            console.error(
+                                "Push error:",
+                                e
+                            );
+
+                        }
+                    );
+
+                }
+
+            }
+
+            else {
+
+                console.warn(
+                    "[NERIC] Notify helper not loaded"
+                );
+
+            }
+
+        }
+
+        catch (e) {
+
+            console.error(
+                "Notify error:",
+                e
+            );
+
+        }
+
+
+        /* =================================================
            تفريغ البيانات
         ================================================= */
 
@@ -2685,10 +2748,6 @@ function renderHTRecords(records) {
                 "record";
 
 
-            /*
-             * مهم جداً لنظام الحذف
-             */
-
             if (
                 record.id !== undefined
             ) {
@@ -2893,6 +2952,10 @@ document.addEventListener(
 
 
 <script src="delete-system.js?v=2"></script>
+
+<!-- 🔔 ملف الإشعارات -->
+
+<script src="notifications-helper.js"></script>
 
 </body>
 
