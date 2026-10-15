@@ -1,72 +1,517 @@
-// ============================================================
-// NERIC - Notifications Helper
-// ============================================================
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>الإشعارات - NERIC</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+body {
+    background: #f1f5f9;
+    margin: 0;
+    font-family: Arial, Tahoma, sans-serif;
+    color: #1f2937;
+}
+
+.notifications-page {
+    max-width: 1000px;
+    margin: 25px auto;
+    padding: 15px;
+}
+
+.page-header {
+    background: rgb(52, 67, 84);
+    color: white;
+    padding: 20px 25px;
+    border-radius: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    border-bottom: 4px solid #5928e0;
+    box-shadow: 0 5px 20px rgba(0,0,0,.08);
+}
+
+.page-header h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+}
+
+.page-header p {
+    margin: 0;
+    color: #d1d5db;
+    font-size: 14px;
+}
+
+.home-btn {
+    border: none;
+    background: #198754;
+    color: white;
+    padding: 11px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.home-btn:hover {
+    opacity: .9;
+}
+
+.notif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.notif-card {
+    background: white;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    border-right: 5px solid #f59e0b;
+}
+
+.notif-card h3 {
+    margin: 0 0 12px;
+    color: #92400e;
+    font-size: 17px;
+}
+
+.notif-card p {
+    margin: 8px 0;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.notif-card strong {
+    color: #374151;
+}
+
+.notif-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.approve-btn {
+    border: none;
+    background: #198754;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.approve-btn:hover {
+    background: #157347;
+}
+
+.reject-btn {
+    border: none;
+    background: #dc3545;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.reject-btn:hover {
+    background: #b91c1c;
+}
+
+.empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: #64748b;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+}
+
+.empty-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+    background: white;
+    border-radius: 14px;
+}
+
+.error-box {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #b42318;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    line-height: 1.7;
+}
+
+.time-badge {
+    display: inline-block;
+    background: #fef3c7;
+    color: #78350f;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+    .page-header {
+        padding: 15px;
+    }
+    .page-header h1 {
+        font-size: 20px;
+    }
+    .notif-actions {
+        flex-direction: column;
+    }
+    .approve-btn, .reject-btn {
+        width: 100%;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="notifications-page">
+
+    <div class="page-header">
+        <div>
+            <h1>🔔 الإشعارات</h1>
+            <p>حلول المشاكل في انتظار مراجعتك</p>
+        </div>
+
+        <button class="home-btn" onclick="window.location.href='index.html'">
+            🏠 الرئيسية
+        </button>
+    </div>
+
+    <div id="notificationsList" class="notif-list">
+        <div class="loading">⏳ جاري تحميل الإشعارات...</div>
+    </div>
+
+</div>
+
+
+<!-- مكتبة Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- السكريبت الرئيسي (فيه الدوال الجاهزة) -->
+<script src="script.js"></script>
+
+
+<script>
+
+/* =====================================================
+   حماية الصفحة — للمدير بس
+===================================================== */
 
 (function () {
-    "use strict";
 
-    const SUPABASE_FUNCTION_URL = "https://gzyybadyaunizdlvmcle.supabase.co/functions/v1/send-push";
-    const SUPABASE_ANON_KEY = "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+    const user = typeof getCurrentUser === "function"
+        ? getCurrentUser()
+        : null;
 
-    const ADMIN_USERNAME = "Yosry";
+    if (!user || user.role !== "admin") {
 
-    // ============================================================
-    // الدالة الأساسية
-    // ============================================================
-    async function sendPush(title, body, data, targetUsernames) {
-        try {
-            const payload = {
-                title: title,
-                body: body,
-                data: data || {}
-            };
+        alert("❌ هذه الصفحة متاحة للمدير فقط");
 
-            if (Array.isArray(targetUsernames) && targetUsernames.length > 0) {
-                payload.target_usernames = targetUsernames;
-            }
+        window.location.href = "index.html";
 
-            const response = await fetch(SUPABASE_FUNCTION_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + SUPABASE_ANON_KEY
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-            console.log("[NERIC-Notify] Sent:", title, "→", result);
-            return result;
-        } catch (error) {
-            console.error("[NERIC-Notify] Error:", error);
-            return null;
-        }
     }
 
-    // ============================================================
-    // 🔔 الدوال الجاهزة
-    // ============================================================
-
-    // 1) إشعار للمدير بس
-    //    (يستخدم للأحداث: 4, 5, 6, 9, 11, 12)
-    function sendAdminOnly(title, body, data) {
-        return sendPush(title, body, data, [ADMIN_USERNAME]);
-    }
-
-    // 2) إشعار للمدير + كل الفنيين
-    //    (يستخدم للأحداث: 1, 2, 3, 7, 8, 10)
-    function sendEveryone(title, body, data) {
-        return sendPush(title, body, data, null);
-    }
-
-    // ============================================================
-    // كشف الدوال
-    // ============================================================
-    window.NERIC_Notify = {
-        sendAdminOnly: sendAdminOnly,
-        sendEveryone: sendEveryone,
-        sendPush: sendPush
-    };
-
-    console.log("[NERIC-Notify] Helper loaded ✅");
 })();
+
+
+/* =====================================================
+   تحويل التاريخ للعربي
+===================================================== */
+
+function formatNotifDate(value) {
+
+    if (!value) return "غير محدد";
+
+    const date = new Date(value);
+
+    if (isNaN(date.getTime())) return value;
+
+    return date.toLocaleString("ar-EG", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+
+}
+
+
+/* =====================================================
+   تحميل الإشعارات
+===================================================== */
+
+async function loadNotifications() {
+
+    const container = document.getElementById("notificationsList");
+
+    if (!container) return;
+
+    try {
+
+        /* ================================================
+           جلب الإشعارات من قاعدة البيانات
+        ================================================ */
+
+        if (typeof getNotificationsData !== "function") {
+
+            container.innerHTML = `
+                <div class="error-box">
+                    ❌ لم يتم العثور على دالة الإشعارات في script.js
+                </div>
+            `;
+
+            return;
+
+        }
+
+        const notifications = await getNotificationsData();
+
+        /* ================================================
+           مفيش إشعارات
+        ================================================ */
+
+        if (!notifications || !notifications.length) {
+
+            container.innerHTML = `
+                <div class="empty">
+                    <div class="empty-icon">✅</div>
+                    <div style="font-size:18px;font-weight:bold;color:#198754;">
+                        لا توجد إشعارات حالية
+                    </div>
+                    <div style="margin-top:10px;">
+                        كل المشاكل تم مراجعتها
+                    </div>
+                </div>
+            `;
+
+            return;
+
+        }
+
+        /* ================================================
+           عرض الإشعارات
+        ================================================ */
+
+        container.innerHTML = notifications.map(function (notif) {
+
+            const notifId = notif.recordId || notif.id || "";
+
+            return `
+                <div class="notif-card">
+
+                    <h3>🛠️ حل مشكلة في انتظار المراجعة</h3>
+
+                    <p>
+                        <strong>🚆 رقم العربية:</strong>
+                        ${escapeHTML(notif.carNumber || "-")}
+                    </p>
+
+                    <p>
+                        <strong>🔧 الجهاز:</strong>
+                        ${escapeHTML(notif.device || "-")}
+                    </p>
+
+                    <p>
+                        <strong>📝 السبب / الحل:</strong>
+                        ${escapeHTML(notif.problemReason || notif.notificationMessage || "-")}
+                    </p>
+
+                    <p>
+                        <strong>👤 تم بواسطة:</strong>
+                        ${escapeHTML(notif.problemResolvedBy || "-")}
+                    </p>
+
+                    <p>
+                        <span class="time-badge">
+                            🕐 ${formatNotifDate(notif.problemResolvedAt)}
+                        </span>
+                    </p>
+
+                    <div class="notif-actions">
+
+                        <button
+                            class="approve-btn"
+                            onclick="handleApprove('${escapeHTML(notifId)}')"
+                        >
+                            ✅ اعتماد الحل
+                        </button>
+
+                        <button
+                            class="reject-btn"
+                            onclick="handleReject('${escapeHTML(notifId)}')"
+                        >
+                            ↩️ رفض وإرجاع
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
+
+    }
+
+    catch (error) {
+
+        console.error("Load notifications error:", error);
+
+        container.innerHTML = `
+            <div class="error-box">
+                ❌ حصل خطأ أثناء تحميل الإشعارات<br>
+                ${escapeHTML(error.message || "")}
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   اعتماد الحل
+===================================================== */
+
+async function handleApprove(recordId) {
+
+    if (!confirm("هل أنت متأكد من اعتماد هذا الحل؟")) return;
+
+    try {
+
+        if (typeof approveResolvedProblem !== "function") {
+
+            alert("❌ الدالة approveResolvedProblem غير موجودة");
+
+            return;
+
+        }
+
+        const result = await approveResolvedProblem(recordId);
+
+        if (result) {
+
+            alert("✅ تم اعتماد الحل");
+
+            await loadNotifications();
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error("Approve error:", error);
+
+        alert("❌ حصل خطأ: " + (error.message || ""));
+
+    }
+
+}
+
+
+/* =====================================================
+   رفض الحل
+===================================================== */
+
+async function handleReject(recordId) {
+
+    const reason = prompt("اكتب سبب الرفض:");
+
+    if (reason === null) return;
+
+    if (!reason.trim()) {
+
+        alert("⚠️ لازم تكتب سبب الرفض");
+
+        return;
+
+    }
+
+    try {
+
+        if (typeof rejectResolvedProblem !== "function") {
+
+            alert("❌ الدالة rejectResolvedProblem غير موجودة");
+
+            return;
+
+        }
+
+        const result = await rejectResolvedProblem(recordId, reason);
+
+        if (result) {
+
+            alert("↩️ تم إرجاع المشكلة");
+
+            await loadNotifications();
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error("Reject error:", error);
+
+        alert("❌ حصل خطأ: " + (error.message || ""));
+
+    }
+
+}
+
+
+/* =====================================================
+   تشغيل الصفحة
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    loadNotifications();
+
+    // تحديث كل 30 ثانية
+    setInterval(loadNotifications, 30000);
+
+});
+
+</script>
+
+</body>
+
+</html>
