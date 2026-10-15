@@ -467,6 +467,63 @@ async function sendPriorityMessage(type){
         );
 
 
+        /* =================================================
+           🔔 إرسال إشعار Push لكل الفريق
+        ================================================= */
+
+        try{
+
+            if(window.NERIC_Notify){
+
+                const typeName =
+
+                    type === 'trucking'
+
+                        ? 'Trucking'
+
+                        : 'Duct Installation';
+
+
+                window.NERIC_Notify.sendPush(
+
+                    `🚨 تنبيه عاجل - ${typeName}`,
+
+                    `${senderName} أرسل تنبيه ببدء أعمال ${typeName}. يرجى التوجه للموقع.`,
+
+                    {
+                        type: "priority_item",
+                        priority_type: type
+                    },
+
+                    recipients
+
+                ).catch(
+                    function(e){
+                        console.error(
+                            "Push error:",
+                            e
+                        );
+                    }
+                );
+
+            }
+
+            else{
+                console.warn(
+                    "[NERIC] Notify helper not loaded"
+                );
+            }
+
+        }
+
+        catch(e){
+            console.error(
+                "Notify error:",
+                e
+            );
+        }
+
+
     }catch(error){
 
         console.error(
@@ -554,6 +611,10 @@ function showPriorityStatus(
 }
 
 </script>
+
+
+<!-- 🔔 ملف الإشعارات -->
+<script src="notifications-helper.js"></script>
 
 </body>
 </html>
