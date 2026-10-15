@@ -2358,6 +2358,90 @@ async function saveLT() {
 
 
         /* =================================================
+           🔔 إرسال إشعار
+        ================================================= */
+
+        try {
+
+            if (window.NERIC_Notify) {
+
+                if (done === "لا") {
+
+                    // مشكلة جديدة → للمدير بس
+                    window.NERIC_Notify.sendAdminOnly(
+
+                        "⚠️ مشكلة جديدة - LT",
+
+                        `${username} سجل مشكلة - عربية: ${carNumber} - الأجهزة: ${devices.join(", ")} - السبب: ${reason}`,
+
+                        {
+                            type: "problem_new",
+                            department: "lt"
+                        }
+
+                    ).catch(
+                        function(e) {
+
+                            console.error(
+                                "Push error:",
+                                e
+                            );
+
+                        }
+                    );
+
+                }
+
+                else {
+
+                    // تسجيل عمل جديد → للمدير بس
+                    window.NERIC_Notify.sendAdminOnly(
+
+                        "📝 تسجيل عمل جديد - LT",
+
+                        `${username} سجل ${devices.length} جهاز - عربية: ${carNumber}`,
+
+                        {
+                            type: "work_record",
+                            department: "lt"
+                        }
+
+                    ).catch(
+                        function(e) {
+
+                            console.error(
+                                "Push error:",
+                                e
+                            );
+
+                        }
+                    );
+
+                }
+
+            }
+
+            else {
+
+                console.warn(
+                    "[NERIC] Notify helper not loaded"
+                );
+
+            }
+
+        }
+
+        catch (e) {
+
+            console.error(
+                "Notify error:",
+                e
+            );
+
+        }
+
+
+        /* =================================================
            تنظيف الفورم
         ================================================= */
 
@@ -2497,15 +2581,6 @@ function getLTCarDisplayName(record) {
         ).trim();
 
 
-    /*
-       car_number مخزن بالشكل:
-       3-MC2-1
-
-       الرقم الأول = رقم العربية
-       الرقم الأخير = رقم الوحدة
-    */
-
-
     const parts =
         carNumberRaw.split("-");
 
@@ -2619,10 +2694,6 @@ function buildLTCarSelector(records) {
         );
 
 
-    /*
-       ترتيب العربيات حسب رقم العربية
-    */
-
     cars.sort(
         function(a, b) {
 
@@ -2694,11 +2765,6 @@ function buildLTCarSelector(records) {
     );
 
 
-    /*
-       لو العربية المختارة ما زالت موجودة
-       نحافظ عليها
-    */
-
     if (
         selectedLTCar &&
         uniqueCars.has(
@@ -2751,10 +2817,6 @@ function showSelectedLTCar() {
     selectedLTCar =
         selector.value;
 
-
-    /*
-       لم يتم اختيار عربية
-    */
 
     if (!selectedLTCar) {
 
@@ -2825,10 +2887,6 @@ function showSelectedLTCar() {
     }
 
 
-    /*
-       عنوان العربية المختارة
-    */
-
     const firstRecord =
         selectedRecords[0];
 
@@ -2860,10 +2918,6 @@ function showSelectedLTCar() {
         "";
 
 
-    /*
-       ترتيب أجهزة العربية
-    */
-
     selectedRecords.sort(
         function(a, b) {
 
@@ -2879,10 +2933,6 @@ function showSelectedLTCar() {
     );
 
 
-    /*
-       عرض كل سجلات العربية
-    */
-
     selectedRecords.forEach(
         function(record) {
 
@@ -2891,11 +2941,6 @@ function showSelectedLTCar() {
                     "div"
                 );
 
-
-            /*
-               مهم جدًا لنظام الحذف
-               كل Card يحتفظ بـ record.id
-            */
 
             div.dataset.recordId =
                 record.id;
@@ -3213,19 +3258,10 @@ async function loadLTRecords() {
         }
 
 
-        /*
-           بناء قائمة العربيات
-        */
-
         buildLTCarSelector(
             allLTRecords
         );
 
-
-        /*
-           إذا كانت هناك عربية مختارة
-           نعرضها مرة أخرى
-        */
 
         if (selectedLTCar) {
 
@@ -3254,11 +3290,6 @@ async function loadLTRecords() {
 
         }
 
-
-        /*
-           أول دخول للصفحة:
-           لا نعرض كل التسجيلات
-        */
 
         const title =
             document.getElementById(
@@ -3334,42 +3365,6 @@ document.addEventListener(
 
         loadLTRecords();
 
-
-        console.log(
-            "UNIT 1 DTC =",
-            "1"
-        );
-
-
-        console.log(
-            "UNIT 1 MCI =",
-            "4"
-        );
-
-
-        console.log(
-            "UNIT 2 MCI =",
-            "5"
-        );
-
-
-        console.log(
-            "UNIT 2 MC2 =",
-            "6"
-        );
-
-
-        console.log(
-            "UNIT 2 MC1 =",
-            "7"
-        );
-
-
-        console.log(
-            "UNIT 2 DTC =",
-            "8"
-        );
-
     }
 );
 
@@ -3377,6 +3372,10 @@ document.addEventListener(
 
 
 <script src="delete-system.js?v=3"></script>
+
+<!-- 🔔 ملف الإشعارات -->
+
+<script src="notifications-helper.js"></script>
 
 </body>
 

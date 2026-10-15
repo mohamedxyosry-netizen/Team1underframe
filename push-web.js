@@ -19,6 +19,31 @@
         measurementId: "G-EE965421EJ"
     };
 
+    // ---------- عرض إشعار للتاب المفتوح ----------
+    async function showForegroundNotification(payload) {
+        try {
+            const data = payload.data || {};
+            const notificationTitle = data.title || "NERIC";
+            const notificationBody = data.body || "لديك إشعار جديد";
+
+            if (!("Notification" in window)) return;
+            if (Notification.permission !== "granted") return;
+
+            const registration = await navigator.serviceWorker.ready;
+
+            await registration.showNotification(notificationTitle, {
+                body: notificationBody,
+                icon: "./favicon.ico",
+                badge: "./favicon.ico",
+                data: data
+            });
+
+            console.log("[NERIC-WebPush] 🔔 Foreground notification shown");
+        } catch (error) {
+            console.error("[NERIC-WebPush] Foreground notification error:", error);
+        }
+    }
+
     // ---------- قراءة المستخدم الحالي ----------
     function getCurrentUsername() {
         try {
@@ -78,6 +103,7 @@
 
     window.NERIC_webPush = {
         initialized: false,
+        foregroundSetup: false,
 
         // ---------- تهيئة Firebase ----------
         init: function () {
@@ -93,6 +119,26 @@
             this.initialized = true;
             console.log("[NERIC-WebPush] Firebase initialized");
             return true;
+        },
+
+        // ---------- إعداد استقبال الإشعارات في المقدمة ----------
+        setupForegroundListener: function () {
+            if (this.foregroundSetup) return;
+            if (!this.init()) return;
+
+            try {
+                const messaging = firebase.messaging();
+
+                messaging.onMessage(function (payload) {
+                    console.log("[NERIC-WebPush] 📩 Foreground message:", payload);
+                    showForegroundNotification(payload);
+                });
+
+                this.foregroundSetup = true;
+                console.log("[NERIC-WebPush] ✅ Foreground listener ready");
+            } catch (e) {
+                console.error("[NERIC-WebPush] Setup foreground error:", e);
+            }
         },
 
         // ---------- طلب الإذن + الحصول على التوكن ----------
@@ -113,21 +159,18 @@
                 throw new Error("الموقع يحتاج اتصال HTTPS");
             }
 
-            // لو الإذن مرفوض قبل كده، مش هينفع نعمل حاجة
             if (Notification.permission === "denied") {
                 throw new Error(
                     "الإشعارات محظورة. لازم تفتح إعدادات المتصفح وتسمح بالإشعارات لهذا الموقع."
                 );
             }
 
-            // طلب الإذن
             const permission = await Notification.requestPermission();
 
             if (permission !== "granted") {
                 throw new Error("لم يتم السماح بالإشعارات");
             }
 
-            // تسجيل Service Worker
             const registration = await navigator.serviceWorker.register(
                 "/Team1underframe/firebase-messaging-sw.js",
                 { scope: "/Team1underframe/" }
@@ -135,7 +178,6 @@
 
             await navigator.serviceWorker.ready;
 
-            // الحصول على التوكن
             const messaging = firebase.messaging();
 
             const token = await messaging.getToken({
@@ -148,6 +190,10 @@
             }
 
             console.log("[NERIC-WebPush] ✅ FCM Token received");
+
+            // 🔑 فعّل الاستماع في المقدمة
+            this.setupForegroundListener();
+
             return token;
         },
 
@@ -159,7 +205,6 @@
 
                 if (!username) {
                     console.warn("[NERIC-WebPush] مفيش مستخدم مسجل حالياً");
-                    // نخزن التوكن لحد ما المستخدم يسجل دخول
                     localStorage.setItem("neric_pending_web_token", token);
                     return { success: false, reason: "no_user" };
                 }
@@ -191,5 +236,19 @@
         }
     };
 
+    // ---------- تهيئة أولية ----------
     window.NERIC_webPush.init();
+
+    // ---------- تفعيل foreground لو الإذن مسموح ----------
+    if (typeof Notification !== "undefined" &&
+        Notification.permission === "granted") {
+
+        setTimeout(function () {
+            try {
+                window.NERIC_webPush.setupForegroundListener();
+            } catch (e) {
+                console.error("[NERIC-WebPush] Auto foreground setup error:", e);
+            }
+        }, 1500);
+    }
 })();
