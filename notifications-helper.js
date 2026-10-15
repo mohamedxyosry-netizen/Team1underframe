@@ -10,18 +10,49 @@
 
     const ADMIN_USERNAME = "Yosry";
 
-    async function sendPush(title, body, data, targetUsernames) {
-        try {
-            const payload = {
-                title: title,
-                body: body,
-                data: data || {}
-            };
+// قائمة الكلمات المحجوزة في Firebase FCM
+const RESERVED_KEYS = [
+    "from",
+    "message_type",
+    "collapse_key",
+    "google",
+    "gcm",
+    "google.c.a.e",
+    "google.c.c.a.e"
+];
 
-            if (Array.isArray(targetUsernames) && targetUsernames.length > 0) {
-                payload.target_usernames = targetUsernames;
-            }
+function sanitizeData(data) {
+    const clean = {};
 
+    if (!data || typeof data !== "object") {
+        return clean;
+    }
+
+    Object.keys(data).forEach(function (key) {
+        const lowerKey = String(key).toLowerCase();
+
+        // نتجاهل الكلمات المحجوزة
+        if (RESERVED_KEYS.indexOf(lowerKey) !== -1) {
+            console.warn(
+                "[NERIC-Notify] تم تجاهل key محجوز:",
+                key
+            );
+            return;
+        }
+
+        clean[key] = String(data[key]);
+    });
+
+    return clean;
+}
+
+async function sendPush(title, body, data, targetUsernames) {
+    try {
+        const payload = {
+            title: title,
+            body: body,
+            data: sanitizeData(data)
+        };
             const response = await fetch(SUPABASE_FUNCTION_URL, {
                 method: "POST",
                 headers: {
