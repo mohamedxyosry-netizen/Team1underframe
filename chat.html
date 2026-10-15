@@ -395,10 +395,6 @@
 <div class="chat-page">
 
 
-    <!-- =========================
-         HEADER
-    ========================== -->
-
     <div class="chat-header">
 
         <h1>
@@ -415,16 +411,8 @@
     </div>
 
 
-    <!-- =========================
-         CHAT LAYOUT
-    ========================== -->
-
     <div class="chat-layout">
 
-
-        <!-- =========================
-             USERS
-        ========================== -->
 
         <div class="users-card">
 
@@ -446,16 +434,10 @@
         </div>
 
 
-        <!-- =========================
-             CONVERSATION
-        ========================== -->
-
         <div class="conversation-card">
 
             <div class="conversation">
 
-
-                <!-- Conversation Header -->
 
                 <div
                     class="conversation-header"
@@ -480,8 +462,6 @@
 
                 </div>
 
-
-                <!-- Messages -->
 
                 <div
                     id="messages"
@@ -511,8 +491,6 @@
 
                 </div>
 
-
-                <!-- Input -->
 
                 <div class="message-input-area">
 
@@ -555,25 +533,9 @@
 
 <script>
 
-/* =========================================================
-   IMPORTANT
-=========================================================
-
-   script.js عندك هو الذي ينشئ:
-
-   window.supabaseClient
-
-   لذلك لا نعمل createClient مرة ثانية هنا.
-========================================================= */
-
-
 const chatSupabaseClient =
     window.supabaseClient;
 
-
-/* =========================================================
-   VARIABLES
-========================================================= */
 
 let currentUser = null;
 
@@ -590,10 +552,6 @@ let messagesLoading = false;
 let usersLoading = false;
 
 
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
 function escapeHTML(value) {
 
     const div =
@@ -607,10 +565,6 @@ function escapeHTML(value) {
     return div.innerHTML;
 }
 
-
-/* =========================================================
-   GET USERNAME
-========================================================= */
 
 function getUserUsername(user) {
 
@@ -626,10 +580,6 @@ function getUserUsername(user) {
     ).toString();
 }
 
-
-/* =========================================================
-   GET DISPLAY NAME
-========================================================= */
 
 function getUserDisplayName(username) {
 
@@ -651,10 +601,6 @@ function getUserDisplayName(username) {
 }
 
 
-/* =========================================================
-   INITIAL
-========================================================= */
-
 function getInitial(name) {
 
     name =
@@ -669,10 +615,6 @@ function getInitial(name) {
         .toUpperCase();
 }
 
-
-/* =========================================================
-   FORMAT DATE
-========================================================= */
 
 function formatMessageDate(dateValue) {
 
@@ -699,10 +641,6 @@ function formatMessageDate(dateValue) {
     );
 }
 
-
-/* =========================================================
-   LOAD CURRENT USER
-========================================================= */
 
 function loadCurrentUser() {
 
@@ -761,10 +699,6 @@ function loadCurrentUser() {
 }
 
 
-/* =========================================================
-   GET ALL USERS
-========================================================= */
-
 function getAllUsers() {
 
     if (
@@ -804,10 +738,6 @@ function getAllUsers() {
 }
 
 
-/* =========================================================
-   ONLINE CHECK
-========================================================= */
-
 function isUserOnline(username) {
 
     return onlineUsers.has(
@@ -816,10 +746,6 @@ function isUserOnline(username) {
 
 }
 
-
-/* =========================================================
-   STATUS HTML
-========================================================= */
 
 function getUserStatusHTML(username) {
 
@@ -856,10 +782,6 @@ function getUserStatusHTML(username) {
 
 }
 
-
-/* =========================================================
-   UPDATE ONLINE USERS
-========================================================= */
 
 function updateOnlineUsers() {
 
@@ -912,10 +834,6 @@ function updateOnlineUsers() {
 }
 
 
-/* =========================================================
-   UPDATE SELECTED USER STATUS
-========================================================= */
-
 function updateSelectedUserStatus() {
 
     if (!selectedUser) {
@@ -941,10 +859,6 @@ function updateSelectedUserStatus() {
 
 }
 
-
-/* =========================================================
-   START PRESENCE
-========================================================= */
 
 async function startPresence() {
 
@@ -993,10 +907,6 @@ async function startPresence() {
         );
 
 
-    /* =========================
-       SYNC
-    ========================== */
-
     presenceChannel.on(
         "presence",
         {
@@ -1009,10 +919,6 @@ async function startPresence() {
         }
     );
 
-
-    /* =========================
-       JOIN
-    ========================== */
 
     presenceChannel.on(
         "presence",
@@ -1027,10 +933,6 @@ async function startPresence() {
     );
 
 
-    /* =========================
-       LEAVE
-    ========================== */
-
     presenceChannel.on(
         "presence",
         {
@@ -1043,10 +945,6 @@ async function startPresence() {
         }
     );
 
-
-    /* =========================
-       SUBSCRIBE
-    ========================== */
 
     presenceChannel.subscribe(
         async status => {
@@ -1086,10 +984,6 @@ async function startPresence() {
 
 }
 
-
-/* =========================================================
-   UNREAD COUNTS
-========================================================= */
 
 async function getUnreadCounts() {
 
@@ -1158,10 +1052,6 @@ async function getUnreadCounts() {
 
 }
 
-
-/* =========================================================
-   DISPLAY USERS
-========================================================= */
 
 async function displayUsers() {
 
@@ -1314,10 +1204,6 @@ async function displayUsers() {
                 .join("");
 
 
-        /* =========================
-           CLICK EVENTS
-        ========================== */
-
         container
             .querySelectorAll(
                 ".user-item"
@@ -1360,10 +1246,6 @@ async function displayUsers() {
 
 }
 
-
-/* =========================================================
-   OPEN CHAT
-========================================================= */
 
 async function openChat(username) {
 
@@ -1451,10 +1333,6 @@ async function openChat(username) {
 
 }
 
-
-/* =========================================================
-   GET CHAT MESSAGES
-========================================================= */
 
 async function getChatMessages(username) {
 
@@ -1555,10 +1433,6 @@ async function getChatMessages(username) {
 
 }
 
-
-/* =========================================================
-   DISPLAY MESSAGES
-========================================================= */
 
 async function displayMessages() {
 
@@ -1719,10 +1593,6 @@ async function displayMessages() {
 }
 
 
-/* =========================================================
-   SEND MESSAGE
-========================================================= */
-
 async function sendMessage() {
 
     if (!currentUser) {
@@ -1827,6 +1697,69 @@ async function sendMessage() {
         }
 
 
+        /* =================================================
+           🔔 إرسال إشعار للمستقبل بس
+        ================================================= */
+
+        try {
+
+            if (window.NERIC_Notify) {
+
+                const senderDisplay =
+                    currentUser.name ||
+                    currentUsername;
+
+                const shortMsg =
+                    text.length > 80
+                        ? text.substring(0, 80) + "..."
+                        : text;
+
+                window.NERIC_Notify.sendPush(
+
+                    `💬 رسالة من ${senderDisplay}`,
+
+                    shortMsg,
+
+                    {
+                        type: "chat_message",
+                        from: String(currentUsername)
+                    },
+
+                    [selectedUser]
+
+                ).catch(
+                    function(e) {
+
+                        console.error(
+                            "Push error:",
+                            e
+                        );
+
+                    }
+                );
+
+            }
+
+            else {
+
+                console.warn(
+                    "[NERIC] Notify helper not loaded"
+                );
+
+            }
+
+        }
+
+        catch (e) {
+
+            console.error(
+                "Notify error:",
+                e
+            );
+
+        }
+
+
         input.value = "";
 
         input.style.height =
@@ -1857,10 +1790,6 @@ async function sendMessage() {
 
 }
 
-
-/* =========================================================
-   MARK AS READ
-========================================================= */
 
 async function markMessagesAsRead(
     username
@@ -1917,10 +1846,6 @@ async function markMessagesAsRead(
 
 }
 
-
-/* =========================================================
-   REALTIME MESSAGES
-========================================================= */
 
 function startRealtime() {
 
@@ -2056,10 +1981,6 @@ function startRealtime() {
 }
 
 
-/* =========================================================
-   TEXTAREA
-========================================================= */
-
 function setupMessageInput() {
 
     const input =
@@ -2106,10 +2027,6 @@ function setupMessageInput() {
 
 }
 
-
-/* =========================================================
-   INIT CHAT
-========================================================= */
 
 async function initChat() {
 
@@ -2167,42 +2084,22 @@ async function initChat() {
     setupMessageInput();
 
 
-    /*
-       أولاً نبدأ Presence
-    */
-
     await startPresence();
 
 
-    /*
-       ثم المستخدمين
-    */
-
     await displayUsers();
 
-
-    /*
-       ثم الرسائل Realtime
-    */
 
     startRealtime();
 
 }
 
 
-/* =========================================================
-   START
-========================================================= */
-
 document.addEventListener(
     "DOMContentLoaded",
     initChat
 );
 
-
-/* =========================================================
-   FALLBACK
-========================================================= */
 
 setInterval(
     async function () {
@@ -2225,10 +2122,6 @@ setInterval(
     10000
 );
 
-
-/* =========================================================
-   CLEANUP
-========================================================= */
 
 window.addEventListener(
     "beforeunload",
@@ -2265,6 +2158,10 @@ window.addEventListener(
 );
 
 </script>
+
+
+<!-- 🔔 ملف الإشعارات -->
+<script src="notifications-helper.js"></script>
 
 </body>
 
