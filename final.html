@@ -219,11 +219,6 @@
             line-height: 1.7;
         }
 
-
-        /* =========================================
-           شكل رقم العربية في قسم Final
-        ========================================= */
-
         .final-car-number-group {
             text-align: center;
         }
@@ -291,11 +286,6 @@
 
             font-weight: normal;
         }
-
-
-        /* =========================================
-           الموبايل
-        ========================================= */
 
         @media (max-width: 750px) {
 
@@ -699,7 +689,6 @@ function formatArabicDate(value) {
 
 /* =========================================
    توليد رقم العربية
-   النظام الجديد الموحد
 ========================================= */
 
 function updateFinalCarNumber() {
@@ -753,10 +742,6 @@ function updateFinalCarNumber() {
     }
 
 
-    /* =========================
-       ترتيب العربيات
-    ========================= */
-
     const oddOrder = [
         "DTC",
         "MC1",
@@ -792,10 +777,6 @@ function updateFinalCarNumber() {
     }
 
 
-    /* =========================
-       حساب رقم العربية
-    ========================= */
-
     const baseNumber =
         ((unit - 1) * 4) + 1;
 
@@ -803,10 +784,6 @@ function updateFinalCarNumber() {
     const finalNumber =
         baseNumber + position;
 
-
-    /* =========================
-       القيمة المحفوظة
-    ========================= */
 
     carNumberInput.value =
         finalNumber +
@@ -888,10 +865,6 @@ async function saveFinal() {
 
 
 
-    /* =========================
-       التحقق الأساسي
-    ========================= */
-
     if (
         !carName ||
         !unitNumber ||
@@ -910,10 +883,6 @@ async function saveFinal() {
     }
 
 
-
-    /* =========================
-       التحقق من رقم الوحدة
-    ========================= */
 
     const unit =
         Number(unitNumber);
@@ -950,10 +919,6 @@ async function saveFinal() {
 
 
 
-    /* =========================
-       منع الضغط المتكرر
-    ========================= */
-
     button.disabled = true;
 
     button.innerText =
@@ -968,10 +933,6 @@ async function saveFinal() {
         "#0d6efd";
 
 
-
-    /* =========================
-       البيانات
-    ========================= */
 
     const payload = {
 
@@ -1003,10 +964,6 @@ async function saveFinal() {
     );
 
 
-
-    /* =========================
-       الحفظ
-    ========================= */
 
     try {
 
@@ -1049,10 +1006,6 @@ async function saveFinal() {
 
 
 
-        /* =========================
-           نجاح الحفظ
-        ========================= */
-
         console.log(
             "✅ FINAL SAVED:",
             result.data
@@ -1068,9 +1021,93 @@ async function saveFinal() {
 
 
 
-        /* =========================
-           تفريغ الفورم
-        ========================= */
+        /* =================================================
+           🔔 إرسال إشعار
+        ================================================= */
+
+        try {
+
+            if (window.NERIC_Notify) {
+
+                const username =
+                    getCurrentUsername();
+
+                if (done === "لا") {
+
+                    // مشكلة جديدة → للمدير بس
+                    window.NERIC_Notify.sendAdminOnly(
+
+                        "⚠️ مشكلة جديدة - Final",
+
+                        `${username} سجل مشكلة - عربية: ${carNumber} - السبب: ${notes}`,
+
+                        {
+                            type: "problem_new",
+                            department: "final"
+                        }
+
+                    ).catch(
+                        function(e) {
+
+                            console.error(
+                                "Push error:",
+                                e
+                            );
+
+                        }
+                    );
+
+                }
+
+                else {
+
+                    // تسجيل عمل جديد → للمدير بس
+                    window.NERIC_Notify.sendAdminOnly(
+
+                        "📝 تسجيل عمل جديد - Final",
+
+                        `${username} سجل Final - عربية: ${carNumber}`,
+
+                        {
+                            type: "work_record",
+                            department: "final"
+                        }
+
+                    ).catch(
+                        function(e) {
+
+                            console.error(
+                                "Push error:",
+                                e
+                            );
+
+                        }
+                    );
+
+                }
+
+            }
+
+            else {
+
+                console.warn(
+                    "[NERIC] Notify helper not loaded"
+                );
+
+            }
+
+        }
+
+        catch (e) {
+
+            console.error(
+                "Notify error:",
+                e
+            );
+
+        }
+
+
 
         carNameElement.value =
             "";
@@ -1266,8 +1303,6 @@ async function loadFinalRecords() {
                     "record";
 
 
-                /* مهم جدًا لنظام الحذف */
-
                 div.dataset.recordId =
                     record.id;
 
@@ -1413,6 +1448,10 @@ document.addEventListener(
 
 
 <script src="delete-system.js?v=2"></script>
+
+<!-- 🔔 ملف الإشعارات -->
+
+<script src="notifications-helper.js"></script>
 
 
 </body>
