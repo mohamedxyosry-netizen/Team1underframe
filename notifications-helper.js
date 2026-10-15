@@ -10,49 +10,21 @@
 
     const ADMIN_USERNAME = "Yosry";
 
-// قائمة الكلمات المحجوزة في Firebase FCM
-const RESERVED_KEYS = [
-    "from",
-    "message_type",
-    "collapse_key",
-    "google",
-    "gcm",
-    "google.c.a.e",
-    "google.c.c.a.e"
-];
+    // ============================================================
+    // الدالة الأساسية
+    // ============================================================
+    async function sendPush(title, body, data, targetUsernames) {
+        try {
+            const payload = {
+                title: title,
+                body: body,
+                data: data || {}
+            };
 
-function sanitizeData(data) {
-    const clean = {};
+            if (Array.isArray(targetUsernames) && targetUsernames.length > 0) {
+                payload.target_usernames = targetUsernames;
+            }
 
-    if (!data || typeof data !== "object") {
-        return clean;
-    }
-
-    Object.keys(data).forEach(function (key) {
-        const lowerKey = String(key).toLowerCase();
-
-        // نتجاهل الكلمات المحجوزة
-        if (RESERVED_KEYS.indexOf(lowerKey) !== -1) {
-            console.warn(
-                "[NERIC-Notify] تم تجاهل key محجوز:",
-                key
-            );
-            return;
-        }
-
-        clean[key] = String(data[key]);
-    });
-
-    return clean;
-}
-
-async function sendPush(title, body, data, targetUsernames) {
-    try {
-        const payload = {
-            title: title,
-            body: body,
-            data: sanitizeData(data)
-        };
             const response = await fetch(SUPABASE_FUNCTION_URL, {
                 method: "POST",
                 headers: {
@@ -71,14 +43,23 @@ async function sendPush(title, body, data, targetUsernames) {
         }
     }
 
+    // ============================================================
+    // 🔔 الدوال الجاهزة
+    // ============================================================
+
+    // 1) إشعار للمدير بس
     function sendAdminOnly(title, body, data) {
         return sendPush(title, body, data, [ADMIN_USERNAME]);
     }
 
+    // 2) إشعار للمدير + كل الفنيين
     function sendEveryone(title, body, data) {
         return sendPush(title, body, data, null);
     }
 
+    // ============================================================
+    // كشف الدوال
+    // ============================================================
     window.NERIC_Notify = {
         sendAdminOnly: sendAdminOnly,
         sendEveryone: sendEveryone,
