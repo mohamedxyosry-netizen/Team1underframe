@@ -961,11 +961,20 @@
             });
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        updateChatUnreadCount();
-        startChatUnreadRealtime();
-    });
+document.addEventListener("DOMContentLoaded", function () {
+    updateChatUnreadCount();
+    startChatUnreadRealtime();
 
+    // 🔄 تحديث عداد الرسائل كل 3 ثواني
+    setInterval(updateChatUnreadCount, 3000);
+});
+
+// 🔄 لما نرجع للتاب، نحدّث العداد فورًا
+document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) {
+        updateChatUnreadCount();
+    }
+});
     window.addEventListener("beforeunload", function () {
         try {
             if (chatUnreadRealtimeChannel && window.supabaseClient) {
