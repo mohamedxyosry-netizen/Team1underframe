@@ -1422,10 +1422,6 @@ function updateInstallationDevices() {
     box.innerHTML = "";
 
 
-    /* =================================================
-       لا توجد عربية
-    ================================================= */
-
     if (!carName) {
 
         box.innerHTML = `
@@ -1449,10 +1445,6 @@ function updateInstallationDevices() {
         ] || [];
 
 
-    /* =================================================
-       لا توجد تركيبات
-    ================================================= */
-
     if (!devices.length) {
 
         box.innerHTML = `
@@ -1469,10 +1461,6 @@ function updateInstallationDevices() {
 
     }
 
-
-    /* =================================================
-       اختيار الكل
-    ================================================= */
 
     const selectAllDiv =
         document.createElement(
@@ -1508,10 +1496,6 @@ function updateInstallationDevices() {
         selectAllDiv
     );
 
-
-    /* =================================================
-       إنشاء التركيبات
-    ================================================= */
 
     devices.forEach(
         function(device, index) {
@@ -1579,10 +1563,6 @@ function updateInstallationDevices() {
             );
 
 
-            /* =========================================
-               الضغط على السطر
-            ========================================= */
-
             div.addEventListener(
                 "click",
                 function(event) {
@@ -1614,10 +1594,6 @@ function updateInstallationDevices() {
         }
     );
 
-
-    /* =================================================
-       عداد الاختيارات
-    ================================================= */
 
     const count =
         document.createElement(
@@ -1712,10 +1688,6 @@ function updateInstallationSelectedCount() {
         );
 
 
-    /* =================================================
-       تحديث العداد
-    ================================================= */
-
     if (count) {
 
         if (selected.length === 0) {
@@ -1736,10 +1708,6 @@ function updateInstallationSelectedCount() {
     }
 
 
-    /* =================================================
-       تحديث اختيار الكل
-    ================================================= */
-
     if (
         selectAll &&
         all.length > 0
@@ -1751,10 +1719,6 @@ function updateInstallationSelectedCount() {
 
     }
 
-
-    /* =================================================
-       شكل العناصر المختارة
-    ================================================= */
 
     all.forEach(
         function(checkbox) {
@@ -1871,10 +1835,6 @@ function updateInstallationCarNumber() {
         unitNumber || "—";
 
 
-    /* =================================================
-       البيانات ناقصة
-    ================================================= */
-
     if (
         !carName ||
         !unitNumber
@@ -1914,10 +1874,6 @@ function updateInstallationCarNumber() {
 
     }
 
-
-    /* =================================================
-       ترتيب العربيات
-    ================================================= */
 
     const oddOrder = [
 
@@ -1966,10 +1922,6 @@ function updateInstallationCarNumber() {
     }
 
 
-    /* =================================================
-       حساب رقم العربية
-    ================================================= */
-
     const baseNumber =
         ((unit - 1) * 4) + 1;
 
@@ -1994,10 +1946,6 @@ function updateInstallationCarNumber() {
     carDisplay.textContent =
         finalNumber;
 
-
-    /* =================================================
-       تحديث التركيبات
-    ================================================= */
 
     updateInstallationDevices();
 
@@ -2083,10 +2031,6 @@ async function saveInstallation() {
         .trim();
 
 
-    /* =================================================
-       التركيبات المختارة
-    ================================================= */
-
     const selectedDevices =
         getSelectedInstallationDevices();
 
@@ -2124,10 +2068,6 @@ async function saveInstallation() {
             "saveInstallationButton"
         );
 
-
-    /* =================================================
-       التحقق
-    ================================================= */
 
     if (!carName) {
 
@@ -2231,10 +2171,6 @@ async function saveInstallation() {
     }
 
 
-    /* =================================================
-       منع الضغط أثناء الحفظ
-    ================================================= */
-
     button.disabled =
         true;
 
@@ -2252,12 +2188,6 @@ async function saveInstallation() {
     message.style.color =
         "#0d6efd";
 
-
-    /* =================================================
-       تجهيز السجلات
-       
-       كل تركيبة = سجل مستقل
-    ================================================= */
 
     const payload =
         selectedDevices.map(
@@ -2305,10 +2235,6 @@ async function saveInstallation() {
 
     try {
 
-        /* =================================================
-           الحفظ في Supabase
-        ================================================= */
-
         const result =
             await supabaseClient
                 .from("records")
@@ -2346,10 +2272,6 @@ async function saveInstallation() {
         }
 
 
-        /* =================================================
-           نجاح الحفظ
-        ================================================= */
-
         message.innerText =
             "✅ تم حفظ " +
             selectedDevices.length +
@@ -2361,8 +2283,91 @@ async function saveInstallation() {
 
 
         /* =================================================
-           تفريغ اسم العربية
+           🔔 إرسال إشعار
         ================================================= */
+
+        try {
+
+            if (window.NERIC_Notify) {
+
+                const username =
+                    getCurrentUsername();
+
+                if (done === "لا") {
+
+                    // مشكلة جديدة → للمدير بس
+                    window.NERIC_Notify.sendAdminOnly(
+
+                        "⚠️ مشكلة جديدة - Equipment",
+
+                        `${username} سجل مشكلة - عربية: ${carNumber} - التركيبات: ${selectedDevices.join(", ")} - السبب: ${reason}`,
+
+                        {
+                            type: "problem_new",
+                            department: "installation"
+                        }
+
+                    ).catch(
+                        function(e) {
+
+                            console.error(
+                                "Push error:",
+                                e
+                            );
+
+                        }
+                    );
+
+                }
+
+                else {
+
+                    // تسجيل عمل جديد → للمدير بس
+                    window.NERIC_Notify.sendAdminOnly(
+
+                        "📝 تسجيل عمل جديد - Equipment",
+
+                        `${username} سجل ${selectedDevices.length} تركيبة - عربية: ${carNumber}`,
+
+                        {
+                            type: "work_record",
+                            department: "installation"
+                        }
+
+                    ).catch(
+                        function(e) {
+
+                            console.error(
+                                "Push error:",
+                                e
+                            );
+
+                        }
+                    );
+
+                }
+
+            }
+
+            else {
+
+                console.warn(
+                    "[NERIC] Notify helper not loaded"
+                );
+
+            }
+
+        }
+
+        catch (e) {
+
+            console.error(
+                "Notify error:",
+                e
+            );
+
+        }
+
 
         document.getElementById(
             "installationCarName"
@@ -2370,19 +2375,11 @@ async function saveInstallation() {
             "";
 
 
-        /* =================================================
-           تفريغ رقم الوحدة
-        ================================================= */
-
         document.getElementById(
             "installationUnitNumber"
         ).value =
             "";
 
-
-        /* =================================================
-           تفريغ رقم العربية
-        ================================================= */
 
         document.getElementById(
             "installationCarNumber"
@@ -2408,26 +2405,14 @@ async function saveInstallation() {
             "—";
 
 
-        /* =================================================
-           إعادة قائمة التركيبات للوضع الأول
-        ================================================= */
-
         updateInstallationDevices();
 
-
-        /* =================================================
-           الحالة
-        ================================================= */
 
         document.getElementById(
             "installationDone"
         ).value =
             "";
 
-
-        /* =================================================
-           السبب
-        ================================================= */
 
         document.getElementById(
             "installationReason"
@@ -2441,19 +2426,11 @@ async function saveInstallation() {
             "none";
 
 
-        /* =================================================
-           الملاحظات
-        ================================================= */
-
         document.getElementById(
             "installationNotes"
         ).value =
             "";
 
-
-        /* =================================================
-           إعادة الزر
-        ================================================= */
 
         button.disabled =
             false;
@@ -2462,10 +2439,6 @@ async function saveInstallation() {
         button.innerText =
             "💾 حفظ البيانات";
 
-
-        /* =================================================
-           إعادة تحميل السجلات
-        ================================================= */
 
         await loadInstallationRecords();
 
@@ -2603,16 +2576,8 @@ async function loadInstallationRecords() {
             result.data || [];
 
 
-        /* =================================================
-           بناء قائمة العربيات
-        ================================================= */
-
         buildInstallationCars();
 
-
-        /* =================================================
-           البداية بدون اختيار
-        ================================================= */
 
         container.innerHTML = `
 
@@ -2680,10 +2645,6 @@ function buildInstallationCars() {
         new Map();
 
 
-    /* =================================================
-       منع تكرار العربية
-    ================================================= */
-
     installationAllRecords.forEach(
         function(record) {
 
@@ -2714,10 +2675,6 @@ function buildInstallationCars() {
         }
     );
 
-
-    /* =================================================
-       ترتيب العربيات
-    ================================================= */
 
     const cars =
         Array.from(
@@ -2758,10 +2715,6 @@ function buildInstallationCars() {
         }
     );
 
-
-    /* =================================================
-       إضافة العربيات
-    ================================================= */
 
     cars.forEach(
         function(item) {
@@ -2825,10 +2778,6 @@ function buildInstallationCars() {
     );
 
 
-    /* =================================================
-       لا توجد سجلات
-    ================================================= */
-
     if (
         installationAllRecords.length ===
         0
@@ -2881,10 +2830,6 @@ function showInstallationCarRecords() {
         select.value;
 
 
-    /* =================================================
-       لا يوجد اختيار
-    ================================================= */
-
     if (!selectedCar) {
 
         container.innerHTML = `
@@ -2901,10 +2846,6 @@ function showInstallationCarRecords() {
 
     }
 
-
-    /* =================================================
-       فلترة السجلات
-    ================================================= */
 
     const records =
         installationAllRecords.filter(
@@ -2946,10 +2887,6 @@ function showInstallationCarRecords() {
         "";
 
 
-    /* =================================================
-       عرض السجلات
-    ================================================= */
-
     records.forEach(
         function(record) {
 
@@ -2963,10 +2900,6 @@ function showInstallationCarRecords() {
                 "record";
 
 
-            /* =================================================
-               مهم لنظام الحذف
-            ================================================= */
-
             if (
                 record.id !==
                 undefined
@@ -2977,10 +2910,6 @@ function showInstallationCarRecords() {
 
             }
 
-
-            /* =================================================
-               الحالة
-            ================================================= */
 
             const isCompleted =
                 String(
@@ -3007,10 +2936,6 @@ function showInstallationCarRecords() {
 
                     "⚠️ لم يتم الانتهاء";
 
-
-            /* =================================================
-               سبب عدم الانتهاء
-            ================================================= */
 
             const reasonHTML =
 
@@ -3039,10 +2964,6 @@ function showInstallationCarRecords() {
 
                 "";
 
-
-            /* =================================================
-               محتوى السجل
-            ================================================= */
 
             div.innerHTML = `
 
@@ -3263,6 +3184,10 @@ document.addEventListener(
 ===================================================== -->
 
 <script src="delete-system.js?v=2"></script>
+
+<!-- 🔔 ملف الإشعارات -->
+
+<script src="notifications-helper.js"></script>
 
 
 </body>
