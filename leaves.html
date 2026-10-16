@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>طلب إجازة - NERIC</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: #f1f5f9;
+    font-family: Arial, Tahoma, sans-serif;
+    color: #1f2937;
+    min-height: 100vh;
+}
+
+.header {
+    background: rgb(52, 67, 84);
+    color: white;
+    padding: 20px 30px;
+    border-bottom: 3px solid #f59e0b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.header h1 { margin: 0 0 6px 0; font-size: 26px; }
+.header p { margin: 0; color: #d1d5db; font-size: 14px; }
+
+.back-btn {
+    border: none;
+    background: #198754;
+    color: white;
+    padding: 11px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.main-container {
+    width: min(900px, 94%);
+    margin: 25px auto 40px;
+}
+
+/* =========================================
+   Form Card
+========================================= */
+
+.form-card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.07);
+    border-right: 5px solid #f59e0b;
+}
+
+.form-card h2 {
+    margin: 0 0 20px 0;
+    color: #92400e;
+    font-size: 20px;
+}
+
+.form-row {
+    margin-bottom: 18px;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #374151;
+    font-size: 14px;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+    width: 100%;
+    padding: 13px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fafbfc;
+    outline: none;
+    transition: 0.2s;
+}
+
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
+    border-color: #f59e0b;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(245,158,11,.1);
+}
+
+.form-row textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+@media (max-width: 600px) {
+    .form-grid-2 { grid-template-columns: 1fr; }
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(245,158,11,.3);
+    transition: all 0.2s;
+    margin-top: 8px;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(245,158,11,.4);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =========================================
+   Messages
+========================================= */
+
+.page-message {
+    padding: 14px 20px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    display: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.page-message.success {
+    background: #d4edda;
+    color: #155724;
+    display: block;
+    border-right: 4px solid #198754;
+}
+
+.page-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    display: block;
+    border-right: 4px solid #d92d20;
+}
+
+.page-message.warning {
+    background: #fff3cd;
+    color: #856404;
+    display: block;
+    border-right: 4px solid #ffc107;
+}
+
+/* =========================================
+   History
+========================================= */
+
+.history-title {
+    margin: 0 0 20px 0;
+    color: #06345c;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.leave-item {
+    background: white;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    border-right: 5px solid #f59e0b;
+}
+
+.leave-item.pending { border-right-color: #f59e0b; }
+.leave-item.approved { border-right-color: #16a34a; background: #f0fdf4; }
+.leave-item.rejected { border-right-color: #dc2626; background: #fff7f7; }
+
+.leave-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.leave-type-badge {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.approved {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.leave-info-row {
+    display: flex;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 14px;
+    color: #334155;
+    align-items: flex-start;
+}
+
+.leave-info-row strong {
+    color: #64748b;
+    min-width: 110px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.leave-info-row span {
+    flex: 1;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.rejection-reason {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border-right: 3px solid #dc2626;
+}
+
+.loading, .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #64748b;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    font-size: 15px;
+}
+
+.empty-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <h1>🏖️ طلب إجازة</h1>
+        <p id="headerSubtitle">قدّم طلب إجازة وتابع حالته</p>
+    </div>
+    <button class="back-btn" onclick="window.location.href='index.html'">
+        ← الرئيسية
+    </button>
+</div>
+
+<div class="main-container">
+
+    <div id="pageMessage" class="page-message"></div>
+
+    <!-- فورم طلب إجازة -->
+    <div class="form-card" id="formCard">
+        <h2>📝 طلب إجازة جديدة</h2>
+
+        <div class="form-grid-2">
+            <div class="form-row">
+                <label>نوع الإجازة *</label>
+                <select id="leaveType">
+                    <option value="">اختر نوع الإجازة</option>
+                    <option value="مرضي">🤒 مرضي</option>
+                    <option value="عرضة">⚡ عرضة</option>
+                    <option value="سنوي">🌴 سنوي</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label>عدد الأيام *</label>
+                <input type="number" id="leaveDays" min="1" value="1" placeholder="مثال: 3">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label>تاريخ بداية الإجازة *</label>
+            <input type="date" id="leaveDate">
+        </div>
+
+        <div class="form-row">
+            <label>سبب الإجازة</label>
+            <textarea id="leaveReason" placeholder="اكتب سبب الإجازة (اختياري)"></textarea>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitLeave()">
+            📤 إرسال الطلب
+        </button>
+    </div>
+
+    <!-- سجل الإجازات -->
+    <h2 class="history-title">📋 سجل الإجازات</h2>
+
+    <div id="historyContainer" class="history-list">
+        <div class="loading">⏳ جاري تحميل السجل...</div>
+    </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL = "https://gzyybadyaunizdlvmcle.supabase.co";
+const SUPABASE_KEY = "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window.supabaseClient = db;
+
+let currentUser = null;
+
+
+function getCurrentUser() {
+    try {
+        const raw = sessionStorage.getItem("currentUser");
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch (e) {
+        return null;
+    }
+}
+
+
+function escapeHTML(value) {
+    if (value === null || value === undefined) return "";
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function showMessage(text, type) {
+    const el = document.getElementById("pageMessage");
+    el.innerText = text;
+    el.className = "page-message " + type;
+    setTimeout(() => {
+        el.className = "page-message";
+    }, 5000);
+}
+
+
+function formatDate(value) {
+    if (!value) return "-";
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return value;
+    return d.toLocaleDateString("ar-EG", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+}
+
+
+function getLeaveTypeIcon(type) {
+    const icons = {
+        "مرضي": "🤒",
+        "عرضة": "⚡",
+        "سنوي": "🌴"
+    };
+    return icons[type] || "🏖️";
+}
+
+
+/* =====================================================
+   Submit Leave
+===================================================== */
+
+async function submitLeave() {
+
+    const type = document.getElementById("leaveType").value;
+    const days = document.getElementById("leaveDays").value.trim();
+    const date = document.getElementById("leaveDate").value;
+    const reason = document.getElementById("leaveReason").value.trim();
+    const btn = document.getElementById("submitBtn");
+
+    if (!type) {
+        showMessage("❌ اختر نوع الإجازة", "error");
+        return;
+    }
+
+    if (!days || Number(days) < 1) {
+        showMessage("❌ اكتب عدد أيام صحيح (1 على الأقل)", "error");
+        return;
+    }
+
+    if (!date) {
+        showMessage("❌ اختر تاريخ بداية الإجازة", "error");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "⏳ جاري الإرسال...";
+
+    try {
+
+        const payload = {
+            username: currentUser.username,
+            employee_name: currentUser.name || currentUser.username,
+            leave_type: type,
+            leave_days: Number(days),
+            leave_date: date,
+            reason: reason || null,
+            status: "pending"
+        };
+
+        const { error } = await db
+            .from("leaves")
+            .insert(payload);
+
+        if (error) {
+            throw error;
+        }
+
+        showMessage("✅ تم إرسال طلب الإجازة - في انتظار موافقة المدير", "success");
+
+        // مسح الفورم
+        document.getElementById("leaveType").value = "";
+        document.getElementById("leaveDays").value = "1";
+        document.getElementById("leaveDate").value = "";
+        document.getElementById("leaveReason").value = "";
+
+        // 🔔 إشعار للمدير
+        try {
+            if (window.NERIC_Notify) {
+                window.NERIC_Notify.sendAdminOnly(
+                    "🏖️ طلب إجازة جديد",
+                    `${currentUser.name || currentUser.username} طلب إجازة ${type} لمدة ${days} يوم من ${date}`,
+                    {
+                        type: "leave_request",
+                        username: String(currentUser.username)
+                    }
+                ).catch(e => console.error("Push error:", e));
+            }
+        } catch (e) {
+            console.error("Notify error:", e);
+        }
+
+        await loadHistory();
+
+    } catch (error) {
+        console.error(error);
+        showMessage("❌ فشل إرسال الطلب: " + error.message, "error");
+    }
+
+    btn.disabled = false;
+    btn.innerText = "📤 إرسال الطلب";
+}
+
+
+/* =====================================================
+   Load History
+===================================================== */
+
+async function loadHistory() {
+
+    const container = document.getElementById("historyContainer");
+
+    try {
+
+        const { data, error } = await db
+            .from("leaves")
+            .select("*")
+            .eq("username", currentUser.username)
+            .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        if (!data || !data.length) {
+            container.innerHTML = `
+                <div class="empty">
+                    <div class="empty-icon">📭</div>
+                    <div>لا توجد إجازات سابقة</div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = data.map(renderLeaveItem).join("");
+
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = `
+            <div class="empty" style="color:#b42318;">
+                ❌ فشل تحميل السجل
+            </div>
+        `;
+    }
+}
+
+
+/* =====================================================
+   Render Leave Item
+===================================================== */
+
+function renderLeaveItem(leave) {
+
+    const statusClass = leave.status || "pending";
+    const typeIcon = getLeaveTypeIcon(leave.leave_type);
+
+    let statusText = "";
+    let statusBadge = "";
+
+    if (leave.status === "approved") {
+        statusText = "✅ تمت الموافقة";
+        statusBadge = `<span class="status-badge approved">✅ موافق عليها</span>`;
+    } else if (leave.status === "rejected") {
+        statusText = "❌ مرفوض";
+        statusBadge = `<span class="status-badge rejected">❌ مرفوض</span>`;
+    } else {
+        statusText = "⏳ في الانتظار";
+        statusBadge = `<span class="status-badge pending">⏳ في الانتظار</span>`;
+    }
+
+    const rejectionHTML = (leave.status === "rejected" && leave.rejection_reason)
+        ? `<div class="rejection-reason">
+             <strong>📝 سبب الرفض:</strong> ${escapeHTML(leave.rejection_reason)}
+           </div>`
+        : "";
+
+    return `
+        <div class="leave-item ${statusClass}">
+
+            <div class="leave-header">
+                <span class="leave-type-badge">
+                    ${typeIcon} إجازة ${escapeHTML(leave.leave_type)}
+                </span>
+                ${statusBadge}
+            </div>
+
+            <div class="leave-info-row">
+                <strong>📅 تاريخ البداية:</strong>
+                <span>${formatDate(leave.leave_date)}</span>
+            </div>
+
+            <div class="leave-info-row">
+                <strong>📆 عدد الأيام:</strong>
+                <span>${leave.leave_days} يوم</span>
+            </div>
+
+            ${leave.reason ? `
+                <div class="leave-info-row">
+                    <strong>📝 السبب:</strong>
+                    <span>${escapeHTML(leave.reason)}</span>
+                </div>
+            ` : ""}
+
+            ${leave.reviewed_by ? `
+                <div class="leave-info-row">
+                    <strong>👤 راجعه:</strong>
+                    <span>${escapeHTML(leave.reviewed_by)}</span>
+                </div>
+            ` : ""}
+
+            ${rejectionHTML}
+
+        </div>
+    `;
+}
+
+
+/* =====================================================
+   Start
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", async function () {
+
+    currentUser = getCurrentUser();
+
+    if (!currentUser) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    // لو مدير → يروح لصفحة المراجعة
+    if (currentUser.role === "admin") {
+        window.location.href = "leaves-admin.html";
+        return;
+    }
+
+    // تحديد الحد الأدنى للتاريخ = النهاردة
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("leaveDate").min = today;
+
+    document.getElementById("headerSubtitle").innerText =
+        "مرحبًا " + (currentUser.name || currentUser.username) + " - قدم طلب إجازة وتابع حالته";
+
+    await loadHistory();
+
+});
+
+</script>
+
+</body>
+
+</html>
