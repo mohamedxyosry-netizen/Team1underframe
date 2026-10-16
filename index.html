@@ -42,6 +42,52 @@
             .stats { grid-template-columns: 1fr !important; }
         }
 
+        /* =========================================
+           🆕 الشريط الجانبي القابل للتحريك
+        ========================================= */
+
+        .sidebar {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            overflow: hidden !important;
+        }
+
+        .sidebar-menu {
+            flex: 1 1 auto !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            padding-bottom: 10px !important;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,.3) transparent;
+        }
+
+        .sidebar-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-menu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,.3);
+            border-radius: 3px;
+        }
+
+        .sidebar-menu::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,.5);
+        }
+
+        .sidebar-footer {
+            flex-shrink: 0 !important;
+        }
+
+        /* =========================================
+           عداد الرسائل غير المقروءة
+        ========================================= */
+
         #chatMenu { position: relative; }
 
         .chat-menu-icon {
@@ -80,6 +126,10 @@
         }
 
         #productionRouteMenu strong { font-weight: 700; }
+
+        /* =========================================
+           مربع الإشعارات
+        ========================================= */
 
         .header-title-wrap {
             display: flex;
@@ -129,6 +179,10 @@
             color: white;
             border-color: #f59e0b;
         }
+
+        /* =========================================
+           User Info
+        ========================================= */
 
         .user-info {
             cursor: pointer;
@@ -185,6 +239,31 @@
                     <span id="chatUnreadCount">0</span>
                 </span>
                 <strong>الدردشة</strong>
+            </button>
+
+            <!-- 🏖️ مراجعة الإجازات (للمدير) -->
+            <button
+                id="leavesAdminMenu"
+                class="menu-item"
+                onclick="openLeavesAdminPage()">
+
+                <span>🏖️</span>
+                <strong>مراجعة الإجازات</strong>
+
+                <span
+                    id="leavesCountMenu"
+                    style="
+                        display:none;
+                        background:#d92d20;
+                        color:white;
+                        border-radius:20px;
+                        min-width:28px;
+                        text-align:center;
+                        padding:3px 8px;
+                        font-size:12px;
+                        font-weight:bold;
+                        margin-right:auto;
+                    ">0</span>
             </button>
 
             <button id="deleteRequestsMenu" class="menu-item" onclick="openSection('deleteRequests')">
@@ -420,6 +499,91 @@
 
         window.location.href = "attendance.html";
     }
+
+    // 🏖️ فتح صفحة مراجعة الإجازات (للمدير)
+    function openLeavesAdminPage() {
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (user.role !== "admin") {
+            alert("❌ هذه الصفحة متاحة للمدير فقط");
+            return;
+        }
+
+        window.location.href = "leaves-admin.html";
+    }
+
+    // 🏖️ فتح صفحة طلب الإجازة (للفني)
+    function openLeavesPage() {
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (user.role === "admin") {
+            window.location.href = "leaves-admin.html";
+            return;
+        }
+
+        window.location.href = "leaves.html";
+    }
+
+    // 🏖️ عدّاد الإجازات للمدير
+    async function updateLeavesCount() {
+        const menu = document.getElementById("leavesAdminMenu");
+        const badge = document.getElementById("leavesCountMenu");
+
+        if (!menu || !badge) return;
+
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        if (!user || user.role !== "admin") {
+            menu.style.display = "none";
+            return;
+        }
+
+        menu.style.display = "flex";
+
+        try {
+
+            if (!window.supabaseClient) return;
+
+            const { count, error } = await window.supabaseClient
+                .from("leaves")
+                .select("id", { count: "exact", head: true })
+                .eq("status", "pending");
+
+            if (error) {
+                console.error("Leaves count error:", error);
+                return;
+            }
+
+            const pending = count || 0;
+
+            badge.textContent = pending;
+            badge.style.display = pending > 0 ? "inline-flex" : "none";
+
+        } catch (e) {
+            console.error("Leaves count exception:", e);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(updateLeavesCount, 1200);
+        setInterval(updateLeavesCount, 5000);
+    });
 
     // فتح الدردشة
 

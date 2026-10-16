@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>مراجعة الإجازات - NERIC</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: #f1f5f9;
+    font-family: Arial, Tahoma, sans-serif;
+    color: #1f2937;
+}
+
+.header {
+    background: rgb(52, 67, 84);
+    color: white;
+    padding: 20px 30px;
+    border-bottom: 3px solid #f59e0b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.header h1 { margin: 0 0 6px 0; font-size: 26px; }
+.header p { margin: 0; color: #d1d5db; font-size: 14px; }
+
+.back-btn {
+    border: none;
+    background: #198754;
+    color: white;
+    padding: 11px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.main-container {
+    width: min(1100px, 94%);
+    margin: 25px auto 40px;
+}
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat-box {
+    background: white;
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    text-align: center;
+    border-bottom: 4px solid #0b3d91;
+}
+
+.stat-box.pending { border-bottom-color: #f59e0b; }
+.stat-box.approved { border-bottom-color: #16a34a; }
+.stat-box.rejected { border-bottom-color: #dc2626; }
+
+.stat-box .num {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1e293b;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.stat-box .label {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.filter-tabs {
+    background: white;
+    border-radius: 14px;
+    padding: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 6px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    border: none;
+    background: transparent;
+    padding: 11px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    color: #64748b;
+    transition: all 0.15s;
+}
+
+.tab-btn:hover { background: #f1f5f9; }
+.tab-btn.active { background: #0b3d91; color: white; }
+
+.leaves-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.leave-card {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    border-right: 6px solid #f59e0b;
+}
+
+.leave-card.approved { border-right-color: #16a34a; background: #f0fdf4; }
+.leave-card.rejected { border-right-color: #dc2626; background: #fff7f7; }
+
+.leave-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 15px;
+}
+
+.employee-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.emp-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0b3d91, #092e6e);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.emp-name {
+    font-size: 17px;
+    font-weight: bold;
+    color: #1e293b;
+    margin: 0 0 3px 0;
+}
+
+.emp-username {
+    font-size: 12px;
+    color: #94a3b8;
+    direction: ltr;
+}
+
+.type-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-badge.pending { background: #fef3c7; color: #92400e; }
+.status-badge.approved { background: #d1fae5; color: #065f46; }
+.status-badge.rejected { background: #fee2e2; color: #991b1b; }
+
+.leave-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.info-item {
+    background: #f8fafc;
+    padding: 12px 15px;
+    border-radius: 10px;
+}
+
+.info-item .info-label {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.info-item .info-value {
+    font-size: 15px;
+    color: #1e293b;
+    font-weight: bold;
+}
+
+.reason-box {
+    background: #f8fafc;
+    border-right: 3px solid #94a3b8;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #334155;
+}
+
+.reason-box strong {
+    color: #0b3d91;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.rejection-reason {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    border-right: 3px solid #dc2626;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.15s;
+}
+
+.action-btn:hover { transform: translateY(-2px); }
+
+.approve-btn {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+    box-shadow: 0 3px 10px rgba(22,163,74,.3);
+}
+
+.reject-btn {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+    box-shadow: 0 3px 10px rgba(220,38,38,.3);
+}
+
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.loading, .empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: #64748b;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    font-size: 15px;
+}
+
+.empty-icon { font-size: 55px; margin-bottom: 15px; }
+
+.page-message {
+    padding: 14px 20px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    display: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.page-message.success {
+    background: #d4edda;
+    color: #155724;
+    display: block;
+    border-right: 4px solid #198754;
+}
+
+.page-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    display: block;
+    border-right: 4px solid #d92d20;
+}
+
+@media (max-width: 600px) {
+    .header { padding: 15px; }
+    .header h1 { font-size: 20px; }
+    .main-container { width: 96%; }
+    .leave-card { padding: 16px; }
+    .actions { flex-direction: column; }
+    .action-btn { width: 100%; }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <h1>📋 مراجعة الإجازات</h1>
+        <p>مراجعة طلبات الإجازة والموافقة عليها</p>
+    </div>
+    <button class="back-btn" onclick="window.location.href='index.html'">
+        ← الرئيسية
+    </button>
+</div>
+
+<div class="main-container">
+
+    <div id="pageMessage" class="page-message"></div>
+
+    <div class="stats-row">
+        <div class="stat-box pending">
+            <span class="num" id="pendingCount">0</span>
+            <span class="label">⏳ في الانتظار</span>
+        </div>
+        <div class="stat-box approved">
+            <span class="num" id="approvedCount">0</span>
+            <span class="label">✅ موافق عليها</span>
+        </div>
+        <div class="stat-box rejected">
+            <span class="num" id="rejectedCount">0</span>
+            <span class="label">❌ مرفوضة</span>
+        </div>
+    </div>
+
+    <div class="filter-tabs">
+        <button class="tab-btn active" onclick="filterLeaves('pending', this)">
+            ⏳ في الانتظار
+        </button>
+        <button class="tab-btn" onclick="filterLeaves('approved', this)">
+            ✅ موافق عليها
+        </button>
+        <button class="tab-btn" onclick="filterLeaves('rejected', this)">
+            ❌ مرفوضة
+        </button>
+        <button class="tab-btn" onclick="filterLeaves('all', this)">
+            📋 الكل
+        </button>
+    </div>
+
+    <div id="leavesContainer" class="leaves-list">
+        <div class="loading">⏳ جاري التحميل...</div>
+    </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL = "https://gzyybadyaunizdlvmcle.supabase.co";
+const SUPABASE_KEY = "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window.supabaseClient = db;
+
+let allLeaves = [];
+let currentFilter = "pending";
+let currentUser = null;
+
+
+function getCurrentUser() {
+    try {
+        const raw = sessionStorage.getItem("currentUser");
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch (e) {
+        return null;
+    }
+}
+
+
+function escapeHTML(value) {
+    if (value === null || value === undefined) return "";
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function showMessage(text, type) {
+    const el = document.getElementById("pageMessage");
+    el.innerText = text;
+    el.className = "page-message " + type;
+    setTimeout(() => {
+        el.className = "page-message";
+    }, 5000);
+}
+
+
+function formatDate(value) {
+    if (!value) return "-";
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return value;
+    return d.toLocaleDateString("ar-EG", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+}
+
+
+function getLeaveTypeIcon(type) {
+    const icons = {
+        "مرضي": "🤒",
+        "عرضة": "⚡",
+        "سنوي": "🌴"
+    };
+    return icons[type] || "🏖️";
+}
+
+
+function getInitial(name) {
+    const n = String(name || "").trim();
+    return n ? n.charAt(0).toUpperCase() : "👤";
+}
+
+
+async function loadLeaves() {
+
+    const container = document.getElementById("leavesContainer");
+
+    try {
+
+        const { data, error } = await db
+            .from("leaves")
+            .select("*")
+            .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        allLeaves = data || [];
+
+        updateStats();
+        renderLeaves();
+
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = `
+            <div class="empty" style="color:#b42318;">
+                ❌ فشل تحميل الطلبات: ${escapeHTML(error.message)}
+            </div>
+        `;
+    }
+}
+
+
+function updateStats() {
+
+    const pending = allLeaves.filter(l => l.status === "pending").length;
+    const approved = allLeaves.filter(l => l.status === "approved").length;
+    const rejected = allLeaves.filter(l => l.status === "rejected").length;
+
+    document.getElementById("pendingCount").textContent = pending;
+    document.getElementById("approvedCount").textContent = approved;
+    document.getElementById("rejectedCount").textContent = rejected;
+}
+
+
+function filterLeaves(status, btn) {
+
+    currentFilter = status;
+
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+
+    renderLeaves();
+}
+
+
+function renderLeaves() {
+
+    const container = document.getElementById("leavesContainer");
+
+    let list = allLeaves;
+
+    if (currentFilter !== "all") {
+        list = list.filter(l => l.status === currentFilter);
+    }
+
+    if (!list.length) {
+        container.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">📭</div>
+                <div>لا توجد طلبات في هذه الفئة</div>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = list.map(renderLeaveCard).join("");
+}
+
+
+function renderLeaveCard(leave) {
+
+    const statusClass = leave.status || "pending";
+    const typeIcon = getLeaveTypeIcon(leave.leave_type);
+
+    let statusBadge = "";
+
+    if (leave.status === "approved") {
+        statusBadge = `<span class="status-badge approved">✅ موافق عليها</span>`;
+    } else if (leave.status === "rejected") {
+        statusBadge = `<span class="status-badge rejected">❌ مرفوض</span>`;
+    } else {
+        statusBadge = `<span class="status-badge pending">⏳ في الانتظار</span>`;
+    }
+
+    let actionsHTML = "";
+
+    if (leave.status === "pending") {
+        actionsHTML = `
+            <div class="actions">
+                <button class="action-btn approve-btn" onclick="approveLeave(${leave.id})">
+                    ✅ الموافقة
+                </button>
+                <button class="action-btn reject-btn" onclick="rejectLeave(${leave.id})">
+                    ❌ الرفض
+                </button>
+            </div>
+        `;
+    }
+
+    const rejectionHTML = (leave.status === "rejected" && leave.rejection_reason)
+        ? `<div class="rejection-reason">
+             <strong>📝 سبب الرفض:</strong> ${escapeHTML(leave.rejection_reason)}
+           </div>`
+        : "";
+
+    return `
+        <div class="leave-card ${statusClass}">
+
+            <div class="leave-header">
+
+                <div class="employee-info">
+                    <div class="emp-avatar">
+                        ${escapeHTML(getInitial(leave.employee_name))}
+                    </div>
+                    <div>
+                        <h3 class="emp-name">${escapeHTML(leave.employee_name || leave.username)}</h3>
+                        <div class="emp-username">@${escapeHTML(leave.username)}</div>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <span class="type-badge">${typeIcon} ${escapeHTML(leave.leave_type)}</span>
+                    ${statusBadge}
+                </div>
+
+            </div>
+
+            <div class="leave-info-grid">
+
+                <div class="info-item">
+                    <div class="info-label">📅 تاريخ البداية</div>
+                    <div class="info-value">${formatDate(leave.leave_date)}</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">📆 عدد الأيام</div>
+                    <div class="info-value">${leave.leave_days} يوم</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">🕐 تاريخ الطلب</div>
+                    <div class="info-value">${formatDate(leave.created_at)}</div>
+                </div>
+
+            </div>
+
+            ${leave.reason ? `
+                <div class="reason-box">
+                    <strong>📝 سبب الإجازة:</strong>
+                    ${escapeHTML(leave.reason)}
+                </div>
+            ` : ""}
+
+            ${rejectionHTML}
+
+            ${actionsHTML}
+
+        </div>
+    `;
+}
+
+
+async function approveLeave(leaveId) {
+
+    const leave = allLeaves.find(l => l.id === leaveId);
+
+    if (!leave) {
+        showMessage("❌ لم يتم العثور على الطلب", "error");
+        return;
+    }
+
+    const confirmed = confirm(
+        `هل تريد الموافقة على إجازة ${leave.employee_name} (${leave.leave_type} - ${leave.leave_days} يوم)؟`
+    );
+
+    if (!confirmed) return;
+
+    try {
+
+        const { error } = await db
+            .from("leaves")
+            .update({
+                status: "approved",
+                reviewed_by: currentUser.name || currentUser.username,
+                review_date: new Date().toISOString()
+            })
+            .eq("id", leaveId);
+
+        if (error) throw error;
+
+        showMessage("✅ تمت الموافقة على الإجازة", "success");
+
+        try {
+            if (window.NERIC_Notify) {
+                window.NERIC_Notify.sendPush(
+                    "✅ تمت الموافقة على إجازتك",
+                    `تمت الموافقة على إجازتك (${leave.leave_type} - ${leave.leave_days} يوم) من ${formatDate(leave.leave_date)}`,
+                    {
+                        type: "leave_approved",
+                        leave_id: String(leaveId)
+                    },
+                    [leave.username]
+                ).catch(e => console.error("Push error:", e));
+            }
+        } catch (e) {
+            console.error("Notify error:", e);
+        }
+
+        await loadLeaves();
+
+    } catch (error) {
+        console.error(error);
+        showMessage("❌ فشل: " + error.message, "error");
+    }
+}
+
+
+async function rejectLeave(leaveId) {
+
+    const leave = allLeaves.find(l => l.id === leaveId);
+
+    if (!leave) {
+        showMessage("❌ لم يتم العثور على الطلب", "error");
+        return;
+    }
+
+    const reason = prompt(
+        `سبب رفض إجازة ${leave.employee_name}:`,
+        ""
+    );
+
+    if (reason === null) return;
+
+    const cleanReason = reason.trim() || "لم يتم ذكر سبب";
+
+    try {
+
+        const { error } = await db
+            .from("leaves")
+            .update({
+                status: "rejected",
+                rejection_reason: cleanReason,
+                reviewed_by: currentUser.name || currentUser.username,
+                review_date: new Date().toISOString()
+            })
+            .eq("id", leaveId);
+
+        if (error) throw error;
+
+        showMessage("❌ تم رفض الإجازة", "success");
+
+        try {
+            if (window.NERIC_Notify) {
+                window.NERIC_Notify.sendPush(
+                    "❌ تم رفض طلب الإجازة",
+                    `تم رفض إجازتك (${leave.leave_type}) - السبب: ${cleanReason}`,
+                    {
+                        type: "leave_rejected",
+                        leave_id: String(leaveId)
+                    },
+                    [leave.username]
+                ).catch(e => console.error("Push error:", e));
+            }
+        } catch (e) {
+            console.error("Notify error:", e);
+        }
+
+        await loadLeaves();
+
+    } catch (error) {
+        console.error(error);
+        showMessage("❌ فشل: " + error.message, "error");
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", async function () {
+
+    currentUser = getCurrentUser();
+
+    if (!currentUser) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    if (currentUser.role !== "admin") {
+        alert("❌ هذه الصفحة متاحة للمدير فقط");
+        window.location.href = "index.html";
+        return;
+    }
+
+    await loadLeaves();
+
+    setInterval(loadLeaves, 15000);
+
+});
+
+</script>
+
+<!-- 🔔 ملف الإشعارات -->
+<script src="notifications-helper.js"></script>
+
+</body>
+
+</html>
