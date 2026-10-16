@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>العدة المستلمة - NERIC</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+body {
+    margin: 0;
+    background: #f1f5f9;
+    font-family: Arial, Tahoma, sans-serif;
+    color: #1f2937;
+}
+
+.header {
+    background: rgb(52, 67, 84);
+    color: white;
+    padding: 20px 30px;
+    border-bottom: 3px solid #7c3aed;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.header h1 { margin: 0 0 6px 0; font-size: 26px; }
+.header p { margin: 0; color: #d1d5db; font-size: 14px; }
+
+.home-btn {
+    border: none;
+    background: #198754;
+    color: white;
+    padding: 11px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.main-container {
+    width: min(1100px, 94%);
+    margin: 25px auto 40px;
+}
+
+/* =========================================
+   Form (للمدير بس)
+========================================= */
+
+.add-tool-card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.06);
+    border-right: 5px solid #7c3aed;
+}
+
+.add-tool-card h2 {
+    margin: 0 0 20px 0;
+    color: #5b21b6;
+    font-size: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+    padding: 13px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fafbfc;
+    outline: none;
+    transition: 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus {
+    border-color: #7c3aed;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(124,58,237,.1);
+}
+
+.form-grid textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.file-input-wrapper {
+    grid-column: 1 / -1;
+}
+
+.file-input-wrapper label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #5b21b6;
+    font-size: 14px;
+}
+
+.file-input-wrapper input[type="file"] {
+    padding: 10px;
+    border: 2px dashed #7c3aed;
+    background: #faf5ff;
+    cursor: pointer;
+}
+
+.add-btn {
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+    color: white;
+    border: none;
+    padding: 14px 35px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    font-family: inherit;
+    box-shadow: 0 3px 10px rgba(124,58,237,.3);
+    transition: all 0.2s;
+}
+
+.add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(124,58,237,.4);
+}
+
+.add-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =========================================
+   Tools Grid
+========================================= */
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.tool-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0,0,0,.08);
+    transition: transform 0.15s;
+    border: 1px solid #e5e7eb;
+}
+
+.tool-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,.12);
+}
+
+.tool-image {
+    width: 100%;
+    height: 200px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 3px solid #7c3aed;
+    position: relative;
+}
+
+.tool-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tool-image .placeholder {
+    font-size: 60px;
+    color: #cbd5e1;
+}
+
+.tool-body {
+    padding: 18px;
+}
+
+.tool-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1e293b;
+    margin: 0 0 12px 0;
+}
+
+.tool-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.tool-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px dashed #f1f5f9;
+}
+
+.tool-info-row:last-child {
+    border-bottom: none;
+}
+
+.tool-info-row .label {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.tool-info-row .value {
+    color: #1e293b;
+    font-weight: 700;
+    direction: ltr;
+    text-align: left;
+    word-break: break-word;
+}
+
+.tool-info-row .value-ar {
+    direction: rtl;
+}
+
+.part-badge {
+    background: #eff6ff;
+    color: #0b3d91;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+.delete-tool-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 9px;
+    border: none;
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    transition: 0.15s;
+}
+
+.delete-tool-btn:hover {
+    background: #dc2626;
+    color: white;
+}
+
+/* =========================================
+   Empty / Loading / Error
+========================================= */
+
+.empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #64748b;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    font-size: 16px;
+}
+
+.empty-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    color: #64748b;
+    font-size: 16px;
+    background: white;
+    border-radius: 16px;
+}
+
+.error-box {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #b42318;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    line-height: 1.7;
+    font-weight: bold;
+}
+
+.page-message {
+    padding: 14px 20px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    display: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.page-message.success {
+    background: #d4edda;
+    color: #155724;
+    display: block;
+    border-right: 4px solid #198754;
+}
+
+.page-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    display: block;
+    border-right: 4px solid #d92d20;
+}
+
+@media (max-width: 600px) {
+    .header { padding: 15px; }
+    .header h1 { font-size: 20px; }
+    .main-container { width: 96%; }
+    .add-tool-card { padding: 18px; }
+    .tools-grid { grid-template-columns: 1fr; }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <h1 id="pageTitle">🔧 العدة المستلمة</h1>
+        <p id="pageSubtitle">جاري التحميل...</p>
+    </div>
+    <button class="home-btn" onclick="window.location.href='employees.html'">
+        ← رجوع
+    </button>
+</div>
+
+<div class="main-container">
+
+    <div id="pageMessage" class="page-message"></div>
+
+    <!-- ✏️ فورم إضافة عدة (للمدير بس) -->
+    <div class="add-tool-card" id="addToolCard" style="display:none;">
+        <h2>➕ إضافة عدة جديدة</h2>
+
+        <div class="form-grid">
+            <input type="text" id="toolName" placeholder="اسم العدة *">
+            <input type="text" id="toolPartNumber" placeholder="Part Number">
+            <input type="number" id="toolQuantity" placeholder="الكمية" min="1" value="1">
+            <input type="text" id="toolUnit" placeholder="الوحدة (قطعة / متر / كجم)">
+
+            <div class="file-input-wrapper">
+                <label>📷 صورة العدة (اختياري)</label>
+                <input type="file" id="toolImage" accept="image/*">
+            </div>
+
+            <textarea id="toolNotes" placeholder="ملاحظات (اختياري)" style="grid-column: 1 / -1;"></textarea>
+        </div>
+
+        <button class="add-btn" id="addToolBtn" onclick="addTool()">
+            💾 حفظ العدة
+        </button>
+    </div>
+
+    <!-- 📋 قايمة العدة -->
+    <div id="toolsContainer">
+        <div class="loading">⏳ جاري التحميل...</div>
+    </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL = "https://gzyybadyaunizdlvmcle.supabase.co";
+const SUPABASE_KEY = "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+window.supabaseClient = db;
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let currentUser = null;
+let isAdmin = false;
+let viewingUsername = "";
+let viewingName = "";
+let toolsList = [];
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function getCurrentUser() {
+    try {
+        const raw = sessionStorage.getItem("currentUser");
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch (e) {
+        return null;
+    }
+}
+
+
+function escapeHTML(value) {
+    if (value === null || value === undefined) return "";
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function showMessage(text, type) {
+    const el = document.getElementById("pageMessage");
+    el.innerText = text;
+    el.className = "page-message " + type;
+    setTimeout(() => {
+        el.className = "page-message";
+    }, 5000);
+}
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+async function init() {
+
+    currentUser = getCurrentUser();
+
+    if (!currentUser) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    isAdmin = currentUser.role === "admin";
+
+    // نجيب اسم الفني اللي عايزين نشوف عدته
+    viewingUsername = localStorage.getItem("viewingToolsFor") || "";
+
+    // لو مفيش، والفني هو نفسه، نشوف عدته
+    if (!viewingUsername) {
+        viewingUsername = currentUser.username;
+    }
+
+    // لو الفني حد تاني مش مسموح
+    if (!isAdmin && viewingUsername !== currentUser.username) {
+        alert("❌ ليس لديك صلاحية لعرض عدة فني آخر");
+        window.location.href = "employees.html";
+        return;
+    }
+
+    // نجيب اسم الفني من جدول employees
+    try {
+        const { data } = await db
+            .from("employees")
+            .select("name")
+            .eq("username", viewingUsername)
+            .maybeSingle();
+
+        if (data && data.name) {
+            viewingName = data.name;
+        } else {
+            viewingName = viewingUsername;
+        }
+
+    } catch (e) {
+        viewingName = viewingUsername;
+    }
+
+    // تحديث العنوان
+    document.getElementById("pageTitle").innerText =
+        "🔧 العدة المستلمة - " + viewingName;
+
+    document.getElementById("pageSubtitle").innerText =
+        isAdmin
+            ? "إدارة العدة المستلمة لهذا الفني"
+            : "قائمة العدة المستلمة لك";
+
+    // إظهار الفورم للمدير بس
+    if (isAdmin) {
+        document.getElementById("addToolCard").style.display = "block";
+    }
+
+    // تحميل العدة
+    await loadTools();
+}
+
+
+/* =========================================================
+   LOAD TOOLS
+========================================================= */
+
+async function loadTools() {
+
+    const container = document.getElementById("toolsContainer");
+
+    try {
+
+        const { data, error } = await db
+            .from("employee_tools")
+            .select("*")
+            .eq("employee_username", viewingUsername)
+            .order("id", { ascending: false });
+
+        if (error) {
+            console.error("Load tools error:", error);
+            container.innerHTML = `
+                <div class="error-box">
+                    ❌ فشل تحميل العدة<br>
+                    <small>${escapeHTML(error.message)}</small>
+                </div>
+            `;
+            return;
+        }
+
+        toolsList = data || [];
+
+        renderTools();
+
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = `
+            <div class="error-box">
+                ❌ حصل خطأ أثناء التحميل
+            </div>
+        `;
+    }
+}
+
+
+/* =========================================================
+   RENDER TOOLS
+========================================================= */
+
+function renderTools() {
+
+    const container = document.getElementById("toolsContainer");
+
+    if (!toolsList.length) {
+        container.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">🔧</div>
+                <div>لا توجد عدة مستلمة حتى الآن</div>
+                ${
+                    isAdmin
+                        ? `<div style="margin-top:10px;font-size:14px;color:#94a3b8;">استخدم الفورم فوق لإضافة عدة</div>`
+                        : ""
+                }
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="tools-grid">
+            ${toolsList.map(renderToolCard).join("")}
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   RENDER ONE TOOL
+========================================================= */
+
+function renderToolCard(tool) {
+
+    const imageHTML = tool.image_url
+        ? `<img src="${escapeHTML(tool.image_url)}" alt="${escapeHTML(tool.tool_name)}" onerror="this.parentElement.innerHTML='<div class=\\'placeholder\\'>🔧</div>'">`
+        : `<div class="placeholder">🔧</div>`;
+
+    const partNumberHTML = tool.part_number
+        ? `<span class="part-badge">${escapeHTML(tool.part_number)}</span>`
+        : "-";
+
+    const deleteBtn = isAdmin
+        ? `<button class="delete-tool-btn" onclick="deleteTool(${tool.id})">🗑️ حذف</button>`
+        : "";
+
+    return `
+        <div class="tool-card">
+
+            <div class="tool-image">
+                ${imageHTML}
+            </div>
+
+            <div class="tool-body">
+
+                <h3 class="tool-name">${escapeHTML(tool.tool_name)}</h3>
+
+                <div class="tool-info">
+
+                    <div class="tool-info-row">
+                        <span class="label">🔢 Part Number</span>
+                        <span class="value">${partNumberHTML}</span>
+                    </div>
+
+                    <div class="tool-info-row">
+                        <span class="label">📦 الكمية</span>
+                        <span class="value">${Number(tool.quantity) || 0}</span>
+                    </div>
+
+                    <div class="tool-info-row">
+                        <span class="label">📏 الوحدة</span>
+                        <span class="value value-ar">${escapeHTML(tool.unit || "-")}</span>
+                    </div>
+
+                    ${
+                        tool.notes
+                            ? `
+                                <div class="tool-info-row">
+                                    <span class="label">📝 ملاحظات</span>
+                                    <span class="value value-ar">${escapeHTML(tool.notes)}</span>
+                                </div>
+                            `
+                            : ""
+                    }
+
+                </div>
+
+                ${deleteBtn}
+
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   ADD TOOL
+========================================================= */
+
+async function addTool() {
+
+    if (!isAdmin) {
+        alert("❌ الإضافة متاحة للمدير فقط");
+        return;
+    }
+
+    const toolName = document.getElementById("toolName").value.trim();
+    const partNumber = document.getElementById("toolPartNumber").value.trim();
+    const quantity = document.getElementById("toolQuantity").value.trim();
+    const unit = document.getElementById("toolUnit").value.trim();
+    const notes = document.getElementById("toolNotes").value.trim();
+    const fileInput = document.getElementById("toolImage");
+    const btn = document.getElementById("addToolBtn");
+
+    if (!toolName) {
+        showMessage("❌ من فضلك اكتب اسم العدة", "error");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "⏳ جاري الحفظ...";
+
+    let imageUrl = "";
+
+    try {
+
+        /* ============================
+           1. رفع الصورة (لو فيه)
+        ============================ */
+
+        if (fileInput.files && fileInput.files[0]) {
+
+            const file = fileInput.files[0];
+
+            // التحقق من الحجم (5 ميجا كحد أقصى)
+            if (file.size > 5 * 1024 * 1024) {
+                showMessage("❌ حجم الصورة كبير جدًا (الحد 5 ميجا)", "error");
+                btn.disabled = false;
+                btn.innerText = "💾 حفظ العدة";
+                return;
+            }
+
+            // اسم فريد للملف
+            const ext = file.name.split(".").pop();
+            const fileName = `${viewingUsername}_${Date.now()}.${ext}`;
+
+            const { error: uploadError } = await db.storage
+                .from("tool-images")
+                .upload(fileName, file, {
+                    cacheControl: "3600",
+                    upsert: false
+                });
+
+            if (uploadError) {
+                console.error("Upload error:", uploadError);
+                showMessage("❌ فشل رفع الصورة: " + uploadError.message, "error");
+                btn.disabled = false;
+                btn.innerText = "💾 حفظ العدة";
+                return;
+            }
+
+            // الحصول على الرابط العام
+            const { data: urlData } = db.storage
+                .from("tool-images")
+                .getPublicUrl(fileName);
+
+            imageUrl = urlData?.publicUrl || "";
+        }
+
+        /* ============================
+           2. إضافة السجل في الجدول
+        ============================ */
+
+        const payload = {
+            employee_username: viewingUsername,
+            tool_name: toolName,
+            part_number: partNumber || null,
+            quantity: Number(quantity) || 1,
+            unit: unit || null,
+            image_url: imageUrl || null,
+            notes: notes || null,
+            created_by: currentUser.name || currentUser.username
+        };
+
+        const { error: insertError } = await db
+            .from("employee_tools")
+            .insert(payload);
+
+        if (insertError) {
+            console.error("Insert error:", insertError);
+            showMessage("❌ فشل إضافة العدة: " + insertError.message, "error");
+            btn.disabled = false;
+            btn.innerText = "💾 حفظ العدة";
+            return;
+        }
+
+        showMessage("✅ تم إضافة العدة بنجاح", "success");
+
+        // مسح الفورم
+        document.getElementById("toolName").value = "";
+        document.getElementById("toolPartNumber").value = "";
+        document.getElementById("toolQuantity").value = "1";
+        document.getElementById("toolUnit").value = "";
+        document.getElementById("toolNotes").value = "";
+        fileInput.value = "";
+
+        await loadTools();
+
+    } catch (error) {
+        console.error(error);
+        showMessage("❌ حصل خطأ: " + error.message, "error");
+    }
+
+    btn.disabled = false;
+    btn.innerText = "💾 حفظ العدة";
+}
+
+
+/* =========================================================
+   DELETE TOOL
+========================================================= */
+
+async function deleteTool(toolId) {
+
+    if (!isAdmin) {
+        alert("❌ الحذف متاح للمدير فقط");
+        return;
+    }
+
+    if (!confirm("هل أنت متأكد من حذف هذه العدة؟")) return;
+
+    try {
+
+        // نجيب بيانات العدة عشان نمسح الصورة
+        const { data: tool } = await db
+            .from("employee_tools")
+            .select("image_url")
+            .eq("id", toolId)
+            .single();
+
+        // نمسح الصورة من Storage
+        if (tool && tool.image_url) {
+
+            const parts = tool.image_url.split("/tool-images/");
+
+            if (parts.length > 1) {
+                const filePath = parts[1];
+
+                await db.storage
+                    .from("tool-images")
+                    .remove([filePath]);
+            }
+        }
+
+        // نمسح السجل من الجدول
+        const { error } = await db
+            .from("employee_tools")
+            .delete()
+            .eq("id", toolId);
+
+        if (error) {
+            console.error("Delete error:", error);
+            showMessage("❌ فشل الحذف: " + error.message, "error");
+            return;
+        }
+
+        showMessage("✅ تم حذف العدة", "success");
+
+        await loadTools();
+
+    } catch (error) {
+        console.error(error);
+        showMessage("❌ حصل خطأ أثناء الحذف", "error");
+    }
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", init);
+
+</script>
+
+</body>
+
+</html>

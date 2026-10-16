@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        /* ترتيب كروت لوحة التحكم */
-
         .stats {
             display: grid !important;
             grid-template-columns: repeat(5, minmax(150px, 1fr)) !important;
@@ -26,49 +24,25 @@
             margin: 0 !important;
         }
 
-        .stats .stat-card:nth-child(1) {
-            order: 1;
-        }
-
-        .stats .stat-card:nth-child(3) {
-            order: 2;
-        }
-
-        .stats .stat-card:nth-child(2) {
-            order: 3;
-        }
-
-        .stats .stat-card:nth-child(4) {
-            order: 4;
-        }
-
-        .stats .stat-card:nth-child(5) {
-            order: 5;
-        }
+        .stats .stat-card:nth-child(1) { order: 1; }
+        .stats .stat-card:nth-child(3) { order: 2; }
+        .stats .stat-card:nth-child(2) { order: 3; }
+        .stats .stat-card:nth-child(4) { order: 4; }
+        .stats .stat-card:nth-child(5) { order: 5; }
 
         @media (max-width: 1100px) {
-            .stats {
-                grid-template-columns: repeat(3, minmax(150px, 1fr)) !important;
-            }
+            .stats { grid-template-columns: repeat(3, minmax(150px, 1fr)) !important; }
         }
 
         @media (max-width: 900px) {
-            .stats {
-                grid-template-columns: repeat(2, minmax(150px, 1fr)) !important;
-            }
+            .stats { grid-template-columns: repeat(2, minmax(150px, 1fr)) !important; }
         }
 
         @media (max-width: 520px) {
-            .stats {
-                grid-template-columns: 1fr !important;
-            }
+            .stats { grid-template-columns: 1fr !important; }
         }
 
-        /* عداد الرسائل غير المقروءة */
-
-        #chatMenu {
-            position: relative;
-        }
+        #chatMenu { position: relative; }
 
         .chat-menu-icon {
             position: relative;
@@ -101,17 +75,11 @@
             box-shadow: 0 2px 5px rgba(0,0,0,.18);
         }
 
-        /* زر مسار العربية */
-
         #productionRouteMenu span:first-child {
             background: rgba(11,131,246,0.12);
         }
 
-        #productionRouteMenu strong {
-            font-weight: 700;
-        }
-
-        /* 🔔 مربع الإشعارات جنب لوحة التحكم */
+        #productionRouteMenu strong { font-weight: 700; }
 
         .header-title-wrap {
             display: flex;
@@ -162,46 +130,21 @@
             border-color: #f59e0b;
         }
 
-        /* 👤 زر الملف الشخصي */
-
-        .profile-btn {
-            background: linear-gradient(135deg, #0b3d91, #092e6e);
-            color: white;
-            padding: 9px 16px;
-            border-radius: 30px;
+        .user-info {
             cursor: pointer;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            font-size: 13px;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 3px 10px rgba(11, 61, 145, 0.3);
-            transition: all 0.2s;
-            border: 2px solid #092e6e;
-            user-select: none;
-            white-space: nowrap;
+            transition: transform 0.15s, box-shadow 0.15s;
+            border-radius: 12px;
+            padding: 6px 12px;
         }
 
-        .profile-btn:hover {
+        .user-info:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 14px rgba(11, 61, 145, 0.4);
+            background: rgba(11, 61, 145, 0.05);
         }
 
         @media (max-width: 700px) {
-            .notif-status-btn {
-                padding: 7px 12px;
-                font-size: 12px;
-            }
-
-            .profile-btn {
-                padding: 7px 12px;
-                font-size: 12px;
-            }
-
-            .header-title-wrap {
-                gap: 10px;
-            }
+            .notif-status-btn { padding: 7px 12px; font-size: 12px; }
+            .header-title-wrap { gap: 10px; }
         }
     </style>
 </head>
@@ -210,111 +153,47 @@
 
 <div class="app">
 
-    <!-- الشريط الجانبي -->
-
     <aside class="sidebar">
 
         <div class="logo-area">
             <div class="logo-icon">🚆</div>
-
             <h2>نظام إدارة بيانات العمل</h2>
-
             <p>WORK DATA MANAGEMENT SYSTEM</p>
         </div>
 
         <nav class="sidebar-menu">
 
-            <!-- مسار العربية -->
-
-            <button
-                id="productionRouteMenu"
-                class="menu-item"
-                onclick="openProductionRoute()">
-
+            <button id="productionRouteMenu" class="menu-item" onclick="openProductionRoute()">
                 <span>🚆</span>
                 <strong>مسار العربية</strong>
             </button>
 
-            <!-- سجل البيانات -->
-
-            <button
-                class="menu-item"
-                onclick="openSection('search')">
-
+            <button class="menu-item" onclick="openSection('search')">
                 <span>📋</span>
                 <strong>سجل البيانات</strong>
             </button>
 
-            <!-- الإشعارات -->
-
-            <button
-                id="notificationsMenu"
-                class="menu-item"
-                onclick="openNotificationsPage()">
-
+            <button id="notificationsMenu" class="menu-item" onclick="openNotificationsPage()">
                 <span>🔔</span>
                 <strong>الإشعارات</strong>
-
-                <span
-                    id="notificationsCountMenu"
-                    style="
-                        display:none;
-                        background:#d92d20;
-                        color:white;
-                        border-radius:20px;
-                        min-width:28px;
-                        text-align:center;
-                        padding:3px 8px;
-                        font-size:12px;
-                        font-weight:bold;
-                        margin-right:auto;
-                    ">0</span>
+                <span id="notificationsCountMenu" style="display:none;background:#d92d20;color:white;border-radius:20px;min-width:28px;text-align:center;padding:3px 8px;font-size:12px;font-weight:bold;margin-right:auto;">0</span>
             </button>
 
-            <!-- الدردشة -->
-
-            <button
-                id="chatMenu"
-                class="menu-item"
-                onclick="openChat()">
-
+            <button id="chatMenu" class="menu-item" onclick="openChat()">
                 <span class="chat-menu-icon">
                     💬
                     <span id="chatUnreadCount">0</span>
                 </span>
-
                 <strong>الدردشة</strong>
             </button>
 
-            <!-- طلبات الحذف -->
-
-            <button
-                id="deleteRequestsMenu"
-                class="menu-item"
-                onclick="openSection('deleteRequests')">
-
+            <button id="deleteRequestsMenu" class="menu-item" onclick="openSection('deleteRequests')">
                 <span>🗑️</span>
                 <strong>طلبات الحذف</strong>
-
-                <span
-                    id="deleteRequestsCount"
-                    style="
-                        background:#d92d20;
-                        color:white;
-                        border-radius:20px;
-                        padding:3px 9px;
-                        font-size:12px;
-                        font-weight:bold;
-                        margin-right:auto;
-                    ">0</span>
+                <span id="deleteRequestsCount" style="background:#d92d20;color:white;border-radius:20px;padding:3px 9px;font-size:12px;font-weight:bold;margin-right:auto;">0</span>
             </button>
 
-            <!-- تسجيل الخروج -->
-
-            <button
-                class="menu-item logout-menu"
-                onclick="logout()">
-
+            <button class="menu-item logout-menu" onclick="logout()">
                 <span>🚪</span>
                 <strong>تسجيل الخروج</strong>
             </button>
@@ -327,147 +206,80 @@
 
     </aside>
 
-    <!-- المحتوى الرئيسي -->
-
     <div class="main-content">
-
-        <!-- الهيدر -->
 
         <header class="top-header">
 
             <div class="header-title-wrap">
-
                 <div>
                     <h1>لوحة التحكم</h1>
                     <p>الرئيسية / لوحة التحكم</p>
                 </div>
 
-                <!-- 🔔 مربع الإشعارات جنب العنوان -->
-
-                <div
-                    id="notifStatusBtn"
-                    class="notif-status-btn"
-                    onclick="handleNotifClick()"
-                    title="اضغط لتفعيل الإشعارات">
-
+                <div id="notifStatusBtn" class="notif-status-btn" onclick="handleNotifClick()" title="اضغط لتفعيل الإشعارات">
                     <span id="notifStatusIcon">🔔</span>
                     <span id="notifStatusText">تفعيل الإشعارات</span>
-
                 </div>
-
             </div>
 
-            <div class="user-info">
-
+            <div class="user-info" onclick="openEmployeesPage()" title="اضغط لعرض ملفك الشخصي">
                 <div class="user-icon">👤</div>
-
                 <div>
                     <strong id="currentUserName">المستخدم</strong>
                     <small id="currentUserRole">Worker</small>
                 </div>
-
-                <!-- 👤 زر الملف الشخصي -->
-                <button
-                    class="profile-btn"
-                    onclick="openEmployeesPage()"
-                    title="عرض بيانات الفريق">
-                    👥 الملف الشخصي
-                </button>
-
             </div>
 
         </header>
 
-        <!-- الإحصائيات -->
-
         <section class="stats">
 
-            <!-- مكتملة -->
-
             <div class="stat-card">
-
                 <div class="stat-icon green">✓</div>
-
                 <div>
                     <span>مكتملة</span>
                     <strong id="completedRecords">0</strong>
                     <small>إدخال</small>
                 </div>
-
             </div>
 
-            <!-- Priority Item -->
-
-            <div
-                class="stat-card priority-item-card"
-                onclick="openPriorityPage()"
-                style="cursor:pointer;">
-
+            <div class="stat-card priority-item-card" onclick="openPriorityPage()" style="cursor:pointer;">
                 <div class="stat-icon orange">⚡</div>
-
                 <div>
                     <span>Priority Item</span>
                     <strong>📢</strong>
                     <small>إرسال تنبيه للفريق</small>
                 </div>
-
             </div>
 
-            <!-- مشاكل العربيات -->
-
-            <div
-                class="stat-card"
-                onclick="openProblemsPage()"
-                style="cursor:pointer;">
-
+            <div class="stat-card" onclick="openProblemsPage()" style="cursor:pointer;">
                 <div class="stat-icon red">⚠️</div>
-
                 <div>
                     <span>مشاكل العربيات</span>
                     <strong id="problemRecords">0</strong>
                     <small>مشكلة</small>
                 </div>
-
             </div>
 
-            <!-- تسجيل الحضور -->
-
-            <div
-                class="stat-card"
-                onclick="handleAttendanceLogin()"
-                style="cursor:pointer;">
-
+            <div class="stat-card" onclick="handleAttendanceLogin()" style="cursor:pointer;">
                 <div class="stat-icon purple">🔐</div>
-
                 <div>
                     <span>تسجيل الحضور</span>
                     <strong>👤</strong>
                     <small>تسجيل حضور</small>
                 </div>
-
             </div>
 
-            <!-- صفحة المستهلكات الجديدة -->
-
-            <div
-                id="consumablesCard"
-                class="stat-card"
-                onclick="openConsumablesPage()"
-                style="cursor:pointer;">
-
+            <div id="consumablesCard" class="stat-card" onclick="openConsumablesPage()" style="cursor:pointer;">
                 <div class="stat-icon purple">📦</div>
-
                 <div>
                     <span>المستهلكات</span>
                     <strong>📋</strong>
                     <small>إدارة المستهلكات</small>
                 </div>
-
             </div>
 
         </section>
-
-        <!-- الأقسام -->
 
         <section class="section-area">
 
@@ -478,65 +290,35 @@
 
             <div class="sections">
 
-                <!-- Wiring -->
-
-                <button
-                    id="section-wiring"
-                    class="section-card"
-                    onclick="openSection('wiring')">
-
+                <button id="section-wiring" class="section-card" onclick="openSection('wiring')">
                     <div class="department-icon wiring-icon">🔌</div>
                     <strong>قسم Wiring</strong>
                     <small>تسجيل أعمال Wiring</small>
                     <span class="enter-btn">دخول</span>
                 </button>
 
-                <!-- LT -->
-
-                <button
-                    id="section-lt"
-                    class="section-card"
-                    onclick="openSection('lt')">
-
+                <button id="section-lt" class="section-card" onclick="openSection('lt')">
                     <div class="department-icon lt-icon">⚡</div>
                     <strong>قسم LT</strong>
                     <small>تسجيل أعمال LT</small>
                     <span class="enter-btn">دخول</span>
                 </button>
 
-                <!-- HT -->
-
-                <button
-                    id="section-ht"
-                    class="section-card"
-                    onclick="openSection('ht')">
-
+                <button id="section-ht" class="section-card" onclick="openSection('ht')">
                     <div class="department-icon ht-icon">⚡</div>
                     <strong>قسم HT</strong>
                     <small>تسجيل أعمال HT</small>
                     <span class="enter-btn">دخول</span>
                 </button>
 
-                <!-- Equipment -->
-
-                <button
-                    id="section-installation"
-                    class="section-card"
-                    onclick="openSection('installation')">
-
+                <button id="section-installation" class="section-card" onclick="openSection('installation')">
                     <div class="department-icon installation-icon">🔧</div>
                     <strong>قسم Equipment</strong>
                     <small>تسجيل أعمال Equipment</small>
                     <span class="enter-btn">دخول</span>
                 </button>
 
-                <!-- Final -->
-
-                <button
-                    id="section-final"
-                    class="section-card"
-                    onclick="openSection('final')">
-
+                <button id="section-final" class="section-card" onclick="openSection('final')">
                     <div class="department-icon final-icon">✓</div>
                     <strong>Final</strong>
                     <small>تسجيل اعمال Final</small>
@@ -547,113 +329,60 @@
 
         </section>
 
-        <!-- البحث السريع -->
-
         <section class="quick-search">
 
             <div class="search-content">
-
                 <div class="search-icon">🔎</div>
-
                 <div class="search-text">
                     <h2>البحث السريع</h2>
                     <p>ابحث عن أي سيارة باستخدام رقم العربية</p>
                 </div>
-
             </div>
 
             <div class="search-box">
-
-                <input
-                    type="text"
-                    id="homeSearchNumber"
-                    placeholder="اكتب رقم العربية هنا...">
-
+                <input type="text" id="homeSearchNumber" placeholder="اكتب رقم العربية هنا...">
                 <button onclick="homeSearch()">🔍 بحث</button>
-
             </div>
 
         </section>
 
-        <!-- الفوتر -->
-
         <footer class="main-footer">
-
             <span>نسخة 1.0.0</span>
             <span id="currentDate">2026</span>
             <span id="currentTime">--</span>
-
         </footer>
 
     </div>
 
 </div>
 
-<!-- مكتبة Supabase -->
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- السكريبت الرئيسي -->
 
 <script src="script.js"></script>
 
 <script>
-    // فتح صفحة مسار العربية
-
     function openProductionRoute() {
-        const user = typeof getCurrentUser === "function"
-            ? getCurrentUser()
-            : null;
-
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
-
+        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+        if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "route.html";
     }
 
-    // 👥 فتح صفحة بيانات الفريق
-
     function openEmployeesPage() {
-        const user = typeof getCurrentUser === "function"
-            ? getCurrentUser()
-            : null;
-
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
-
+        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+        if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "employees.html";
     }
 
-    // فتح صفحة المستهلكات الجديدة
-
     function openConsumablesPage() {
-        const user = typeof getCurrentUser === "function"
-            ? getCurrentUser()
-            : null;
-
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
-
+        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+        if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "consumables.html";
     }
 
-    // تسجيل الحضور
-
     async function handleAttendanceLogin() {
-        const user = typeof getCurrentUser === "function"
-            ? getCurrentUser()
-            : null;
+        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
 
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
+        if (!user) { window.location.href = "login.html"; return; }
 
         if (String(user.role || "").toLowerCase() === "admin") {
             window.location.href = "attendance.html";
@@ -666,12 +395,8 @@
                 return;
             }
 
-            const username =
-                user.username || user.userName || user.name || "";
-
-            const fullName =
-                user.full_name || user.fullName || user.name || username;
-
+            const username = user.username || user.userName || user.name || "";
+            const fullName = user.full_name || user.fullName || user.name || username;
             const role = String(user.role || "").toLowerCase();
 
             if (!username) {
@@ -726,34 +451,17 @@
         }
     }
 
-    // فتح الدردشة
-
     function openChat() {
         const user = getCurrentUser();
-
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
-
+        if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "chat.html";
     }
 
-    // فتح Priority Item
-
     function openPriorityPage() {
-        const user = typeof getCurrentUser === "function"
-            ? getCurrentUser()
-            : null;
+        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+        if (!user) { window.location.href = "login.html"; return; }
 
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
-
-        const allowedPriorityRoles = [
-            "admin", "wiring", "lt", "ht", "installation", "final"
-        ];
+        const allowedPriorityRoles = ["admin", "wiring", "lt", "ht", "installation", "final"];
 
         if (!allowedPriorityRoles.includes(String(user.role || "").toLowerCase())) {
             alert("❌ ليس لديك صلاحية لاستخدام Priority Item");
@@ -763,15 +471,10 @@
         window.location.href = "priority.html";
     }
 
-    // فتح الأقسام
-
     function openSection(section) {
         const userData = sessionStorage.getItem("currentUser");
 
-        if (!userData) {
-            window.location.href = "login.html";
-            return;
-        }
+        if (!userData) { window.location.href = "login.html"; return; }
 
         let user;
 
@@ -787,48 +490,30 @@
             user.role,
             user.secondRole,
             ...(Array.isArray(user.extraRoles) ? user.extraRoles : [])
-        ]
-        .filter(Boolean)
-        .map(role => String(role).toLowerCase());
+        ].filter(Boolean).map(role => String(role).toLowerCase());
 
         const currentRole = String(user.role || "").toLowerCase();
         const requestedSection = String(section || "").toLowerCase();
 
-        if (requestedSection === "problems") {
-            window.location.href = "problems.html";
-            return;
-        }
+        if (requestedSection === "problems") { window.location.href = "problems.html"; return; }
 
         if (requestedSection === "search") {
-            if (currentRole === "admin") {
-                window.location.href = "search.html";
-                return;
-            }
-
+            if (currentRole === "admin") { window.location.href = "search.html"; return; }
             alert("ليس لديك صلاحية للدخول إلى سجل البيانات ❌");
             return;
         }
 
         if (requestedSection === "deleterequests") {
-            if (currentRole === "admin") {
-                window.location.href = "deleteRequests.html";
-                return;
-            }
-
+            if (currentRole === "admin") { window.location.href = "deleteRequests.html"; return; }
             alert("طلبات الحذف متاحة للمدير فقط ❌");
             return;
         }
 
         if (requestedSection === "final") {
-            if (
-                currentRole === "admin" ||
-                user.username === "Osama" ||
-                user.username === "Mamdouh"
-            ) {
+            if (currentRole === "admin" || user.username === "Osama" || user.username === "Mamdouh") {
                 window.location.href = "final.html";
                 return;
             }
-
             alert("ليس لديك صلاحية للدخول إلى Final ❌");
             return;
         }
@@ -841,10 +526,7 @@
             final: "final.html"
         };
 
-        if (
-            currentRole !== "admin" &&
-            !userRoles.includes(requestedSection)
-        ) {
+        if (currentRole !== "admin" && !userRoles.includes(requestedSection)) {
             alert("ليس لديك صلاحية للدخول إلى هذا القسم ❌");
             return;
         }
@@ -854,38 +536,18 @@
         }
     }
 
-    // الإشعارات
-
     function openNotificationsPage() {
         const user = getCurrentUser();
-
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
-
-        if (user.role !== "admin") {
-            alert("🔔 الإشعارات متاحة للمدير فقط");
-            return;
-        }
-
+        if (!user) { window.location.href = "login.html"; return; }
+        if (user.role !== "admin") { alert("🔔 الإشعارات متاحة للمدير فقط"); return; }
         window.location.href = "notifications.html";
     }
 
-    // مشاكل العربيات
-
     function openProblemsPage() {
         const user = getCurrentUser();
-
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
-
+        if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "problems.html";
     }
-
-    // البحث من الصفحة الرئيسية
 
     function homeSearch() {
         let user = null;
@@ -902,31 +564,22 @@
         }
 
         const input = document.getElementById("homeSearchNumber");
-
         if (!input) return;
 
         const number = input.value.trim();
 
-        if (!number) {
-            alert("⚠️ اكتب رقم العربية أولاً");
-            return;
-        }
+        if (!number) { alert("⚠️ اكتب رقم العربية أولاً"); return; }
 
         localStorage.setItem("searchNumber", number);
         window.location.href = "search.html";
     }
 
-    // التاريخ والوقت
-
     function updateDateTime() {
         const now = new Date();
-
         const dateElement = document.getElementById("currentDate");
         const timeElement = document.getElementById("currentTime");
 
-        if (dateElement) {
-            dateElement.innerText = now.toLocaleDateString("ar-EG");
-        }
+        if (dateElement) { dateElement.innerText = now.toLocaleDateString("ar-EG"); }
 
         if (timeElement) {
             timeElement.innerText = now.toLocaleTimeString("ar-EG", {
@@ -938,39 +591,56 @@
 
     updateDateTime();
     setInterval(updateDateTime, 1000);
-</script>
 
-<!-- عداد الدردشة اللحظي -->
+    // 👤 مزامنة الاسم من جدول employees
+
+    async function syncUserNameFromEmployees() {
+        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+
+        if (!user || !user.username) return;
+        if (!window.supabaseClient) return;
+
+        try {
+            const { data, error } = await window.supabaseClient
+                .from("employees")
+                .select("name")
+                .eq("username", user.username)
+                .maybeSingle();
+
+            if (error || !data || !data.name) return;
+
+            const nameElement = document.getElementById("currentUserName");
+
+            if (nameElement) {
+                nameElement.innerText = data.name;
+            }
+
+        } catch (e) {
+            console.error("Sync name error:", e);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(syncUserNameFromEmployees, 500);
+        setInterval(syncUserNameFromEmployees, 10000);
+    });
+</script>
 
 <script>
     let chatUnreadRealtimeChannel = null;
 
     async function updateChatUnreadCount() {
         const badge = document.getElementById("chatUnreadCount");
-
         if (!badge) return;
 
         try {
-            const user = typeof getCurrentUser === "function"
-                ? getCurrentUser()
-                : null;
+            const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
 
-            if (!user) {
-                badge.style.display = "none";
-                return;
-            }
+            if (!user) { badge.style.display = "none"; return; }
 
             const username = user.username || user.userName || user.name;
-
-            if (!username) {
-                badge.style.display = "none";
-                return;
-            }
-
-            if (!window.supabaseClient) {
-                console.warn("supabaseClient غير موجود");
-                return;
-            }
+            if (!username) { badge.style.display = "none"; return; }
+            if (!window.supabaseClient) { console.warn("supabaseClient غير موجود"); return; }
 
             const { count, error } = await window.supabaseClient
                 .from("private_messages")
@@ -978,10 +648,7 @@
                 .eq("receiver_username", username)
                 .eq("is_read", false);
 
-            if (error) {
-                console.error("Chat unread count error:", error);
-                return;
-            }
+            if (error) { console.error("Chat unread count error:", error); return; }
 
             const unread = count || 0;
 
@@ -1015,20 +682,18 @@
             });
     }
 
-document.addEventListener("DOMContentLoaded", function () {
-    updateChatUnreadCount();
-    startChatUnreadRealtime();
-
-    // 🔄 تحديث عداد الرسائل كل 3 ثواني
-    setInterval(updateChatUnreadCount, 3000);
-});
-
-// 🔄 لما نرجع للتاب، نحدّث العداد فورًا
-document.addEventListener("visibilitychange", function () {
-    if (!document.hidden) {
+    document.addEventListener("DOMContentLoaded", function () {
         updateChatUnreadCount();
-    }
-});
+        startChatUnreadRealtime();
+        setInterval(updateChatUnreadCount, 3000);
+    });
+
+    document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) {
+            updateChatUnreadCount();
+        }
+    });
+
     window.addEventListener("beforeunload", function () {
         try {
             if (chatUnreadRealtimeChannel && window.supabaseClient) {
@@ -1040,8 +705,6 @@ document.addEventListener("visibilitychange", function () {
     });
 </script>
 
-<!-- عداد الإشعارات في القائمة الجانبية -->
-
 <script>
     async function syncNotificationsMenuCount() {
         const menu = document.getElementById("notificationsMenu");
@@ -1049,9 +712,7 @@ document.addEventListener("visibilitychange", function () {
 
         if (!menu || !badge) return;
 
-        const user = typeof getCurrentUser === "function"
-            ? getCurrentUser()
-            : null;
+        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
 
         if (!user || user.role !== "admin") {
             menu.style.display = "none";
@@ -1066,9 +727,7 @@ document.addEventListener("visibilitychange", function () {
             const notifications = await getNotificationsData();
 
             badge.textContent = notifications.length;
-            badge.style.display = notifications.length
-                ? "inline-flex"
-                : "none";
+            badge.style.display = notifications.length ? "inline-flex" : "none";
 
         } catch (error) {
             console.error("Notifications count error:", error);
@@ -1082,20 +741,11 @@ document.addEventListener("visibilitychange", function () {
     setInterval(syncNotificationsMenuCount, 3000);
 </script>
 
-<!-- Firebase SDK: Web Push -->
-
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js"></script>
 
-<!-- ملف دعم إشعارات الويب -->
-
 <script src="push-web.js"></script>
-
-<!-- ملف Push الحالي: نحافظ عليه كما هو -->
-
 <script src="push.js"></script>
-
-<!-- 🔔 منطق مربع الإشعارات -->
 
 <script>
     (function () {
@@ -1172,7 +822,6 @@ document.addEventListener("visibilitychange", function () {
                 icon.textContent = "❌";
                 text.textContent = "فشل التفعيل";
                 btn.classList.add("denied");
-
                 setTimeout(updateNotifBtn, 3000);
             }
         };
