@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>بيانات الفريق - NERIC</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+body {
+    margin: 0;
+    background: #f1f5f9;
+    font-family: Arial, Tahoma, sans-serif;
+    color: #1f2937;
+}
+
+.header {
+    background: rgb(52, 67, 84);
+    color: white;
+    padding: 20px 30px;
+    border-bottom: 3px solid #5928e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.header h1 {
+    margin: 0 0 6px 0;
+    font-size: 26px;
+}
+
+.header p {
+    margin: 0;
+    color: #d1d5db;
+    font-size: 14px;
+}
+
+.home-btn {
+    border: none;
+    background: #198754;
+    color: white;
+    padding: 11px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.main-container {
+    width: min(1100px, 94%);
+    margin: 25px auto 40px;
+}
+
+.employees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+}
+
+.employee-card {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.07);
+    border-right: 5px solid #0b3d91;
+    transition: transform 0.15s;
+}
+
+.employee-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,.12);
+}
+
+.employee-card.my-card {
+    border-right-color: #198754;
+    background: linear-gradient(135deg, #f0fdf4, #ffffff);
+}
+
+.employee-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0b3d91, #092e6e);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.my-card .avatar {
+    background: linear-gradient(135deg, #198754, #157347);
+}
+
+.employee-title h3 {
+    margin: 0 0 4px 0;
+    font-size: 17px;
+    color: #1e293b;
+}
+
+.employee-title small {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px dashed #f1f5f9;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 110px;
+}
+
+.info-value {
+    color: #1e293b;
+    font-weight: 700;
+    font-size: 14px;
+    flex: 1;
+    text-align: left;
+    direction: rtl;
+    word-break: break-word;
+}
+
+.info-value.empty {
+    color: #cbd5e1;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 13px;
+}
+
+.edit-btn {
+    background: #f3e8ff;
+    color: #7c3aed;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+    font-family: inherit;
+    transition: 0.15s;
+    flex-shrink: 0;
+}
+
+.edit-btn:hover {
+    background: #7c3aed;
+    color: white;
+}
+
+.dept-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    background: #dbeafe;
+    color: #0b3d91;
+}
+
+.role-admin { background: #fee2e2; color: #991b1b; }
+.role-wiring { background: #fef3c7; color: #92400e; }
+.role-lt { background: #dbeafe; color: #1e40af; }
+.role-ht { background: #fce7f3; color: #9d174d; }
+.role-installation { background: #d1fae5; color: #065f46; }
+.role-final { background: #ede9fe; color: #5b21b6; }
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    color: #64748b;
+    font-size: 16px;
+}
+
+.error-box {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #b42318;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    line-height: 1.7;
+}
+
+.toolbar {
+    background: white;
+    border-radius: 14px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+    box-shadow: 0 3px 12px rgba(0,0,0,.06);
+    border-right: 4px solid #0b3d91;
+}
+
+.toolbar-info {
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.toolbar-info strong {
+    color: #0b3d91;
+    font-size: 16px;
+}
+
+.search-box {
+    position: relative;
+    min-width: 220px;
+    flex: 1;
+    max-width: 350px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 11px 38px 11px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fafbfc;
+    outline: none;
+    transition: 0.2s;
+}
+
+.search-box input:focus {
+    border-color: #0b3d91;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(11,61,145,.1);
+}
+
+.search-box::before {
+    content: "🔍";
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+@media (max-width: 700px) {
+    .header { padding: 15px; }
+    .header h1 { font-size: 20px; }
+    .employees-grid { grid-template-columns: 1fr; }
+    .main-container { width: 96%; }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <h1>👥 بيانات الفريق</h1>
+        <p>بيانات الموظفين وكوداتهم وأقسامهم</p>
+    </div>
+    <button class="home-btn" onclick="window.location.href='index.html'">
+        🏠 الرئيسية
+    </button>
+</div>
+
+<div class="main-container">
+
+    <div class="toolbar">
+        <div class="toolbar-info">
+            📊 إجمالي الموظفين: <strong id="totalCount">0</strong>
+        </div>
+        <div class="search-box">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="ابحث بالاسم أو الكود أو القسم..."
+                autocomplete="off">
+        </div>
+    </div>
+
+    <div id="employeesContainer">
+        <div class="loading">⏳ جاري تحميل البيانات...</div>
+    </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL = "https://gzyybadyaunizdlvmisc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+
+// ⚠️ تصحيح الرابط
+const SUPABASE_URL_CORRECT = "https://gzyybadyaunizdlvmcle.supabase.co";
+
+const db = window.supabase.createClient(
+    SUPABASE_URL_CORRECT,
+    SUPABASE_KEY
+);
+
+window.supabaseClient = db;
+
+
+/* =========================================================
+   CURRENT USER
+========================================================= */
+
+function getCurrentUser() {
+    try {
+        const raw = sessionStorage.getItem("currentUser");
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch (e) {
+        return null;
+    }
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+    if (value === null || value === undefined) return "";
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   DATE FORMAT
+========================================================= */
+
+function formatDate(value) {
+    if (!value) return "";
+
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return value;
+
+    return date.toLocaleDateString("ar-EG", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+}
+
+
+/* =========================================================
+   DEPARTMENT NAME
+========================================================= */
+
+function getDepartmentName(dept) {
+    const map = {
+        admin: "الإدارة",
+        wiring: "Wiring",
+        lt: "LT",
+        ht: "HT",
+        installation: "التركيبات",
+        final: "Final"
+    };
+    return map[dept] || dept || "غير محدد";
+}
+
+
+/* =========================================================
+   INITIAL
+========================================================= */
+
+function getInitial(name) {
+    const n = String(name || "").trim();
+    return n ? n.charAt(0).toUpperCase() : "👤";
+}
+
+
+/* =========================================================
+   LOAD EMPLOYEES
+========================================================= */
+
+let allEmployees = [];
+let currentUser = null;
+let isAdmin = false;
+
+async function loadEmployees() {
+
+    const container = document.getElementById("employeesContainer");
+
+    try {
+
+        const { data, error } = await db
+            .from("employees")
+            .select("*")
+            .order("id", { ascending: true });
+
+        if (error) {
+            console.error("Load error:", error);
+            container.innerHTML = `
+                <div class="error-box">
+                    ❌ فشل تحميل البيانات<br>
+                    <small>${escapeHTML(error.message)}</small>
+                </div>
+            `;
+            return;
+        }
+
+        allEmployees = data || [];
+
+        document.getElementById("totalCount").textContent =
+            allEmployees.length;
+
+        renderEmployees();
+
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = `
+            <div class="error-box">
+                ❌ حصل خطأ أثناء التحميل
+            </div>
+        `;
+    }
+}
+
+
+/* =========================================================
+   RENDER EMPLOYEES
+========================================================= */
+
+function renderEmployees() {
+
+    const container = document.getElementById("employeesContainer");
+
+    const term = (document.getElementById("searchInput")?.value || "")
+        .trim()
+        .toLowerCase();
+
+    let list = allEmployees;
+
+    // لو مش مدير — يشوف بياناته بس
+    if (!isAdmin) {
+        const username = currentUser?.username || "";
+        list = list.filter(e => e.username === username);
+    }
+
+    // فلترة البحث
+    if (term) {
+        list = list.filter(e => {
+            return (
+                String(e.name || "").toLowerCase().includes(term) ||
+                String(e.username || "").toLowerCase().includes(term) ||
+                String(e.employee_code || "").toLowerCase().includes(term) ||
+                String(e.department || "").toLowerCase().includes(term)
+            );
+        });
+    }
+
+    if (list.length === 0) {
+        container.innerHTML = `
+            <div class="error-box" style="background:#f8fafc;border-color:#e2e8f0;color:#64748b;">
+                🔍 لا توجد نتائج
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="employees-grid">
+            ${list.map(renderEmployeeCard).join("")}
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   RENDER ONE EMPLOYEE
+========================================================= */
+
+function renderEmployeeCard(emp) {
+
+    const isMyCard =
+        currentUser &&
+        emp.username === currentUser.username;
+
+    const deptClass = "role-" + (emp.department || "unknown");
+
+    const editBtn = (field, label, value) => {
+
+        if (!isAdmin) {
+            return "";
+        }
+
+        return `
+            <button
+                class="edit-btn"
+                onclick="editField(${emp.id}, '${field}', '${escapeHTML(String(value || ""))}')"
+                title="تعديل">
+                ✏️
+            </button>
+        `;
+    };
+
+    const valueOrEmpty = (value, emptyText) => {
+
+        if (value && String(value).trim()) {
+            return escapeHTML(String(value));
+        }
+
+        return `<span class="empty">${emptyText}</span>`;
+    };
+
+    return `
+        <div class="employee-card ${isMyCard ? 'my-card' : ''}">
+
+            <div class="employee-header">
+
+                <div class="avatar">
+                    ${escapeHTML(getInitial(emp.name))}
+                </div>
+
+                <div class="employee-title">
+                    <h3>${escapeHTML(emp.name || "غير معروف")}</h3>
+                    <small>@${escapeHTML(emp.username || "")}</small>
+                </div>
+
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">🆔 كود الموظف</div>
+                <div class="info-value">
+                    ${valueOrEmpty(emp.employee_code, "لم يُسجّل بعد")}
+                </div>
+                ${editBtn("employee_code", "كود الموظف", emp.employee_code || "")}
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">📅 تاريخ التعيين</div>
+                <div class="info-value">
+                    ${
+                        emp.join_date
+                            ? escapeHTML(formatDate(emp.join_date))
+                            : '<span class="empty">لم يُسجّل بعد</span>'
+                    }
+                </div>
+                ${editBtn("join_date", "تاريخ التعيين", emp.join_date || "")}
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">🏢 القسم</div>
+                <div class="info-value">
+                    <span class="dept-badge ${deptClass}">
+                        ${escapeHTML(getDepartmentName(emp.department))}
+                    </span>
+                </div>
+                ${editBtn("department", "القسم", emp.department || "")}
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">📞 التليفون</div>
+                <div class="info-value">
+                    ${valueOrEmpty(emp.phone, "لا يوجد")}
+                </div>
+                ${editBtn("phone", "التليفون", emp.phone || "")}
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">📝 ملاحظات</div>
+                <div class="info-value">
+                    ${valueOrEmpty(emp.notes, "لا توجد")}
+                </div>
+                ${editBtn("notes", "ملاحظات", emp.notes || "")}
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   EDIT FIELD
+========================================================= */
+
+async function editField(empId, field, currentValue) {
+
+    if (!isAdmin) {
+        alert("❌ التعديل متاح للمدير فقط");
+        return;
+    }
+
+    const fieldNames = {
+        employee_code: "كود الموظف",
+        join_date: "تاريخ التعيين (YYYY-MM-DD)",
+        department: "القسم (admin / wiring / lt / ht / installation / final)",
+        phone: "التليفون",
+        notes: "ملاحظات"
+    };
+
+    const label = fieldNames[field] || field;
+
+    const newValue = prompt(
+        `تعديل ${label}\n\nالقيمة الحالية: ${currentValue || "(فاضي)"}\n\nاكتب القيمة الجديدة:`,
+        currentValue || ""
+    );
+
+    if (newValue === null) return;
+
+    // تحضير القيمة
+    let finalValue = newValue.trim();
+
+    // لو فاضي، نخليه null
+    if (finalValue === "") {
+        finalValue = null;
+    }
+
+    try {
+
+        const updatePayload = {};
+        updatePayload[field] = finalValue;
+        updatePayload.updated_at = new Date().toISOString();
+
+        const { error } = await db
+            .from("employees")
+            .update(updatePayload)
+            .eq("id", empId);
+
+        if (error) {
+            console.error("Update error:", error);
+            alert("❌ فشل التعديل:\n" + error.message);
+            return;
+        }
+
+        alert("✅ تم التعديل بنجاح");
+
+        await loadEmployees();
+
+    } catch (error) {
+        console.error(error);
+        alert("❌ حصل خطأ أثناء التعديل");
+    }
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", async function () {
+
+    currentUser = getCurrentUser();
+
+    if (!currentUser) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    isAdmin = currentUser.role === "admin";
+
+    document.getElementById("searchInput")
+        .addEventListener("input", renderEmployees);
+
+    await loadEmployees();
+
+});
+
+</script>
+
+</body>
+
+</html>
