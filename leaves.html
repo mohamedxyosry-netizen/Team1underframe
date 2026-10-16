@@ -56,10 +56,6 @@ body {
     margin: 25px auto 40px;
 }
 
-/* =========================================
-   Form Card
-========================================= */
-
 .form-card {
     background: white;
     border-radius: 18px;
@@ -114,10 +110,40 @@ body {
     resize: vertical;
 }
 
+.form-row input[readonly] {
+    background: #f0fdf4;
+    color: #166534;
+    font-weight: bold;
+    cursor: not-allowed;
+    border-color: #bbf7d0;
+}
+
 .form-grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
+}
+
+.end-date-box {
+    background: #f0fdf4;
+    border: 2px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 13px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    color: #166534;
+    font-size: 14px;
+}
+
+.end-date-box .icon {
+    font-size: 20px;
+}
+
+.end-date-box .value {
+    color: #065f46;
+    font-size: 16px;
 }
 
 @media (max-width: 600px) {
@@ -151,10 +177,6 @@ body {
     transform: none;
 }
 
-/* =========================================
-   Messages
-========================================= */
-
 .page-message {
     padding: 14px 20px;
     border-radius: 10px;
@@ -184,10 +206,6 @@ body {
     display: block;
     border-right: 4px solid #ffc107;
 }
-
-/* =========================================
-   History
-========================================= */
 
 .history-title {
     margin: 0 0 20px 0;
@@ -267,7 +285,7 @@ body {
 
 .leave-info-row strong {
     color: #64748b;
-    min-width: 110px;
+    min-width: 130px;
     font-weight: 600;
     font-size: 13px;
 }
@@ -315,8 +333,8 @@ body {
         <h1>🏖️ طلب إجازة</h1>
         <p id="headerSubtitle">قدّم طلب إجازة وتابع حالته</p>
     </div>
-    <button class="back-btn" onclick="window.location.href='index.html'">
-        ← الرئيسية
+    <button class="back-btn" onclick="window.location.href='attendance.html'">
+        ← رجوع
     </button>
 </div>
 
@@ -324,7 +342,6 @@ body {
 
     <div id="pageMessage" class="page-message"></div>
 
-    <!-- فورم طلب إجازة -->
     <div class="form-card" id="formCard">
         <h2>📝 طلب إجازة جديدة</h2>
 
@@ -350,6 +367,15 @@ body {
             <input type="date" id="leaveDate">
         </div>
 
+        <!-- 🆕 تاريخ الانتهاء (محسوب تلقائيًا) -->
+        <div class="form-row">
+            <label>تاريخ انتهاء الإجازة </label>
+            <div class="end-date-box" id="endDateBox">
+                <span class="icon">📅</span>
+                <span class="value" id="endDateValue">—</span>
+            </div>
+        </div>
+
         <div class="form-row">
             <label>سبب الإجازة</label>
             <textarea id="leaveReason" placeholder="اكتب سبب الإجازة (اختياري)"></textarea>
@@ -360,7 +386,6 @@ body {
         </button>
     </div>
 
-    <!-- سجل الإجازات -->
     <h2 class="history-title">📋 سجل الإجازات</h2>
 
     <div id="historyContainer" class="history-list">
@@ -436,6 +461,44 @@ function getLeaveTypeIcon(type) {
 
 
 /* =====================================================
+   🆕 حساب تاريخ الانتهاء
+===================================================== */
+
+function calculateEndDate(startDateStr, days) {
+    if (!startDateStr || !days || Number(days) < 1) return null;
+
+    const start = new Date(startDateStr + "T00:00:00");
+    if (isNaN(start.getTime())) return null;
+
+    const end = new Date(start);
+    end.setDate(end.getDate() + Number(days) - 1);
+
+    const y = end.getFullYear();
+    const m = String(end.getMonth() + 1).padStart(2, "0");
+    const d = String(end.getDate()).padStart(2, "0");
+
+    return y + "-" + m + "-" + d;
+}
+
+
+function updateEndDate() {
+    const startDate = document.getElementById("leaveDate").value;
+    const days = document.getElementById("leaveDays").value;
+    const display = document.getElementById("endDateValue");
+
+    const endDate = calculateEndDate(startDate, days);
+
+    if (endDate) {
+        display.innerText = formatDate(endDate);
+        display.style.color = "#065f46";
+    } else {
+        display.innerText = "—";
+        display.style.color = "#94a3b8";
+    }
+}
+
+
+/* =====================================================
    Submit Leave
 ===================================================== */
 
@@ -462,6 +525,13 @@ async function submitLeave() {
         return;
     }
 
+    const endDate = calculateEndDate(date, days);
+
+    if (!endDate) {
+        showMessage("❌ فشل حساب تاريخ الانتهاء", "error");
+        return;
+    }
+
     btn.disabled = true;
     btn.innerText = "⏳ جاري الإرسال...";
 
@@ -473,6 +543,7 @@ async function submitLeave() {
             leave_type: type,
             leave_days: Number(days),
             leave_date: date,
+            leave_end_date: endDate,
             reason: reason || null,
             status: "pending"
         };
@@ -481,24 +552,21 @@ async function submitLeave() {
             .from("leaves")
             .insert(payload);
 
-        if (error) {
-            throw error;
-        }
+        if (error) throw error;
 
         showMessage("✅ تم إرسال طلب الإجازة - في انتظار موافقة المدير", "success");
 
-        // مسح الفورم
         document.getElementById("leaveType").value = "";
         document.getElementById("leaveDays").value = "1";
         document.getElementById("leaveDate").value = "";
         document.getElementById("leaveReason").value = "";
+        updateEndDate();
 
-        // 🔔 إشعار للمدير
         try {
             if (window.NERIC_Notify) {
                 window.NERIC_Notify.sendAdminOnly(
                     "🏖️ طلب إجازة جديد",
-                    `${currentUser.name || currentUser.username} طلب إجازة ${type} لمدة ${days} يوم من ${date}`,
+                    `${currentUser.name || currentUser.username} طلب إجازة ${type} لمدة ${days} يوم (من ${date} إلى ${endDate})`,
                     {
                         type: "leave_request",
                         username: String(currentUser.username)
@@ -571,17 +639,13 @@ function renderLeaveItem(leave) {
     const statusClass = leave.status || "pending";
     const typeIcon = getLeaveTypeIcon(leave.leave_type);
 
-    let statusText = "";
     let statusBadge = "";
 
     if (leave.status === "approved") {
-        statusText = "✅ تمت الموافقة";
         statusBadge = `<span class="status-badge approved">✅ موافق عليها</span>`;
     } else if (leave.status === "rejected") {
-        statusText = "❌ مرفوض";
         statusBadge = `<span class="status-badge rejected">❌ مرفوض</span>`;
     } else {
-        statusText = "⏳ في الانتظار";
         statusBadge = `<span class="status-badge pending">⏳ في الانتظار</span>`;
     }
 
@@ -604,6 +668,12 @@ function renderLeaveItem(leave) {
             <div class="leave-info-row">
                 <strong>📅 تاريخ البداية:</strong>
                 <span>${formatDate(leave.leave_date)}</span>
+            </div>
+
+            <!-- 🆕 تاريخ الانتهاء -->
+            <div class="leave-info-row">
+                <strong>📅 تاريخ الانتهاء:</strong>
+                <span>${leave.leave_end_date ? formatDate(leave.leave_end_date) : "—"}</span>
             </div>
 
             <div class="leave-info-row">
@@ -645,24 +715,34 @@ document.addEventListener("DOMContentLoaded", async function () {
         return;
     }
 
-    // لو مدير → يروح لصفحة المراجعة
     if (currentUser.role === "admin") {
         window.location.href = "leaves-admin.html";
         return;
     }
 
-    // تحديد الحد الأدنى للتاريخ = النهاردة
-    const today = new Date().toISOString().split("T")[0];
-    document.getElementById("leaveDate").min = today;
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, "0");
+    const d = String(today.getDate()).padStart(2, "0");
+    const todayStr = y + "-" + m + "-" + d;
+
+    document.getElementById("leaveDate").min = todayStr;
 
     document.getElementById("headerSubtitle").innerText =
         "مرحبًا " + (currentUser.name || currentUser.username) + " - قدم طلب إجازة وتابع حالته";
+
+    // 🆕 ربط الحساب التلقائي لتاريخ الانتهاء
+    document.getElementById("leaveDate").addEventListener("change", updateEndDate);
+    document.getElementById("leaveDays").addEventListener("input", updateEndDate);
 
     await loadHistory();
 
 });
 
 </script>
+
+<!-- 🔔 ملف الإشعارات -->
+<script src="notifications-helper.js"></script>
 
 </body>
 

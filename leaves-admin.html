@@ -603,11 +603,15 @@ function renderLeaveCard(leave) {
                     <div class="info-value">${formatDate(leave.leave_date)}</div>
                 </div>
 
-                <div class="info-item">
-                    <div class="info-label">📆 عدد الأيام</div>
-                    <div class="info-value">${leave.leave_days} يوم</div>
-                </div>
+<div class="info-item">
+    <div class="info-label">📆 عدد الأيام</div>
+    <div class="info-value">${leave.leave_days} يوم</div>
+</div>
 
+<div class="info-item">
+    <div class="info-label">📅 تاريخ الانتهاء</div>
+    <div class="info-value">${leave.leave_end_date ? formatDate(leave.leave_end_date) : "—"}</div>
+</div>
                 <div class="info-item">
                     <div class="info-label">🕐 تاريخ الطلب</div>
                     <div class="info-value">${formatDate(leave.created_at)}</div>
