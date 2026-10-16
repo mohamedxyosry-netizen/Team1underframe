@@ -49,9 +49,13 @@ body {
 }
 
 .main-container {
-    width: min(900px, 94%);
+    width: min(1200px, 94%);
     margin: 25px auto 40px;
 }
+
+/* ===============================
+   Toolbar (للمدير بس)
+=============================== */
 
 .toolbar {
     background: white;
@@ -60,7 +64,7 @@ body {
     margin-bottom: 20px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 15px;
     flex-wrap: wrap;
     box-shadow: 0 3px 12px rgba(0,0,0,.06);
@@ -80,8 +84,9 @@ body {
 
 .search-box {
     position: relative;
-    width: 100%;
+    flex: 1;
     max-width: 400px;
+    min-width: 200px;
 }
 
 .search-box input {
@@ -94,6 +99,7 @@ body {
     background: #fafbfc;
     outline: none;
     transition: 0.2s;
+    box-sizing: border-box;
 }
 
 .search-box input:focus {
@@ -111,18 +117,128 @@ body {
     pointer-events: none;
 }
 
+/* ===============================
+   Grid (للمدير)
+=============================== */
+
+.employees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+.employee-mini-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    border-right: 5px solid #0b3d91;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    border-left: 1px solid #e5e7eb;
+}
+
+.employee-mini-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,.12);
+    border-right-color: #7c3aed;
+}
+
+.employee-mini-card.my-card {
+    border-right-color: #198754;
+    background: linear-gradient(135deg, #f0fdf4, #ffffff);
+}
+
+.mini-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0b3d91, #092e6e);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 28px;
+    margin: 0 auto 12px;
+    box-shadow: 0 4px 12px rgba(11,61,145,.25);
+}
+
+.my-card .mini-avatar {
+    background: linear-gradient(135deg, #198754, #157347);
+    box-shadow: 0 4px 12px rgba(25,135,84,.25);
+}
+
+.mini-name {
+    font-size: 17px;
+    font-weight: bold;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+}
+
+.mini-username {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 0 0 10px 0;
+    direction: ltr;
+}
+
+.mini-dept {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    background: #dbeafe;
+    color: #0b3d91;
+    margin-bottom: 8px;
+}
+
+.role-admin { background: #fee2e2; color: #991b1b; }
+.role-wiring { background: #fef3c7; color: #92400e; }
+.role-lt { background: #dbeafe; color: #1e40af; }
+.role-ht { background: #fce7f3; color: #9d174d; }
+.role-installation { background: #d1fae5; color: #065f46; }
+.role-final { background: #ede9fe; color: #5b21b6; }
+
+.mini-code {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+.mini-code strong {
+    color: #0b3d91;
+    font-family: 'Courier New', monospace;
+    direction: ltr;
+    display: inline-block;
+}
+
+.mini-hint {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed #e5e7eb;
+}
+
+/* ===============================
+   Detail (للفني - عرض كبير)
+=============================== */
+
 .employee-card {
     background: white;
     border-radius: 20px;
     padding: 30px;
     box-shadow: 0 6px 25px rgba(0,0,0,.08);
-    border-right: 6px solid #0b3d91;
+    border-right: 6px solid #198754;
     max-width: 750px;
     margin: 0 auto;
-}
-
-.employee-card.my-card {
-    border-right-color: #198754;
     background: linear-gradient(135deg, #f0fdf4, #ffffff);
 }
 
@@ -140,7 +256,7 @@ body {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #0b3d91, #092e6e);
+    background: linear-gradient(135deg, #198754, #157347);
     color: white;
     display: flex;
     align-items: center;
@@ -148,11 +264,6 @@ body {
     font-weight: bold;
     font-size: 32px;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(11,61,145,.25);
-}
-
-.my-card .avatar {
-    background: linear-gradient(135deg, #198754, #157347);
     box-shadow: 0 4px 12px rgba(25,135,84,.25);
 }
 
@@ -171,10 +282,7 @@ body {
     transition: background 0.15s;
 }
 
-.info-row:hover {
-    background: #f8fafc;
-}
-
+.info-row:hover { background: #f8fafc; }
 .info-row:last-child { border-bottom: none; }
 
 .info-label {
@@ -204,42 +312,15 @@ body {
     font-size: 14px;
 }
 
-.edit-btn {
-    background: #f3e8ff;
-    color: #7c3aed;
-    border: none;
-    padding: 7px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: bold;
-    font-family: inherit;
-    transition: 0.15s;
-    flex-shrink: 0;
-}
-
-.edit-btn:hover {
-    background: #7c3aed;
-    color: white;
-    transform: translateY(-1px);
-}
-
 .dept-badge {
     display: inline-block;
     padding: 5px 14px;
     border-radius: 20px;
     font-size: 14px;
     font-weight: bold;
-    background: #dbeafe;
-    color: #0b3d91;
+    background: #d1fae5;
+    color: #065f46;
 }
-
-.role-admin { background: #fee2e2; color: #991b1b; }
-.role-wiring { background: #fef3c7; color: #92400e; }
-.role-lt { background: #dbeafe; color: #1e40af; }
-.role-ht { background: #fce7f3; color: #9d174d; }
-.role-installation { background: #d1fae5; color: #065f46; }
-.role-final { background: #ede9fe; color: #5b21b6; }
 
 .tools-btn {
     display: block;
@@ -262,6 +343,65 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(124,58,237,.4);
 }
+
+/* ===============================
+   Modal (للمدير - تفاصيل الموظف)
+=============================== */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal-box {
+    background: white;
+    border-radius: 20px;
+    max-width: 720px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #fee2e2;
+    color: #991b1b;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: bold;
+    z-index: 10;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    background: #dc2626;
+    color: white;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+/* ===============================
+   Loading/Empty
+=============================== */
 
 .loading {
     text-align: center;
@@ -288,11 +428,13 @@ body {
     .header { padding: 15px; }
     .header h1 { font-size: 20px; }
     .main-container { width: 96%; }
+    .employees-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .employee-mini-card { padding: 15px; }
+    .mini-avatar { width: 55px; height: 55px; font-size: 22px; }
+    .mini-name { font-size: 15px; }
     .employee-card { padding: 20px; }
     .avatar { width: 65px; height: 65px; font-size: 26px; }
     .employee-title h3 { font-size: 22px; }
-    .info-label { min-width: 100px; font-size: 13px; }
-    .info-value { font-size: 14px; }
 }
 
 </style>
@@ -304,7 +446,7 @@ body {
 <div class="header">
     <div>
         <h1>👥 بيانات الفريق</h1>
-        <p>بيانات الموظفين وكوداتهم وأقسامهم</p>
+        <p id="pageSubtitle">بيانات الموظفين وكوداتهم وأقسامهم</p>
     </div>
     <button class="home-btn" onclick="window.location.href='index.html'">
         🏠 الرئيسية
@@ -313,7 +455,6 @@ body {
 
 <div class="main-container">
 
-    <!-- 🛠️ الشريط ده يظهر للمدير بس -->
     <div class="toolbar" id="toolbarSection" style="display:none;">
         <div class="toolbar-info">
             📊 إجمالي الموظفين: <strong id="totalCount">0</strong>
@@ -334,19 +475,28 @@ body {
 </div>
 
 
+<!-- Modal تفاصيل الموظف (للمدير) -->
+<div id="employeeModal" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeEmployeeModal()">×</button>
+        <div class="modal-body" id="employeeModalBody"></div>
+    </div>
+</div>
+
+
 <script>
 
 const SUPABASE_URL = "https://gzyybadyaunizdlvmcle.supabase.co";
 const SUPABASE_KEY = "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 window.supabaseClient = db;
 
 
-/* =========================================================
-   CURRENT USER
-========================================================= */
+let allEmployees = [];
+let currentUser = null;
+let isAdmin = false;
+
 
 function getCurrentUser() {
     try {
@@ -358,10 +508,6 @@ function getCurrentUser() {
     }
 }
 
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
 
 function escapeHTML(value) {
     if (value === null || value === undefined) return "";
@@ -376,10 +522,8 @@ function escapeHTML(value) {
 
 function formatDate(value) {
     if (!value) return "";
-
     const date = new Date(value);
     if (isNaN(date.getTime())) return value;
-
     return date.toLocaleDateString("ar-EG", {
         day: "numeric",
         month: "long",
@@ -407,19 +551,6 @@ function getInitial(name) {
 }
 
 
-/* =========================================================
-   VARIABLES
-========================================================= */
-
-let allEmployees = [];
-let currentUser = null;
-let isAdmin = false;
-
-
-/* =========================================================
-   LOAD EMPLOYEES
-========================================================= */
-
 async function loadEmployees() {
 
     const container = document.getElementById("employeesContainer");
@@ -443,26 +574,16 @@ async function loadEmployees() {
         }
 
         allEmployees = data || [];
-
-        document.getElementById("totalCount").textContent =
-            allEmployees.length;
+        document.getElementById("totalCount").textContent = allEmployees.length;
 
         renderEmployees();
 
     } catch (error) {
         console.error(error);
-        container.innerHTML = `
-            <div class="error-box">
-                ❌ حصل خطأ أثناء التحميل
-            </div>
-        `;
+        container.innerHTML = `<div class="error-box">❌ حصل خطأ أثناء التحميل</div>`;
     }
 }
 
-
-/* =========================================================
-   RENDER EMPLOYEES
-========================================================= */
 
 function renderEmployees() {
 
@@ -474,13 +595,13 @@ function renderEmployees() {
 
     let list = allEmployees;
 
-    // لو مش مدير — يشوف بياناته بس
+    // لو فني — يشوف بياناته بس
     if (!isAdmin) {
         const username = currentUser?.username || "";
         list = list.filter(e => e.username === username);
     }
 
-    // فلترة البحث
+    // فلترة البحث (للمدير بس)
     if (term && isAdmin) {
         list = list.filter(e => {
             return (
@@ -501,35 +622,70 @@ function renderEmployees() {
         return;
     }
 
-    container.innerHTML = list.map(renderEmployeeCard).join("");
+    /* ============================================
+       للمدير: شبكة مربعات صغيرة
+    ============================================ */
+    if (isAdmin) {
+        container.innerHTML = `
+            <div class="employees-grid">
+                ${list.map(renderMiniCard).join("")}
+            </div>
+        `;
+        return;
+    }
+
+    /* ============================================
+       للفني: كارت كبير بتفاصيله
+    ============================================ */
+    container.innerHTML = list.map(renderDetailedCard).join("");
 }
 
 
 /* =========================================================
-   RENDER ONE EMPLOYEE
+   MINI CARD (للمدير)
 ========================================================= */
 
-function renderEmployeeCard(emp) {
+function renderMiniCard(emp) {
 
-    const isMyCard =
-        currentUser &&
-        emp.username === currentUser.username;
-
+    const isMyCard = currentUser && emp.username === currentUser.username;
     const deptClass = "role-" + (emp.department || "unknown");
 
-    const editBtn = (field, label, value) => {
+    const codeHTML = emp.employee_code
+        ? `<span class="mini-code">🆔 <strong>${escapeHTML(emp.employee_code)}</strong></span>`
+        : `<span class="mini-code" style="color:#cbd5e1;">🆔 لم يُسجّل</span>`;
 
-        if (!isAdmin) return "";
+    return `
+        <div class="employee-mini-card ${isMyCard ? 'my-card' : ''}"
+             onclick="openEmployeeModal('${escapeHTML(emp.username)}')">
 
-        return `
-            <button
-                class="edit-btn"
-                onclick="editField(${emp.id}, '${field}', '${escapeHTML(String(value || ""))}')"
-                title="تعديل">
-                ✏️
-            </button>
-        `;
-    };
+            <div class="mini-avatar">
+                ${escapeHTML(getInitial(emp.name))}
+            </div>
+
+            <h3 class="mini-name">${escapeHTML(emp.name || "غير معروف")}</h3>
+
+            <p class="mini-username">@${escapeHTML(emp.username || "")}</p>
+
+            <span class="mini-dept ${deptClass}">
+                ${escapeHTML(getDepartmentName(emp.department))}
+            </span>
+
+            ${codeHTML}
+
+            <div class="mini-hint">👆 اضغط للتفاصيل</div>
+
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   DETAILED CARD (للفني)
+========================================================= */
+
+function renderDetailedCard(emp) {
+
+    const deptClass = "role-" + (emp.department || "unknown");
 
     const valueOrEmpty = (value, emptyText) => {
         if (value && String(value).trim()) {
@@ -539,7 +695,7 @@ function renderEmployeeCard(emp) {
     };
 
     return `
-        <div class="employee-card ${isMyCard ? 'my-card' : ''}">
+        <div class="employee-card">
 
             <div class="employee-header">
                 <div class="avatar">
@@ -554,30 +710,19 @@ function renderEmployeeCard(emp) {
 
             <div class="info-row">
                 <div class="info-label">👤 الاسم</div>
-                <div class="info-value">
-                    ${escapeHTML(emp.name || "غير معروف")}
-                </div>
-                ${editBtn("name", "الاسم", emp.name || "")}
+                <div class="info-value">${escapeHTML(emp.name || "غير معروف")}</div>
             </div>
 
             <div class="info-row">
                 <div class="info-label">🆔 كود الموظف</div>
-                <div class="info-value">
-                    ${valueOrEmpty(emp.employee_code, "لم يُسجّل بعد")}
-                </div>
-                ${editBtn("employee_code", "كود الموظف", emp.employee_code || "")}
+                <div class="info-value">${valueOrEmpty(emp.employee_code, "لم يُسجّل بعد")}</div>
             </div>
 
             <div class="info-row">
                 <div class="info-label">📅 تاريخ التعيين</div>
                 <div class="info-value">
-                    ${
-                        emp.join_date
-                            ? escapeHTML(formatDate(emp.join_date))
-                            : '<span class="empty">لم يُسجّل بعد</span>'
-                    }
+                    ${emp.join_date ? escapeHTML(formatDate(emp.join_date)) : '<span class="empty">لم يُسجّل بعد</span>'}
                 </div>
-                ${editBtn("join_date", "تاريخ التعيين", emp.join_date || "")}
             </div>
 
             <div class="info-row">
@@ -587,35 +732,125 @@ function renderEmployeeCard(emp) {
                         ${escapeHTML(getDepartmentName(emp.department))}
                     </span>
                 </div>
-                ${editBtn("department", "القسم", emp.department || "")}
             </div>
 
             <div class="info-row">
                 <div class="info-label">📞 التليفون</div>
-                <div class="info-value">
-                    ${valueOrEmpty(emp.phone, "لا يوجد")}
-                </div>
-                ${editBtn("phone", "التليفون", emp.phone || "")}
+                <div class="info-value">${valueOrEmpty(emp.phone, "لا يوجد")}</div>
             </div>
 
             <div class="info-row">
                 <div class="info-label">📝 ملاحظات</div>
-                <div class="info-value">
-                    ${valueOrEmpty(emp.notes, "لا توجد")}
-                </div>
-                ${editBtn("notes", "ملاحظات", emp.notes || "")}
+                <div class="info-value">${valueOrEmpty(emp.notes, "لا توجد")}</div>
             </div>
 
-            <!-- 🔧 زرار العدة المستلمة -->
-            <button
-                class="tools-btn"
-                onclick="openEmployeeTools('${escapeHTML(emp.username)}')">
+            <button class="tools-btn" onclick="openEmployeeTools('${escapeHTML(emp.username)}')">
                 🔧 العدة المستلمة
             </button>
 
         </div>
     `;
 }
+
+
+/* =========================================================
+   MODAL (للمدير - تفاصيل موظف)
+========================================================= */
+
+function openEmployeeModal(username) {
+
+    const emp = allEmployees.find(e => e.username === username);
+
+    if (!emp) return;
+
+    const deptClass = "role-" + (emp.department || "unknown");
+
+    const editBtn = (field, value) => `
+        <button class="edit-btn"
+            onclick="editField(${emp.id}, '${field}', '${escapeHTML(String(value || ""))}')">
+            ✏️
+        </button>
+    `;
+
+    const valueOrEmpty = (value, emptyText) => {
+        if (value && String(value).trim()) return escapeHTML(String(value));
+        return `<span class="info-value empty">${emptyText}</span>`;
+    };
+
+    const html = `
+        <div class="employee-card" style="border-right-color:#0b3d91;background:white;box-shadow:none;max-width:100%;margin:0;">
+
+            <div class="employee-header">
+                <div class="avatar" style="background:linear-gradient(135deg,#0b3d91,#092e6e);">
+                    ${escapeHTML(getInitial(emp.name))}
+                </div>
+                <div class="employee-title">
+                    <h3>${escapeHTML(emp.name || "غير معروف")}</h3>
+                    <small>@${escapeHTML(emp.username || "")}</small>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">👤 الاسم</div>
+                <div class="info-value">${escapeHTML(emp.name || "")}</div>
+                ${editBtn("name", emp.name || "")}
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">🆔 كود الموظف</div>
+                <div class="info-value">${valueOrEmpty(emp.employee_code, "لم يُسجّل بعد")}</div>
+                ${editBtn("employee_code", emp.employee_code || "")}
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">📅 تاريخ التعيين</div>
+                <div class="info-value">${emp.join_date ? escapeHTML(formatDate(emp.join_date)) : '<span class="empty">لم يُسجّل بعد</span>'}</div>
+                ${editBtn("join_date", emp.join_date || "")}
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">🏢 القسم</div>
+                <div class="info-value">
+                    <span class="dept-badge ${deptClass}">
+                        ${escapeHTML(getDepartmentName(emp.department))}
+                    </span>
+                </div>
+                ${editBtn("department", emp.department || "")}
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">📞 التليفون</div>
+                <div class="info-value">${valueOrEmpty(emp.phone, "لا يوجد")}</div>
+                ${editBtn("phone", emp.phone || "")}
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">📝 ملاحظات</div>
+                <div class="info-value">${valueOrEmpty(emp.notes, "لا توجد")}</div>
+                ${editBtn("notes", emp.notes || "")}
+            </div>
+
+            <button class="tools-btn" onclick="openEmployeeTools('${escapeHTML(emp.username)}')">
+                🔧 العدة المستلمة
+            </button>
+
+        </div>
+    `;
+
+    document.getElementById("employeeModalBody").innerHTML = html;
+    document.getElementById("employeeModal").classList.add("show");
+}
+
+
+function closeEmployeeModal() {
+    document.getElementById("employeeModal").classList.remove("show");
+}
+
+document.addEventListener("click", function(e) {
+    if (e.target && e.target.id === "employeeModal") {
+        closeEmployeeModal();
+    }
+});
 
 
 /* =========================================================
@@ -648,7 +883,6 @@ async function editField(empId, field, currentValue) {
     if (newValue === null) return;
 
     let finalValue = newValue.trim();
-
     if (finalValue === "") finalValue = null;
 
     try {
@@ -672,6 +906,12 @@ async function editField(empId, field, currentValue) {
 
         await loadEmployees();
 
+        // نعيد فتح المودال بنفس الموظف بعد التحديث
+        const emp = allEmployees.find(e => e.id === empId);
+        if (emp) {
+            openEmployeeModal(emp.username);
+        }
+
     } catch (error) {
         console.error(error);
         alert("❌ حصل خطأ أثناء التعديل");
@@ -684,14 +924,9 @@ async function editField(empId, field, currentValue) {
 ========================================================= */
 
 function openEmployeeTools(username) {
-
     if (!username) return;
-
-    // نحفظ اسم الفني في localStorage عشان الصفحة التانية تقرأه
     localStorage.setItem("viewingToolsFor", username);
-
     window.location.href = "employee-tools.html";
-
 }
 
 
@@ -710,13 +945,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     isAdmin = currentUser.role === "admin";
 
-    // إظهار الشريط (البحث + الإجمالي) للمدير بس
+    // للمدير: إظهار شريط البحث
     if (isAdmin) {
         const toolbar = document.getElementById("toolbarSection");
         if (toolbar) toolbar.style.display = "flex";
 
         document.getElementById("searchInput")
             .addEventListener("input", renderEmployees);
+
+        // نغير الـ subtitle للمدير
+        document.getElementById("pageSubtitle").innerText =
+            "👆 اضغط على أي موظف لعرض بياناته";
+    } else {
+        document.getElementById("pageSubtitle").innerText =
+            "بياناتك الشخصية";
     }
 
     await loadEmployees();
