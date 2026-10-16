@@ -361,107 +361,94 @@
 <script src="script.js"></script>
 
 <script>
+    // فتح صفحة مسار العربية
+
     function openProductionRoute() {
-        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
-        if (!user) { window.location.href = "login.html"; return; }
-        window.location.href = "route.html";
-    }
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
 
-    function openEmployeesPage() {
-        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
-        if (!user) { window.location.href = "login.html"; return; }
-        window.location.href = "employees.html";
-    }
-
-    function openConsumablesPage() {
-        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
-        if (!user) { window.location.href = "login.html"; return; }
-        window.location.href = "consumables.html";
-    }
-
-    async function handleAttendanceLogin() {
-        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
-
-        if (!user) { window.location.href = "login.html"; return; }
-
-        if (String(user.role || "").toLowerCase() === "admin") {
-            window.location.href = "attendance.html";
+        if (!user) {
+            window.location.href = "login.html";
             return;
         }
 
-        try {
-            if (!window.supabaseClient) {
-                alert("❌ لا يوجد اتصال بقاعدة البيانات");
-                return;
-            }
-
-            const username = user.username || user.userName || user.name || "";
-            const fullName = user.full_name || user.fullName || user.name || username;
-            const role = String(user.role || "").toLowerCase();
-
-            if (!username) {
-                alert("❌ لم يتم العثور على Username الخاص بك");
-                return;
-            }
-
-            const now = new Date();
-            const attendanceDate = now.toISOString().split("T")[0];
-            const attendanceTime = now.toTimeString().split(" ")[0];
-
-            const checkResult = await window.supabaseClient
-                .from("attendance")
-                .select("id")
-                .eq("username", username)
-                .eq("attendance_date", attendanceDate)
-                .maybeSingle();
-
-            if (checkResult.error) {
-                console.error("Attendance check error:", checkResult.error);
-                alert("❌ حصل خطأ أثناء التأكد من تسجيل الحضور");
-                return;
-            }
-
-            if (checkResult.data) {
-                alert("⚠️ تم تسجيل حضورك اليوم بالفعل");
-                return;
-            }
-
-            const insertResult = await window.supabaseClient
-                .from("attendance")
-                .insert([{
-                    username: username,
-                    full_name: fullName,
-                    role: role,
-                    attendance_date: attendanceDate,
-                    attendance_time: attendanceTime,
-                    status: "present"
-                }]);
-
-            if (insertResult.error) {
-                console.error("Attendance insert error:", insertResult.error);
-                alert("❌ لم يتم تسجيل الحضور\n\n" + insertResult.error.message);
-                return;
-            }
-
-            alert("تم تسجيل الحضور بنجاح ✅");
-
-        } catch (error) {
-            console.error("Attendance error:", error);
-            alert("❌ حصل خطأ أثناء تسجيل الحضور");
-        }
+        window.location.href = "route.html";
     }
+
+    // 👥 فتح صفحة بيانات الفريق
+
+    function openEmployeesPage() {
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        window.location.href = "employees.html";
+    }
+
+    // فتح صفحة المستهلكات الجديدة
+
+    function openConsumablesPage() {
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        window.location.href = "consumables.html";
+    }
+
+    // 🔐 فتح صفحة الحضور (للمدير والفني)
+
+    function handleAttendanceLogin() {
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        window.location.href = "attendance.html";
+    }
+
+    // فتح الدردشة
 
     function openChat() {
         const user = getCurrentUser();
-        if (!user) { window.location.href = "login.html"; return; }
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
         window.location.href = "chat.html";
     }
 
-    function openPriorityPage() {
-        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
-        if (!user) { window.location.href = "login.html"; return; }
+    // فتح Priority Item
 
-        const allowedPriorityRoles = ["admin", "wiring", "lt", "ht", "installation", "final"];
+    function openPriorityPage() {
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const allowedPriorityRoles = [
+            "admin", "wiring", "lt", "ht", "installation", "final"
+        ];
 
         if (!allowedPriorityRoles.includes(String(user.role || "").toLowerCase())) {
             alert("❌ ليس لديك صلاحية لاستخدام Priority Item");
@@ -471,10 +458,15 @@
         window.location.href = "priority.html";
     }
 
+    // فتح الأقسام
+
     function openSection(section) {
         const userData = sessionStorage.getItem("currentUser");
 
-        if (!userData) { window.location.href = "login.html"; return; }
+        if (!userData) {
+            window.location.href = "login.html";
+            return;
+        }
 
         let user;
 
@@ -490,30 +482,48 @@
             user.role,
             user.secondRole,
             ...(Array.isArray(user.extraRoles) ? user.extraRoles : [])
-        ].filter(Boolean).map(role => String(role).toLowerCase());
+        ]
+        .filter(Boolean)
+        .map(role => String(role).toLowerCase());
 
         const currentRole = String(user.role || "").toLowerCase();
         const requestedSection = String(section || "").toLowerCase();
 
-        if (requestedSection === "problems") { window.location.href = "problems.html"; return; }
+        if (requestedSection === "problems") {
+            window.location.href = "problems.html";
+            return;
+        }
 
         if (requestedSection === "search") {
-            if (currentRole === "admin") { window.location.href = "search.html"; return; }
+            if (currentRole === "admin") {
+                window.location.href = "search.html";
+                return;
+            }
+
             alert("ليس لديك صلاحية للدخول إلى سجل البيانات ❌");
             return;
         }
 
         if (requestedSection === "deleterequests") {
-            if (currentRole === "admin") { window.location.href = "deleteRequests.html"; return; }
+            if (currentRole === "admin") {
+                window.location.href = "deleteRequests.html";
+                return;
+            }
+
             alert("طلبات الحذف متاحة للمدير فقط ❌");
             return;
         }
 
         if (requestedSection === "final") {
-            if (currentRole === "admin" || user.username === "Osama" || user.username === "Mamdouh") {
+            if (
+                currentRole === "admin" ||
+                user.username === "Osama" ||
+                user.username === "Mamdouh"
+            ) {
                 window.location.href = "final.html";
                 return;
             }
+
             alert("ليس لديك صلاحية للدخول إلى Final ❌");
             return;
         }
@@ -526,7 +536,10 @@
             final: "final.html"
         };
 
-        if (currentRole !== "admin" && !userRoles.includes(requestedSection)) {
+        if (
+            currentRole !== "admin" &&
+            !userRoles.includes(requestedSection)
+        ) {
             alert("ليس لديك صلاحية للدخول إلى هذا القسم ❌");
             return;
         }
@@ -536,18 +549,38 @@
         }
     }
 
+    // الإشعارات
+
     function openNotificationsPage() {
         const user = getCurrentUser();
-        if (!user) { window.location.href = "login.html"; return; }
-        if (user.role !== "admin") { alert("🔔 الإشعارات متاحة للمدير فقط"); return; }
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (user.role !== "admin") {
+            alert("🔔 الإشعارات متاحة للمدير فقط");
+            return;
+        }
+
         window.location.href = "notifications.html";
     }
 
+    // مشاكل العربيات
+
     function openProblemsPage() {
         const user = getCurrentUser();
-        if (!user) { window.location.href = "login.html"; return; }
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
         window.location.href = "problems.html";
     }
+
+    // البحث من الصفحة الرئيسية
 
     function homeSearch() {
         let user = null;
@@ -564,22 +597,31 @@
         }
 
         const input = document.getElementById("homeSearchNumber");
+
         if (!input) return;
 
         const number = input.value.trim();
 
-        if (!number) { alert("⚠️ اكتب رقم العربية أولاً"); return; }
+        if (!number) {
+            alert("⚠️ اكتب رقم العربية أولاً");
+            return;
+        }
 
         localStorage.setItem("searchNumber", number);
         window.location.href = "search.html";
     }
 
+    // التاريخ والوقت
+
     function updateDateTime() {
         const now = new Date();
+
         const dateElement = document.getElementById("currentDate");
         const timeElement = document.getElementById("currentTime");
 
-        if (dateElement) { dateElement.innerText = now.toLocaleDateString("ar-EG"); }
+        if (dateElement) {
+            dateElement.innerText = now.toLocaleDateString("ar-EG");
+        }
 
         if (timeElement) {
             timeElement.innerText = now.toLocaleTimeString("ar-EG", {
