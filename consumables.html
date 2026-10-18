@@ -64,6 +64,45 @@
             transform: translateY(-1px);
         }
 
+        /* =========================================
+           Tabs (الأقسام)
+        ========================================= */
+        .department-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #64748b;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .tab-btn:hover {
+            background: #f8fafc;
+        }
+
+        .tab-btn.active {
+            background: #0b3d91;
+            color: white;
+            border-color: #0b3d91;
+            box-shadow: 0 4px 12px rgba(11,61,145,0.25);
+        }
+
+        /* =========================================
+           Form
+        ========================================= */
         .add-form {
             background: white;
             padding: 25px;
@@ -145,6 +184,9 @@
             box-shadow: 0 5px 12px rgba(25, 135, 84, 0.4);
         }
 
+        /* =========================================
+           Search
+        ========================================= */
         .search-section {
             background: white;
             padding: 18px 25px;
@@ -223,6 +265,9 @@
             white-space: nowrap;
         }
 
+        /* =========================================
+           Table
+        ========================================= */
         .items-table {
             background: white;
             border-radius: 14px;
@@ -335,6 +380,9 @@
             white-space: nowrap;
         }
 
+        /* =========================================
+           Actions
+        ========================================= */
         .action-buttons {
             display: flex;
             gap: 8px;
@@ -426,6 +474,9 @@
             border-right: 4px solid #ffc107;
         }
 
+        /* =========================================
+           Log Modal
+        ========================================= */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -562,6 +613,7 @@
             .form-grid { grid-template-columns: 1fr 1fr; }
             .consumables-container { padding: 15px; }
             .search-section { padding: 15px; }
+            .tab-btn { padding: 10px; font-size: 13px; }
         }
     </style>
 </head>
@@ -572,18 +624,24 @@
 
         <div class="consumables-header">
             <h1>📦 إدارة المستهلكات</h1>
-
-            <button
-                class="back-btn"
-                onclick="window.location.href='index.html'">
+            <button class="back-btn" onclick="window.location.href='index.html'">
                 ← رجوع للرئيسية
             </button>
         </div>
 
         <div id="pageMessage" class="page-message"></div>
 
+        <!-- 🆕 الأقسام (Tabs) -->
+        <div class="department-tabs" id="tabsContainer">
+            <button class="tab-btn active" data-dept="wiring" onclick="switchDepartment('wiring', this)">🔌 Wiring</button>
+            <button class="tab-btn" data-dept="lt" onclick="switchDepartment('lt', this)">⚡ LT</button>
+            <button class="tab-btn" data-dept="ht" onclick="switchDepartment('ht', this)">⚡ HT</button>
+            <button class="tab-btn" data-dept="installation" onclick="switchDepartment('installation', this)">🔧 Equipment</button>
+        </div>
+
+        <!-- فورم الإضافة -->
         <div class="add-form" id="addFormSection">
-            <h2>➕ إضافة صنف جديد</h2>
+            <h2>➕ إضافة صنف جديد لقسم <span id="currentDeptName" style="color:#0b3d91">Wiring</span></h2>
 
             <div class="form-grid">
                 <select id="itemShape" title="اختر الشكل">
@@ -616,19 +674,10 @@
 
         <div class="search-section">
             <label>🔍 ابحث:</label>
-
             <div class="search-box">
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="اكتب اسم الصنف أو Part Number..."
-                    autocomplete="off">
+                <input type="text" id="searchInput" placeholder="اكتب اسم الصنف أو Part Number..." autocomplete="off">
             </div>
-
-            <button class="search-clear-btn" id="clearSearchBtn" onclick="clearSearch()">
-                ✖ مسح البحث
-            </button>
-
+            <button class="search-clear-btn" id="clearSearchBtn" onclick="clearSearch()">✖ مسح البحث</button>
             <span class="search-results-info" id="searchResultsInfo"></span>
         </div>
 
@@ -671,6 +720,14 @@
     <script>
         let allItems = [];
         let currentSearchTerm = "";
+        let activeDepartment = "wiring"; // القسم الافتراضي
+
+        const deptNames = {
+            wiring: "Wiring",
+            lt: "LT",
+            ht: "HT",
+            installation: "Equipment"
+        };
 
         function showMessage(text, type) {
             const el = document.getElementById("pageMessage");
@@ -693,10 +750,7 @@
             if (!term) return safeText;
             const safeTerm = escapeHtml(term);
             try {
-                const regex = new RegExp(
-                    "(" + safeTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")",
-                    "gi"
-                );
+                const regex = new RegExp("(" + safeTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi");
                 return safeText.replace(regex, "<mark>$1</mark>");
             } catch (e) {
                 return safeText;
@@ -724,14 +778,38 @@
             });
         }
 
+        /* =========================================
+           تغيير القسم
+        ========================================= */
+        function switchDepartment(dept, btn) {
+            activeDepartment = dept;
+            document.getElementById("currentDeptName").innerText = deptNames[dept] || dept;
+            
+            // تحديث شكل التابات
+            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+            if (btn) btn.classList.add("active");
+
+            // إعادة تصفير البحث والفلترة
+            currentSearchTerm = "";
+            document.getElementById("searchInput").value = "";
+            
+            loadConsumables();
+        }
+
         function filterItems() {
+            // 1. الفلترة حسب القسم
+            let filtered = allItems.filter(item => item.department === activeDepartment || (!item.department && activeDepartment === 'wiring'));
+
+            // 2. الفلترة حسب البحث
             const term = currentSearchTerm.trim().toLowerCase();
-            if (!term) return allItems;
-            return allItems.filter(item => {
-                const name = String(item.item_name || "").toLowerCase();
-                const part = String(item.part_number || "").toLowerCase();
-                return name.includes(term) || part.includes(term);
-            });
+            if (term) {
+                filtered = filtered.filter(item => {
+                    const name = String(item.item_name || "").toLowerCase();
+                    const part = String(item.part_number || "").toLowerCase();
+                    return name.includes(term) || part.includes(term);
+                });
+            }
+            return filtered;
         }
 
         function renderItems() {
@@ -745,11 +823,9 @@
             if (currentSearchTerm.trim()) clearBtn.classList.add("show");
             else clearBtn.classList.remove("show");
 
-            if (currentSearchTerm.trim()) {
-                infoEl.innerText = `عدد النتائج: ${filtered.length} من ${allItems.length}`;
-            } else {
-                infoEl.innerText = `إجمالي الأصناف: ${allItems.length}`;
-            }
+            infoEl.innerText = currentSearchTerm.trim() 
+                ? `عدد النتائج: ${filtered.length} من ${allItems.length}` 
+                : `إجمالي الأصناف في هذا القسم: ${filtered.length}`;
 
             if (!allItems.length) {
                 tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">لا توجد أصناف مسجلة حتى الآن</td></tr>';
@@ -806,6 +882,7 @@
 
         async function loadConsumables() {
             const tbody = document.getElementById("itemsBody");
+            tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">⏳ جاري التحميل...</td></tr>';
 
             if (!window.supabaseClient) {
                 tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">❌ لا يوجد اتصال بقاعدة البيانات</td></tr>';
@@ -872,10 +949,7 @@
 
             if (checkResult.data && checkResult.data.length > 0) {
                 const existing = checkResult.data[0];
-                showMessage(
-                    "⚠️ Part Number \"" + partNumber + "\" موجود بالفعل للصنف: " + existing.item_name,
-                    "warning"
-                );
+                showMessage("⚠️ Part Number \"" + partNumber + "\" موجود بالفعل للصنف: " + existing.item_name, "warning");
                 return;
             }
 
@@ -888,7 +962,8 @@
                     part_number: partNumber,
                     quantity: Number(quantity),
                     minimum_quantity: Number(minQty),
-                    used_in_train: Number(usedInTrain) || 0
+                    used_in_train: Number(usedInTrain) || 0,
+                    department: activeDepartment // 🆕 ربط الصنف بالقسم الحالي
                 }]);
 
             if (result.error) {
@@ -897,16 +972,7 @@
                 return;
             }
 
-            showMessage("✅ تم إضافة الصنف بنجاح", "success");
-
-            // 🔔 إشعار (حدث #1: للمدير + الفنيين)
-            if (window.NERIC_Notify) {
-                window.NERIC_Notify.sendEveryone(
-                    "📦 صنف جديد في المستهلكات",
-                    `${getCurrentUsername()} أضاف: ${finalName} (Part: ${partNumber}) - الكمية: ${quantity}`,
-                    { type: "consumables_add", part_number: partNumber }
-                );
-            }
+            showMessage("✅ تم إضافة الصنف بنجاح لقسم " + deptNames[activeDepartment], "success");
 
             document.getElementById("itemShape").value = "";
             document.getElementById("itemName").value = "";
@@ -999,10 +1065,9 @@
 
             showMessage("✅ تم صرف " + issuedQty + " بنجاح", "success");
 
-            // 🔔 إشعار (حدث #2: للمدير + الفنيين)
             if (window.NERIC_Notify) {
                 window.NERIC_Notify.sendEveryone(
-                    "📤 صرف من المستهلكات",
+                    "📤 صرف من المستهلكات (" + deptNames[activeDepartment] + ")",
                     `${getCurrentUsername()} صرف ${issuedQty} من: ${item.item_name} (Part: ${item.part_number || "-"})`,
                     { type: "consumables_issue", part_number: item.part_number || "" }
                 );
@@ -1072,10 +1137,9 @@
 
             showMessage("✅ تم إضافة " + addQty + " بنجاح", "success");
 
-            // 🔔 إشعار (حدث #3: للمدير + الفنيين)
             if (window.NERIC_Notify) {
                 window.NERIC_Notify.sendEveryone(
-                    "📥 توريد للمستهلكات",
+                    "📥 توريد للمستهلكات (" + deptNames[activeDepartment] + ")",
                     `${getCurrentUsername()} أضاف ${addQty} إلى: ${item.item_name} (Part: ${item.part_number || "-"})`,
                     { type: "consumables_restock", part_number: item.part_number || "" }
                 );
@@ -1181,15 +1245,55 @@
             if (e.target === this) closeLogModal();
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
-            if (!isAdminUser()) {
-                const addForm = document.getElementById("addFormSection");
-                if (addForm) addForm.style.display = "none";
+document.addEventListener("DOMContentLoaded", function () {
+    const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+    
+    // لو المستخدم فني (مش مدير)
+    if (user && user.role !== "admin") {
+        
+        // 1. نجمع كل الأقسام المسموح له بيها
+        let allowedDepts = [user.role];
+        if (user.secondRole) allowedDepts.push(user.secondRole);
+        if (Array.isArray(user.extraRoles)) allowedDepts.push(...user.extraRoles);
+
+        // 2. نحدد القسم الأساسي اللي هيفتح افتراضيًا
+        let userDept = allowedDepts[0] || "wiring";
+        if (userDept === "installation") userDept = "installation"; 
+        else if (userDept === "lt") userDept = "lt";
+        else if (userDept === "ht") userDept = "ht";
+        else if (userDept === "wiring") userDept = "wiring";
+
+        // 3. نغير القسم النشط
+        activeDepartment = userDept;
+        document.getElementById("currentDeptName").innerText = deptNames[userDept] || userDept;
+
+        // 4. نعدل التابات (نخفي المسموح له بيها ونشيل الباقي)
+        document.querySelectorAll(".tab-btn").forEach(btn => {
+            const btnDept = btn.getAttribute("data-dept");
+            
+            if (allowedDepts.includes(btnDept)) {
+                // لو القسم بتاعه، نخليه يظهر
+                btn.style.display = "block";
+                if (btnDept === userDept) {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
+                }
+            } else {
+                // ❌ لو قسم مش بتاعه، نخفيه خالص
+                btn.style.display = "none";
             }
-            loadConsumables();
         });
+
+        // 5. نخفي فورم الإضافة لأنه فني
+        const addForm = document.getElementById("addFormSection");
+        if (addForm) addForm.style.display = "none";
+    }
+
+    // تحميل البيانات
+    loadConsumables();
+});
     </script>
 
 </body>
-
 </html>

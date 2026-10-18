@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقييمات الفنيين - NERIC</title>
+    
+    <!-- مكتبة Chart.js للرسومات -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * { box-sizing: border-box; font-family: Arial, Tahoma, sans-serif; }
+        body { margin: 0; background: #f1f5f9; color: #1e293b; }
+
+        .header { background: #06345c; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .back-btn { background: #198754; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        .container { max-width: 1300px; margin: 25px auto; padding: 0 15px; }
+
+        /* Search Box */
+        .search-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,.05); margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap; }
+        .search-box input { flex: 1; padding: 12px 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; outline: none; }
+        .search-box input:focus { border-color: #06345c; }
+        .search-box button { background: #06345c; color: white; border: none; padding: 0 25px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .card h3 { margin: 0 0 15px; color: #64748b; font-size: 16px; font-weight: normal; }
+        .card .big-number { font-size: 32px; font-weight: bold; color: #0f172a; margin-bottom: 10px; }
+        
+        /* ألوان مخصصة */
+        .text-green { color: #16a34a; }
+        .text-red { color: #dc2626; }
+        .text-blue { color: #2563eb; }
+        .text-orange { color: #ea580c; }
+        .text-purple { color: #7c3aed; }
+
+        .chart-container { position: relative; height: 160px; width: 160px; }
+        
+        /* تكبير مساحة الرسم البياني الشامل */
+        .chart-container-lg { 
+            position: relative; 
+            height: 350px; 
+            width: 100%; 
+            grid-column: span 3; /* ياخد 3 أرباع الشاشة */
+            padding: 20px;
+        }
+
+        /* صندوق الملخص (أعلى وأقل تقييم) */
+        .summary-box {
+            grid-column: span 1; /* ياخد ربع الشاشة */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .summary-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.05);
+            text-align: center;
+            border-right: 5px solid;
+        }
+        .summary-item.top { border-color: #16a34a; }
+        .summary-item.low { border-color: #dc2626; }
+
+        .summary-item span { display: block; font-size: 14px; color: #64748b; margin-bottom: 5px; }
+        .summary-item strong { font-size: 22px; }
+
+        .info-card { grid-column: span 4; display: flex; justify-content: space-between; align-items: center; text-align: right; }
+        .info-card h2 { margin: 0 0 5px; color: #06345c; font-size: 24px; }
+        .info-card p { margin: 0; color: #64748b; font-size: 15px; }
+
+        /* Edit Scores */
+        .score-edit { display: flex; gap: 10px; margin-top: 10px; align-items: center; }
+        .score-edit input { width: 60px; padding: 8px; border: 2px solid #cbd5e1; border-radius: 6px; text-align: center; font-weight: bold; font-size: 16px; }
+        .score-edit button { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .score-edit button:hover { background: #059669; }
+
+        @media (max-width: 1000px) {
+            .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-container-lg { grid-column: span 2; height: 300px; }
+            .summary-box { grid-column: span 2; flex-direction: row; }
+            .summary-item { flex: 1; }
+        }
+        @media (max-width: 600px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .chart-container-lg { grid-column: span 1; }
+            .summary-box { grid-column: span 1; flex-direction: column; }
+            .info-card { grid-column: span 1; flex-direction: column; gap: 15px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📊 تقييمات الفنيين (تقييم شهري)</h1>
+        <button class="back-btn" onclick="window.location.href='index.html'">← الرئيسية</button>
+    </div>
+
+    <div class="container">
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ابحث باسم الفني أو كود الموظف...">
+            <button onclick="searchEmployee()">بحث 🔍</button>
+        </div>
+
+        <div id="dashboardContent" style="display: none;">
+            
+            <div class="dashboard-grid">
+                <!-- كارت بيانات الفني -->
+                <div class="card info-card">
+                    <div>
+                        <h2 id="empName">اسم الفني</h2>
+                        <p>كود: <span id="empCode" style="font-weight:bold; color:#0f172a;">-</span> | القسم: <span id="empDept">-</span></p>
+                        <p style="color:#94a3b8; font-size:13px; margin-top:5px;" id="monthInfo"></p>
+                    </div>
+                    <div style="background:#f8fafc; padding:10px 20px; border-radius:10px; border:1px solid #e2e8f0;">
+                        <span style="font-size:14px; color:#64748b;">التقييم العام (هذا الشهر)</span>
+                        <div id="overallScore" style="font-size:26px; font-weight:bold; color:#06345c;">0%</div>
+                    </div>
+                </div>
+
+                <!-- كارت نسبة الحضور -->
+                <div class="card">
+                    <h3>نسبة الحضور</h3>
+                    <div class="chart-container">
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                    <div class="big-number text-green" id="attendancePercent">0%</div>
+                </div>
+
+                <!-- كارت كمية الشغل -->
+                <div class="card">
+                    <h3>تقييم الأعمال</h3>
+                    <div class="chart-container">
+                        <canvas id="workChart"></canvas>
+                    </div>
+                    <div class="big-number text-blue" id="totalWork">0 / 100</div>
+                </div>
+
+                <!-- كارت السلوك -->
+                <div class="card">
+                    <h3>تقييم السلوك</h3>
+                    <div class="chart-container">
+                        <canvas id="behaviorChart"></canvas>
+                    </div>
+                    <div class="big-number text-orange" id="behaviorScoreText">0 / 10</div>
+                    <div class="score-edit" id="behaviorEdit">
+                        <input type="number" id="behaviorInput" min="0" max="10" value="0">
+                        <button onclick="updateScore('behavior')">حفظ</button>
+                    </div>
+                </div>
+
+                <!-- كارت الأخلاق -->
+                <div class="card">
+                    <h3>تقييم الأخلاق</h3>
+                    <div class="chart-container">
+                        <canvas id="mannersChart"></canvas>
+                    </div>
+                    <div class="big-number text-purple" id="mannersScoreText">0 / 10</div>
+                    <div class="score-edit" id="mannersEdit">
+                        <input type="number" id="mannersInput" min="0" max="10" value="0">
+                        <button onclick="updateScore('manners')">حفظ</button>
+                    </div>
+                </div>
+
+                <!-- الرسم البياني الشامل الجديد (أعمدة) -->
+                <div class="card chart-container-lg">
+                    <h3 style="width:100%; text-align:right; font-size: 18px; font-weight: bold; color:#06345c; margin-bottom: 10px;">📈 تفاصيل التقييم (من 100)</h3>
+                    <canvas id="overallBarChart"></canvas>
+                </div>
+
+                <!-- صندوق أعلى وأقل تقييم -->
+                <div class="summary-box">
+                    <div class="summary-item top">
+                        <span>🥇 أعلى تقييم</span>
+                        <strong id="topScoreText" style="color:#16a34a;">-</strong>
+                    </div>
+                    <div class="summary-item low">
+                        <span>📉 أقل تقييم (الناقص)</span>
+                        <strong id="lowScoreText" style="color:#dc2626;">-</strong>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="emptyState" style="text-align: center; padding: 50px; color: #94a3b8;">
+            <div style="font-size: 50px; margin-bottom: 10px;">🔍</div>
+            ابحث عن فني (بالاسم أو الكود) لعرض تقييمه الشهري
+        </div>
+
+    </div>
+
+    <script>
+        const db = window.supabase.createClient("https://gzyybadyaunizdlvmcle.supabase.co", "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO");
+        let charts = {};
+        let currentEmp = null;
+
+        // دالة البحث
+        async function searchEmployee() {
+            const term = document.getElementById("searchInput").value.trim().toLowerCase();
+            if (!term) return;
+
+            document.getElementById("emptyState").style.display = "block";
+            document.getElementById("emptyState").innerHTML = "⏳ جاري البحث...";
+            document.getElementById("dashboardContent").style.display = "none";
+
+            const { data: empData, error } = await db
+                .from("employees")
+                .select("*")
+                .or(`name.ilike.%${term}%,employee_code.ilike.%${term}%`)
+                .limit(1)
+                .maybeSingle();
+
+            if (error || !empData) {
+                document.getElementById("emptyState").innerHTML = "❌ لم يتم العثور على الفني، تأكد من الاسم أو الكود.";
+                return;
+            }
+
+            currentEmp = empData;
+            document.getElementById("emptyState").style.display = "none";
+            document.getElementById("dashboardContent").style.display = "block";
+
+            document.getElementById("empName").innerText = empData.name;
+            document.getElementById("empCode").innerText = empData.employee_code || "غير مسجل";
+            document.getElementById("empDept").innerText = empData.department || "غير محدد";
+            
+            document.getElementById("behaviorInput").value = empData.behavior_score || 0;
+            document.getElementById("mannersInput").value = empData.manners_score || 0;
+
+            // حساب بداية ونهاية الشهر الحالي
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth(); 
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            const startDate = firstDay.toISOString().split("T")[0];
+            const endDate = lastDay.toISOString().split("T")[0];
+
+            const monthNames = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            document.getElementById("monthInfo").innerText = `إحصائيات شهر: ${monthNames[month]} ${year}`;
+
+            // جلب الحضور
+            const { data: attData } = await db
+                .from("attendance")
+                .select("status")
+                .eq("username", empData.username)
+                .gte("attendance_date", startDate)
+                .lte("attendance_date", endDate);
+
+            const present = attData.filter(a => a.status === "present" || a.status === "حاضر").length;
+            const absent = attData.filter(a => a.status === "absent").length;
+            const totalDays = present + absent || 1;
+            const attPercent = Math.round((present / totalDays) * 100);
+
+            // جلب الأعمال
+            const { data: workData } = await db
+                .from("records")
+                .select("department")
+                .in("created_by", [empData.name, empData.username])
+                .gte("created_at", `${startDate}T00:00:00`)
+                .lte("created_at", `${endDate}T23:59:59`);
+
+            const totalWork = workData.length;
+
+            // حساب التقييمات
+            const behavior = empData.behavior_score || 0;
+            const manners = empData.manners_score || 0;
+            
+            // تقييم الشغل: كل شغلة بـ 2 نقط، بحد أقصى 100
+            const workScore = Math.min(totalWork * 2, 100); 
+            
+            // المعادلة العامة
+            const overall = Math.round(((attPercent + workScore + (behavior*10) + (manners*10)) / 400) * 100);
+            
+            document.getElementById("overallScore").innerText = overall + "%";
+            document.getElementById("attendancePercent").innerText = attPercent + "%";
+            document.getElementById("totalWork").innerText = workScore + " / 100"; // عرض النقاط من 100
+
+            // تحديد أعلى وأقل تقييم
+            const scores = {
+                "الحضور": attPercent,
+                "الأعمال": workScore,
+                "السلوك": behavior * 10,
+                "الأخلاق": manners * 10
+            };
+            
+            const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+            
+            document.getElementById("topScoreText").innerText = `${sorted[0][0]} (${sorted[0][1]}%)`;
+            document.getElementById("lowScoreText").innerText = `${sorted[3][0]} (${sorted[3][1]}%)`;
+
+            // رسم الرسومات
+            drawCharts(present, absent, behavior, manners, workScore, attPercent);
+        }
+
+        function drawCharts(present, absent, behavior, manners, workScore, attPercent) {
+            Object.values(charts).forEach(c => c.destroy());
+
+            const doughnutOptions = { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } };
+
+            // 1. الحضور (الدائرة الخضراء)
+            charts.att = new Chart(document.getElementById("attendanceChart"), {
+                type: 'doughnut',
+                data: {
+                    labels: ['حضور', 'غياب'],
+                    datasets: [{ data: [attPercent, 100 - attPercent], backgroundColor: ['#16a34a', '#f1f5f9'], borderWidth: 0 }]
+                },
+                options: doughnutOptions
+            });
+
+            // 2. الأعمال (الدائرة الزرقاء) - تم إصلاحها عشان تتحرك مع النقاط
+            charts.work = new Chart(document.getElementById("workChart"), {
+                type: 'doughnut',
+                data: {
+                    labels: ['مكتمل', 'ناقص'],
+                    datasets: [{ data: [workScore, 100 - workScore], backgroundColor: ['#2563eb', '#f1f5f9'], borderWidth: 0 }]
+                },
+                options: doughnutOptions
+            });
+
+            // 3. السلوك (البرتقالي)
+            charts.beh = new Chart(document.getElementById("behaviorChart"), {
+                type: 'doughnut',
+                data: {
+                    labels: ['سلوك'],
+                    datasets: [{ data: [behavior * 10, 100 - (behavior * 10)], backgroundColor: ['#ea580c', '#f1f5f9'], borderWidth: 0 }]
+                },
+                options: doughnutOptions
+            });
+
+            // 4. الأخلاق (البنفسجي)
+            charts.man = new Chart(document.getElementById("mannersChart"), {
+                type: 'doughnut',
+                data: {
+                    labels: ['أخلاق'],
+                    datasets: [{ data: [manners * 10, 100 - (manners * 10)], backgroundColor: ['#7c3aed', '#f1f5f9'], borderWidth: 0 }]
+                },
+                options: doughnutOptions
+            });
+
+            // 5. رسم الأعمدة الكبير (زي الصورة اللي بعتها)
+            charts.bar = new Chart(document.getElementById("overallBarChart"), {
+                type: 'bar',
+                data: {
+                    labels: ['الحضور', 'الأعمال', 'السلوك', 'الأخلاق'],
+                    datasets: [{
+                        label: 'النسبة المئوية',
+                        data: [attPercent, workScore, behavior * 10, manners * 10],
+                        backgroundColor: [
+                            'rgba(22, 163, 74, 0.8)',  // أخضر
+                            'rgba(37, 99, 235, 0.8)',  // أزرق
+                            'rgba(234, 88, 12, 0.8)',  // برتقالي
+                            'rgba(124, 58, 237, 0.8)'  // بنفسجي
+                        ],
+                        borderColor: [
+                            '#16a34a', '#2563eb', '#ea580c', '#7c3aed'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) { return value + '%'; }
+                            }
+                        }
+                    }
+                }
+            });
+
+            document.getElementById("behaviorScoreText").innerText = behavior + " / 10";
+            document.getElementById("mannersScoreText").innerText = manners + " / 10";
+        }
+
+        async function updateScore(type) {
+            if (!currentEmp) return;
+
+            const val = type === 'behavior' 
+                ? document.getElementById("behaviorInput").value 
+                : document.getElementById("mannersInput").value;
+
+            const col = type === 'behavior' ? 'behavior_score' : 'manners_score';
+
+            const { error } = await db.from("employees").update({ [col]: parseInt(val) }).eq("id", currentEmp.id);
+
+            if (error) {
+                alert("❌ فشل حفظ التقييم");
+                return;
+            }
+
+            alert("✅ تم حفظ التقييم بنجاح");
+            searchEmployee(); 
+        }
+    </script>
+</body>
+</html>
