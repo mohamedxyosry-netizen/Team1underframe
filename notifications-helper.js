@@ -25,6 +25,18 @@
                 payload.target_usernames = targetUsernames;
             }
 
+            // تحديد الصفحة اللي هتفتح لما المستخدم يدوس على الإشعار
+let targetPage = "index.html"; // الافتراضي
+if (data && data.type) {
+    if (data.type === "leave_request") targetPage = "leaves-admin.html";
+    else if (data.type === "leave_approved" || data.type === "leave_rejected") targetPage = "leaves.html";
+    else if (data.type === "chat_message") targetPage = "chat.html";
+    else if (data.type === "priority_item") targetPage = "priority.html";
+}
+
+// إضافة رابط الصفحة للبيانات اللي هتتبعت
+payload.data.url = "/Team1underframe/" + targetPage;
+
             const response = await fetch(SUPABASE_FUNCTION_URL, {
                 method: "POST",
                 headers: {

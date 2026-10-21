@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل المهام اليومية - NERIC</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * { box-sizing: border-box; font-family: Arial, Tahoma, sans-serif; }
+        body { margin: 0; background: #f1f5f9; color: #1e293b; }
+
+        .header { background: #06345c; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;}
+        .header h1 { margin: 0; font-size: 22px; }
+        .back-btn { background: #198754; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit; }
+
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
+
+        /* شريط اختيار التاريخ */
+        .date-filter {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.05);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .date-filter label { font-weight: bold; color: #06345c; font-size: 16px; }
+        .date-filter input[type="date"] {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
+        }
+        .date-filter input[type="date"]:focus { border-color: #06345c; }
+
+        /* شبكة الأقسام */
+        .departments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .dept-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,.05);
+            border-top: 5px solid #e2e8f0;
+            transition: transform 0.2s;
+        }
+        .dept-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,.1); }
+
+        .dept-card.has-work { border-top-color: #16a34a; }
+        .dept-card.no-work { border-top-color: #94a3b8; }
+
+        .dept-icon { font-size: 40px; margin-bottom: 15px; }
+        .dept-name { font-size: 20px; font-weight: bold; color: #0f172a; margin-bottom: 10px; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .has-work .status-badge { background: #dcfce7; color: #166534; }
+        .no-work .status-badge { background: #f1f5f9; color: #64748b; }
+
+        .count-text { font-size: 15px; color: #475569; margin-bottom: 15px; font-weight: bold; }
+        
+        .view-btn {
+            background: #06345c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: inherit;
+            width: 100%;
+            transition: 0.2s;
+            display: none;
+        }
+        .has-work .view-btn { display: inline-block; }
+        .view-btn:hover { background: #0b4d82; }
+
+        /* النافذة المنبثقة (المودال) */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6); z-index: 9999;
+            justify-content: center; align-items: center;
+            padding: 20px; backdrop-filter: blur(3px);
+        }
+        .modal-overlay.show { display: flex; }
+        
+        .modal-box {
+            background: #f8fafc; border-radius: 16px;
+            width: 100%; max-width: 850px; max-height: 85vh;
+            display: flex; flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+        }
+        
+        .modal-header {
+            background: #06345c; color: white; padding: 20px 25px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-header h2 { margin: 0; font-size: 20px; }
+        .modal-close { background: rgba(255,255,255,0.2); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; font-size: 20px; cursor: pointer; }
+        .modal-close:hover { background: rgba(255,255,255,0.4); }
+        
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+
+        /* تفاصيل السجل */
+        .record-item {
+            background: white; padding: 15px 20px; border-radius: 10px;
+            margin-bottom: 12px; border-right: 4px solid #0b3d91;
+            box-shadow: 0 2px 8px rgba(0,0,0,.04);
+        }
+        .record-item:last-child { margin-bottom: 0; }
+        .record-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;}
+        .record-title { font-weight: bold; color: #0b3d91; font-size: 16px; }
+        .record-time { font-size: 13px; color: #64748b; }
+        .record-details { font-size: 14px; color: #334155; line-height: 1.7; }
+        .record-details strong { color: #0f172a; }
+
+        .loading { text-align: center; padding: 50px; font-size: 18px; color: #64748b; }
+
+        @media (max-width: 600px) {
+            .date-filter { flex-direction: column; align-items: stretch; }
+            .departments-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📅 سجل المهام اليومية</h1>
+        <button class="back-btn" onclick="window.location.href='index.html'">← الرئيسية</button>
+    </div>
+
+    <div class="container">
+        
+        <div class="date-filter">
+            <label>اختر التاريخ:</label>
+            <input type="date" id="filterDate" onchange="loadDailyTasks()">
+            <span id="dayName" style="font-weight:bold; color:#198754; font-size:16px;"></span>
+        </div>
+
+        <div id="dashboardContent">
+            <div class="departments-grid" id="departmentsGrid">
+                <!-- سيتم توليد الكروت هنا -->
+                <div class="loading">⏳ جاري تحميل البيانات...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal لعرض التفاصيل -->
+    <div id="detailsModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="modalTitle">تفاصيل القسم</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- التفاصيل هتظهر هنا -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const db = window.supabase.createClient("https://gzyybadyaunizdlvmcle.supabase.co", "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO");
+        
+        let currentUser = null;
+        let allTasks = [];
+
+        const DEPARTMENTS = {
+            wiring: { name: "Wiring", icon: "🔌" },
+            lt: { name: "LT", icon: "⚡" },
+            ht: { name: "HT", icon: "⚡" },
+            installation: { name: "Equipment", icon: "🔧" },
+            final: { name: "Final", icon: "✅" }
+        };
+
+        // تحويل التاريخ لصيغة محلية YYYY-MM-DD
+        function getLocalDateString(dateObj) {
+            const d = dateObj || new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, "0");
+            const day = String(d.getDate()).padStart(2, "0");
+            return `${y}-${m}-${day}`;
+        }
+
+        // عرض اسم اليوم بالعربي
+        function updateDayName(dateStr) {
+            const date = new Date(dateStr + "T00:00:00");
+            const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+            document.getElementById("dayName").innerText = `(${days[date.getDay()]})`;
+        }
+
+        // تهيئة الصفحة
+        document.addEventListener("DOMContentLoaded", async function() {
+            // التأكد إن المستخدم مدير فقط
+            try {
+                const raw = sessionStorage.getItem("currentUser");
+                currentUser = raw ? JSON.parse(raw) : null;
+            } catch(e) {}
+
+            if (!currentUser || currentUser.role !== "admin") {
+                alert("❌ هذه الصفحة متاحة للمدير فقط");
+                window.location.href = "index.html";
+                return;
+            }
+
+            // تعيين تاريخ النهاردة كافتراضي
+            const today = getLocalDateString();
+            document.getElementById("filterDate").value = today;
+            updateDayName(today);
+            
+            // تحميل الشغل
+            await loadDailyTasks();
+        });
+
+        async function loadDailyTasks() {
+            const grid = document.getElementById("departmentsGrid");
+            grid.innerHTML = '<div class="loading">⏳ جاري تحميل البيانات...</div>';
+
+            const dateStr = document.getElementById("filterDate").value;
+            if (!dateStr) return;
+            updateDayName(dateStr);
+
+            const startDate = `${dateStr}T00:00:00`;
+            const endDate = `${dateStr}T23:59:59`;
+
+            try {
+                // جلب كل السجلات في اليوم المختار
+                const { data, error } = await db
+                    .from("records")
+                    .select("*")
+                    .gte("created_at", startDate)
+                    .lte("created_at", endDate);
+
+                if (error) throw error;
+                allTasks = data || [];
+
+                renderCards();
+
+            } catch (err) {
+                console.error(err);
+                grid.innerHTML = `<div class="loading" style="color:red;">❌ حدث خطأ أثناء تحميل البيانات: ${err.message}</div>`;
+            }
+        }
+
+        function renderCards() {
+            const grid = document.getElementById("departmentsGrid");
+            grid.innerHTML = "";
+
+            // لفة على الخمس أقسام
+            Object.keys(DEPARTMENTS).forEach(deptKey => {
+                const deptInfo = DEPARTMENTS[deptKey];
+                
+                // فلترة الشغل الخاص بالقسم ده
+                const deptTasks = allTasks.filter(t => t.department === deptKey);
+                const hasWork = deptTasks.length > 0;
+
+                const cardClass = hasWork ? "has-work" : "no-work";
+                const statusText = hasWork ? "✅ تم تسجيل شغل" : "❌ لم يتم تسجيل شغل";
+                const countText = hasWork ? `عدد العمليات: ${deptTasks.length}` : "لا يوجد بيانات";
+
+                const cardHTML = `
+                    <div class="dept-card ${cardClass}">
+                        <div class="dept-icon">${deptInfo.icon}</div>
+                        <div class="dept-name">${deptInfo.name}</div>
+                        <div class="status-badge">${statusText}</div>
+                        <div class="count-text">${countText}</div>
+                        ${hasWork ? `<button class="view-btn" onclick="openDetails('${deptKey}')">عرض التفاصيل 👁️</button>` : ""}
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        function openDetails(deptKey) {
+            const deptTasks = allTasks.filter(t => t.department === deptKey);
+            const deptInfo = DEPARTMENTS[deptKey];
+            
+            document.getElementById("modalTitle").innerText = `تفاصيل قسم ${deptInfo.name} (${deptTasks.length} عمليات)`;
+            
+            const body = document.getElementById("modalBody");
+            
+            body.innerHTML = deptTasks.map(task => {
+                // تنسيق الوقت
+                const time = new Date(task.created_at).toLocaleTimeString("ar-EG", { hour: '2-digit', minute: '2-digit' });
+                
+                // حالة الشغل
+                const isDone = task.done === "نعم" || task.done === "تم";
+                const statusHTML = isDone 
+                    ? `<span style="color:#16a34a; font-weight:bold;">✅ مكتمل</span>` 
+                    : `<span style="color:#dc2626; font-weight:bold;">❌ غير مكتمل</span>`;
+                
+                const reasonHTML = (!isDone && task.not_completed_reason) 
+                    ? `<br><span style="color:#dc2626; font-size:13px;">سبب عدم الإكمال: ${task.not_completed_reason}</span>` 
+                    : "";
+
+                return `
+                    <div class="record-item">
+                        <div class="record-header">
+                            <span class="record-title">🚆 عربية: ${task.car_number || '-'} | ${task.car_name || '-'}</span>
+                            <span class="record-time">🕒 ${time}</span>
+                        </div>
+                        <div class="record-details">
+                            <strong>الجهاز/المهمة:</strong> ${task.device || 'غير محدد'} <br>
+                            <strong>الحالة:</strong> ${statusHTML} ${reasonHTML} <br>
+                            <strong>الملاحظات:</strong> ${task.notes || 'لا يوجد'} <br>
+                            <strong>بواسطة:</strong> ${task.created_by || 'غير معروف'}
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            document.getElementById("detailsModal").classList.add("show");
+        }
+
+        function closeModal() {
+            document.getElementById("detailsModal").classList.remove("show");
+        }
+
+        // إغلاق المودال عند الضغط على الخلفية
+        document.getElementById("detailsModal").addEventListener("click", function(e) {
+            if (e.target === this) closeModal();
+        });
+
+    </script>
+</body>
+</html>

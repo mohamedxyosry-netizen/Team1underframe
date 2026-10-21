@@ -37,11 +37,14 @@ messaging.onBackgroundMessage((payload) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const targetUrl = new URL(
-    (event.notification.data && event.notification.data.url) || './index.html',
-    self.location.origin
-  ).href;
+let targetPath = (event.notification.data && event.notification.data.url) || "/Team1underframe/index.html";
 
+// التأكد من وجود السلاش في البداية
+if (!targetPath.startsWith("/")) {
+    targetPath = "/" + targetPath;
+}
+
+const targetUrl = new URL(targetPath, self.location.origin).href;
   event.waitUntil(
     clients.matchAll({
       type: 'window',

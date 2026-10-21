@@ -276,6 +276,16 @@
                 <strong>تقييمات الفنيين</strong>
             </button>
 
+            <!-- 📅 سجل المهام اليومية (للمدير) -->
+            <button
+                id="dailyTasksMenu"
+                class="menu-item"
+                onclick="openDailyTasksPage()"
+                style="display:none;">
+                <span>📅</span>
+                <strong>سجل المهام اليومية</strong>
+            </button>
+
             <button id="deleteRequestsMenu" class="menu-item" onclick="openSection('deleteRequests')">
                 <span>🗑️</span>
                 <strong>طلبات الحذف</strong>
@@ -567,6 +577,25 @@
         window.location.href = "ratings.html";
     }
 
+    // 📅 فتح صفحة سجل المهام اليومية (للمدير)
+    function openDailyTasksPage() {
+        const user = typeof getCurrentUser === "function"
+            ? getCurrentUser()
+            : null;
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (user.role !== "admin") {
+            alert("❌ هذه الصفحة متاحة للمدير فقط");
+            return;
+        }
+
+        window.location.href = "daily-tasks.html";
+    }
+
     // 🏖️ عدّاد الإجازات للمدير
     async function updateLeavesCount() {
         const menu = document.getElementById("leavesAdminMenu");
@@ -613,13 +642,14 @@
         setTimeout(updateLeavesCount, 1200);
         setInterval(updateLeavesCount, 5000);
 
-        // إظهار زرار التقييمات للمدير فقط
+        // إظهار أزرار المدير فقط
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (user && user.role === "admin") {
             const ratingsMenu = document.getElementById("ratingsMenu");
-            if (ratingsMenu) {
-                ratingsMenu.style.display = "flex";
-            }
+            if (ratingsMenu) ratingsMenu.style.display = "flex";
+
+            const dailyTasksMenu = document.getElementById("dailyTasksMenu");
+            if (dailyTasksMenu) dailyTasksMenu.style.display = "flex";
         }
     });
 
