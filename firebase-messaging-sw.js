@@ -23,8 +23,10 @@ messaging.onBackgroundMessage((payload) => {
 
   const notificationOptions = {
     body: notificationBody,
-    icon: './favicon.ico',
-    badge: './favicon.ico',
+    // 🚂 صورة القطر في الإشعار
+    icon: 'https://img.icons8.com/fluency/192/train.png',
+    // 🚂 صورة القطر الصغيرة في شريط الحالة
+    badge: 'https://img.icons8.com/fluency/96/train.png',
     data: data
   };
 

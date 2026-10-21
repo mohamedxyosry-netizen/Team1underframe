@@ -1,0 +1,21 @@
+{
+  "name": "NERIC Work Management",
+  "short_name": "NERIC",
+  "description": "نظام إدارة بيانات العمل",
+  "start_url": "/Team1underframe/index.html",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#06345c",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/fluency/192/train.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://img.icons8.com/fluency/512/train.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
