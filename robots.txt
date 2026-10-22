@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mohamedxyosry-netizen.github.io/Team1underframe/sitemap.xml
