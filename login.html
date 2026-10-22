@@ -2,43 +2,23 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>NERIC - Login</title>
 
     <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body class="login-page">
 
-
-    <!-- ================================
-         HEADER
-    ================================= -->
-
     <div class="site-header">
-
-        <div class="neric">
-            NERIC
-        </div>
-
+        <div class="neric">NERIC</div>
     </div>
-
-
-    <!-- ================================
-         LOGIN
-    ================================= -->
 
     <div class="login-container">
 
-        <h1>
-            Login to Access Sections
-        </h1>
+        <h1>Login to Access Sections</h1>
 
         <div class="login-line"></div>
 
@@ -46,430 +26,76 @@
             Railway Work Management System
         </p>
 
-
-        <!-- Username -->
-
         <div class="input-group">
-
             <input
                 type="text"
                 id="username"
                 placeholder="Username"
                 autocomplete="username"
             >
-
         </div>
 
-
-        <!-- Password -->
-
         <div class="input-group">
-
             <input
                 type="password"
                 id="password"
                 placeholder="Password"
                 autocomplete="current-password"
             >
-
         </div>
 
-
-        <!-- Remember Me -->
-
         <label class="remember">
-
-            <input
-                type="checkbox"
-                id="rememberMe"
-            >
-
-            <span>
-                Remember me
-            </span>
-
+            <input type="checkbox" id="rememberMe">
+            <span>Remember me</span>
         </label>
 
-
-        <!-- Login Button -->
-
-        <button
-            type="button"
-            id="loginButton">
-
+        <button type="button" id="loginButton">
             🔐 LOGIN
-
         </button>
-
-
-        <!-- Message -->
 
         <div id="message"></div>
 
     </div>
 
+    <!-- Main Script (Users, Login, Permissions) -->
+    <script src="script.js"></script>
 
-    <!-- ================================
-         LOGIN SCRIPT
-    ================================= -->
-
+    <!-- LOGIN SCRIPT -->
     <script>
-
-        const USERS = {
-
-            "Yosry": {
-                password: "0111252",
-                role: "admin",
-                name: "Yosry"
-            },
-
-            "Zezo": {
-                password: "58321476",
-                role: "wiring",
-                name: "Zezo"
-            },
-
-            "Abdo": {
-                password: "74185296",
-                role: "wiring",
-                name: "Abdo"
-            },
-
-            "Mahmoud Khairy": {
-                password: "62473851",
-                role: "wiring",
-                name: "Mahmoud Khairy"
-            },
-
-            "Osama": {
-                password: "29481736",
-                role: "lt",
-                name: "Osama"
-            },
-
-            "Yaser": {
-                password: "63825194",
-                role: "lt",
-                name: "Yaser"
-            },
-
-            "Seif": {
-                password: "81573924",
-                role: "lt",
-                name: "Seif"
-            },
-
-            "Ahmed Ayman": {
-                password: "47291638",
-                role: "lt",
-                name: "Ahmed Ayman"
-            },
-
-            "Mamdouh": {
-                password: "92638471",
-                role: "ht",
-                name: "Mamdouh"
-            },
-
-            "Ali": {
-                password: "35182749",
-                role: "ht",
-                name: "Ali"
-            },
-
-            "Tarek": {
-                password: "48372615",
-                role: "ht",
-                name: "Tarek"
-            },
-
-            "Mohamed Khairy": {
-                password: "71938426",
-                role: "lt",
-                extraRoles: ["ht"],
-                name: "Mohamed Khairy"
-            },
-
-            "Eid": {
-                password: "68421937",
-                role: "installation",
-                name: "Eid"
-            },
-
-            "Mosad": {
-                password: "51963827",
-                role: "installation",
-                name: "Mosad"
-            },
-
-            "Mohamed Haitham": {
-                password: "83746192",
-                role: "installation",
-                name: "Mohamed Haitham"
-            },
-
-            "Elgenany": {
-                password: "56281749",
-                role: "installation",
-                name: "Elgenany"
-            },
-
-            "Ziad": {
-                password: "83519462",
-                role: "installation",
-                name: "Ziad"
-            }
-
-        };
-
-
-        function loginUser() {
-
-            const usernameInput =
-                document.getElementById("username");
-
-            const passwordInput =
-                document.getElementById("password");
-
-            const message =
-                document.getElementById("message");
-
-            const button =
-                document.getElementById("loginButton");
-
-
-            const username =
-                usernameInput.value.trim();
-
-            const password =
-                passwordInput.value.trim();
-
-
-            /* =========================
-               التحقق من البيانات
-            ========================= */
-
-            if (!username || !password) {
-
-                message.innerText =
-                    "❌ من فضلك اكتب اسم المستخدم وكلمة المرور";
-
-                message.style.color =
-                    "#dc3545";
-
-                return;
-
-            }
-
-
-            /* =========================
-               البحث عن المستخدم
-            ========================= */
-
-            const foundUsername =
-                Object.keys(USERS).find(
-                    name =>
-                        name.toLowerCase() ===
-                        username.toLowerCase()
-                );
-
-
-            if (!foundUsername) {
-
-                message.innerText =
-                    "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-
-                message.style.color =
-                    "#dc3545";
-
-                return;
-
-            }
-
-
-            const user =
-                USERS[foundUsername];
-
-
-            if (
-                String(user.password) !==
-                String(password)
-            ) {
-
-                message.innerText =
-                    "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-
-                message.style.color =
-                    "#dc3545";
-
-                return;
-
-            }
-
-
-            /* =========================
-               إنشاء الجلسة
-            ========================= */
-
-            const currentUser = {
-
-                username:
-                    foundUsername,
-
-                name:
-                    user.name,
-
-                role:
-                    user.role,
-
-                extraRoles:
-                    user.extraRoles || []
-
-            };
-
-
-            sessionStorage.setItem(
-                "currentUser",
-                JSON.stringify(currentUser)
-            );
-
-
-            /* =========================
-               Remember Me
-            ========================= */
-
-            const remember =
-                document.getElementById(
-                    "rememberMe"
-                ).checked;
-
-
-            if (remember) {
-
-                localStorage.setItem(
-                    "rememberedUsername",
-                    foundUsername
-                );
-
+        document.getElementById("loginButton").addEventListener("click", function () {
+            if (typeof login === "function") {
+                login();
             } else {
-
-                localStorage.removeItem(
-                    "rememberedUsername"
-                );
-
+                console.error("login function not found. Make sure script.js is loaded.");
             }
+        });
 
-
-            /* =========================
-               نجاح
-            ========================= */
-
-            message.innerText =
-                "✅ تم تسجيل الدخول بنجاح";
-
-            message.style.color =
-                "#198754";
-
-
-            button.disabled =
-                true;
-
-            button.innerText =
-                "⏳ جاري الدخول...";
-
-
-            /* =========================
-               الانتقال للرئيسية
-            ========================= */
-
-            setTimeout(
-                function() {
-
-                    window.location.href =
-                        "index.html";
-
-                },
-                300
-            );
-
-        }
-
-
-        /* ================================
-           زر الدخول
-        ================================= */
-
-        document
-            .getElementById("loginButton")
-            .addEventListener(
-                "click",
-                loginUser
-            );
-
-
-        /* ================================
-           Enter
-        ================================= */
-
-        document
-            .getElementById("password")
-            .addEventListener(
-                "keydown",
-                function(event) {
-
-                    if (
-                        event.key === "Enter"
-                    ) {
-
-                        loginUser();
-
-                    }
-
+        document.getElementById("password").addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                if (typeof login === "function") {
+                    login();
                 }
-            );
-
-
-        /* ================================
-           Remember Me
-        ================================= */
-
-        window.addEventListener(
-            "load",
-            function() {
-
-                const remembered =
-                    localStorage.getItem(
-                        "rememberedUsername"
-                    );
-
-
-                if (remembered) {
-
-                    const usernameInput =
-                        document.getElementById(
-                            "username"
-                        );
-
-                    const rememberMe =
-                        document.getElementById(
-                            "rememberMe"
-                        );
-
-
-                    usernameInput.value =
-                        remembered;
-
-                    rememberMe.checked =
-                        true;
-
-                }
-
             }
-        );
+        });
 
+        window.addEventListener("load", function () {
+            const remembered = localStorage.getItem("rememberedUsername");
+            if (remembered) {
+                document.getElementById("username").value = remembered;
+                document.getElementById("rememberMe").checked = true;
+            }
+        });
     </script>
 
+    <!-- Firebase SDK: Web Push -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js"></script>
+
+    <!-- ملف دعم إشعارات الويب المنفصل -->
+    <script src="push-web.js"></script>
+
+    <!-- ملف Push الحالي: نحافظ عليه كما هو -->
+    <script src="push.js"></script>
 
 </body>
-
 </html>
