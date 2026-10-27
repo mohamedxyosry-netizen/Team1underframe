@@ -509,9 +509,11 @@
             updatePath(carNumber);
         }
 
-        // 🆕 دوال الإشعارات (تم تعديلها لضمان الفتح وإظهار الأخطاء)
+        // 🆕 دوال الإشعارات (تم تعديلها لضمان الفتح وإخفاء العداد)
         window.toggleNotifications = function() {
             const panel = document.getElementById("notificationsPanel");
+            const countBadge = document.getElementById("notifCount");
+
             if (!panel) {
                 console.error("مربع الإشعارات غير موجود في الصفحة!");
                 return;
@@ -520,6 +522,11 @@
             if (panel.style.display === "none" || panel.style.display === "") {
                 panel.style.display = "block";
                 loadNotifications(); 
+                
+                // إخفاء الرقم الأحمر بمجرد فتح الإشعارات
+                if (countBadge) {
+                    countBadge.style.display = "none";
+                }
             } else {
                 panel.style.display = "none";
             }
@@ -570,7 +577,7 @@
                     `).join("");
                 }
 
-                // 🆕 تحديث حالة الإشعارات لـ "مقروءة" عشان الرقم يختفي من الرئيسية
+                // تحديث حالة الإشعارات لـ "مقروءة"
                 await window.supabaseClient
                     .from("quality_notifications")
                     .update({ is_read: true })
