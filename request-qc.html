@@ -126,7 +126,16 @@
                     select.innerHTML = '<option value="">خطأ في التحميل: ' + error.message + '</option>';
                     return; 
                 }
-                const uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
+                
+                let uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
+                
+                // الترتيب: بنجيب رقم الوحدة من آخر الاسم ونرتب على أساسه
+                uniqueCars.sort((a, b) => {
+                    const numA = parseInt(a.split("-").pop()) || 0;
+                    const numB = parseInt(b.split("-").pop()) || 0;
+                    return numA - numB;
+                });
+
                 if (uniqueCars.length === 0) {
                     select.innerHTML = '<option value="">لا توجد عربيات مسجلة</option>';
                     return;

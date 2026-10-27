@@ -317,7 +317,7 @@
     <script src="script.js"></script>
     
     <script>
-        // تحميل أرقام العربيات
+        // تحميل أرقام العربيات (مع الترتيب الذكي)
         async function loadQCars() {
             const select = document.getElementById("qcCarNumber");
             if (!window.supabaseClient) {
@@ -330,7 +330,16 @@
                     select.innerHTML = '<option value="">خطأ في التحميل: ' + error.message + '</option>';
                     return; 
                 }
-                const uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
+                
+                let uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
+                
+                // الترتيب: بنجيب رقم الوحدة من آخر الاسم ونرتب على أساسه
+                uniqueCars.sort((a, b) => {
+                    const numA = parseInt(a.split("-").pop()) || 0;
+                    const numB = parseInt(b.split("-").pop()) || 0;
+                    return numA - numB; 
+                });
+
                 if (uniqueCars.length === 0) {
                     select.innerHTML = '<option value="">لا توجد أرقام عربيات مسجلة</option>';
                     return;
@@ -509,7 +518,7 @@
             updatePath(carNumber);
         }
 
-        // 🆕 دوال الإشعارات (تم تعديلها لضمان الفتح وإخفاء العداد)
+        // 🆕 دوال الإشعارات
         window.toggleNotifications = function() {
             const panel = document.getElementById("notificationsPanel");
             const countBadge = document.getElementById("notifCount");
