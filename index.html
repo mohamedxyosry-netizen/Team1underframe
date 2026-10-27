@@ -3,53 +3,54 @@
 
 <head>
     <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#06345c">
-
+    <meta name="theme-color" content="#0f172a">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>نظام إدارة بيانات العمل</title>
+    <title>NERIC - نظام إدارة بيانات العمل</title>
+    
+    <!-- مكتبة Swiper للكروت 3D -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <!-- مكتبة الأيقونات الجديدة -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <link rel="stylesheet" href="style.css">
 
     <style>
-        .stats {
-            display: grid !important;
-            grid-template-columns: repeat(5, minmax(150px, 1fr)) !important;
-            gap: 18px !important;
-            align-items: stretch;
-            direction: rtl;
+        /* =========================================
+           التصميم الاحترافي الجديد 
+        ========================================= */
+        :root {
+            --bg-color: #e2e8f0; 
+            --sidebar-bg: #111827; 
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.6);
+            --text-main: #1e293b; 
+            --text-muted: #64748b;
         }
 
-        .stats .stat-card {
-            width: auto !important;
-            min-width: 0 !important;
-            margin: 0 !important;
-        }
-
-        .stats .stat-card:nth-child(1) { order: 1; }
-        .stats .stat-card:nth-child(3) { order: 2; }
-        .stats .stat-card:nth-child(2) { order: 3; }
-        .stats .stat-card:nth-child(4) { order: 4; }
-        .stats .stat-card:nth-child(5) { order: 5; }
-
-        @media (max-width: 1100px) {
-            .stats { grid-template-columns: repeat(3, minmax(150px, 1fr)) !important; }
-        }
-
-        @media (max-width: 900px) {
-            .stats { grid-template-columns: repeat(2, minmax(150px, 1fr)) !important; }
-        }
-
-        @media (max-width: 520px) {
-            .stats { grid-template-columns: 1fr !important; }
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 30%);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
         /* =========================================
-           🆕 الشريط الجانبي القابل للتحريك
+           الشريط الجانبي
         ========================================= */
-
         .sidebar {
+            background: var(--sidebar-bg) !important;
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            
             display: flex !important;
             flex-direction: column !important;
             height: 100vh !important;
@@ -66,143 +67,311 @@
             scrollbar-color: rgba(255,255,255,.3) transparent;
         }
 
-        .sidebar-menu::-webkit-scrollbar {
-            width: 6px;
-        }
+        .sidebar-menu::-webkit-scrollbar { width: 6px; }
+        .sidebar-menu::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,.3); border-radius: 3px; }
+        .sidebar-menu::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.5); }
+        .sidebar-footer { flex-shrink: 0 !important; }
+        
+        .logo-area h2 { color: white !important; font-weight: 800; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .logo-area p { color: #3b82f6 !important; font-size: 12px; }
 
-        .sidebar-menu::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar-menu::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,.3);
-            border-radius: 3px;
-        }
-
-        .sidebar-menu::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,.5);
-        }
-
-        .sidebar-footer {
-            flex-shrink: 0 !important;
-        }
-
-        /* =========================================
-           عداد الرسائل غير المقروءة
-        ========================================= */
-
-        #chatMenu { position: relative; }
-
-        .chat-menu-icon {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-            flex-shrink: 0;
-        }
-
-        #chatUnreadCount {
-            display: none;
-            position: absolute;
-            top: -9px;
-            right: -10px;
-            min-width: 21px;
-            height: 21px;
-            padding: 0 5px;
-            background: #d92d20;
-            color: #fff;
-            border: 2px solid #fff;
-            border-radius: 50px;
-            font-size: 11px;
-            font-weight: 800;
-            line-height: 17px;
-            text-align: center;
-            box-sizing: border-box;
-            z-index: 20;
-            box-shadow: 0 2px 5px rgba(0,0,0,.18);
-        }
-
-        #productionRouteMenu span:first-child {
-            background: rgba(11,131,246,0.12);
-        }
-
-        #productionRouteMenu strong { font-weight: 700; }
-
-        /* =========================================
-           مربع الإشعارات
-        ========================================= */
-
-        .header-title-wrap {
+        .sidebar-menu .menu-item {
+            color: #94a3b8 !important;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            margin-bottom: 5px;
             display: flex;
             align-items: center;
-            gap: 18px;
-            flex-wrap: wrap;
+            gap: 12px;
+            padding: 12px 15px !important;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: right;
         }
+        
+        .sidebar-menu .menu-item span { font-size: 20px; }
 
-        .notif-status-btn {
-            background: #e5e7eb;
-            color: #374151;
-            padding: 9px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            font-size: 13px;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
-            transition: all 0.2s;
-            border: 2px solid #d1d5db;
-            user-select: none;
-            white-space: nowrap;
-        }
-
-        .notif-status-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 14px rgba(0,0,0,0.2);
-        }
-
-        .notif-status-btn.granted {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border-color: #059669;
-        }
-
-        .notif-status-btn.denied {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border-color: #dc2626;
-        }
-
-        .notif-status-btn.loading {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: white;
-            border-color: #f59e0b;
+        .sidebar-menu .menu-item:hover, .sidebar-menu .menu-item.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: white !important;
+            transform: translateX(-5px);
+            border-right: 3px solid #3b82f6;
+            box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);
         }
 
         /* =========================================
-           User Info
+           🆕 الهيدر (أزرق مع إضاءة للحساب)
         ========================================= */
+        .top-header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8) !important; /* لون أزرق متدرج */
+            border: none !important;
+            border-radius: 20px !important; /* زوايا ناعمة */
+            margin: 20px 25px !important; /* مسافة من بره */
+            padding: 20px 30px !important;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); /* ظل أزرق شيك */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .top-header h1 { 
+            color: #ffffff !important; 
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        
+        .top-header p { 
+            color: #bfdbfe !important; 
+        }
 
+        /* تعديل شكل الحساب عشان ينور لما تقف عليه */
         .user-info {
-            cursor: pointer;
-            transition: transform 0.15s, box-shadow 0.15s;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            padding: 6px 12px;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
         }
 
         .user-info:hover {
-            transform: translateY(-2px);
-            background: rgba(11, 61, 145, 0.05);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
         }
 
-        @media (max-width: 700px) {
-            .notif-status-btn { padding: 7px 12px; font-size: 12px; }
-            .header-title-wrap { gap: 10px; }
+        .user-info strong {
+            color: #ffffff !important;
         }
+
+        .user-info small {
+            color: #bfdbfe !important;
+        }
+
+        /* =========================================
+           كروت الإحصائيات (جنب بعض)
+        ========================================= */
+        .stats {
+            display: grid !important;
+            grid-template-columns: repeat(5, minmax(120px, 1fr)) !important; 
+            gap: 15px !important;
+            align-items: stretch;
+            direction: rtl;
+            margin: 0 15px;
+        }
+
+        @media (max-width: 1000px) { .stats { grid-template-columns: repeat(3, 1fr) !important; } }
+        @media (max-width: 700px) { .stats { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 450px) { .stats { grid-template-columns: 1fr !important; } }
+
+        .stat-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 16px !important;
+            color: #1e293b !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 10px !important;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #3b82f6 !important;
+            animation: electricGlow 1.5s infinite alternate;
+        }
+
+        @keyframes electricGlow {
+            0% { box-shadow: 0 0 5px #3b82f6, 0 0 10px rgba(59, 130, 246, 0.6); }
+            100% { box-shadow: 0 0 20px #3b82f6, 0 0 30px rgba(59, 130, 246, 0.6); }
+        }
+
+        .stat-card span { color: #64748b !important; font-size: 14px; }
+        .stat-card small { color: #94a3b8 !important; font-size: 12px; }
+        .stat-card strong { color: #0f172a !important; font-size: 22px; font-weight: bold; }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-icon { transform: scale(1.1) rotate(5deg); }
+
+        .stat-icon.green { color: #10b981; background: #dcfce7; }
+        .stat-icon.orange { color: #f59e0b; background: #fef3c7; }
+        .stat-icon.red { color: #ef4444; background: #fee2e2; }
+        .stat-icon.purple { color: #8b5cf6; background: #ede9fe; }
+
+        /* =========================================
+           تنسيق الـ 3D Carousel للأقسام
+        ========================================= */
+        .section-area {
+            margin: 30px 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-title h2 {
+            color: #111827 !important; 
+            text-shadow: none !important;
+            font-weight: 800;
+        }
+
+        .swiper {
+            width: 100%;
+            padding-top: 20px;
+            padding-bottom: 50px;
+        }
+
+        .swiper-slide {
+            width: 260px;
+            height: 340px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .swiper-slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            transition: 0.5s;
+        }
+        .swiper-slide:hover::before { left: 100%; }
+
+        .swiper-slide .dept-icon {
+            font-size: 65px;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+
+        .swiper-slide h3 {
+            font-size: 26px;
+            margin: 0 0 5px 0;
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .swiper-slide p {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .swiper-slide .btn-enter {
+            background: transparent;
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+            padding: 8px 35px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+        .swiper-slide:hover .btn-enter {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+        }
+
+        .slide-wiring:hover { border-color: #3b82f6; box-shadow: 0 0 40px rgba(59, 130, 246, 0.3); }
+        .slide-wiring .dept-icon { color: #1e293b; filter: none; }
+        
+        .slide-lt:hover { border-color: #f59e0b; box-shadow: 0 0 40px rgba(245, 158, 11, 0.3); }
+        .slide-lt .dept-icon { color: #1e293b; filter: none; }
+        .slide-lt .btn-enter { color: #f59e0b; border-color: #f59e0b; }
+        .slide-lt:hover .btn-enter { background: #f59e0b; color: white; box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
+
+        .slide-ht:hover { border-color: #ef4444; box-shadow: 0 0 40px rgba(239, 68, 68, 0.3); }
+        .slide-ht .dept-icon { color: #1e293b; filter: none; }
+        .slide-ht .btn-enter { color: #ef4444; border-color: #ef4444; }
+        .slide-ht:hover .btn-enter { background: #ef4444; color: white; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+
+        .slide-install:hover { border-color: #8b5cf6; box-shadow: 0 0 40px rgba(139, 92, 246, 0.3); }
+        .slide-install .dept-icon { color: #1e293b; filter: none; }
+        .slide-install .btn-enter { color: #8b5cf6; border-color: #8b5cf6; }
+        .slide-install:hover .btn-enter { background: #8b5cf6; color: white; box-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+
+        .slide-final:hover { border-color: #10b981; box-shadow: 0 0 40px rgba(16, 185, 129, 0.3); }
+        .slide-final .dept-icon { color: #1e293b; filter: none; }
+        .slide-final .btn-enter { color: #10b981; border-color: #10b981; }
+        .slide-final:hover .btn-enter { background: #10b981; color: white; box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+
+        .slide-quality:hover { border-color: #0284c7; box-shadow: 0 0 40px rgba(2, 132, 199, 0.3); }
+        .slide-quality .dept-icon { color: #1e293b; filter: none; }
+        .slide-quality .btn-enter { color: #0284c7; border-color: #0284c7; }
+        .slide-quality:hover .btn-enter { background: #0284c7; color: white; box-shadow: 0 0 20px rgba(2, 132, 199, 0.5); }
+
+        .swiper-pagination-bullet { background: #94a3b8; opacity: 0.5; }
+        .swiper-pagination-bullet-active { background: #3b82f6; width: 25px; border-radius: 5px; transition: 0.3s; opacity: 1; }
+        
+        .swiper-button-next, .swiper-button-prev {
+            color: white;
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transition: 0.3s;
+        }
+        .swiper-button-next:hover, .swiper-button-prev:hover {
+            background: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+        }
+        .swiper-button-next::after, .swiper-button-prev::after { font-size: 20px; font-weight: bold; }
+
+        /* قسم البحث */
+        .quick-search {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 20px !important;
+            margin: 20px 15px;
+            color: #1e293b !important;
+        }
+        .quick-search h2 { color: #0f172a !important; }
+        .search-box input {
+            background: #f8fafc !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #1e293b !important;
+            border-radius: 10px;
+        }
+        .search-box button {
+            background: #3b82f6 !important;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+            border-radius: 10px;
+            color: white;
+        }
+
+        /* الفوتر */
+        .main-footer { color: #64748b !important; border-top: 1px solid #cbd5e1; }
     </style>
 </head>
 
@@ -211,15 +380,13 @@
 <div class="app">
 
     <aside class="sidebar">
-
         <div class="logo-area">
-            <div class="logo-icon">🚆</div>
-            <h2>نظام إدارة بيانات العمل</h2>
-            <p>WORK DATA MANAGEMENT SYSTEM</p>
+            <div class="logo-icon" style="color: #3b82f6; filter: drop-shadow(0 0 10px #3b82f6); font-size: 35px;">🚆</div>
+            <h2>NERIC</h2>
+            <p>WORK DATA MANAGEMENT</p>
         </div>
 
         <nav class="sidebar-menu">
-
             <button id="productionRouteMenu" class="menu-item" onclick="openProductionRoute()">
                 <span>🚆</span>
                 <strong>مسار العربية</strong>
@@ -230,67 +397,30 @@
                 <strong>سجل البيانات</strong>
             </button>
 
-            <!-- زرار طلب استلام جودة (مخفي افتراضياً) -->
-            <button id="requestQCBtn" class="menu-item" onclick="window.location.href='request-qc.html'" style="display: none;">
-                <span>📦</span>
-                <strong>طلب استلام جودة</strong>
-            </button>
-
             <button id="notificationsMenu" class="menu-item" onclick="openNotificationsPage()">
                 <span>🔔</span>
                 <strong>الإشعارات</strong>
-                <span id="notificationsCountMenu" style="display:none;background:#d92d20;color:white;border-radius:20px;min-width:28px;text-align:center;padding:3px 8px;font-size:12px;font-weight:bold;margin-right:auto;">0</span>
+                <span id="notificationsCountMenu" style="display:none;background:#ef4444;color:white;border-radius:20px;min-width:28px;text-align:center;padding:3px 8px;font-size:12px;font-weight:bold;margin-right:auto;">0</span>
             </button>
 
             <button id="chatMenu" class="menu-item" onclick="openChat()">
-                <span class="chat-menu-icon">
-                    💬
-                    <span id="chatUnreadCount">0</span>
-                </span>
+                <span>💬</span>
                 <strong>الدردشة</strong>
+                <span id="chatUnreadCount" style="display:none;background:#ef4444;color:white;border-radius:20px;min-width:28px;text-align:center;padding:3px 8px;font-size:12px;font-weight:bold;margin-right:auto;">0</span>
             </button>
 
-            <!-- 🏖️ مراجعة الإجازات (للمدير) -->
-            <button
-                id="leavesAdminMenu"
-                class="menu-item"
-                onclick="openLeavesAdminPage()">
-
+            <button id="leavesAdminMenu" class="menu-item" onclick="openLeavesAdminPage()">
                 <span>🏖️</span>
                 <strong>مراجعة الإجازات</strong>
-
-                <span
-                    id="leavesCountMenu"
-                    style="
-                        display:none;
-                        background:#d92d20;
-                        color:white;
-                        border-radius:20px;
-                        min-width:28px;
-                        text-align:center;
-                        padding:3px 8px;
-                        font-size:12px;
-                        font-weight:bold;
-                        margin-right:auto;
-                    ">0</span>
+                <span id="leavesCountMenu" style="display:none;background:#ef4444;color:white;border-radius:20px;min-width:28px;text-align:center;padding:3px 8px;font-size:12px;font-weight:bold;margin-right:auto;">0</span>
             </button>
 
-            <!-- 📊 تقييمات الفنيين (للمدير) -->
-            <button
-                id="ratingsMenu"
-                class="menu-item"
-                onclick="openRatingsPage()"
-                style="display:none;">
+            <button id="ratingsMenu" class="menu-item" onclick="openRatingsPage()" style="display:none;">
                 <span>📊</span>
                 <strong>تقييمات الفنيين</strong>
             </button>
 
-            <!-- 📅 سجل المهام اليومية (للمدير) -->
-            <button
-                id="dailyTasksMenu"
-                class="menu-item"
-                onclick="openDailyTasksPage()"
-                style="display:none;">
+            <button id="dailyTasksMenu" class="menu-item" onclick="openDailyTasksPage()" style="display:none;">
                 <span>📅</span>
                 <strong>سجل المهام اليومية</strong>
             </button>
@@ -298,30 +428,27 @@
             <button id="deleteRequestsMenu" class="menu-item" onclick="openSection('deleteRequests')">
                 <span>🗑️</span>
                 <strong>طلبات الحذف</strong>
-                <span id="deleteRequestsCount" style="background:#d92d20;color:white;border-radius:20px;padding:3px 9px;font-size:12px;font-weight:bold;margin-right:auto;">0</span>
+                <span id="deleteRequestsCount" style="background:#ef4444;color:white;border-radius:20px;padding:3px 9px;font-size:12px;font-weight:bold;margin-right:auto;">0</span>
             </button>
 
-            <button class="menu-item logout-menu" onclick="logout()">
+            <button class="menu-item logout-menu" onclick="logout()" style="margin-top: 20px; color: #ef4444 !important;">
                 <span>🚪</span>
                 <strong>تسجيل الخروج</strong>
             </button>
-
         </nav>
 
-        <div class="sidebar-footer">
+        <div class="sidebar-footer" style="color: #475569;">
             جميع الحقوق محفوظة © 2026
         </div>
-
     </aside>
 
     <div class="main-content">
 
         <header class="top-header">
-
             <div class="header-title-wrap">
                 <div>
-                    <h1>لوحة التحكم</h1>
-                    <p>الرئيسية / لوحة التحكم</p>
+                    <h1 style="margin: 0 0 5px 0; font-size: 24px;">لوحة التحكم</h1>
+                    <p style="margin: 0; font-size: 14px;">الرئيسية / لوحة التحكم</p>
                 </div>
 
                 <div id="notifStatusBtn" class="notif-status-btn" onclick="handleNotifClick()" title="اضغط لتفعيل الإشعارات">
@@ -331,19 +458,19 @@
             </div>
 
             <div class="user-info" onclick="openEmployeesPage()" title="اضغط لعرض ملفك الشخصي">
-                <div class="user-icon">👤</div>
+                <div class="user-icon" style="background: rgba(255, 255, 255, 0.2); color: #ffffff;">👤</div>
                 <div>
                     <strong id="currentUserName">المستخدم</strong>
                     <small id="currentUserRole">Worker</small>
                 </div>
             </div>
-
         </header>
 
+        <!-- كروت الإحصائيات -->
         <section class="stats">
-
+            
             <div class="stat-card">
-                <div class="stat-icon green">✓</div>
+                <div class="stat-icon green"><i class="ph ph-check-circle"></i></div>
                 <div>
                     <span>مكتملة</span>
                     <strong id="completedRecords">0</strong>
@@ -352,117 +479,115 @@
             </div>
 
             <div class="stat-card priority-item-card" onclick="openPriorityPage()" style="cursor:pointer;">
-                <div class="stat-icon orange">⚡</div>
+                <div class="stat-icon orange"><i class="ph ph-lightning"></i></div>
                 <div>
                     <span>Priority Item</span>
                     <strong>📢</strong>
-                    <small>إرسال تنبيه للفريق</small>
+                    <small>إرسال تنبيه</small>
                 </div>
             </div>
 
             <div class="stat-card" onclick="openProblemsPage()" style="cursor:pointer;">
-                <div class="stat-icon red">⚠️</div>
+                <div class="stat-icon red"><i class="ph ph-warning"></i></div>
                 <div>
-                    <span>مشاكل العربيات</span>
+                    <span>المشاكل</span>
                     <strong id="problemRecords">0</strong>
                     <small>مشكلة</small>
                 </div>
             </div>
 
             <div class="stat-card" onclick="handleAttendanceLogin()" style="cursor:pointer;">
-                <div class="stat-icon purple">🔐</div>
+                <div class="stat-icon purple"><i class="ph ph-fingerprint"></i></div>
                 <div>
-                    <span>تسجيل الحضور</span>
+                    <span>الحضور</span>
                     <strong>👤</strong>
-                    <small>تسجيل حضور</small>
+                    <small>تسجيل</small>
                 </div>
             </div>
 
             <div id="consumablesCard" class="stat-card" onclick="openConsumablesPage()" style="cursor:pointer;">
-                <div class="stat-icon purple">📦</div>
+                <div class="stat-icon purple"><i class="ph ph-package"></i></div>
                 <div>
                     <span>المستهلكات</span>
                     <strong>📋</strong>
-                    <small>إدارة المستهلكات</small>
+                    <small>إدارة</small>
                 </div>
             </div>
 
         </section>
 
         <section class="section-area">
-
-            <div class="section-title">
-                <span></span>
-                <h2>إدخال بيانات العمل</h2>
+            <div class="section-title" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <span style="width: 5px; height: 25px; background: #3b82f6; border-radius: 5px; box-shadow: 0 0 10px #3b82f6;"></span>
+                <h2 style="margin: 0; font-size: 22px;">اختر القسم للدخول</h2>
             </div>
 
-            <div class="sections">
-
-                <button id="section-wiring" class="section-card" onclick="openSection('wiring')">
-                    <div class="department-icon wiring-icon">🔌</div>
-                    <strong>قسم Wiring</strong>
-                    <small>تسجيل أعمال Wiring</small>
-                    <span class="enter-btn">دخول</span>
-                </button>
-
-                <button id="section-lt" class="section-card" onclick="openSection('lt')">
-                    <div class="department-icon lt-icon">⚡</div>
-                    <strong>قسم LT</strong>
-                    <small>تسجيل أعمال LT</small>
-                    <span class="enter-btn">دخول</span>
-                </button>
-
-                <button id="section-ht" class="section-card" onclick="openSection('ht')">
-                    <div class="department-icon ht-icon">⚡</div>
-                    <strong>قسم HT</strong>
-                    <small>تسجيل أعمال HT</small>
-                    <span class="enter-btn">دخول</span>
-                </button>
-
-                <button id="section-installation" class="section-card" onclick="openSection('installation')">
-                    <div class="department-icon installation-icon">🔧</div>
-                    <strong>قسم Equipment</strong>
-                    <small>تسجيل أعمال Equipment</small>
-                    <span class="enter-btn">دخول</span>
-                </button>
-
-                <button id="section-final" class="section-card" onclick="openSection('final')">
-                    <div class="department-icon final-icon">✓</div>
-                    <strong>Final</strong>
-                    <small>تسجيل اعمال Final</small>
-                    <span class="enter-btn">دخول</span>
-                </button>
-
-                <!-- كارت قسم الجودة (للمدير والجودة بس) -->
-                <button id="section-quality" class="section-card" onclick="openSection('quality')" style="display: none; position: relative;">
-                    <div class="department-icon" style="background: #e0f2fe; color: #0284c7;">🛡️</div>
-                    <strong>قسم الجودة</strong>
-                    <small>تسجيل حالة الاستلام</small>
-                    <span class="enter-btn">دخول</span>
+            <!-- الـ 3D Carousel -->
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
                     
-                    <!-- عداد الإشعارات -->
-                    <span id="qualityNotifBadge" style="display: none; position: absolute; top: 10px; right: 10px; background: #ef4444; color: white; border-radius: 50%; width: 24px; height: 24px; line-height: 24px; text-align: center; font-size: 12px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">0</span>
-                </button>
+                    <div class="swiper-slide slide-wiring" onclick="openSection('wiring')">
+                        <div class="dept-icon">🔌</div>
+                        <h3>Wiring</h3>
+                        <p>قسم الضفيرة</p>
+                        <div class="btn-enter">دخول</div>
+                    </div>
 
+                    <div class="swiper-slide slide-lt" onclick="openSection('lt')">
+                        <div class="dept-icon">⚡</div>
+                        <h3>LT</h3>
+                        <p>الجهد المنخفض</p>
+                        <div class="btn-enter">دخول</div>
+                    </div>
+
+                    <div class="swiper-slide slide-ht" onclick="openSection('ht')">
+                        <div class="dept-icon">⚡</div>
+                        <h3>HT</h3>
+                        <p>الجهد العالي</p>
+                        <div class="btn-enter">دخول</div>
+                    </div>
+
+                    <div class="swiper-slide slide-install" onclick="openSection('installation')">
+                        <div class="dept-icon">🔧</div>
+                        <h3>Equipment</h3>
+                        <p>التركيبات</p>
+                        <div class="btn-enter">دخول</div>
+                    </div>
+
+                    <div class="swiper-slide slide-final" onclick="openSection('final')">
+                        <div class="dept-icon">✓</div>
+                        <h3>Final</h3>
+                        <p>الفنش النهائي</p>
+                        <div class="btn-enter">دخول</div>
+                    </div>
+
+                    <div class="swiper-slide slide-quality" id="slide-quality" onclick="openSection('quality')" style="display: none; position: relative;">
+                        <div class="dept-icon">🛡️</div>
+                        <h3>Quality</h3>
+                        <p>قسم الجودة</p>
+                        <div class="btn-enter">دخول</div>
+                        <span id="qualityNotifBadge" style="display: none; position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; border-radius: 50%; width: 28px; height: 28px; line-height: 28px; text-align: center; font-size: 14px; font-weight: bold; box-shadow: 0 0 10px #ef4444;">0</span>
+                    </div>
+
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
             </div>
-
         </section>
 
         <section class="quick-search">
-
             <div class="search-content">
-                <div class="search-icon">🔎</div>
+                <div class="search-icon" style="color: #3b82f6; font-size: 30px; filter: drop-shadow(0 0 10px rgba(59,130,246,0.5));">🔎</div>
                 <div class="search-text">
-                    <h2>البحث السريع</h2>
+                    <h2 style="margin-bottom: 5px;">البحث السريع</h2>
                     <p>ابحث عن أي سيارة باستخدام رقم العربية</p>
                 </div>
             </div>
-
             <div class="search-box">
                 <input type="text" id="homeSearchNumber" placeholder="اكتب رقم العربية هنا...">
                 <button onclick="homeSearch()">🔍 بحث</button>
             </div>
-
         </section>
 
         <footer class="main-footer">
@@ -475,8 +600,47 @@
 
 </div>
 
+<!-- مكتبة Swiper -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
+
+<!-- سكريبت تشغيل الـ 3D Carousel -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        window.swiper = new Swiper(".mySwiper", {
+            effect: "coverflow",
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: "auto",
+            loop: true,
+            coverflowEffect: {
+                rotate: 15, 
+                stretch: 0, 
+                depth: 150, 
+                modifier: 1,
+                slideShadows: true, 
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            keyboard: {
+                enabled: true,
+            },
+            breakpoints: {
+                320: { slidesPerView: 1, spaceBetween: 10 },
+                768: { slidesPerView: "auto", spaceBetween: 20 },
+                1024: { slidesPerView: "auto", spaceBetween: 30 }
+            }
+        });
+    });
+</script>
 
 <script>
     function openProductionRoute() {
@@ -541,7 +705,6 @@
         } catch (e) { console.error("Leaves count exception:", e); }
     }
 
-    // 🆕 دالة جلب عدد الإشعارات غير المقروءة لقسم الجودة
     async function loadQualityNotifCount() {
         const badge = document.getElementById("qualityNotifBadge");
         if (!badge || !window.supabaseClient) return;
@@ -584,15 +747,33 @@
             }
 
             if (user.role === "admin" || user.role === "quality") {
-                const qualityCard = document.getElementById("section-quality");
-                if (qualityCard) qualityCard.style.display = "flex";
+                const qualitySlide = document.getElementById("slide-quality");
+                if (qualitySlide) {
+                    qualitySlide.style.display = "flex";
+                    setTimeout(() => { if(window.swiper) window.swiper.update(); }, 500);
+                }
 
-                const qcBtn = document.getElementById("requestQCBtn");
-                if (qcBtn) qcBtn.style.display = "flex";
-
-                // 🆕 تشغيل عداد الإشعارات
                 loadQualityNotifCount();
                 setInterval(loadQualityNotifCount, 5000);
+            }
+
+            // 🆕 إخفاء الكروت والزرار لقسم الجودة فقط
+            if (user.role === "quality") {
+                // إخفاء سجل البيانات من القائمة الجانبية
+                const searchMenu = document.querySelector('button[onclick="openSection(\'search\')"]');
+                if (searchMenu) searchMenu.style.display = "none";
+
+                // إخفاء كارت تسجيل الحضور
+                const attendanceCard = document.querySelector('.stat-card[onclick="handleAttendanceLogin()"]');
+                if (attendanceCard) attendanceCard.style.display = "none";
+
+                // إخفاء كارت المستهلكات
+                const consumablesCard = document.getElementById("consumablesCard");
+                if (consumablesCard) consumablesCard.style.display = "none";
+
+                // إخفاء كارت مشاكل العربيات
+                const problemsCard = document.querySelector('.stat-card[onclick="openProblemsPage()"]');
+                if (problemsCard) problemsCard.style.display = "none";
             }
         }
     });
@@ -708,7 +889,6 @@
     });
 </script>
 
-<!-- ... باقي السكريبتات بتاعتك زي ما هي (Chat, Notifications, Firebase) ... -->
 <script>
     let chatUnreadRealtimeChannel = null;
 
