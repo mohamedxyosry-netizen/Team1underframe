@@ -230,7 +230,7 @@
                 <strong>سجل البيانات</strong>
             </button>
 
-            <!-- 🆕 زرار طلب استلام جودة (مخفي افتراضياً) -->
+            <!-- زرار طلب استلام جودة (مخفي افتراضياً) -->
             <button id="requestQCBtn" class="menu-item" onclick="window.location.href='request-qc.html'" style="display: none;">
                 <span>📦</span>
                 <strong>طلب استلام جودة</strong>
@@ -434,11 +434,14 @@
                 </button>
 
                 <!-- كارت قسم الجودة (للمدير والجودة بس) -->
-                <button id="section-quality" class="section-card" onclick="openSection('quality')" style="display: none;">
+                <button id="section-quality" class="section-card" onclick="openSection('quality')" style="display: none; position: relative;">
                     <div class="department-icon" style="background: #e0f2fe; color: #0284c7;">🛡️</div>
                     <strong>قسم الجودة</strong>
                     <small>تسجيل حالة الاستلام</small>
                     <span class="enter-btn">دخول</span>
+                    
+                    <!-- عداد الإشعارات -->
+                    <span id="qualityNotifBadge" style="display: none; position: absolute; top: 10px; right: 10px; background: #ef4444; color: white; border-radius: 50%; width: 24px; height: 24px; line-height: 24px; text-align: center; font-size: 12px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">0</span>
                 </button>
 
             </div>
@@ -476,35 +479,30 @@
 <script src="script.js"></script>
 
 <script>
-    // فتح صفحة مسار العربية
     function openProductionRoute() {
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "route.html";
     }
 
-    // 👥 فتح صفحة بيانات الفريق
     function openEmployeesPage() {
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "employees.html";
     }
 
-    // فتح صفحة المستهلكات
     function openConsumablesPage() {
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "consumables.html";
     }
 
-    // 🔐 فتح صفحة الحضور
     function handleAttendanceLogin() {
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "attendance.html";
     }
 
-    // 🏖️ فتح صفحة مراجعة الإجازات (للمدير)
     function openLeavesAdminPage() {
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (!user) { window.location.href = "login.html"; return; }
@@ -512,7 +510,6 @@
         window.location.href = "leaves-admin.html";
     }
 
-    // 📊 فتح صفحة تقييمات الفنيين (للمدير)
     function openRatingsPage() {
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (!user) { window.location.href = "login.html"; return; }
@@ -520,7 +517,6 @@
         window.location.href = "ratings.html";
     }
 
-    // 📅 فتح صفحة سجل المهام اليومية (للمدير)
     function openDailyTasksPage() {
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (!user) { window.location.href = "login.html"; return; }
@@ -528,7 +524,6 @@
         window.location.href = "daily-tasks.html";
     }
 
-    // 🏖️ عدّاد الإجازات للمدير
     async function updateLeavesCount() {
         const menu = document.getElementById("leavesAdminMenu");
         const badge = document.getElementById("leavesCountMenu");
@@ -546,6 +541,34 @@
         } catch (e) { console.error("Leaves count exception:", e); }
     }
 
+    // 🆕 دالة جلب عدد الإشعارات غير المقروءة لقسم الجودة
+    async function loadQualityNotifCount() {
+        const badge = document.getElementById("qualityNotifBadge");
+        if (!badge || !window.supabaseClient) return;
+
+        const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+        if (!user || (user.role !== "admin" && user.role !== "quality")) return;
+
+        try {
+            const { count, error } = await window.supabaseClient
+                .from("quality_notifications")
+                .select("id", { count: "exact", head: true })
+                .eq("target_user", "Mohamed")
+                .eq("is_read", false);
+
+            if (error) { console.error("Quality Notif Count Error:", error); return; }
+
+            const unread = count || 0;
+
+            if (unread > 0) {
+                badge.innerText = unread > 99 ? "99+" : unread;
+                badge.style.display = "block";
+            } else {
+                badge.style.display = "none";
+            }
+        } catch (error) { console.error("Quality Notif Exception:", error); }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         setTimeout(updateLeavesCount, 1200);
         setInterval(updateLeavesCount, 5000);
@@ -553,7 +576,6 @@
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         
         if (user) {
-            // إظهار أزرار المدير
             if (user.role === "admin") {
                 const ratingsMenu = document.getElementById("ratingsMenu");
                 if (ratingsMenu) ratingsMenu.style.display = "flex";
@@ -561,46 +583,42 @@
                 if (dailyTasksMenu) dailyTasksMenu.style.display = "flex";
             }
 
-            // إظهار كارت قسم الجودة
             if (user.role === "admin" || user.role === "quality") {
                 const qualityCard = document.getElementById("section-quality");
                 if (qualityCard) qualityCard.style.display = "flex";
 
-                // 🆕 إظهار زرار طلب استلام جودة
                 const qcBtn = document.getElementById("requestQCBtn");
                 if (qcBtn) qcBtn.style.display = "flex";
+
+                // 🆕 تشغيل عداد الإشعارات
+                loadQualityNotifCount();
+                setInterval(loadQualityNotifCount, 5000);
             }
         }
     });
 
-    // فتح الدردشة
     function openChat() {
         const user = getCurrentUser();
         if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "chat.html";
     }
 
-    // فتح Priority Item
     function openPriorityPage() {
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (!user) { window.location.href = "login.html"; return; }
         const allowedPriorityRoles = ["admin", "wiring", "lt", "ht", "installation", "final", "quality"];
         if (!allowedPriorityRoles.includes(String(user.role || "").toLowerCase())) {
-            alert("❌ ليس لديك صلاحية لاستخدام Priority Item");
-            return;
+            alert("❌ ليس لديك صلاحية لاستخدام Priority Item"); return;
         }
         window.location.href = "priority.html";
     }
 
-    // فتح الأقسام
     function openSection(section) {
         const userData = sessionStorage.getItem("currentUser");
         if (!userData) { window.location.href = "login.html"; return; }
         let user;
         try { user = JSON.parse(userData); } catch (error) {
-            sessionStorage.removeItem("currentUser");
-            window.location.href = "login.html";
-            return;
+            sessionStorage.removeItem("currentUser"); window.location.href = "login.html"; return;
         }
 
         const userRoles = [user.role, user.secondRole, ...(Array.isArray(user.extraRoles) ? user.extraRoles : [])].filter(Boolean).map(role => String(role).toLowerCase());
@@ -636,7 +654,6 @@
         if (pages[requestedSection]) { window.location.href = pages[requestedSection]; }
     }
 
-    // الإشعارات
     function openNotificationsPage() {
         const user = getCurrentUser();
         if (!user) { window.location.href = "login.html"; return; }
@@ -644,14 +661,12 @@
         window.location.href = "notifications.html";
     }
 
-    // مشاكل العربيات
     function openProblemsPage() {
         const user = getCurrentUser();
         if (!user) { window.location.href = "login.html"; return; }
         window.location.href = "problems.html";
     }
 
-    // البحث من الصفحة الرئيسية
     function homeSearch() {
         let user = null;
         try { user = JSON.parse(sessionStorage.getItem("currentUser")); } catch (error) { user = null; }
@@ -666,7 +681,6 @@
         window.location.href = "search.html";
     }
 
-    // التاريخ والوقت
     function updateDateTime() {
         const now = new Date();
         const dateElement = document.getElementById("currentDate");
@@ -677,7 +691,6 @@
     updateDateTime();
     setInterval(updateDateTime, 1000);
 
-    // 👤 مزامنة الاسم من جدول employees
     async function syncUserNameFromEmployees() {
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (!user || !user.username) return;
@@ -695,6 +708,7 @@
     });
 </script>
 
+<!-- ... باقي السكريبتات بتاعتك زي ما هي (Chat, Notifications, Firebase) ... -->
 <script>
     let chatUnreadRealtimeChannel = null;
 

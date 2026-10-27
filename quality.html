@@ -230,6 +230,14 @@
         </div>
     </div>
 
+    <!-- مربع الإشعارات (مخفي في الأول) -->
+    <div id="notificationsPanel" class="quality-container" style="display: none; border-color: #f59e0b; margin-top: 20px;">
+        <h2 style="color: #fcd34d;">🔔 إشعارات الجودة</h2>
+        <div id="notificationsList" style="display:flex; flex-direction:column; gap:10px; max-height: 400px; overflow-y:auto;">
+            <!-- الإشعارات هتظهر هنا -->
+        </div>
+    </div>
+
     <!-- المربع الرئيسي -->
     <div class="quality-container">
         
@@ -301,14 +309,6 @@
             </div>
         </div>
 
-    </div>
-
-    <!-- مربع الإشعارات (مخفي في الأول) -->
-    <div id="notificationsPanel" class="quality-container" style="display: none; border-color: #f59e0b; margin-top: 20px;">
-        <h2 style="color: #fcd34d;">🔔 إشعارات الجودة</h2>
-        <div id="notificationsList" style="display:flex; flex-direction:column; gap:10px; max-height: 400px; overflow-y:auto;">
-            <!-- الإشعارات هتظهر هنا -->
-        </div>
     </div>
 
     <!-- تحميل مكتبة Supabase -->
@@ -510,11 +510,16 @@
         }
 
         // 🆕 دوال الإشعارات
-        function toggleNotifications() {
+        window.toggleNotifications = function() {
             const panel = document.getElementById("notificationsPanel");
-            if (panel.style.display === "none") {
+            if (!panel) {
+                console.error("مربع الإشعارات غير موجود في الصفحة!");
+                return;
+            }
+            
+            if (panel.style.display === "none" || panel.style.display === "") {
                 panel.style.display = "block";
-                loadNotifications();
+                loadNotifications(); // تحميل الإشعارات أول ما يتفتح
             } else {
                 panel.style.display = "none";
             }
@@ -556,6 +561,13 @@
                     <small style="color: #94a3b8;">${new Date(notif.created_at).toLocaleString("ar-EG")}</small>
                 </div>
             `).join("");
+
+            // 🆕 تحديث حالة الإشعارات لـ "مقروءة" عشان الرقم يختفي من الرئيسية
+            await window.supabaseClient
+                .from("quality_notifications")
+                .update({ is_read: true })
+                .eq("target_user", "Mohamed")
+                .eq("is_read", false);
         }
 
         // تشغيل الدوال
