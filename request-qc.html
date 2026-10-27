@@ -23,8 +23,6 @@
         .bg-animation span:nth-child(2) { width: 20px; height: 20px; left: 10%; animation-delay: 2s; animation-duration: 12s; }
         .bg-animation span:nth-child(3) { width: 20px; height: 20px; left: 70%; animation-delay: 4s; }
         .bg-animation span:nth-child(4) { width: 60px; height: 60px; left: 40%; animation-delay: 0s; animation-duration: 18s; background: rgba(16, 185, 129, 0.15); }
-        .bg-animation span:nth-child(5) { width: 20px; height: 20px; left: 65%; animation-delay: 0s; }
-        .bg-animation span:nth-child(6) { width: 110px; height: 110px; left: 75%; animation-delay: 3s; }
         @keyframes animate {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
             100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
@@ -70,7 +68,7 @@
 <body>
 
     <div class="bg-animation">
-        <span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
     </div>
 
     <div class="site-header">
@@ -112,33 +110,28 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- تحميل ملف السكريبت الأساسي -->
     <script src="script.js"></script>
+    <!-- تحميل ملف الإشعارات -->
+    <script src="notifications-helper.js"></script>
     
     <script>
-        // تحميل العربيات
         async function loadCars() {
             const select = document.getElementById("reqCarNumber");
-            
             if (!window.supabaseClient) {
                 select.innerHTML = '<option value="">خطأ: Supabase غير متصل</option>';
                 return;
             }
-
             try {
                 const { data, error } = await window.supabaseClient.from("records").select("car_number");
                 if (error) { 
                     select.innerHTML = '<option value="">خطأ في التحميل: ' + error.message + '</option>';
                     return; 
                 }
-
                 const uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
-                
                 if (uniqueCars.length === 0) {
                     select.innerHTML = '<option value="">لا توجد عربيات مسجلة</option>';
                     return;
                 }
-
                 select.innerHTML = '<option value="">اختر رقم العربية</option>';
-                
                 uniqueCars.forEach(car => {
                     const opt = document.createElement("option");
                     opt.value = car;
@@ -146,12 +139,10 @@
                     select.appendChild(opt);
                 });
             } catch (err) {
-                console.error(err);
                 select.innerHTML = '<option value="">خطأ غير متوقع</option>';
             }
         }
 
-        // إرسال الطلب
         async function sendRequest() {
             const car = document.getElementById("reqCarNumber").value;
             const section = document.getElementById("reqSection").value;
@@ -170,7 +161,7 @@
             msg.innerText = "⏳ جاري إرسال الطلب...";
             msg.style.color = "#fcd34d";
 
-            // حفظ الطلب في الداتابيز عشان يظهر في صفحة الجودة
+            // 1. حفظ الطلب في جدول الجودة الأساسي
             const { error } = await window.supabaseClient.from("quality_control").insert({
                 car_number: car,
                 status: status,
@@ -186,6 +177,26 @@
                 msg.innerText = "✅ تم إرسال الطلب بنجاح، مسؤول الجودة هيشوفه";
                 msg.style.color = "#34d399";
                 document.getElementById("reqCarNumber").value = "";
+
+                // 2. حفظ إشعار في جدول الإشعارات عشان يظهر في صفحة الجودة
+                await window.supabaseClient.from("quality_notifications").insert({
+                    title: "🔔 طلب استلام عربية جديدة",
+                    body: `برجاء التوجه إلى العربية: ${car} (قسم ${section}).\nتم الطلب بواسطة: ${user.name}.\nشكراً لك على حسن تعاونكم معنا.`,
+                    car_number: car,
+                    target_user: "Mohamed",
+                    is_read: false
+                });
+
+                // 3. إرسال Push Notification (لو شغال)
+                if (window.NERIC_Notify && typeof window.NERIC_Notify.sendToQuality === "function") {
+                    window.NERIC_Notify.sendToQuality(
+                        "🔔 طلب استلام عربية جديدة",
+                        `برجاء التوجه إلى العربية: ${car} (قسم ${section}).\nتم الطلب بواسطة: ${user.name}.\nشكراً لك على حسن تعاونكم معنا.`,
+                        { type: "qc_request", carNumber: car, section: section }
+                    ).catch(function(e) {
+                        console.error("Push error:", e);
+                    });
+                }
             }
         }
 

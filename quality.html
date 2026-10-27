@@ -220,9 +220,14 @@
     <!-- الهيدر -->
     <div class="site-header">
         <div class="brand">NERIC <span>| Quality Control</span></div>
-        <button class="back-btn" onclick="window.location.href='index.html'">
-            <span>🏠</span> الرجوع للرئيسية
-        </button>
+        <div style="display:flex; gap:10px;">
+            <button class="back-btn" onclick="toggleNotifications()" style="background: rgba(245, 158, 11, 0.2); color: #fcd34d; border-color: #f59e0b;">
+                🔔 الإشعارات <span id="notifCount" style="background:red; color:white; border-radius:50%; padding:2px 8px; font-size:12px; margin-right:5px; display:none;">0</span>
+            </button>
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <span>🏠</span> الرجوع للرئيسية
+            </button>
+        </div>
     </div>
 
     <!-- المربع الرئيسي -->
@@ -298,45 +303,39 @@
 
     </div>
 
-    <!-- 1. تحميل مكتبة Supabase الأول -->
+    <!-- مربع الإشعارات (مخفي في الأول) -->
+    <div id="notificationsPanel" class="quality-container" style="display: none; border-color: #f59e0b; margin-top: 20px;">
+        <h2 style="color: #fcd34d;">🔔 إشعارات الجودة</h2>
+        <div id="notificationsList" style="display:flex; flex-direction:column; gap:10px; max-height: 400px; overflow-y:auto;">
+            <!-- الإشعارات هتظهر هنا -->
+        </div>
+    </div>
+
+    <!-- تحميل مكتبة Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- 2. تحميل ملف السكريبت الأساسي -->
+    <!-- تحميل ملف السكريبت الأساسي -->
     <script src="script.js"></script>
     
     <script>
         // تحميل أرقام العربيات
         async function loadQCars() {
             const select = document.getElementById("qcCarNumber");
-            
             if (!window.supabaseClient) {
                 select.innerHTML = '<option value="">خطأ: Supabase غير متصل</option>';
                 return;
             }
-            
             try {
                 const { data, error } = await window.supabaseClient.from("records").select("car_number");
-                
                 if (error) { 
-                    console.error("QCARS ERROR:", error); 
                     select.innerHTML = '<option value="">خطأ في التحميل: ' + error.message + '</option>';
                     return; 
                 }
-                
-                if (!data || data.length === 0) {
-                    select.innerHTML = '<option value="">جدول records فاضي</option>';
-                    return;
-                }
-
                 const uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
-                
                 if (uniqueCars.length === 0) {
                     select.innerHTML = '<option value="">لا توجد أرقام عربيات مسجلة</option>';
                     return;
                 }
-
                 select.innerHTML = '<option value="">اختر رقم العربية</option>';
-                
                 uniqueCars.forEach(car => {
                     const opt = document.createElement("option");
                     opt.value = car;
@@ -344,7 +343,6 @@
                     select.appendChild(opt);
                 });
             } catch (err) {
-                console.error("QCARS Exception:", err);
                 select.innerHTML = '<option value="">استثناء: ' + err.message + '</option>';
             }
         }
@@ -395,6 +393,13 @@
             if (error) {
                 alert("❌ حدث خطأ: " + error.message);
             } else {
+                // مسح الطلب القديم (اللي بحالة لم يتم الانتهاء) لنفس العربية
+                await window.supabaseClient
+                    .from("quality_control")
+                    .delete()
+                    .eq("car_number", car)
+                    .eq("status", "لم يتم الانتهاء");
+
                 alert("✅ تم حفظ حالة الجودة بنجاح");
                 document.getElementById("qcNotes").value = ""; 
                 updatePath(car); 
@@ -504,12 +509,62 @@
             updatePath(carNumber);
         }
 
+        // 🆕 دوال الإشعارات
+        function toggleNotifications() {
+            const panel = document.getElementById("notificationsPanel");
+            if (panel.style.display === "none") {
+                panel.style.display = "block";
+                loadNotifications();
+            } else {
+                panel.style.display = "none";
+            }
+        }
+
+        async function loadNotifications() {
+            const list = document.getElementById("notificationsList");
+            const countBadge = document.getElementById("notifCount");
+            if (!window.supabaseClient) return;
+
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const { data, error } = await window.supabaseClient
+                .from("quality_notifications")
+                .select("*")
+                .eq("target_user", "Mohamed")
+                .order("created_at", { ascending: false });
+
+            if (error) {
+                console.error(error);
+                list.innerHTML = "<p style='color:red;'>خطأ في تحميل الإشعارات</p>";
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                list.innerHTML = "<p style='text-align:center; color:#94a3b8;'>لا توجد إشعارات حالياً</p>";
+                countBadge.style.display = "none";
+                return;
+            }
+
+            countBadge.innerText = data.length;
+            countBadge.style.display = "inline-block";
+
+            list.innerHTML = data.map(notif => `
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 10px; border-right: 4px solid #f59e0b;">
+                    <strong style="color: #fcd34d;">${notif.title}</strong>
+                    <p style="margin: 5px 0; color: #e2e8f0; white-space: pre-line;">${notif.body}</p>
+                    <small style="color: #94a3b8;">${new Date(notif.created_at).toLocaleString("ar-EG")}</small>
+                </div>
+            `).join("");
+        }
+
         // تشغيل الدوال
         document.addEventListener("DOMContentLoaded", () => {
             if (typeof protectPage === "function") protectPage();
             loadQCars();
             loadHistory();
             loadNewRequests();
+            loadNotifications(); 
         });
     </script>
 </body>
