@@ -61,6 +61,12 @@ const users = {
     password: "NjI0NzM4NTE=",
     role: "wiring",
     name: "Mahmoud Khairy"
+  },
+  // الحساب الجديد لقسم الجودة
+  Mohamed: { 
+    password: "MTIzNDU2", 
+    role: "quality", 
+    name: " Mohamed Abdelghany " 
   }
 };
 
@@ -77,7 +83,8 @@ const permissions = {
     "deleterequests.html",
     "deleteRequests.html",
     "chat.html",
-    "consumables.html"
+    "consumables.html",
+    "quality.html"
   ],
   wiring: [
     "index.html",
@@ -113,6 +120,14 @@ const permissions = {
     "problems.html",
     "chat.html",
     "consumables.html"
+  ],
+  // صلاحيات قسم الجودة
+  quality: [
+    "index.html",
+    "quality.html",
+    "chat.html",
+    "priority.html",
+    "search.html"
   ]
 };
 
@@ -281,6 +296,9 @@ function protectPage() {
   if (currentPage === "leaves-admin.html") return;
   if (currentPage === "priority.html") return;
 
+  if (user.role === "quality" && currentPage === "search.html") return;
+  if (user.role === "quality" && currentPage === "quality.html") return;
+
   if (currentPage === "final.html") {
     if (canOpenFinal(user)) return;
     alert("❌ ليس لديك صلاحية للدخول إلى الفنش النهائي");
@@ -317,11 +335,20 @@ function openSection(section) {
   }
 
   if (section === "search") {
-    if (user.role !== "admin") {
-      alert("❌ البحث متاح للمدير فقط");
+    if (user.role !== "admin" && user.role !== "quality") {
+      alert("❌ البحث متاح للمدير وقسم الجودة فقط");
       return;
     }
     window.location.href = "search.html";
+    return;
+  }
+
+  if (section === "quality") {
+    if (user.role !== "admin" && user.role !== "quality") {
+      alert("❌ صفحة الجودة متاحة للمدير وقسم الجودة فقط");
+      return;
+    }
+    window.location.href = "quality.html";
     return;
   }
 
@@ -350,7 +377,8 @@ function openSection(section) {
     ht: "ht.html",
     installation: "installation.html",
     final: "final.html",
-    search: "search.html"
+    search: "search.html",
+    quality: "quality.html"
   };
 
   if (pages[section]) {
@@ -377,19 +405,26 @@ function setupDashboard() {
       lt: "LT",
       ht: "HT",
       installation: "Installation",
-      final: "Final"
+      final: "Final",
+      quality: "Quality Control"
     };
     roleElement.innerText = roles[user.role] || "Worker";
   }
 
   const searchButton = document.querySelector('button[onclick="openSection(\'search\')"]');
   if (searchButton) {
-    searchButton.style.display = user.role === "admin" ? "" : "none";
+    searchButton.style.display = (user.role === "admin" || user.role === "quality") ? "" : "none";
   }
 
   const deleteRequestsMenu = document.getElementById("deleteRequestsMenu");
   if (deleteRequestsMenu) {
     deleteRequestsMenu.style.display = user.role === "admin" ? "" : "none";
+  }
+
+  // إظهار أو إخفاء زرار الجودة في لوحة التحكم
+  const qualityBtn = document.querySelector('button[onclick="openSection(\'quality\')"]');
+  if (qualityBtn) {
+    qualityBtn.style.display = (user.role === "admin" || user.role === "quality") ? "" : "none";
   }
 
   setupProblemsCard();
@@ -730,7 +765,7 @@ async function deleteRecordFromSupabase(recordId) {
 function getVisibleProblemRecords(records, user = getCurrentUser()) {
   const list = (records || []).filter(isProblemRecord);
 
-  if (!user || user.role === "admin") {
+  if (!user || user.role === "admin" || user.role === "quality") {
     return list;
   }
 

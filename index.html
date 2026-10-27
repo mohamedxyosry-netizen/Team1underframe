@@ -230,6 +230,11 @@
                 <strong>سجل البيانات</strong>
             </button>
 
+            <button class="menu-item" onclick="window.location.href='request-qc.html'">
+    <span>📦</span>
+    <strong>طلب استلام جودة</strong>
+</button>
+
             <button id="notificationsMenu" class="menu-item" onclick="openNotificationsPage()">
                 <span>🔔</span>
                 <strong>الإشعارات</strong>
@@ -424,6 +429,14 @@
                     <div class="department-icon final-icon">✓</div>
                     <strong>Final</strong>
                     <small>تسجيل اعمال Final</small>
+                    <span class="enter-btn">دخول</span>
+                </button>
+
+                <!-- 🆕 كارت قسم الجودة -->
+                <button id="section-quality" class="section-card" onclick="openSection('quality')" style="display: none;">
+                    <div class="department-icon" style="background: #e0f2fe; color: #0284c7;">🛡️</div>
+                    <strong>قسم الجودة</strong>
+                    <small>تسجيل حالة الاستلام</small>
                     <span class="enter-btn">دخول</span>
                 </button>
 
@@ -654,6 +667,12 @@
             const dailyTasksMenu = document.getElementById("dailyTasksMenu");
             if (dailyTasksMenu) dailyTasksMenu.style.display = "flex";
         }
+
+        // 🆕 إظهار كارت قسم الجودة للمدير والجودة فقط
+        if (user && (user.role === "admin" || user.role === "quality")) {
+            const qualityCard = document.getElementById("section-quality");
+            if (qualityCard) qualityCard.style.display = "flex";
+        }
     });
 
     // فتح الدردشة
@@ -682,7 +701,7 @@
         }
 
         const allowedPriorityRoles = [
-            "admin", "wiring", "lt", "ht", "installation", "final"
+            "admin", "wiring", "lt", "ht", "installation", "final", "quality"
         ];
 
         if (!allowedPriorityRoles.includes(String(user.role || "").toLowerCase())) {
@@ -730,7 +749,7 @@
         }
 
         if (requestedSection === "search") {
-            if (currentRole === "admin") {
+            if (currentRole === "admin" || currentRole === "quality") {
                 window.location.href = "search.html";
                 return;
             }
@@ -760,6 +779,16 @@
             }
 
             alert("ليس لديك صلاحية للدخول إلى Final ❌");
+            return;
+        }
+
+        // 🆕 إضافة قسم الجودة
+        if (requestedSection === "quality") {
+            if (currentRole === "admin" || currentRole === "quality") {
+                window.location.href = "quality.html";
+                return;
+            }
+            alert("قسم الجودة متاح للمدير ومسؤول الجودة فقط ❌");
             return;
         }
 
@@ -826,7 +855,7 @@
             user = null;
         }
 
-        if (!user || user.role !== "admin") {
+        if (!user || (user.role !== "admin" && user.role !== "quality")) {
             alert("❌ ليس لديك صلاحية للبحث");
             return;
         }
