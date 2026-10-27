@@ -366,15 +366,24 @@
                 .from("quality_control")
                 .select("*")
                 .eq("car_number", carNumber)
-                .order("id", { ascending: false })
-                .limit(1);
+                .eq("status", "تم الاستلام") // 🆕 بنجيب الاستلام بس عشان نعرف مسار العربية
+                .order("id", { ascending: false });
             
             if (data && data.length > 0) {
-                const handover = data[0].handover_section;
-                if (handover === "wiring") {
-                    display.innerHTML = '<div class="path-box wiring">تم استلام Wiring</div>';
-                } else if (handover === "final") {
-                    display.innerHTML = '<div class="path-box final">تم استلام Final</div>';
+                // بنعرض كل حاجة استلمها (ممكن يكون Wiring و Final)
+                let hasWiring = false;
+                let hasFinal = false;
+                
+                data.forEach(row => {
+                    if (row.handover_section === "wiring") hasWiring = true;
+                    if (row.handover_section === "final") hasFinal = true;
+                });
+
+                if (hasWiring) {
+                    display.innerHTML += '<div class="path-box wiring">تم استلام Wiring</div>';
+                }
+                if (hasFinal) {
+                    display.innerHTML += '<div class="path-box final">تم استلام Final</div>';
                 }
             }
         }
@@ -403,12 +412,7 @@
             if (error) {
                 alert("❌ حدث خطأ: " + error.message);
             } else {
-                await window.supabaseClient
-                    .from("quality_control")
-                    .delete()
-                    .eq("car_number", car)
-                    .eq("status", "لم يتم الانتهاء");
-
+                // 🆕 مسحنا جزء الحذف عشان نحتفظ بكل السجلات (الـ Wiring والـ Final)
                 alert("✅ تم حفظ حالة الجودة بنجاح");
                 document.getElementById("qcNotes").value = ""; 
                 updatePath(car); 
@@ -423,7 +427,6 @@
             const filterSelect = document.getElementById("historyFilter");
             if (!window.supabaseClient) return;
 
-            // 1. تحميل قايمة العربيات في الفلتر
             if (filterSelect && filterSelect.options.length <= 1) {
                 const { data: carsData } = await window.supabaseClient.from("quality_control").select("car_number");
                 if (carsData) {
@@ -439,17 +442,16 @@
 
             const filterValue = filterSelect ? filterSelect.value : "";
 
-            // 🆕 لو مسؤول الجودة مختارش عربية، نعرض رسالة ومش بنجيب داتا
             if (!filterValue) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #94a3b8; padding: 20px;">⬆️ اختر عربية من القائمة عشان تشوف سجلها</td></tr>`;
                 return; 
             }
 
-            // 2. جلب البيانات (للعربية المختارة بس)
             let query = window.supabaseClient
                 .from("quality_control")
                 .select("*")
-                .eq("car_number", filterValue) // بنجيب العربية المختارة بس
+                .eq("car_number", filterValue) 
+                .eq("status", "تم الاستلام") // 🆕 بنعرض اللي تم استلامه بس
                 .order("id", { ascending: false });
 
             const { data, error } = await query;
@@ -490,6 +492,7 @@
             const list = document.getElementById("newRequestsList");
             if (!window.supabaseClient) return;
 
+            // 🆕 بنجيب الطلبات اللي لسه "لم يتم الانتهاء" (عشان تظهر في المربع الأصفر)
             const { data, error } = await window.supabaseClient
                 .from("quality_control")
                 .select("*")
@@ -583,14 +586,9 @@
                     return;
                 }
 
-                // 🆕 إظهار الرقم فقط لو المتصفح مش فاكر إننا قارينها قبل كده
                 if (countBadge) {
-                    if (localStorage.getItem("qualityNotifsRead") === "true") {
-                        countBadge.style.display = "none";
-                    } else {
-                        countBadge.innerText = data.length;
-                        countBadge.style.display = "inline-block";
-                    }
+                    countBadge.innerText = data.length;
+                    countBadge.style.display = "inline-block";
                 }
 
                 if (list) {
