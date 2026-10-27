@@ -509,7 +509,7 @@
             updatePath(carNumber);
         }
 
-        // 🆕 دوال الإشعارات
+        // 🆕 دوال الإشعارات (تم تعديلها لضمان الفتح وإظهار الأخطاء)
         window.toggleNotifications = function() {
             const panel = document.getElementById("notificationsPanel");
             if (!panel) {
@@ -519,7 +519,7 @@
             
             if (panel.style.display === "none" || panel.style.display === "") {
                 panel.style.display = "block";
-                loadNotifications(); // تحميل الإشعارات أول ما يتفتح
+                loadNotifications(); 
             } else {
                 panel.style.display = "none";
             }
@@ -528,46 +528,59 @@
         async function loadNotifications() {
             const list = document.getElementById("notificationsList");
             const countBadge = document.getElementById("notifCount");
-            if (!window.supabaseClient) return;
+            if (!window.supabaseClient) {
+                if (list) list.innerHTML = "<p style='color:red;'>خطأ: Supabase غير متصل</p>";
+                return;
+            }
 
             const user = getCurrentUser();
             if (!user) return;
 
-            const { data, error } = await window.supabaseClient
-                .from("quality_notifications")
-                .select("*")
-                .eq("target_user", "Mohamed")
-                .order("created_at", { ascending: false });
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from("quality_notifications")
+                    .select("*")
+                    .eq("target_user", "Mohamed")
+                    .order("created_at", { ascending: false });
 
-            if (error) {
-                console.error(error);
-                list.innerHTML = "<p style='color:red;'>خطأ في تحميل الإشعارات</p>";
-                return;
+                if (error) {
+                    console.error("Notifications Load Error:", error);
+                    if (list) list.innerHTML = "<p style='color:red;'>خطأ في تحميل الإشعارات: " + error.message + "</p>";
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    if (list) list.innerHTML = "<p style='text-align:center; color:#94a3b8;'>لا توجد إشعارات حالياً</p>";
+                    if (countBadge) countBadge.style.display = "none";
+                    return;
+                }
+
+                if (countBadge) {
+                    countBadge.innerText = data.length;
+                    countBadge.style.display = "inline-block";
+                }
+
+                if (list) {
+                    list.innerHTML = data.map(notif => `
+                        <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 10px; border-right: 4px solid #f59e0b;">
+                            <strong style="color: #fcd34d;">${notif.title}</strong>
+                            <p style="margin: 5px 0; color: #e2e8f0; white-space: pre-line;">${notif.body}</p>
+                            <small style="color: #94a3b8;">${new Date(notif.created_at).toLocaleString("ar-EG")}</small>
+                        </div>
+                    `).join("");
+                }
+
+                // 🆕 تحديث حالة الإشعارات لـ "مقروءة" عشان الرقم يختفي من الرئيسية
+                await window.supabaseClient
+                    .from("quality_notifications")
+                    .update({ is_read: true })
+                    .eq("target_user", "Mohamed")
+                    .eq("is_read", false);
+
+            } catch (err) {
+                console.error("Notifications Exception:", err);
+                if (list) list.innerHTML = "<p style='color:red;'>خطأ غير متوقع في التحميل</p>";
             }
-
-            if (!data || data.length === 0) {
-                list.innerHTML = "<p style='text-align:center; color:#94a3b8;'>لا توجد إشعارات حالياً</p>";
-                countBadge.style.display = "none";
-                return;
-            }
-
-            countBadge.innerText = data.length;
-            countBadge.style.display = "inline-block";
-
-            list.innerHTML = data.map(notif => `
-                <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 10px; border-right: 4px solid #f59e0b;">
-                    <strong style="color: #fcd34d;">${notif.title}</strong>
-                    <p style="margin: 5px 0; color: #e2e8f0; white-space: pre-line;">${notif.body}</p>
-                    <small style="color: #94a3b8;">${new Date(notif.created_at).toLocaleString("ar-EG")}</small>
-                </div>
-            `).join("");
-
-            // 🆕 تحديث حالة الإشعارات لـ "مقروءة" عشان الرقم يختفي من الرئيسية
-            await window.supabaseClient
-                .from("quality_notifications")
-                .update({ is_read: true })
-                .eq("target_user", "Mohamed")
-                .eq("is_read", false);
         }
 
         // تشغيل الدوال
