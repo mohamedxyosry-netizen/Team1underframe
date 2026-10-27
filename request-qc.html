@@ -1,0 +1,167 @@
+ا<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NERIC - طلب استلام جودة</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #0f172a; min-height: 100vh; margin: 0; overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .bg-animation {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            overflow: hidden;
+        }
+        .stars {
+            position: absolute; width: 100%; height: 100%;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0));
+            background-repeat: repeat; background-size: 200px 200px; opacity: 0.6;
+        }
+        .site-header {
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center; color: white; z-index: 10;
+        }
+        .site-header .brand { font-size: 22px; font-weight: bold; }
+        .site-header .brand span { color: #3b82f6; }
+        .back-btn {
+            background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6;
+            padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        .back-btn:hover { background: #3b82f6; color: white; }
+
+        .container {
+            max-width: 600px; margin: 50px auto; padding: 40px;
+            background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); color: #e2e8f0; animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        h2 { text-align: center; color: #f8fafc; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #94a3b8; }
+        .form-group select {
+            width: 100%; padding: 14px; border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px; font-size: 16px; background: rgba(0, 0, 0, 0.3); color: white; outline: none;
+        }
+        .form-group select option { background: #1e293b; }
+        .btn-submit {
+            width: 100%; padding: 15px; background: linear-gradient(135deg, #10b981, #059669);
+            color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer;
+            margin-top: 10px; transition: 0.3s;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
+        .message { text-align: center; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation"><div class="stars"></div></div>
+
+    <div class="site-header">
+        <div class="brand">NERIC <span>| طلب استلام جودة</span></div>
+        <button class="back-btn" onclick="window.location.href='index.html'">🏠 الرئيسية</button>
+    </div>
+
+    <div class="container">
+        <h2>📦 إرسال طلب استلام عربية</h2>
+
+        <div class="form-group">
+            <label>اختر العربية:</label>
+            <select id="reqCarNumber">
+                <option value="">جاري تحميل العربيات...</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>القسم اللي خلص:</label>
+            <select id="reqSection">
+                <option value="wiring">Wiring</option>
+                <option value="final">Final</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>حالة العربية:</label>
+            <select id="reqStatus">
+                <option value="تم الانتهاء">تم الانتهاء</option>
+                <option value="لم يتم الانتهاء">لم يتم الانتهاء</option>
+            </select>
+        </div>
+
+        <button class="btn-submit" onclick="sendRequest()">🚀 إرسال الطلب للجودة</button>
+        <p id="reqMessage" class="message"></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+    <script>
+        const SUPABASE_URL = "https://gzyybadyaunizdlvmcle.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_zg4OnUfu83dzvD_GOIgarA__gbaXCEO";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // تحميل العربيات
+        async function loadCars() {
+            const select = document.getElementById("reqCarNumber");
+            const { data, error } = await supabase.from("records").select("car_number");
+            if (error) { console.error(error); return; }
+
+            const uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
+            select.innerHTML = '<option value="">اختر رقم العربية</option>';
+            
+            uniqueCars.forEach(car => {
+                const opt = document.createElement("option");
+                opt.value = car;
+                opt.textContent = car;
+                select.appendChild(opt);
+            });
+        }
+
+        // إرسال الطلب
+        async function sendRequest() {
+            const car = document.getElementById("reqCarNumber").value;
+            const section = document.getElementById("reqSection").value;
+            const status = document.getElementById("reqStatus").value;
+            const msg = document.getElementById("reqMessage");
+
+            if (!car) {
+                msg.innerText = "⚠️ اختر العربية أولاً";
+                msg.style.color = "#f87171";
+                return;
+            }
+
+            const user = getCurrentUser();
+            if (!user) return;
+
+            msg.innerText = "⏳ جاري إرسال الطلب...";
+            msg.style.color = "#fcd34d";
+
+            // حفظ الطلب في الداتابيز عشان يظهر في صفحة الجودة
+            const { error } = await supabase.from("quality_control").insert({
+                car_number: car,
+                status: status,
+                handover_section: section,
+                notes: "طلب استلام من " + user.name,
+                created_by: user.name
+            });
+
+            if (error) {
+                msg.innerText = "❌ حدث خطأ: " + error.message;
+                msg.style.color = "#f87171";
+            } else {
+                msg.innerText = "✅ تم إرسال الطلب بنجاح، مسؤول الجودة هيشوفه";
+                msg.style.color = "#34d399";
+                document.getElementById("reqCarNumber").value = "";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (typeof protectPage === "function") protectPage();
+            loadCars();
+        });
+    </script>
+</body>
+</html>

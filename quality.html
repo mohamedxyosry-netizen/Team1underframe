@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NERIC - Quality Control</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* =========================================
+           الخلفية المتحركة (دوائر)
+        ========================================= */
+        body {
+            background: #0f172a;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .bg-animation span {
+            position: absolute;
+            display: block;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.15);
+            animation: animate 25s linear infinite;
+            bottom: -150px;
+        }
+
+        .bg-animation span:nth-child(1) { width: 80px; height: 80px; left: 25%; animation-delay: 0s; }
+        .bg-animation span:nth-child(2) { width: 20px; height: 20px; left: 10%; animation-delay: 2s; animation-duration: 12s; }
+        .bg-animation span:nth-child(3) { width: 20px; height: 20px; left: 70%; animation-delay: 4s; }
+        .bg-animation span:nth-child(4) { width: 60px; height: 60px; left: 40%; animation-delay: 0s; animation-duration: 18s; background: rgba(16, 185, 129, 0.15); }
+        .bg-animation span:nth-child(5) { width: 20px; height: 20px; left: 65%; animation-delay: 0s; }
+        .bg-animation span:nth-child(6) { width: 110px; height: 110px; left: 75%; animation-delay: 3s; }
+        .bg-animation span:nth-child(7) { width: 150px; height: 150px; left: 35%; animation-delay: 7s; }
+        .bg-animation span:nth-child(8) { width: 25px; height: 25px; left: 50%; animation-delay: 15s; animation-duration: 45s; }
+        .bg-animation span:nth-child(9) { width: 15px; height: 15px; left: 20%; animation-delay: 2s; animation-duration: 35s; background: rgba(139, 92, 246, 0.15); }
+        .bg-animation span:nth-child(10) { width: 150px; height: 150px; left: 85%; animation-delay: 0s; animation-duration: 11s; }
+
+        @keyframes animate {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
+            100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
+        }
+
+        /* =========================================
+           الهيدر
+        ========================================= */
+        .site-header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: relative;
+            z-index: 10;
+        }
+
+        .site-header .brand { font-size: 22px; font-weight: bold; letter-spacing: 1px; }
+        .site-header .brand span { color: #3b82f6; }
+
+        .back-btn {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid #3b82f6;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .back-btn:hover { background: #3b82f6; color: white; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+
+        /* =========================================
+           المربع الزجاجي (Glassmorphism)
+        ========================================= */
+        .quality-container {
+            max-width: 750px;
+            margin: 50px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            color: #e2e8f0;
+            animation: slideUp 0.6s ease-out;
+            position: relative;
+            z-index: 5;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quality-container h2 {
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 26px;
+            text-align: center;
+            color: #f8fafc;
+            text-shadow: 0 2px 10px rgba(255,255,255,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* =========================================
+           الفورم
+        ========================================= */
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 10px; font-weight: 600; color: #94a3b8; font-size: 15px; }
+        
+        .form-group select, .form-group textarea {
+            width: 100%; padding: 14px 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 12px; 
+            font-size: 16px; 
+            background: rgba(0, 0, 0, 0.3); 
+            color: #f1f5f9;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-group select option { background: #1e293b; color: white; }
+
+        .btn-submit {
+            width: 100%; padding: 16px; 
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6); 
+            color: white; border: none; border-radius: 12px; 
+            font-size: 18px; font-weight: bold; cursor: pointer; 
+            transition: 0.3s;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            margin-top: 10px;
+        }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(59, 130, 246, 0.6); }
+
+        /* =========================================
+           مسار العربية (الأنيميشن)
+        ========================================= */
+        .car-path { display: flex; gap: 15px; margin-bottom: 25px; justify-content: center; min-height: 45px; }
+        
+        .path-box { 
+            padding: 12px 30px; border-radius: 12px; font-weight: bold; font-size: 16px;
+            text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .path-box.wiring { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #000; text-shadow: 0 1px 2px rgba(255,255,255,0.5); }
+        .path-box.final { background: linear-gradient(135deg, #10b981, #34d399); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* =========================================
+           السجل والجدول
+        ========================================= */
+        .history-section { margin-top: 50px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; }
+        .history-section h3 { color: #f8fafc; margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        .table-responsive { 
+            overflow-x: auto; 
+            background: rgba(0, 0, 0, 0.2); 
+            border-radius: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        
+        th { 
+            background: rgba(0, 0, 0, 0.4); 
+            padding: 16px; color: #94a3b8; font-weight: 600; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); white-space: nowrap;
+        }
+        
+        td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1; }
+        
+        tr:hover td { background: rgba(255, 255, 255, 0.03); }
+        
+        .status-badge { padding: 6px 12px; border-radius: 30px; font-size: 13px; font-weight: bold; display: inline-block; }
+        .status-yes { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .status-no { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+        .filter-select {
+            background: rgba(0, 0, 0, 0.3); color: white; padding: 10px 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; width: 100%; max-width: 300px; font-size: 15px;
+        }
+        .filter-select:focus { outline: none; border-color: #3b82f6; }
+        .filter-select option { background: #1e293b; }
+    </style>
+</head>
+<body>
+
+    <!-- الخلفية المتحركة (دوائر) -->
+    <div class="bg-animation">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- الهيدر -->
+    <div class="site-header">
+        <div class="brand">NERIC <span>| Quality Control</span></div>
+        <button class="back-btn" onclick="window.location.href='index.html'">
+            <span>🏠</span> الرجوع للرئيسية
+        </button>
+    </div>
+
+    <!-- المربع الرئيسي -->
+    <div class="quality-container">
+        
+        <h2>🛡️ تسجيل حالة استلام عربية</h2>
+
+        <!-- 🆕 قسم الطلبات الجديدة -->
+        <div id="newRequestsSection" style="display: none; margin-bottom: 30px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 15px; padding: 15px;">
+            <h3 style="color: #fcd34d; margin-top: 0; margin-bottom: 15px; font-size: 18px;">🔔 طلبات جديدة بانتظار الاستلام</h3>
+            <div id="newRequestsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+
+        <div class="form-group">
+            <label>اختر العربية:</label>
+            <select id="qcCarNumber" onchange="updatePath(this.value)">
+                <option value="">جاري تحميل العربيات...</option>
+            </select>
+        </div>
+
+        <!-- مسار العربية -->
+        <div class="car-path" id="carPathDisplay"></div>
+
+        <div class="form-group">
+            <label>حالة الاستلام:</label>
+            <select id="qcStatus">
+                <option value="تم الاستلام">تم الاستلام</option>
+                <option value="لم يتم الاستلام">لم يتم الاستلام</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>الاستلام من قسم:</label>
+            <select id="qcHandover">
+                <option value="none">بدون تحديد</option>
+                <option value="wiring">Wiring</option>
+                <option value="final">Final</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>ملاحظات:</label>
+            <textarea id="qcNotes" rows="3" placeholder="اكتب أي ملاحظات هنا..."></textarea>
+        </div>
+
+        <button class="btn-submit" onclick="saveQC()">💾 حفظ البيانات</button>
+
+        <!-- سجل العربيات -->
+        <div class="history-section">
+            <h3>📋 سجل العربيات المستلمة</h3>
+            
+            <select id="historyFilter" class="filter-select" onchange="loadHistory()">
+                <option value="">كل العربيات</option>
+            </select>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>رقم العربية</th>
+                            <th>الحالة</th>
+                            <th>القسم المستلم منه</th>
+                            <th>الملاحظات</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="qcHistoryBody">
+                        <tr><td colspan="5" style="text-align:center;">جاري تحميل السجل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+    
+    <script>
+        // تحميل أرقام العربيات
+        async function loadQCars() {
+            if (!window.supabaseClient) return;
+            const select = document.getElementById("qcCarNumber");
+            
+            const { data, error } = await window.supabaseClient.from("records").select("car_number");
+            if (error) { console.error(error); return; }
+            
+            const uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
+            select.innerHTML = '<option value="">اختر رقم العربية</option>';
+            
+            uniqueCars.forEach(car => {
+                const opt = document.createElement("option");
+                opt.value = car;
+                opt.textContent = car;
+                select.appendChild(opt);
+            });
+        }
+
+        // تحديث مسار العربية
+        async function updatePath(carNumber) {
+            const display = document.getElementById("carPathDisplay");
+            display.innerHTML = "";
+            if (!carNumber) return;
+
+            const { data } = await window.supabaseClient
+                .from("quality_control")
+                .select("*")
+                .eq("car_number", carNumber)
+                .order("id", { ascending: false })
+                .limit(1);
+            
+            if (data && data.length > 0) {
+                const handover = data[0].handover_section;
+                if (handover === "wiring") {
+                    display.innerHTML = '<div class="path-box wiring">تم استلام Wiring</div>';
+                } else if (handover === "final") {
+                    display.innerHTML = '<div class="path-box final">تم استلام Final</div>';
+                }
+            }
+        }
+
+        // حفظ البيانات
+        async function saveQC() {
+            const car = document.getElementById("qcCarNumber").value;
+            const status = document.getElementById("qcStatus").value;
+            const handover = document.getElementById("qcHandover").value;
+            const notes = document.getElementById("qcNotes").value;
+
+            if (!car) { alert("⚠️ اختر العربية أولاً"); return; }
+
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const { error } = await window.supabaseClient.from("quality_control").insert({
+                car_number: car,
+                status: status,
+                handover_section: handover,
+                notes: notes,
+                created_by: user.name
+            });
+
+            if (error) {
+                alert("❌ حدث خطأ: " + error.message);
+            } else {
+                alert("✅ تم حفظ حالة الجودة بنجاح");
+                document.getElementById("qcNotes").value = ""; 
+                updatePath(car); 
+                loadHistory(); 
+                loadNewRequests(); 
+            }
+        }
+
+        // تحميل سجل الجودة (مع فلتر)
+        async function loadHistory() {
+            const tbody = document.getElementById("qcHistoryBody");
+            const filterSelect = document.getElementById("historyFilter");
+            if (!window.supabaseClient) return;
+
+            // 1. تحميل قايمة العربيات في الفلتر
+            if (filterSelect && filterSelect.options.length <= 1) {
+                const { data: carsData } = await window.supabaseClient.from("quality_control").select("car_number");
+                if (carsData) {
+                    const uniqueCars = [...new Set(carsData.map(r => r.car_number).filter(Boolean))];
+                    uniqueCars.forEach(car => {
+                        const opt = document.createElement("option");
+                        opt.value = car;
+                        opt.textContent = car;
+                        filterSelect.appendChild(opt);
+                    });
+                }
+            }
+
+            // 2. جلب البيانات (مفلترة أو كلها)
+            let query = window.supabaseClient.from("quality_control").select("*").order("id", { ascending: false });
+            
+            const filterValue = filterSelect ? filterSelect.value : "";
+            if (filterValue) {
+                query = query.eq("car_number", filterValue);
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#f87171;">خطأ في تحميل السجل</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">لا يوجد سجل حتى الآن</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map(row => {
+                const date = new Date(row.created_at).toLocaleDateString("ar-EG");
+                const statusClass = row.status === "تم الاستلام" ? "status-yes" : "status-no";
+                const handoverText = row.handover_section === "wiring" ? "Wiring" : (row.handover_section === "final" ? "Final" : "-");
+                
+                return `
+                    <tr>
+                        <td><strong>${row.car_number}</strong></td>
+                        <td><span class="status-badge ${statusClass}">${row.status}</span></td>
+                        <td>${handoverText}</td>
+                        <td>${row.notes || "-"}</td>
+                        <td>${date}</td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        // 🆕 تحميل الطلبات الجديدة اللي لسه ما اتعملتش
+        async function loadNewRequests() {
+            const section = document.getElementById("newRequestsSection");
+            const list = document.getElementById("newRequestsList");
+            if (!window.supabaseClient) return;
+
+            const { data, error } = await window.supabaseClient
+                .from("quality_control")
+                .select("*")
+                .eq("status", "لم يتم الانتهاء") 
+                .order("id", { ascending: false });
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                section.style.display = "none";
+                return;
+            }
+
+            section.style.display = "block";
+            
+            list.innerHTML = data.map(req => `
+                <div style="background: rgba(0,0,0,0.3); padding: 12px 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border-right: 4px solid #f59e0b; cursor: pointer;" onclick="selectRequest('${req.car_number}', '${req.handover_section}')">
+                    <div>
+                        <strong style="color: white; font-size: 16px;">${req.car_number}</strong>
+                        <span style="color: #94a3b8; font-size: 13px; margin-right: 10px;">(${req.handover_section === 'wiring' ? 'Wiring' : 'Final'})</span>
+                    </div>
+                    <button style="background: #f59e0b; color: black; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">استلام ⬅️</button>
+                </div>
+            `).join("");
+        }
+
+        // 🆕 دالة بتشتغل لما مسؤول الجودة يدوس "استلام" على طلب
+        function selectRequest(carNumber, handoverSection) {
+            document.getElementById("qcCarNumber").value = carNumber;
+            document.getElementById("qcHandover").value = handoverSection;
+            document.getElementById("qcStatus").value = "تم الاستلام"; 
+            document.querySelector(".quality-container").scrollIntoView({ behavior: 'smooth' });
+            updatePath(carNumber);
+        }
+
+        // تشغيل الدوال أول ما الصفحة تفتح
+        document.addEventListener("DOMContentLoaded", () => {
+            if (typeof protectPage === "function") protectPage();
+            loadQCars();
+            loadHistory();
+            loadNewRequests(); 
+        });
+    </script>
+</body>
+</html>
