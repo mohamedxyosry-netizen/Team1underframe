@@ -304,7 +304,6 @@
                         </tr>
                     </thead>
                     <tbody id="qcHistoryBody">
-                        <!-- الجدول هيفضل فاضي لحد ما يتم اختيار عربية -->
                         <tr><td colspan="6" style="text-align:center; color: #94a3b8; padding: 20px;">⬆️ اختر عربية من القائمة عشان تشوف سجلها</td></tr>
                     </tbody>
                 </table>
@@ -528,7 +527,7 @@
             updatePath(carNumber);
         }
 
-        // دوال الإشعارات
+        // 🆕 دوال الإشعارات (تم تعديلها لضمان الفتح وإخفاء العداد)
         window.toggleNotifications = function() {
             const panel = document.getElementById("notificationsPanel");
             const countBadge = document.getElementById("notifCount");
@@ -542,7 +541,13 @@
                 panel.style.display = "block";
                 loadNotifications(); 
                 
-                if (countBadge) countBadge.style.display = "none";
+                // إخفاء الرقم الأحمر بمجرد فتح الإشعارات
+                if (countBadge) {
+                    countBadge.style.display = "none";
+                }
+                // 🆕 تخزين في ذاكرة المتصفح إننا فتحنا الرسايل خلاص
+                localStorage.setItem("qualityNotifsRead", "true");
+                
             } else {
                 panel.style.display = "none";
             }
@@ -578,9 +583,14 @@
                     return;
                 }
 
+                // 🆕 إظهار الرقم فقط لو المتصفح مش فاكر إننا قارينها قبل كده
                 if (countBadge) {
-                    countBadge.innerText = data.length;
-                    countBadge.style.display = "inline-block";
+                    if (localStorage.getItem("qualityNotifsRead") === "true") {
+                        countBadge.style.display = "none";
+                    } else {
+                        countBadge.innerText = data.length;
+                        countBadge.style.display = "inline-block";
+                    }
                 }
 
                 if (list) {
