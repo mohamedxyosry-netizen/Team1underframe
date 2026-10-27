@@ -10,7 +10,7 @@
            الخلفية المتحركة (دوائر)
         ========================================= */
         body {
-            background: #0f172a;
+            background: #0f172a; 
             min-height: 100vh;
             margin: 0;
             overflow-x: hidden;
@@ -29,7 +29,7 @@
             position: absolute;
             display: block;
             border-radius: 50%;
-            background: rgba(59, 130, 246, 0.15);
+            background: rgba(59, 130, 246, 0.15); 
             animation: animate 25s linear infinite;
             bottom: -150px;
         }
@@ -230,7 +230,7 @@
         
         <h2>🛡️ تسجيل حالة استلام عربية</h2>
 
-        <!-- 🆕 قسم الطلبات الجديدة -->
+        <!-- قسم الطلبات الجديدة -->
         <div id="newRequestsSection" style="display: none; margin-bottom: 30px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 15px; padding: 15px;">
             <h3 style="color: #fcd34d; margin-top: 0; margin-bottom: 15px; font-size: 18px;">🔔 طلبات جديدة بانتظار الاستلام</h3>
             <div id="newRequestsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
@@ -301,23 +301,48 @@
     <script src="script.js"></script>
     
     <script>
-        // تحميل أرقام العربيات
+        // تحميل أرقام العربيات (تم تعديلها عشان تظهر الأخطاء لو حصلت)
         async function loadQCars() {
-            if (!window.supabaseClient) return;
             const select = document.getElementById("qcCarNumber");
             
-            const { data, error } = await window.supabaseClient.from("records").select("car_number");
-            if (error) { console.error(error); return; }
+            if (!window.supabaseClient) {
+                select.innerHTML = '<option value="">خطأ: Supabase غير متصل</option>';
+                return;
+            }
             
-            const uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
-            select.innerHTML = '<option value="">اختر رقم العربية</option>';
-            
-            uniqueCars.forEach(car => {
-                const opt = document.createElement("option");
-                opt.value = car;
-                opt.textContent = car;
-                select.appendChild(opt);
-            });
+            try {
+                const { data, error } = await window.supabaseClient.from("records").select("car_number");
+                
+                if (error) { 
+                    console.error("QCARS ERROR:", error); 
+                    select.innerHTML = '<option value="">خطأ في التحميل: ' + error.message + '</option>';
+                    return; 
+                }
+                
+                if (!data || data.length === 0) {
+                    select.innerHTML = '<option value="">جدول records فاضي</option>';
+                    return;
+                }
+
+                const uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
+                
+                if (uniqueCars.length === 0) {
+                    select.innerHTML = '<option value="">لا توجد أرقام عربيات مسجلة</option>';
+                    return;
+                }
+
+                select.innerHTML = '<option value="">اختر رقم العربية</option>';
+                
+                uniqueCars.forEach(car => {
+                    const opt = document.createElement("option");
+                    opt.value = car;
+                    opt.textContent = car;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("QCARS Exception:", err);
+                select.innerHTML = '<option value="">استثناء: ' + err.message + '</option>';
+            }
         }
 
         // تحديث مسار العربية
@@ -380,7 +405,6 @@
             const filterSelect = document.getElementById("historyFilter");
             if (!window.supabaseClient) return;
 
-            // 1. تحميل قايمة العربيات في الفلتر
             if (filterSelect && filterSelect.options.length <= 1) {
                 const { data: carsData } = await window.supabaseClient.from("quality_control").select("car_number");
                 if (carsData) {
@@ -394,7 +418,6 @@
                 }
             }
 
-            // 2. جلب البيانات (مفلترة أو كلها)
             let query = window.supabaseClient.from("quality_control").select("*").order("id", { ascending: false });
             
             const filterValue = filterSelect ? filterSelect.value : "";
@@ -431,7 +454,7 @@
             }).join("");
         }
 
-        // 🆕 تحميل الطلبات الجديدة اللي لسه ما اتعملتش
+        // تحميل الطلبات الجديدة
         async function loadNewRequests() {
             const section = document.getElementById("newRequestsSection");
             const list = document.getElementById("newRequestsList");
@@ -466,21 +489,23 @@
             `).join("");
         }
 
-        // 🆕 دالة بتشتغل لما مسؤول الجودة يدوس "استلام" على طلب
+        // اختيار طلب
         function selectRequest(carNumber, handoverSection) {
             document.getElementById("qcCarNumber").value = carNumber;
             document.getElementById("qcHandover").value = handoverSection;
             document.getElementById("qcStatus").value = "تم الاستلام"; 
+            
             document.querySelector(".quality-container").scrollIntoView({ behavior: 'smooth' });
+            
             updatePath(carNumber);
         }
 
-        // تشغيل الدوال أول ما الصفحة تفتح
+        // تشغيل الدوال
         document.addEventListener("DOMContentLoaded", () => {
             if (typeof protectPage === "function") protectPage();
             loadQCars();
             loadHistory();
-            loadNewRequests(); 
+            loadNewRequests();
         });
     </script>
 </body>
