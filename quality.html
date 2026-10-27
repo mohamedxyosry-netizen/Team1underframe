@@ -298,10 +298,14 @@
 
     </div>
 
+    <!-- 1. تحميل مكتبة Supabase الأول -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 2. تحميل ملف السكريبت الأساسي -->
     <script src="script.js"></script>
     
     <script>
-        // تحميل أرقام العربيات (تم تعديلها عشان تظهر الأخطاء لو حصلت)
+        // تحميل أرقام العربيات
         async function loadQCars() {
             const select = document.getElementById("qcCarNumber");
             
