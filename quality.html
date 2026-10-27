@@ -298,12 +298,14 @@
                             <th>رقم العربية</th>
                             <th>الحالة</th>
                             <th>القسم المستلم منه</th>
+                            <th>المستلم</th>
+                            <th>وقت الاستلام</th>
                             <th>الملاحظات</th>
-                            <th>التاريخ</th>
                         </tr>
                     </thead>
                     <tbody id="qcHistoryBody">
-                        <tr><td colspan="5" style="text-align:center;">جاري تحميل السجل...</td></tr>
+                        <!-- الجدول هيفضل فاضي لحد ما يتم اختيار عربية -->
+                        <tr><td colspan="6" style="text-align:center; color: #94a3b8; padding: 20px;">⬆️ اختر عربية من القائمة عشان تشوف سجلها</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -333,7 +335,6 @@
                 
                 let uniqueCars = [...new Set(data.map(r => r.car_number).filter(Boolean))];
                 
-                // الترتيب: بنجيب رقم الوحدة من آخر الاسم ونرتب على أساسه
                 uniqueCars.sort((a, b) => {
                     const numA = parseInt(a.split("-").pop()) || 0;
                     const numB = parseInt(b.split("-").pop()) || 0;
@@ -396,13 +397,13 @@
                 status: status,
                 handover_section: handover,
                 notes: notes,
-                created_by: user.name
+                created_by: user.name,
+                received_by: user.name // 🆕 تسجيل اسم المستلم
             });
 
             if (error) {
                 alert("❌ حدث خطأ: " + error.message);
             } else {
-                // مسح الطلب القديم (اللي بحالة لم يتم الانتهاء) لنفس العربية
                 await window.supabaseClient
                     .from("quality_control")
                     .delete()
@@ -423,6 +424,7 @@
             const filterSelect = document.getElementById("historyFilter");
             if (!window.supabaseClient) return;
 
+            // 1. تحميل قايمة العربيات في الفلتر
             if (filterSelect && filterSelect.options.length <= 1) {
                 const { data: carsData } = await window.supabaseClient.from("quality_control").select("car_number");
                 if (carsData) {
@@ -436,37 +438,48 @@
                 }
             }
 
-            let query = window.supabaseClient.from("quality_control").select("*").order("id", { ascending: false });
-            
             const filterValue = filterSelect ? filterSelect.value : "";
-            if (filterValue) {
-                query = query.eq("car_number", filterValue);
+
+            // 🆕 لو مسؤول الجودة مختارش عربية، نعرض رسالة ومش بنجيب داتا
+            if (!filterValue) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #94a3b8; padding: 20px;">⬆️ اختر عربية من القائمة عشان تشوف سجلها</td></tr>`;
+                return; 
             }
+
+            // 2. جلب البيانات (للعربية المختارة بس)
+            let query = window.supabaseClient
+                .from("quality_control")
+                .select("*")
+                .eq("car_number", filterValue) // بنجيب العربية المختارة بس
+                .order("id", { ascending: false });
 
             const { data, error } = await query;
 
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#f87171;">خطأ في تحميل السجل</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#f87171;">خطأ في تحميل السجل</td></tr>`;
                 return;
             }
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">لا يوجد سجل حتى الآن</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">لا يوجد سجل لهذه العربية حتى الآن</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = data.map(row => {
                 const date = new Date(row.created_at).toLocaleDateString("ar-EG");
+                const time = new Date(row.created_at).toLocaleTimeString("ar-EG", { hour: '2-digit', minute: '2-digit' }); 
                 const statusClass = row.status === "تم الاستلام" ? "status-yes" : "status-no";
                 const handoverText = row.handover_section === "wiring" ? "Wiring" : (row.handover_section === "final" ? "Final" : "-");
+                const receiver = row.received_by || row.created_by || "-"; 
                 
                 return `
                     <tr>
                         <td><strong>${row.car_number}</strong></td>
                         <td><span class="status-badge ${statusClass}">${row.status}</span></td>
                         <td>${handoverText}</td>
+                        <td>${receiver}</td> 
+                        <td>${date} ${time}</td> 
                         <td>${row.notes || "-"}</td>
-                        <td>${date}</td>
                     </tr>
                 `;
             }).join("");
@@ -484,10 +497,7 @@
                 .eq("status", "لم يتم الانتهاء") 
                 .order("id", { ascending: false });
 
-            if (error) {
-                console.error(error);
-                return;
-            }
+            if (error) { console.error(error); return; }
 
             if (!data || data.length === 0) {
                 section.style.display = "none";
@@ -518,7 +528,7 @@
             updatePath(carNumber);
         }
 
-        // 🆕 دوال الإشعارات
+        // دوال الإشعارات
         window.toggleNotifications = function() {
             const panel = document.getElementById("notificationsPanel");
             const countBadge = document.getElementById("notifCount");
@@ -532,10 +542,7 @@
                 panel.style.display = "block";
                 loadNotifications(); 
                 
-                // إخفاء الرقم الأحمر بمجرد فتح الإشعارات
-                if (countBadge) {
-                    countBadge.style.display = "none";
-                }
+                if (countBadge) countBadge.style.display = "none";
             } else {
                 panel.style.display = "none";
             }
