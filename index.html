@@ -138,7 +138,7 @@
         .user-info small { color: #bfdbfe !important; }
 
         /* =========================================
-           كروت الإحصائيات
+           كروت الإحصائيات (جنب بعض)
         ========================================= */
         .stats {
             display: grid !important;
@@ -327,6 +327,12 @@
             <button class="menu-item" onclick="openSection('search')">
                 <span>📋</span>
                 <strong>سجل البيانات</strong>
+            </button>
+
+            <!-- 🆕 زرار إضافة موظف (للمدير) -->
+            <button id="registerMenu" class="menu-item" onclick="window.location.href='register.html'" style="display: none;">
+                <span>➕</span>
+                <strong>إضافة موظف جديد</strong>
             </button>
 
             <button id="notificationsMenu" class="menu-item" onclick="openNotificationsPage()">
@@ -678,6 +684,10 @@
                 if (ratingsMenu) ratingsMenu.style.display = "flex";
                 const dailyTasksMenu = document.getElementById("dailyTasksMenu");
                 if (dailyTasksMenu) dailyTasksMenu.style.display = "flex";
+
+                // 🆕 إظهار زرار إضافة موظف للمدير
+                const registerMenu = document.getElementById("registerMenu");
+                if (registerMenu) registerMenu.style.display = "flex";
             }
 
             if (user.role === "admin" || user.role === "quality") {
