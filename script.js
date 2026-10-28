@@ -247,14 +247,64 @@ function login() {
     button.innerText = "⏳ جاري التحقق...";
   }
 
+  // 🆕 إضافة Timeout عشان لو الداتابيز علقت، الكود ميفضلش واقف
+  let loginTimeout = setTimeout(() => {
+    if (message) {
+      message.innerText = "⚠️ الاتصال تأخر، جاري المحاولة في الكود القديم...";
+      message.style.color = "#f59e0b";
+    }
+    fallbackToLocalUsers();
+  }, 5000);
+
+  function fallbackToLocalUsers() {
+    clearTimeout(loginTimeout);
+    
+    const foundUsername = Object.keys(users).find(
+      name => name.toLowerCase() === username.toLowerCase()
+    );
+
+    if (!foundUsername) {
+      if (message) {
+        message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+        message.style.color = "#dc3545";
+      }
+      if (button) {
+        button.disabled = false;
+        button.innerText = "🔐 LOGIN";
+      }
+      return;
+    }
+
+    const userData = users[foundUsername];
+    const realPassword = decodePass(userData.password);
+
+    if (String(realPassword) !== String(password)) {
+      if (message) {
+        message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+        message.style.color = "#dc3545";
+      }
+      if (button) {
+        button.disabled = false;
+        button.innerText = "🔐 LOGIN";
+      }
+      return;
+    }
+
+    completeLogin(userData, foundUsername);
+  }
+
   window.supabaseClient
     .from("employees")
     .select("*")
     .ilike("username", username)
     .maybeSingle()
     .then(({ data, error }) => {
+      clearTimeout(loginTimeout);
+
       if (error) {
         console.error("Login DB Error:", error);
+        fallbackToLocalUsers();
+        return;
       }
 
       if (data) {
@@ -276,50 +326,13 @@ function login() {
         }
       }
 
-      const foundUsername = Object.keys(users).find(
-        name => name.toLowerCase() === username.toLowerCase()
-      );
-
-      if (!foundUsername) {
-        if (message) {
-          message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-          message.style.color = "#dc3545";
-        }
-        if (button) {
-          button.disabled = false;
-          button.innerText = "🔐 LOGIN";
-        }
-        return;
-      }
-
-      const userData = users[foundUsername];
-      const realPassword = decodePass(userData.password);
-
-      if (String(realPassword) !== String(password)) {
-        if (message) {
-          message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-          message.style.color = "#dc3545";
-        }
-        if (button) {
-          button.disabled = false;
-          button.innerText = "🔐 LOGIN";
-        }
-        return;
-      }
-
-      completeLogin(userData, foundUsername);
+      fallbackToLocalUsers();
 
     })
     .catch(err => {
+      clearTimeout(loginTimeout);
       console.error("Login Exception:", err);
-      if (message) {
-        message.innerText = "❌ حدث خطأ في الاتصال";
-        message.style.color = "#dc3545";
-      }
-      if (button) {
-        button.disabled = false;
-        button.innerText = "🔐 LOGIN";
-      }
+      fallbackToLocalUsers();
     });
 }
 
@@ -1786,4 +1799,4 @@ setInterval(async function() {
 function logout() {
   sessionStorage.removeItem("currentUser");
   window.location.href = "login.html";
-} 
+}
