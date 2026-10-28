@@ -200,140 +200,74 @@ function login() {
     return;
   }
 
-  const completeLogin = (userData, foundUsername) => {
-    sessionStorage.setItem(
-      "currentUser",
-      JSON.stringify({
-        username: foundUsername,
-        role: userData.role,
-        secondRole: userData.secondRole || "",
-        extraRoles: userData.extraRoles || [],
-        name: userData.name
-      })
-    );
+  const foundUsername = Object.keys(users).find(
+    name => name.toLowerCase() === username.toLowerCase()
+  );
 
-    if (window.NERIC_push && typeof window.NERIC_push.registerDevice === "function") {
-      try {
-        const registration = window.NERIC_push.registerDevice();
-        if (registration && typeof registration.catch === "function") {
-          registration.catch(error => console.error("Android push registration error:", error));
-        }
-      } catch (error) {
-        console.error("Android push registration error:", error);
-      }
-    }
-
-    const remember = document.getElementById("rememberMe")?.checked;
-    if (remember) localStorage.setItem("rememberedUsername", foundUsername);
-    else localStorage.removeItem("rememberedUsername");
-
+  if (!foundUsername) {
     if (message) {
-      message.innerText = "✅ تم تسجيل الدخول بنجاح";
-      message.style.color = "#198754";
+      message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+      message.style.color = "#dc3545";
     }
-    
-    if (button) {
-      button.disabled = true;
-      button.innerText = "⏳ جاري الدخول...";
+    return;
+  }
+
+  const userData = users[foundUsername];
+  
+  const realPassword = decodePass(userData.password);
+
+  if (String(realPassword) !== String(password)) {
+    if (message) {
+      message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+      message.style.color = "#dc3545";
     }
+    return;
+  }
 
-    setTimeout(() => {
-      window.location.href = "index.html";
-    }, 300);
-  };
+  sessionStorage.setItem(
+    "currentUser",
+    JSON.stringify({
+      username: foundUsername,
+      role: userData.role,
+      secondRole: userData.secondRole || "",
+      extraRoles: userData.extraRoles || [],
+      name: userData.name
+    })
+  );
 
+  if (window.NERIC_push && typeof window.NERIC_push.registerDevice === "function") {
+    try {
+      const registration = window.NERIC_push.registerDevice();
+      if (registration && typeof registration.catch === "function") {
+        registration.catch(error => {
+          console.error("Android push registration error:", error);
+        });
+      }
+    } catch (error) {
+      console.error("Android push registration error:", error);
+    }
+  }
+
+  const remember = document.getElementById("rememberMe")?.checked;
+  if (remember) {
+    localStorage.setItem("rememberedUsername", foundUsername);
+  } else {
+    localStorage.removeItem("rememberedUsername");
+  }
+
+  if (message) {
+    message.innerText = "✅ تم تسجيل الدخول بنجاح";
+    message.style.color = "#198754";
+  }
+  
   if (button) {
     button.disabled = true;
-    button.innerText = "⏳ جاري التحقق...";
+    button.innerText = "⏳ جاري الدخول...";
   }
 
-  // 🆕 إضافة Timeout عشان لو الداتابيز علقت، الكود ميفضلش واقف
-  let loginTimeout = setTimeout(() => {
-    if (message) {
-      message.innerText = "⚠️ الاتصال تأخر، جاري المحاولة في الكود القديم...";
-      message.style.color = "#f59e0b";
-    }
-    fallbackToLocalUsers();
-  }, 5000);
-
-  function fallbackToLocalUsers() {
-    clearTimeout(loginTimeout);
-    
-    const foundUsername = Object.keys(users).find(
-      name => name.toLowerCase() === username.toLowerCase()
-    );
-
-    if (!foundUsername) {
-      if (message) {
-        message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-        message.style.color = "#dc3545";
-      }
-      if (button) {
-        button.disabled = false;
-        button.innerText = "🔐 LOGIN";
-      }
-      return;
-    }
-
-    const userData = users[foundUsername];
-    const realPassword = decodePass(userData.password);
-
-    if (String(realPassword) !== String(password)) {
-      if (message) {
-        message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-        message.style.color = "#dc3545";
-      }
-      if (button) {
-        button.disabled = false;
-        button.innerText = "🔐 LOGIN";
-      }
-      return;
-    }
-
-    completeLogin(userData, foundUsername);
-  }
-
-  window.supabaseClient
-    .from("employees")
-    .select("*")
-    .ilike("username", username)
-    .maybeSingle()
-    .then(({ data, error }) => {
-      clearTimeout(loginTimeout);
-
-      if (error) {
-        console.error("Login DB Error:", error);
-        fallbackToLocalUsers();
-        return;
-      }
-
-      if (data) {
-        const realPassword = decodePass(data.password);
-        
-        if (String(realPassword) === String(password)) {
-          completeLogin(data, data.username);
-          return;
-        } else {
-          if (message) {
-            message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-            message.style.color = "#dc3545";
-          }
-          if (button) {
-            button.disabled = false;
-            button.innerText = "🔐 LOGIN";
-          }
-          return;
-        }
-      }
-
-      fallbackToLocalUsers();
-
-    })
-    .catch(err => {
-      clearTimeout(loginTimeout);
-      console.error("Login Exception:", err);
-      fallbackToLocalUsers();
-    });
+  setTimeout(function () {
+    window.location.href = "index.html";
+  }, 300);
 }
 
 function goHome() {
