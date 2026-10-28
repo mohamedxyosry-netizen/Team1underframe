@@ -102,30 +102,23 @@
         }
 
         /* =========================================
-           🆕 الهيدر (أزرق مع إضاءة للحساب)
+           الهيدر (أزرق مع إضاءة للحساب)
         ========================================= */
         .top-header {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8) !important; /* لون أزرق متدرج */
+            background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
             border: none !important;
-            border-radius: 20px !important; /* زوايا ناعمة */
-            margin: 20px 25px !important; /* مسافة من بره */
+            border-radius: 20px !important;
+            margin: 20px 25px !important;
             padding: 20px 30px !important;
-            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); /* ظل أزرق شيك */
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .top-header h1 { 
-            color: #ffffff !important; 
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-        
-        .top-header p { 
-            color: #bfdbfe !important; 
-        }
+        .top-header h1 { color: #ffffff !important; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .top-header p { color: #bfdbfe !important; }
 
-        /* تعديل شكل الحساب عشان ينور لما تقف عليه */
         .user-info {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
@@ -141,16 +134,11 @@
             transform: scale(1.05);
         }
 
-        .user-info strong {
-            color: #ffffff !important;
-        }
-
-        .user-info small {
-            color: #bfdbfe !important;
-        }
+        .user-info strong { color: #ffffff !important; }
+        .user-info small { color: #bfdbfe !important; }
 
         /* =========================================
-           كروت الإحصائيات (جنب بعض)
+           كروت الإحصائيات
         ========================================= */
         .stats {
             display: grid !important;
@@ -395,6 +383,12 @@
             <button class="menu-item" onclick="openSection('search')">
                 <span>📋</span>
                 <strong>سجل البيانات</strong>
+            </button>
+
+            <!-- 🆕 زرار إضافة موظف (للمدير بس) -->
+            <button id="registerMenu" class="menu-item" onclick="window.location.href='register.html'" style="display: none;">
+                <span>➕</span>
+                <strong>إضافة موظف جديد</strong>
             </button>
 
             <button id="notificationsMenu" class="menu-item" onclick="openNotificationsPage()">
@@ -744,6 +738,10 @@
                 if (ratingsMenu) ratingsMenu.style.display = "flex";
                 const dailyTasksMenu = document.getElementById("dailyTasksMenu");
                 if (dailyTasksMenu) dailyTasksMenu.style.display = "flex";
+                
+                // 🆕 إظهار زرار إضافة الموظف للمدير
+                const regMenu = document.getElementById("registerMenu");
+                if (regMenu) regMenu.style.display = "flex";
             }
 
             if (user.role === "admin" || user.role === "quality") {
@@ -757,21 +755,17 @@
                 setInterval(loadQualityNotifCount, 5000);
             }
 
-            // 🆕 إخفاء الكروت والزرار لقسم الجودة فقط
+            // إخفاء الكروت والزرار لقسم الجودة فقط
             if (user.role === "quality") {
-                // إخفاء سجل البيانات من القائمة الجانبية
                 const searchMenu = document.querySelector('button[onclick="openSection(\'search\')"]');
                 if (searchMenu) searchMenu.style.display = "none";
 
-                // إخفاء كارت تسجيل الحضور
                 const attendanceCard = document.querySelector('.stat-card[onclick="handleAttendanceLogin()"]');
                 if (attendanceCard) attendanceCard.style.display = "none";
 
-                // إخفاء كارت المستهلكات
                 const consumablesCard = document.getElementById("consumablesCard");
                 if (consumablesCard) consumablesCard.style.display = "none";
 
-                // إخفاء كارت مشاكل العربيات
                 const problemsCard = document.querySelector('.stat-card[onclick="openProblemsPage()"]');
                 if (problemsCard) problemsCard.style.display = "none";
             }

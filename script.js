@@ -62,11 +62,10 @@ const users = {
     role: "wiring",
     name: "Mahmoud Khairy"
   },
-  // الحساب الجديد لقسم الجودة
   Mohamed: { 
     password: "MTIzNDU2", 
     role: "quality", 
-    name: " Mohamed Abdelghany " 
+    name: "Mohamed Abdelghany" 
   }
 };
 
@@ -121,7 +120,6 @@ const permissions = {
     "chat.html",
     "consumables.html"
   ],
-  // صلاحيات قسم الجودة
   quality: [
     "index.html",
     "quality.html",
@@ -202,76 +200,127 @@ function login() {
     return;
   }
 
-  const foundUsername = Object.keys(users).find(
-    name => name.toLowerCase() === username.toLowerCase()
-  );
+  const completeLogin = (userData, foundUsername) => {
+    sessionStorage.setItem(
+      "currentUser",
+      JSON.stringify({
+        username: foundUsername,
+        role: userData.role,
+        secondRole: userData.secondRole || "",
+        extraRoles: userData.extraRoles || [],
+        name: userData.name
+      })
+    );
 
-  if (!foundUsername) {
-    if (message) {
-      message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-      message.style.color = "#dc3545";
-    }
-    return;
-  }
-
-  const userData = users[foundUsername];
-  
-  // فك تشفير الباسورد قبل المقارنة
-  const realPassword = decodePass(userData.password);
-
-  if (String(realPassword) !== String(password)) {
-    if (message) {
-      message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-      message.style.color = "#dc3545";
-    }
-    return;
-  }
-
-  sessionStorage.setItem(
-    "currentUser",
-    JSON.stringify({
-      username: foundUsername,
-      role: userData.role,
-      secondRole: userData.secondRole || "",
-      extraRoles: userData.extraRoles || [],
-      name: userData.name
-    })
-  );
-
-  // تسجيل جهاز Android الحالي إذا كانت الوظيفة متاحة
-  if (window.NERIC_push && typeof window.NERIC_push.registerDevice === "function") {
-    try {
-      const registration = window.NERIC_push.registerDevice();
-      if (registration && typeof registration.catch === "function") {
-        registration.catch(error => {
-          console.error("Android push registration error:", error);
-        });
+    if (window.NERIC_push && typeof window.NERIC_push.registerDevice === "function") {
+      try {
+        const registration = window.NERIC_push.registerDevice();
+        if (registration && typeof registration.catch === "function") {
+          registration.catch(error => console.error("Android push registration error:", error));
+        }
+      } catch (error) {
+        console.error("Android push registration error:", error);
       }
-    } catch (error) {
-      console.error("Android push registration error:", error);
     }
-  }
 
-  const remember = document.getElementById("rememberMe")?.checked;
-  if (remember) {
-    localStorage.setItem("rememberedUsername", foundUsername);
-  } else {
-    localStorage.removeItem("rememberedUsername");
-  }
+    const remember = document.getElementById("rememberMe")?.checked;
+    if (remember) localStorage.setItem("rememberedUsername", foundUsername);
+    else localStorage.removeItem("rememberedUsername");
 
-  if (message) {
-    message.innerText = "✅ تم تسجيل الدخول بنجاح";
-    message.style.color = "#198754";
-  }
-  
+    if (message) {
+      message.innerText = "✅ تم تسجيل الدخول بنجاح";
+      message.style.color = "#198754";
+    }
+    
+    if (button) {
+      button.disabled = true;
+      button.innerText = "⏳ جاري الدخول...";
+    }
+
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 300);
+  };
+
   if (button) {
     button.disabled = true;
-    button.innerText = "⏳ جاري الدخول...";
+    button.innerText = "⏳ جاري التحقق...";
   }
 
-  setTimeout(function () {
-    window.location.href = "index.html";
-  }, 300);
+  window.supabaseClient
+    .from("employees")
+    .select("*")
+    .ilike("username", username)
+    .maybeSingle()
+    .then(({ data, error }) => {
+      if (error) {
+        console.error("Login DB Error:", error);
+      }
+
+      if (data) {
+        const realPassword = decodePass(data.password);
+        
+        if (String(realPassword) === String(password)) {
+          completeLogin(data, data.username);
+          return;
+        } else {
+          if (message) {
+            message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+            message.style.color = "#dc3545";
+          }
+          if (button) {
+            button.disabled = false;
+            button.innerText = "🔐 LOGIN";
+          }
+          return;
+        }
+      }
+
+      const foundUsername = Object.keys(users).find(
+        name => name.toLowerCase() === username.toLowerCase()
+      );
+
+      if (!foundUsername) {
+        if (message) {
+          message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+          message.style.color = "#dc3545";
+        }
+        if (button) {
+          button.disabled = false;
+          button.innerText = "🔐 LOGIN";
+        }
+        return;
+      }
+
+      const userData = users[foundUsername];
+      const realPassword = decodePass(userData.password);
+
+      if (String(realPassword) !== String(password)) {
+        if (message) {
+          message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+          message.style.color = "#dc3545";
+        }
+        if (button) {
+          button.disabled = false;
+          button.innerText = "🔐 LOGIN";
+        }
+        return;
+      }
+
+      completeLogin(userData, foundUsername);
+
+    })
+    .catch(err => {
+      console.error("Login Exception:", err);
+      if (message) {
+        message.innerText = "❌ حدث خطأ في الاتصال";
+        message.style.color = "#dc3545";
+      }
+      if (button) {
+        button.disabled = false;
+        button.innerText = "🔐 LOGIN";
+      }
+    });
 }
 
 function goHome() {
@@ -421,7 +470,6 @@ function setupDashboard() {
     deleteRequestsMenu.style.display = user.role === "admin" ? "" : "none";
   }
 
-  // إظهار أو إخفاء زرار الجودة في لوحة التحكم
   const qualityBtn = document.querySelector('button[onclick="openSection(\'quality\')"]');
   if (qualityBtn) {
     qualityBtn.style.display = (user.role === "admin" || user.role === "quality") ? "" : "none";
@@ -1738,4 +1786,4 @@ setInterval(async function() {
 function logout() {
   sessionStorage.removeItem("currentUser");
   window.location.href = "login.html";
-}
+} 

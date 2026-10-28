@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NERIC - إضافة موظف جديد</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #0f172a; min-height: 100vh; margin: 0; overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .bg-animation {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            overflow: hidden;
+        }
+        .site-header {
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center; color: white; z-index: 10;
+        }
+        .site-header .brand { font-size: 22px; font-weight: bold; }
+        .site-header .brand span { color: #3b82f6; }
+        .back-btn {
+            background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6;
+            padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        .back-btn:hover { background: #3b82f6; color: white; }
+
+        .container {
+            max-width: 600px; margin: 50px auto; padding: 40px;
+            background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); color: #e2e8f0; animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        h2 { text-align: center; color: #f8fafc; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #94a3b8; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 14px; border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px; font-size: 16px; background: rgba(0, 0, 0, 0.3); color: white; outline: none;
+        }
+        .form-group option { background: #1e293b; }
+        .btn-submit {
+            width: 100%; padding: 15px; background: linear-gradient(135deg, #10b981, #059669);
+            color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer;
+            margin-top: 10px; transition: 0.3s;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
+        .message { text-align: center; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation"></div>
+
+    <div class="site-header">
+        <div class="brand">NERIC <span>| إضافة موظف</span></div>
+        <button class="back-btn" onclick="window.location.href='index.html'">🏠 الرئيسية</button>
+    </div>
+
+    <div class="container">
+        <h2>👤 إضافة موظف جديد</h2>
+
+        <div class="form-group">
+            <label>الاسم بالكامل (بالإنجليزي):</label>
+            <input type="text" id="regName" placeholder="مثال: Ahmed Ali">
+        </div>
+
+        <div class="form-group">
+            <label>اسم المستخدم (للدخول):</label>
+            <input type="text" id="regUsername" placeholder="مثال: Ahmed">
+        </div>
+
+        <div class="form-group">
+            <label>كلمة المرور:</label>
+            <input type="password" id="regPassword" placeholder="اكتب كلمة المرور">
+        </div>
+
+        <div class="form-group">
+            <label>القسم:</label>
+            <select id="regRole">
+                <option value="wiring">Wiring</option>
+                <option value="lt">LT</option>
+                <option value="ht">HT</option>
+                <option value="installation">Installation</option>
+                <option value="final">Final</option>
+                <option value="quality">Quality</option>
+                <option value="admin">Admin (مدير)</option>
+            </select>
+        </div>
+
+        <button class="btn-submit" onclick="registerUser()">➕ إضافة الموظف</button>
+        <p id="regMessage" class="message"></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+    <script>
+        async function registerUser() {
+            const name = document.getElementById("regName").value.trim();
+            const username = document.getElementById("regUsername").value.trim();
+            const password = document.getElementById("regPassword").value.trim();
+            const role = document.getElementById("regRole").value;
+            const msg = document.getElementById("regMessage");
+
+            if (!name || !username || !password) {
+                msg.innerText = "⚠️ من فضلك املأ كل البيانات";
+                msg.style.color = "#f87171";
+                return;
+            }
+
+            msg.innerText = "⏳ جاري الإضافة...";
+            msg.style.color = "#fcd34d";
+
+            // تشفير الباسورد بـ Base64 عشان ميبقاش مكشوف
+            const encodedPass = btoa(password);
+
+            // إضافة الموظف في جدول employees
+            const { error } = await window.supabaseClient.from("employees").insert({
+                name: name,
+                username: username,
+                password: encodedPass,
+                role: role
+            });
+
+            if (error) {
+                msg.innerText = "❌ حدث خطأ: " + error.message;
+                msg.style.color = "#f87171";
+            } else {
+                msg.innerText = "✅ تم إضافة الموظف بنجاح";
+                msg.style.color = "#34d399";
+                document.getElementById("regName").value = "";
+                document.getElementById("regUsername").value = "";
+                document.getElementById("regPassword").value = "";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // التأكد إن اللي داخل هو المدير
+            const user = getCurrentUser();
+            if (!user || user.role !== "admin") {
+                alert("❌ هذه الصفحة متاحة للمدير فقط");
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</body>
+</html>
