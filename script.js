@@ -1419,7 +1419,19 @@ async function updateDashboardStats() {
     review: document.getElementById("problemReviewCount")
   };
 
-  const records = await getAllSupabaseRecords();
+  if (!window.supabaseClient) return;
+
+  // 🆕 بنجيب كل السجلات من غير أي حدود
+  const { data: allRecords, error } = await window.supabaseClient
+    .from("records")
+    .select("*");
+
+  if (error) {
+    console.error("Error fetching stats:", error);
+    return;
+  }
+
+  const records = (allRecords || []).map(normalizeRecord).filter(Boolean);
   const user = getCurrentUser();
   if (!user) return;
 
@@ -1435,13 +1447,20 @@ async function updateDashboardStats() {
     return (!Number.isNaN(date.getTime()) && date.toLocaleDateString("en-CA") === today);
   }).length;
 
-  if (elements.total) elements.total.innerText = records.length;
-  if (elements.completed) elements.completed.innerText = completed;
-  if (elements.pending) elements.pending.innerText = pending;
+  // 🆕 دالة تنسيق الأرقام الكبيرة (عشان تبان 1.2K بدل 1200)
+  const formatNumber = (num) => {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 10000) return (num / 1000).toFixed(1) + 'K';
+    return num;
+  };
+
+  if (elements.total) elements.total.innerText = formatNumber(records.length);
+  if (elements.completed) elements.completed.innerText = formatNumber(completed);
+  if (elements.pending) elements.pending.innerText = formatNumber(pending);
   if (elements.delayed) elements.delayed.innerText = 0;
-  if (elements.today) elements.today.innerText = todayCount;
-  if (elements.problems) elements.problems.innerText = visibleProblems;
-  if (elements.review) elements.review.innerText = reviewCount;
+  if (elements.today) elements.today.innerText = formatNumber(todayCount);
+  if (elements.problems) elements.problems.innerText = formatNumber(visibleProblems);
+  if (elements.review) elements.review.innerText = formatNumber(reviewCount);
 
   const reviewMenu = document.getElementById("resolvedProblemsMenu");
   if (reviewMenu) {
