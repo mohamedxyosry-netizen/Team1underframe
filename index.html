@@ -329,7 +329,7 @@
                 <strong>سجل البيانات</strong>
             </button>
 
-            <!-- 🆕 رجعنا زرار طلب استلام الجودة -->
+            <!-- 🆕 زرار طلب استلام الجودة (ظاهر للمدير والجودة) -->
             <button id="requestQCBtn" class="menu-item" onclick="window.location.href='request-qc.html'" style="display: none;">
                 <span>📦</span>
                 <strong>طلب استلام جودة</strong>
@@ -499,11 +499,13 @@
                         <div class="btn-enter">دخول</div>
                     </div>
 
+                    <!-- كارت الجودة -->
                     <div class="swiper-slide slide-quality" id="slide-quality" onclick="openSection('quality')" style="display: none; position: relative;">
                         <div class="dept-icon">🛡️</div>
                         <h3>Quality</h3>
                         <p>قسم الجودة</p>
                         <div class="btn-enter">دخول</div>
+                        <!-- 🆕 العلامة الحمراء جوه الكارت -->
                         <span id="qualityNotifBadge" style="display: none; position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; border-radius: 50%; width: 28px; height: 28px; line-height: 28px; text-align: center; font-size: 14px; font-weight: bold; box-shadow: 0 0 10px #ef4444;">0</span>
                     </div>
 
@@ -699,7 +701,6 @@
                     setTimeout(() => { if(window.swiper) window.swiper.update(); }, 500);
                 }
 
-                // 🆕 إظهار زرار طلب الجودة
                 const qcBtn = document.getElementById("requestQCBtn");
                 if (qcBtn) qcBtn.style.display = "flex";
 
