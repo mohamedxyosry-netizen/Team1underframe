@@ -527,7 +527,7 @@
             updatePath(carNumber);
         }
 
-        // 🆕 دوال الإشعارات (تم تعديلها لعرض كل الرسايل مع إخفاء العلامة)
+        // دوال الإشعارات
         window.toggleNotifications = function() {
             const panel = document.getElementById("notificationsPanel");
             const countBadge = document.getElementById("notifCount");
@@ -562,7 +562,7 @@
             }
 
             try {
-                // 🆕 بنجيب كل الرسايل (مش بنفلتر بـ is_read عشان تفضل ظاهرة)
+                // 1. بنجيب كل الرسايل
                 const { data, error } = await window.supabaseClient
                     .from("quality_notifications")
                     .select("*")
@@ -581,6 +581,7 @@
                     return;
                 }
 
+                // 2. بنعرض الرسايل
                 if (list) {
                     list.innerHTML = data.map(notif => `
                         <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 10px; border-right: 4px solid #f59e0b; margin-bottom: 10px;">
@@ -591,15 +592,23 @@
                     `).join("");
                 }
 
-                // 🆕 نغير حالتهم لمقروءة في الخلفية عشان العلامة الحمراء تختفي
+                // 🆕 3. تحديث العلامة الحمراء على الزرار
+                const unreadCount = data.filter(n => !n.is_read).length;
+                if (countBadge) {
+                    if (unreadCount > 0) {
+                        countBadge.innerText = unreadCount;
+                        countBadge.style.display = "inline-block";
+                    } else {
+                        countBadge.style.display = "none";
+                    }
+                }
+
+                // 4. نغير حالة الرسايل اللي لسه مقروءتش في الداتابيز
                 await window.supabaseClient
                     .from("quality_notifications")
                     .update({ is_read: true })
                     .eq("target_user", "Mohamed")
                     .eq("is_read", false);
-
-                // 🆕 نخفي العلامة الحمراء
-                if (countBadge) countBadge.style.display = "none";
 
             } catch (err) {
                 console.error("Notifications Exception:", err);
@@ -614,6 +623,9 @@
             loadHistory();
             loadNewRequests();
             loadNotifications(); 
+            
+            // 🆕 مسح الذاكرة القديمة عشان العلامة تظهر لما تيجي رسالة جديدة
+            localStorage.removeItem("qualityNotifsRead");
         });
     </script>
 </body>
