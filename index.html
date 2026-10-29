@@ -183,7 +183,14 @@
 
         .stat-card span { color: #64748b !important; font-size: 14px; }
         .stat-card small { color: #94a3b8 !important; font-size: 12px; }
-        .stat-card strong { color: #0f172a !important; font-size: 22px; font-weight: bold; }
+        
+        /* 🆕 تعديل حجم الخط عشان الأرقام الكبيرة تبان */
+        .stat-card strong { 
+            color: #0f172a !important; 
+            font-size: 18px; 
+            font-weight: bold;
+            white-space: nowrap; 
+        }
 
         .stat-icon {
             width: 50px;
@@ -504,7 +511,6 @@
                         <h3>Quality</h3>
                         <p>قسم الجودة</p>
                         <div class="btn-enter">دخول</div>
-                        <!-- 🆕 العلامة الحمراء جوه الكارت -->
                         <span id="qualityNotifBadge" style="display: none; position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; border-radius: 50%; width: 28px; height: 28px; line-height: 28px; text-align: center; font-size: 14px; font-weight: bold; box-shadow: 0 0 10px #ef4444;">0</span>
                     </div>
 
@@ -646,7 +652,6 @@
         } catch (e) { console.error("Leaves count exception:", e); }
     }
 
-    // 🆕 دالة تحديث العلامة الحمراء (بتشتغل كل شوية)
     async function loadQualityNotifCount() {
         const badge = document.getElementById("qualityNotifBadge");
         if (!badge || !window.supabaseClient) return;
@@ -655,7 +660,6 @@
         if (!user || (user.role !== "admin" && user.role !== "quality")) return;
 
         try {
-            // بنجيب عدد الرسايل غير المقروءة
             const { count, error } = await window.supabaseClient
                 .from("quality_notifications")
                 .select("id", { count: "exact", head: true })
@@ -667,12 +671,10 @@
             const unread = count || 0;
 
             if (unread > 0) {
-                // لو فيه رسايل جديدة، بنظهر العلامة وبنمسح الذاكرة القديمة
                 localStorage.removeItem("qualityNotifsRead");
                 badge.innerText = unread > 99 ? "99+" : unread;
                 badge.style.display = "block";
             } else {
-                // لو مفيش رسايل، بنخفي العلامة
                 badge.style.display = "none";
             }
         } catch (error) { console.error("Quality Notif Exception:", error); }
@@ -699,12 +701,25 @@
                     setTimeout(() => { if(window.swiper) window.swiper.update(); }, 500);
                 }
 
-                const qcBtn = document.getElementById("requestQCBtn");
-                if (qcBtn) qcBtn.style.display = "flex";
-
-                // 🆕 تشغيل العلامة الحمراء وتحديثها كل ثانيتين
                 loadQualityNotifCount();
                 setInterval(loadQualityNotifCount, 2000);
+            }
+
+            // 🆕 إخفاء الكروت والزراير لقسم الجودة
+            if (user.role === "quality") {
+                // إخفاء سجل البيانات وطلب الجودة من القائمة الجانبية
+                const searchMenu = document.querySelector('button[onclick="openSection(\'search\')"]');
+                if (searchMenu) searchMenu.style.display = "none";
+                const qcBtn = document.getElementById("requestQCBtn");
+                if (qcBtn) qcBtn.style.display = "none";
+
+                // إخفاء كروت المستهلكات، الحضور، والمشاكل
+                const consumablesCard = document.getElementById("consumablesCard");
+                if (consumablesCard) consumablesCard.style.display = "none";
+                const attendanceCard = document.querySelector('.stat-card[onclick="handleAttendanceLogin()"]');
+                if (attendanceCard) attendanceCard.style.display = "none";
+                const problemsCard = document.querySelector('.stat-card[onclick="openProblemsPage()"]');
+                if (problemsCard) problemsCard.style.display = "none";
             }
         }
     });
