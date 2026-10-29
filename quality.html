@@ -527,7 +527,7 @@
             updatePath(carNumber);
         }
 
-        // دوال الإشعارات
+        // 🆕 دوال الإشعارات (تم تعديلها لعرض كل الرسايل مع إخفاء العلامة)
         window.toggleNotifications = function() {
             const panel = document.getElementById("notificationsPanel");
             const countBadge = document.getElementById("notifCount");
@@ -541,9 +541,11 @@
                 panel.style.display = "block";
                 loadNotifications(); 
                 
+                // إخفاء الرقم الأحمر بمجرد فتح الإشعارات
                 if (countBadge) {
                     countBadge.style.display = "none";
                 }
+                // تخزين في ذاكرة المتصفح إننا فتحنا الإشعارات
                 localStorage.setItem("qualityNotifsRead", "true");
                 
             } else {
@@ -560,11 +562,11 @@
             }
 
             try {
+                // 🆕 بنجيب كل الرسايل (مش بنفلتر بـ is_read عشان تفضل ظاهرة)
                 const { data, error } = await window.supabaseClient
                     .from("quality_notifications")
                     .select("*")
                     .eq("target_user", "Mohamed")
-                    .eq("is_read", false) 
                     .order("created_at", { ascending: false });
 
                 if (error) {
@@ -574,20 +576,14 @@
                 }
 
                 if (!data || data.length === 0) {
-                    if (list) list.innerHTML = "<p style='text-align:center; color:#94a3b8;'>لا توجد إشعارات جديدة</p>";
+                    if (list) list.innerHTML = "<p style='text-align:center; color:#94a3b8;'>لا توجد إشعارات حالياً</p>";
                     if (countBadge) countBadge.style.display = "none";
-                    localStorage.setItem("qualityNotifsRead", "true");
                     return;
-                }
-
-                if (countBadge) {
-                    countBadge.innerText = data.length;
-                    countBadge.style.display = "inline-block";
                 }
 
                 if (list) {
                     list.innerHTML = data.map(notif => `
-                        <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 10px; border-right: 4px solid #f59e0b;">
+                        <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 10px; border-right: 4px solid #f59e0b; margin-bottom: 10px;">
                             <strong style="color: #fcd34d;">${notif.title}</strong>
                             <p style="margin: 5px 0; color: #e2e8f0; white-space: pre-line;">${notif.body}</p>
                             <small style="color: #94a3b8;">${new Date(notif.created_at).toLocaleString("ar-EG")}</small>
@@ -595,11 +591,15 @@
                     `).join("");
                 }
 
+                // 🆕 نغير حالتهم لمقروءة في الخلفية عشان العلامة الحمراء تختفي
                 await window.supabaseClient
                     .from("quality_notifications")
                     .update({ is_read: true })
                     .eq("target_user", "Mohamed")
                     .eq("is_read", false);
+
+                // 🆕 نخفي العلامة الحمراء
+                if (countBadge) countBadge.style.display = "none";
 
             } catch (err) {
                 console.error("Notifications Exception:", err);
