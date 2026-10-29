@@ -366,11 +366,10 @@
                 .from("quality_control")
                 .select("*")
                 .eq("car_number", carNumber)
-                .eq("status", "تم الاستلام") // 🆕 بنجيب الاستلام بس عشان نعرف مسار العربية
+                .eq("status", "تم الاستلام") 
                 .order("id", { ascending: false });
             
             if (data && data.length > 0) {
-                // بنعرض كل حاجة استلمها (ممكن يكون Wiring و Final)
                 let hasWiring = false;
                 let hasFinal = false;
                 
@@ -406,13 +405,12 @@
                 handover_section: handover,
                 notes: notes,
                 created_by: user.name,
-                received_by: user.name // 🆕 تسجيل اسم المستلم
+                received_by: user.name 
             });
 
             if (error) {
                 alert("❌ حدث خطأ: " + error.message);
             } else {
-                // 🆕 مسحنا جزء الحذف عشان نحتفظ بكل السجلات (الـ Wiring والـ Final)
                 alert("✅ تم حفظ حالة الجودة بنجاح");
                 document.getElementById("qcNotes").value = ""; 
                 updatePath(car); 
@@ -421,7 +419,7 @@
             }
         }
 
-        // تحميل سجل الجودة (مع فلتر)
+        // تحميل سجل الجودة
         async function loadHistory() {
             const tbody = document.getElementById("qcHistoryBody");
             const filterSelect = document.getElementById("historyFilter");
@@ -451,7 +449,7 @@
                 .from("quality_control")
                 .select("*")
                 .eq("car_number", filterValue) 
-                .eq("status", "تم الاستلام") // 🆕 بنعرض اللي تم استلامه بس
+                .eq("status", "تم الاستلام") 
                 .order("id", { ascending: false });
 
             const { data, error } = await query;
@@ -492,7 +490,6 @@
             const list = document.getElementById("newRequestsList");
             if (!window.supabaseClient) return;
 
-            // 🆕 بنجيب الطلبات اللي لسه "لم يتم الانتهاء" (عشان تظهر في المربع الأصفر)
             const { data, error } = await window.supabaseClient
                 .from("quality_control")
                 .select("*")
@@ -530,7 +527,7 @@
             updatePath(carNumber);
         }
 
-        // 🆕 دوال الإشعارات (تم تعديلها لضمان الفتح وإخفاء العداد)
+        // دوال الإشعارات
         window.toggleNotifications = function() {
             const panel = document.getElementById("notificationsPanel");
             const countBadge = document.getElementById("notifCount");
@@ -544,11 +541,9 @@
                 panel.style.display = "block";
                 loadNotifications(); 
                 
-                // إخفاء الرقم الأحمر بمجرد فتح الإشعارات
                 if (countBadge) {
                     countBadge.style.display = "none";
                 }
-                // 🆕 تخزين في ذاكرة المتصفح إننا فتحنا الرسايل خلاص
                 localStorage.setItem("qualityNotifsRead", "true");
                 
             } else {
@@ -564,14 +559,12 @@
                 return;
             }
 
-            const user = getCurrentUser();
-            if (!user) return;
-
             try {
                 const { data, error } = await window.supabaseClient
                     .from("quality_notifications")
                     .select("*")
                     .eq("target_user", "Mohamed")
+                    .eq("is_read", false) 
                     .order("created_at", { ascending: false });
 
                 if (error) {
@@ -581,8 +574,9 @@
                 }
 
                 if (!data || data.length === 0) {
-                    if (list) list.innerHTML = "<p style='text-align:center; color:#94a3b8;'>لا توجد إشعارات حالياً</p>";
+                    if (list) list.innerHTML = "<p style='text-align:center; color:#94a3b8;'>لا توجد إشعارات جديدة</p>";
                     if (countBadge) countBadge.style.display = "none";
+                    localStorage.setItem("qualityNotifsRead", "true");
                     return;
                 }
 
@@ -601,7 +595,6 @@
                     `).join("");
                 }
 
-                // تحديث حالة الإشعارات لـ "مقروءة"
                 await window.supabaseClient
                     .from("quality_notifications")
                     .update({ is_read: true })
