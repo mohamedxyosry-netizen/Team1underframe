@@ -329,6 +329,12 @@
                 <strong>سجل البيانات</strong>
             </button>
 
+            <!-- 🆕 رجعنا زرار طلب استلام الجودة -->
+            <button id="requestQCBtn" class="menu-item" onclick="window.location.href='request-qc.html'" style="display: none;">
+                <span>📦</span>
+                <strong>طلب استلام جودة</strong>
+            </button>
+
             <button id="notificationsMenu" class="menu-item" onclick="openNotificationsPage()">
                 <span>🔔</span>
                 <strong>الإشعارات</strong>
@@ -643,6 +649,11 @@
         const badge = document.getElementById("qualityNotifBadge");
         if (!badge || !window.supabaseClient) return;
 
+        if (localStorage.getItem("qualityNotifsRead") === "true") {
+            badge.style.display = "none";
+            return;
+        }
+
         const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
         if (!user || (user.role !== "admin" && user.role !== "quality")) return;
 
@@ -660,6 +671,7 @@
             if (unread > 0) {
                 badge.innerText = unread > 99 ? "99+" : unread;
                 badge.style.display = "block";
+                localStorage.removeItem("qualityNotifsRead");
             } else {
                 badge.style.display = "none";
             }
@@ -686,6 +698,10 @@
                     qualitySlide.style.display = "flex";
                     setTimeout(() => { if(window.swiper) window.swiper.update(); }, 500);
                 }
+
+                // 🆕 إظهار زرار طلب الجودة
+                const qcBtn = document.getElementById("requestQCBtn");
+                if (qcBtn) qcBtn.style.display = "flex";
 
                 loadQualityNotifCount();
                 setInterval(loadQualityNotifCount, 5000);
