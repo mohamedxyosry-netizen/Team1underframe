@@ -62,7 +62,7 @@
             margin-top: 10px; transition: 0.3s;
         }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
-        .message { text-align: center; margin-top: 15px; font-weight: bold; }
+        .message { text-align: center; margin-top: 15px; font-weight: bold; white-space: pre-line; }
     </style>
 </head>
 <body>
@@ -110,8 +110,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- تحميل ملف السكريبت الأساسي -->
     <script src="script.js"></script>
-    <!-- تحميل ملف الإشعارات -->
-    <script src="notifications-helper.js"></script>
     
     <script>
         async function loadCars() {
@@ -196,15 +194,21 @@
                     is_read: false
                 });
 
-                // 3. إرسال Push Notification (لو شغال)
-                if (window.NERIC_Notify && typeof window.NERIC_Notify.sendToQuality === "function") {
-                    window.NERIC_Notify.sendToQuality(
-                        "🔔 طلب استلام عربية جديدة",
-                        `برجاء التوجه إلى العربية: ${car} (قسم ${section}).\nتم الطلب بواسطة: ${user.name}.\nشكراً لك على حسن تعاونكم معنا.`,
-                        { type: "qc_request", carNumber: car, section: section }
-                    ).catch(function(e) {
-                        console.error("Push error:", e);
-                    });
+                // 3. إرسال Push Notification للتلفون (للمهندس عبد الغني)
+                try {
+                    if (window.NERIC_Notify && typeof window.NERIC_Notify.sendToQuality === "function") {
+                        window.NERIC_Notify.sendToQuality(
+                            "🔔 طلب استلام عربية جديدة",
+                            `برجاء التوجه إلى العربية: ${car} (قسم ${section}).\nتم الطلب بواسطة: ${user.name}.\nشكراً لك على حسن تعاونكم معنا.`,
+                            { type: "qc_request", carNumber: car, section: section }
+                        ).catch(function(e) {
+                            console.error("Push error:", e);
+                        });
+                    } else {
+                        console.warn("[NERIC] Notify helper not loaded or sendToQuality missing");
+                    }
+                } catch (e) {
+                    console.error("Notify error:", e);
                 }
             }
         }
@@ -214,5 +218,8 @@
             loadCars();
         });
     </script>
+
+    <!-- تحميل ملف الإشعارات في الآخر عشان يشتغل صح -->
+    <script src="notifications-helper.js"></script>
 </body>
 </html>
