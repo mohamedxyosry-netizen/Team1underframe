@@ -497,8 +497,8 @@
                         <div class="btn-enter">دخول</div>
                     </div>
 
-                    <!-- كارت الجودة -->
-                    <div class="swiper-slide slide-quality" id="slide-quality" onclick="openSection('quality')" style="display: none; position: relative;">
+                    <!-- كارت الجودة (تم إظهاره للجميع) -->
+                    <div class="swiper-slide slide-quality" id="slide-quality" onclick="openSection('quality')" style="position: relative;">
                         <div class="dept-icon">🛡️</div>
                         <h3>Quality</h3>
                         <p>قسم الجودة</p>
@@ -553,7 +553,10 @@
             grabCursor: true,
             centeredSlides: true,
             slidesPerView: "auto",
-            loop: true,
+            loop: true,              /* اللف داري ورا زي ما إنت عايز */
+            spaceBetween: 30,        /* مسافة عشان الشكل يبقى منظم */
+            observer: true,          
+            observeParents: true,    
             coverflowEffect: {
                 rotate: 15, 
                 stretch: 0, 
@@ -686,13 +689,14 @@
                 if (dailyTasksMenu) dailyTasksMenu.style.display = "flex";
             }
 
-            if (user.role === "admin" || user.role === "quality") {
-                const qualitySlide = document.getElementById("slide-quality");
-                if (qualitySlide) {
-                    qualitySlide.style.display = "flex";
-                    setTimeout(() => { if(window.swiper) window.swiper.update(); }, 500);
-                }
+            // 🆕 إظهار كارت الجودة للجميع وتحديث الـ Swiper
+            const qualitySlide = document.getElementById("slide-quality");
+            if (qualitySlide) {
+                qualitySlide.style.display = "flex";
+                setTimeout(() => { if(window.swiper) window.swiper.update(); }, 500);
+            }
 
+            if (user.role === "admin" || user.role === "quality") {
                 loadQualityNotifCount();
                 setInterval(loadQualityNotifCount, 2000);
             }
