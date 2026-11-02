@@ -411,6 +411,25 @@
             if (error) {
                 alert("❌ حدث خطأ: " + error.message);
             } else {
+                // 🆕 1. إرسال إشعار في الداتابيز للمدير
+                await window.supabaseClient.from("quality_notifications").insert({
+                    title: "✅ تم استلام عربية (الجودة)",
+                    body: `العربية: ${car} (قسم ${handover}).\nتم الاستلام بواسطة: ${user.name}.`,
+                    car_number: car,
+                    target_user: "admin",
+                    is_read: false
+                });
+
+                // 🆕 2. إرسال Push Notification للمدير (لو شغال)
+if (window.NERIC_Notify && typeof window.NERIC_Notify.sendAdminOnly === "function") {
+    window.NERIC_Notify.sendAdminOnly(
+                                "✅ تم استلام عربية (الجودة)",
+                        `العربية: ${car} (قسم ${handover}).\nتم الاستلام بواسطة: ${user.name}.`
+                    ).catch(function(e) {
+                        console.error("Push error:", e);
+                    });
+                }
+
                 alert("✅ تم حفظ حالة الجودة بنجاح");
                 document.getElementById("qcNotes").value = ""; 
                 updatePath(car); 
@@ -541,11 +560,9 @@
                 panel.style.display = "block";
                 loadNotifications(); 
                 
-                // إخفاء الرقم الأحمر بمجرد فتح الإشعارات
                 if (countBadge) {
                     countBadge.style.display = "none";
                 }
-                // تخزين في ذاكرة المتصفح إننا فتحنا الإشعارات
                 localStorage.setItem("qualityNotifsRead", "true");
                 
             } else {
@@ -562,7 +579,6 @@
             }
 
             try {
-                // 1. بنجيب كل الرسايل
                 const { data, error } = await window.supabaseClient
                     .from("quality_notifications")
                     .select("*")
@@ -581,7 +597,6 @@
                     return;
                 }
 
-                // 2. بنعرض الرسايل
                 if (list) {
                     list.innerHTML = data.map(notif => `
                         <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 10px; border-right: 4px solid #f59e0b; margin-bottom: 10px;">
@@ -592,7 +607,6 @@
                     `).join("");
                 }
 
-                // 🆕 3. تحديث العلامة الحمراء على الزرار
                 const unreadCount = data.filter(n => !n.is_read).length;
                 if (countBadge) {
                     if (unreadCount > 0) {
@@ -603,7 +617,6 @@
                     }
                 }
 
-                // 4. نغير حالة الرسايل اللي لسه مقروءتش في الداتابيز
                 await window.supabaseClient
                     .from("quality_notifications")
                     .update({ is_read: true })
@@ -624,7 +637,6 @@
             loadNewRequests();
             loadNotifications(); 
             
-            // 🆕 مسح الذاكرة القديمة عشان العلامة تظهر لما تيجي رسالة جديدة
             localStorage.removeItem("qualityNotifsRead");
         });
     </script>

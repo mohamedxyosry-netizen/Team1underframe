@@ -183,14 +183,7 @@
 
         .stat-card span { color: #64748b !important; font-size: 14px; }
         .stat-card small { color: #94a3b8 !important; font-size: 12px; }
-        
-        /* 🆕 تعديل حجم الخط عشان الأرقام الكبيرة تبان */
-        .stat-card strong { 
-            color: #0f172a !important; 
-            font-size: 18px; 
-            font-weight: bold;
-            white-space: nowrap; 
-        }
+        .stat-card strong { color: #0f172a !important; font-size: 18px; font-weight: bold; white-space: nowrap; }
 
         .stat-icon {
             width: 50px;
@@ -336,7 +329,8 @@
                 <strong>سجل البيانات</strong>
             </button>
 
-            <button id="requestQCBtn" class="menu-item" onclick="window.location.href='request-qc.html'" style="display: none;">
+            <!-- 🆕 شلنا display:none من هنا -->
+            <button id="requestQCBtn" class="menu-item" onclick="window.location.href='request-qc.html'">
                 <span>📦</span>
                 <strong>طلب استلام جودة</strong>
             </button>
@@ -410,7 +404,6 @@
             </div>
         </header>
 
-        <!-- كروت الإحصائيات -->
         <section class="stats">
             
             <div class="stat-card">
@@ -466,7 +459,6 @@
                 <h2 style="margin: 0; font-size: 22px;">اختر القسم للدخول</h2>
             </div>
 
-            <!-- الـ 3D Carousel -->
             <div class="swiper mySwiper">
                 <div class="swiper-wrapper">
                     
@@ -705,13 +697,21 @@
                 setInterval(loadQualityNotifCount, 2000);
             }
 
-            // 🆕 إخفاء الكروت والزراير لقسم الجودة
+            // 🆕 إظهار زرار طلب الجودة للمدير بس
+            const qcBtn = document.getElementById("requestQCBtn");
+            if (qcBtn) {
+                if (user.role === "admin") {
+                    qcBtn.style.display = "flex"; // المدير يشوفه
+                } else {
+                    qcBtn.style.display = "none"; // أي حد تاني يختفي عنده (حتى الجودة)
+                }
+            }
+
+            // 🆕 إخفاء الكروت لقسم الجودة
             if (user.role === "quality") {
-                // إخفاء سجل البيانات وطلب الجودة من القائمة الجانبية
+                // إخفاء سجل البيانات من القائمة الجانبية
                 const searchMenu = document.querySelector('button[onclick="openSection(\'search\')"]');
                 if (searchMenu) searchMenu.style.display = "none";
-                const qcBtn = document.getElementById("requestQCBtn");
-                if (qcBtn) qcBtn.style.display = "none";
 
                 // إخفاء كروت المستهلكات، الحضور، والمشاكل
                 const consumablesCard = document.getElementById("consumablesCard");
