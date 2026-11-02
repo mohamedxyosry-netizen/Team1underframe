@@ -200,74 +200,140 @@ function login() {
     return;
   }
 
-  const foundUsername = Object.keys(users).find(
-    name => name.toLowerCase() === username.toLowerCase()
-  );
+  const completeLogin = (userData, foundUsername) => {
+    sessionStorage.setItem(
+      "currentUser",
+      JSON.stringify({
+        username: foundUsername,
+        role: userData.role,
+        secondRole: userData.secondRole || "",
+        extraRoles: userData.extraRoles || [],
+        name: userData.name
+      })
+    );
 
-  if (!foundUsername) {
-    if (message) {
-      message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-      message.style.color = "#dc3545";
-    }
-    return;
-  }
-
-  const userData = users[foundUsername];
-  
-  const realPassword = decodePass(userData.password);
-
-  if (String(realPassword) !== String(password)) {
-    if (message) {
-      message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-      message.style.color = "#dc3545";
-    }
-    return;
-  }
-
-  sessionStorage.setItem(
-    "currentUser",
-    JSON.stringify({
-      username: foundUsername,
-      role: userData.role,
-      secondRole: userData.secondRole || "",
-      extraRoles: userData.extraRoles || [],
-      name: userData.name
-    })
-  );
-
-  if (window.NERIC_push && typeof window.NERIC_push.registerDevice === "function") {
-    try {
-      const registration = window.NERIC_push.registerDevice();
-      if (registration && typeof registration.catch === "function") {
-        registration.catch(error => {
-          console.error("Android push registration error:", error);
-        });
+    if (window.NERIC_push && typeof window.NERIC_push.registerDevice === "function") {
+      try {
+        const registration = window.NERIC_push.registerDevice();
+        if (registration && typeof registration.catch === "function") {
+          registration.catch(error => console.error("Android push registration error:", error));
+        }
+      } catch (error) {
+        console.error("Android push registration error:", error);
       }
-    } catch (error) {
-      console.error("Android push registration error:", error);
     }
-  }
 
-  const remember = document.getElementById("rememberMe")?.checked;
-  if (remember) {
-    localStorage.setItem("rememberedUsername", foundUsername);
-  } else {
-    localStorage.removeItem("rememberedUsername");
-  }
+    const remember = document.getElementById("rememberMe")?.checked;
+    if (remember) localStorage.setItem("rememberedUsername", foundUsername);
+    else localStorage.removeItem("rememberedUsername");
 
-  if (message) {
-    message.innerText = "✅ تم تسجيل الدخول بنجاح";
-    message.style.color = "#198754";
-  }
-  
+    if (message) {
+      message.innerText = "✅ تم تسجيل الدخول بنجاح";
+      message.style.color = "#198754";
+    }
+    
+    if (button) {
+      button.disabled = true;
+      button.innerText = "⏳ جاري الدخول...";
+    }
+
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 300);
+  };
+
   if (button) {
     button.disabled = true;
-    button.innerText = "⏳ جاري الدخول...";
+    button.innerText = "⏳ جاري التحقق...";
   }
 
-  setTimeout(function () {
-    window.location.href = "index.html";
-  }, 300);
+  // 🆕 إضافة Timeout عشان لو الداتابيز علقت، الكود ميفضلش واقف
+  let loginTimeout = setTimeout(() => {
+    if (message) {
+      message.innerText = "⚠️ الاتصال تأخر، جاري المحاولة في الكود القديم...";
+      message.style.color = "#f59e0b";
+    }
+    fallbackToLocalUsers();
+  }, 5000);
+
+  function fallbackToLocalUsers() {
+    clearTimeout(loginTimeout);
+    
+    const foundUsername = Object.keys(users).find(
+      name => name.toLowerCase() === username.toLowerCase()
+    );
+
+    if (!foundUsername) {
+      if (message) {
+        message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+        message.style.color = "#dc3545";
+      }
+      if (button) {
+        button.disabled = false;
+        button.innerText = "🔐 LOGIN";
+      }
+      return;
+    }
+
+    const userData = users[foundUsername];
+    const realPassword = decodePass(userData.password);
+
+    if (String(realPassword) !== String(password)) {
+      if (message) {
+        message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+        message.style.color = "#dc3545";
+      }
+      if (button) {
+        button.disabled = false;
+        button.innerText = "🔐 LOGIN";
+      }
+      return;
+    }
+
+    completeLogin(userData, foundUsername);
+  }
+
+  window.supabaseClient
+    .from("employees")
+    .select("*")
+    .ilike("username", username)
+    .maybeSingle()
+    .then(({ data, error }) => {
+      clearTimeout(loginTimeout);
+
+      if (error) {
+        console.error("Login DB Error:", error);
+        fallbackToLocalUsers();
+        return;
+      }
+
+      if (data) {
+        const realPassword = decodePass(data.password);
+        
+        if (String(realPassword) === String(password)) {
+          completeLogin(data, data.username);
+          return;
+        } else {
+          if (message) {
+            message.innerText = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+            message.style.color = "#dc3545";
+          }
+          if (button) {
+            button.disabled = false;
+            button.innerText = "🔐 LOGIN";
+          }
+          return;
+        }
+      }
+
+      fallbackToLocalUsers();
+
+    })
+    .catch(err => {
+      clearTimeout(loginTimeout);
+      console.error("Login Exception:", err);
+      fallbackToLocalUsers();
+    });
 }
 
 function goHome() {
@@ -1419,19 +1485,7 @@ async function updateDashboardStats() {
     review: document.getElementById("problemReviewCount")
   };
 
-  if (!window.supabaseClient) return;
-
-  // 🆕 بنجيب كل السجلات من غير أي حدود
-  const { data: allRecords, error } = await window.supabaseClient
-    .from("records")
-    .select("*");
-
-  if (error) {
-    console.error("Error fetching stats:", error);
-    return;
-  }
-
-  const records = (allRecords || []).map(normalizeRecord).filter(Boolean);
+  const records = await getAllSupabaseRecords();
   const user = getCurrentUser();
   if (!user) return;
 
@@ -1447,20 +1501,13 @@ async function updateDashboardStats() {
     return (!Number.isNaN(date.getTime()) && date.toLocaleDateString("en-CA") === today);
   }).length;
 
-  // 🆕 دالة تنسيق الأرقام الكبيرة (عشان تبان 1.2K بدل 1200)
-  const formatNumber = (num) => {
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-    if (num >= 10000) return (num / 1000).toFixed(1) + 'K';
-    return num;
-  };
-
-  if (elements.total) elements.total.innerText = formatNumber(records.length);
-  if (elements.completed) elements.completed.innerText = formatNumber(completed);
-  if (elements.pending) elements.pending.innerText = formatNumber(pending);
+  if (elements.total) elements.total.innerText = records.length;
+  if (elements.completed) elements.completed.innerText = completed;
+  if (elements.pending) elements.pending.innerText = pending;
   if (elements.delayed) elements.delayed.innerText = 0;
-  if (elements.today) elements.today.innerText = formatNumber(todayCount);
-  if (elements.problems) elements.problems.innerText = formatNumber(visibleProblems);
-  if (elements.review) elements.review.innerText = formatNumber(reviewCount);
+  if (elements.today) elements.today.innerText = todayCount;
+  if (elements.problems) elements.problems.innerText = visibleProblems;
+  if (elements.review) elements.review.innerText = reviewCount;
 
   const reviewMenu = document.getElementById("resolvedProblemsMenu");
   if (reviewMenu) {
