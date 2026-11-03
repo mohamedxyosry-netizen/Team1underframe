@@ -1670,8 +1670,7 @@ const response =
 await supabaseClient
 .from("records")
 .select("car_number")
-.not("car_number","is",null)
-.order("car_number",{ascending:true});
+.not("car_number","is",null);
 
 if(response.error) {
 
